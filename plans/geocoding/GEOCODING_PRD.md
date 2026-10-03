@@ -24,7 +24,7 @@ A search that silently takes the first match would send a route to a wrong place
 
 ## Out of scope
 
-- Building the search. The code is written as a work package of `plans/mvp/`, together with the rest of the backend, because the backend architecture is decided there (`plans/mvp/MVP_PLAN.md` Q-10). Decided by the user with the external API person in the shape interview.
+- Building the search. The code is written as a work package of `plans/mvp/`, together with the rest of the backend, because the backend architecture is decided there (`plans/mvp/MVP_PLAN.md` Q-11). Decided by the user with the external API person in the shape interview.
 - The shape of the search request and response between the frontend and the backend, which is part of `plans/api_contract/`.
 - The map tiles and what their source learns about the person, which is part of `plans/frontend_stack/`.
 - The wording of the privacy information (`plans/mvp/MVP_PRD.md` FR-20), owned by `plans/mvp/`.

@@ -22,7 +22,7 @@ F-11. The architecture tests pass on the tree before this change. | cmd:`venv\Sc
 
 ## Decisions
 
-D-1. The task is split: the deployment configuration with instructions, the secure connection and the unavailable source in the live demo moved to the task `DEPLOYMENT` of this initiative. Decided by the user on 2026-10-03 in phase B, against moving them to `plans/mvp/` and against one plan waiting for Q-10 of the MVP plan.
+D-1. The task is split: the deployment configuration with instructions, the secure connection and the unavailable source in the live demo moved to the task `DEPLOYMENT` of this initiative. Decided by the user on 2026-10-03 in phase B, against moving them to `plans/mvp/` and against one plan waiting for Q-11 of the MVP plan.
 
 D-2. The demo runs on a virtual private server a member of the team already has. Stated by the user on 2026-10-03, in answer to what the team already has to run the demo on.
 

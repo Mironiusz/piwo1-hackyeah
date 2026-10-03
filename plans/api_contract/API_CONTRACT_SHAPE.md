@@ -30,7 +30,7 @@ Following from the seed: the contract of the programming interface between the f
 
 ## Out of scope
 
-The technical decisions delegated in the same conversation have their own initiatives: `plans/routing_engine/`, `plans/osm_data_source/`, `plans/frontend_stack/`, `plans/demo_environment/`, `plans/osm_barrier_mapping/`, `plans/local_database/`, `plans/geocoding/`, `plans/account_sessions/`. The domain model and database schema, the backend architecture with the worker, and the identifier of a vote without an account were offered as topics of this initiative and not chosen; they stay with `plans/mvp/`.
+The technical decisions delegated in the same conversation have their own initiatives: `plans/routing_engine/`, `plans/osm_data_source/`, `plans/frontend_stack/`, `plans/demo_environment/`, `plans/osm_barrier_mapping/`, `plans/local_database/`, `plans/geocoding/`, `plans/account_sessions/`. The domain model and database schema, the backend architecture with the worker, and the identifier of a vote without an account were offered as topics of this initiative and not chosen; they stayed with `plans/mvp/`. Later on 2026-10-03 the domain model and database schema, with the identifier of a vote without an account, moved at the user's request to `plans/fact_schema/` (Q-10 of `plans/mvp/MVP_PLAN.md`), and the backend architecture with the worker stays with `plans/mvp/` as its Q-11.
 
 ## Functional requirements
 
