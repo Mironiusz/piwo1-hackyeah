@@ -18,6 +18,7 @@ Reports, votes, statuses, geozones, OpenStreetMap facts, accounts and moderation
 - The target schema written as the part of the product specification against which a schema change is reviewed, decided in the shape (question 2).
 - The proposal of the changes to the specification and to `plans/mvp/MVP_PRD.md` that these rules require, for the user to approve.
 - The stored data created in the local database, with tests that run the scenarios of the acceptance criteria below.
+- The initiative is delivered in two tasks, decided by the user on 2026-10-03 in phase B of the task `FACT_SCHEMA` (`plans/fact_schema/FACT_SCHEMA_REVISION_SEED.md`). The task `FACT_SCHEMA` writes the target schema that holds FR-1 - FR-13 and the part of FR-14 that version 4 of the specification left to this initiative, and meets AC-13. The task `FACT_SCHEMA_REVISION` creates the stored data of FR-15 and meets AC-1 - AC-12, once the local database and the backend skeleton named under Dependencies exist. The importer and the backend share the stored data, so the target schema is one schema for both.
 
 ## Out of scope
 
