@@ -75,5 +75,3 @@ Two defects of the specification were noticed during this interview and reported
 ## Open questions
 
 None. Questions 1 to 5 were answered on 2026-10-03; the numbering of the answers above follows the original list.
-
-5. By when must the decision be made, given the deadline at 11:00 on 4 October 2026? `Block: no`
