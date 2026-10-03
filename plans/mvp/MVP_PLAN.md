@@ -35,7 +35,7 @@ D-2. Every remaining technical direction of this plan is decided in its own init
 ## Risks
 
 - The plan cannot be closed, and `plan-implement` cannot start, until the initiatives under Open questions are decided. Every hour they stay open is taken from the time left before the Kraków deadline at 11:00 on 4 October 2026.
-- The initiatives depend on each other: the contract in `plans/api_contract/` depends on `plans/routing_engine/` and `plans/account_sessions/`, routing depends on the data source in `plans/osm_data_source/`, and the segment states depend on `plans/osm_barrier_mapping/`. Deciding them in the wrong order means guessing a contract.
+- The open questions depend on each other: Q-10 depends on Q-8 and on one question of Q-2; Q-9 depends on Q-10 and Q-6; Q-11 depends on Q-1, Q-2 and Q-7; Q-1 and Q-2 are decided together, because both decide where the pedestrian network comes from; Q-5 depends on Q-2 only if the address search is built from our own OpenStreetMap copy; Q-3, Q-4, Q-6 and Q-7 depend on no other open question. The critical path is Q-2 (the reimport question) -> Q-10 -> Q-9. Deciding them in the wrong order means guessing a contract.
 
 ## Open questions
 
@@ -47,8 +47,10 @@ D-2. Every remaining technical direction of this plan is decided in its own init
 - Q-6. Account session mechanism - `plans/account_sessions/`, owner: backend.
 - Q-7. Where the demo runs, and the target environment entry of `docs/standards/decision_registry.md` - `plans/demo_environment/`, owner: db, consulted: backend.
 - Q-8. Mapping of OpenStreetMap tags to the closed list of barriers and amenities, with thresholds - `plans/osm_barrier_mapping/`, owner of the proposal: import, approved as a product rule by the owner of the specification.
-- Q-9. Contract of the programming interface between the frontend and the backend - `plans/api_contract/`, owner: backend, consulted: frontend.
-- Q-10. The domain model and database schema, the backend architecture with the worker, and the identifier of a vote without an account were not delegated to an initiative; they are decided in this plan once Q-1 - Q-9 are settled.
+- Q-9. Contract of the programming interface between the frontend and the backend - `plans/api_contract/`, owner: backend, consulted: frontend. Depends on Q-10 for the resources and statuses it exposes and on Q-6 for authentication. It does not depend on Q-1: the route response carries the segment states of Q-10, not anything specific to the routing engine.
+- Q-10. The domain model and database schema of facts and votes: the stored OpenStreetMap elements, the facts from OpenStreetMap and from users, geozones, votes with the identifier of a vote without an account, the segment states, and the accounts. Decided in this plan, owner: db, consulted: backend, import. Depends on Q-8 and, of Q-2, only on the question what happens to the votes on an OpenStreetMap fact that disappears in a fresh copy (`plans/osm_data_source/OSM_DATA_SOURCE_SHAPE.md`, open question 2). It does not depend on Q-1, Q-3, Q-5, Q-6, Q-7 or Q-9; the session storage of Q-6 is outside it.
+- Q-11. The backend architecture with the worker. Decided in this plan, owner: backend. Depends on Q-1 (where the route is computed), Q-2 (the import and refresh job) and Q-7 (where the service runs).
+- Q-10 was narrowed to the domain model on 2026-10-03 at the user's request, and the backend architecture with the worker moved to Q-11, because the former condition of Q-10 "once Q-1 - Q-9 are settled" blocked the domain model on decisions it does not depend on. The owners of Q-10 and Q-11 were proposed by the agent.
 
 ## Supplementary files
 
