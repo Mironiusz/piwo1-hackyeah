@@ -22,7 +22,7 @@ F-11. The architecture tests pass on the tree before this change. | cmd:`venv\Sc
 
 ## Decisions
 
-D-1. The task is split: the deployment configuration with instructions, the secure connection and the unavailable source in the live demo moved to the task `DEPLOYMENT` of this initiative. Decided by the user on 2026-10-03 in phase B, against moving them to `plans/mvp/` and against one plan waiting for Q-10 of the MVP plan.
+D-1. The task is split: the deployment configuration with instructions, the secure connection and the unavailable source in the live demo moved to the task `DEPLOYMENT` of this initiative. Decided by the user on 2026-10-03 in phase B, against moving them to `plans/mvp/` and against one plan waiting for Q-11 of the MVP plan.
 
 D-2. The demo runs on a virtual private server a member of the team already has. Stated by the user on 2026-10-03, in answer to what the team already has to run the demo on.
 
@@ -43,7 +43,7 @@ D-4. The server belongs to the db person of the team, who already pays for it, s
 
 ## Open questions
 
-- Q-1. Whether the server of D-2 carries every variant the routing engine and the frontend still consider (F-8), and allows a secure connection. Asked of the user on 2026-10-03, waiting for the db person: how much free memory and free disk space the server has after the other services of its owner, and whether a domain or subdomain can point at it (yes or no only, because no address or host enters the repository). The variants to carry: a pedestrian graph of Kraków in the memory of the backend, pgRouting in the PostGIS database of the demo, or an external Valhalla instance; a static frontend or one rendered on the server; PostgreSQL with PostGIS, the worker, and the OpenStreetMap extract of Małopolska.
+- Q-1. Whether the server of D-2 carries every variant the routing engine and the frontend still consider (F-8), and allows a secure connection. Asked of the user on 2026-10-03, waiting for the db person: how much free memory and free disk space the server has after the other services of its owner, and whether a domain or subdomain can point at it (yes or no only, because no address or host enters the repository). The variants to carry: a pedestrian graph of Kraków in the memory of the backend, pgRouting in the PostGIS database of the demo, or an external Valhalla instance; a static frontend or one rendered on the server; PostgreSQL with PostGIS, the worker, and the OpenStreetMap extract of Małopolska. For the OpenStreetMap copy, `plans/osm_data_source/OSM_DATA_SOURCE_PLAN.md` measured on 2026-10-03 on the machine of the agent's session a download of 202 232 967 bytes in 57 seconds, all passes of the import over it in 297 - 377 seconds with a peak working set of 980 MB, and a cut copy of 26 803 150 bytes (F-4, F-10, F-11 there); the downloaded file is deleted after each run (D-14 there), and the server, or the team machine Q-11 chooses, needs to reach `download.geofabrik.de` over HTTPS.
 
 ## Supplementary files
 

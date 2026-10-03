@@ -1,12 +1,12 @@
 # Product specification
 
-Document state: 2026-10-03, version 2 - target group, MVP scope and the rules of the MVP features (presets and amenities added in phase A of the PRD)
+Document state: 2026-10-03, version 3 - the OpenStreetMap tag rules with their thresholds and the contradiction between OpenStreetMap and a user report, decided in `plans/osm_barrier_mapping/`, and the fate of OpenStreetMap facts across fresh copies and the refresh of the copy, decided in `plans/osm_data_source/`
 
 ## Why this document exists
 
 This is the source of truth for the product, named in `CLAUDE.md`, section What we are building: what the product does, for whom, and what is in the prototype built at HackYeah 2026. In case of a discrepancy with anything else in the repository, this document prevails. It has to satisfy the external constraints summarized in `docs/hackathon/challenge_requirements.md`; a conflict with them is raised with the user, never resolved silently.
 
-Version 1 settled the target group and the scope of the MVP, split into mandatory and optional features. Version 2 adds the rules of these features, decided in the shape interview of the initiative `plans/mvp/`. This document does not settle the technology stack or any technical solution - those are chosen in phase B of `plan-prd`. Product behavior that this document does not describe is still undecided, and every question about it goes to the user.
+Version 1 settled the target group and the scope of the MVP, split into mandatory and optional features. Version 2 adds the rules of these features, decided in the shape interview of the initiative `plans/mvp/`. Version 3 adds which OpenStreetMap tags count as which barrier or amenity, with their thresholds, and when OpenStreetMap contradicts a user report, decided in `plans/osm_barrier_mapping/`, and the fate of OpenStreetMap facts across fresh copies and the refresh of the copy, decided in `plans/osm_data_source/`. This document does not settle the technology stack or any technical solution - those are chosen in phase B of `plan-prd`. Product behavior that this document does not describe is still undecided, and every question about it goes to the user.
 
 ## Target group
 
@@ -70,6 +70,8 @@ The route avoids the barriers from the profile known from OpenStreetMap, the con
 
 An unverified or disputed barrier from the profile, not contradicted by OpenStreetMap, is not avoided: its segment is red, and the app proposes an alternative route that avoids it and says why, naming the barrier and its status.
 
+OpenStreetMap contradicts a user report in two cases only: an opposite fact of the closed list at the same place - a lowered kerb against a reported high kerb, or a high kerb against a reported lowered kerb - or a tag value on the same stretch of way that the tag rules of M6 classify as not the reported barrier, for example `surface=asphalt` against a report of poor surface. The absence of a tag never contradicts a report; in particular a way not tagged as steps never contradicts a report of stairs.
+
 When every way to the destination crosses a barrier from the profile or a matching geozone, the app shows the route with the fewest such barriers, says plainly that no route without barriers exists, and lists where the barriers are, so that the user decides.
 
 ### M3. Point reports of barriers and amenities
@@ -93,6 +95,10 @@ Every barrier and amenity, facts from OpenStreetMap included, can be confirmed b
 - Weights: a logged-in person counts 1 and a person without an account 0.5, the author of the report included.
 - A user fact becomes confirmed when the sum of its confirmations reaches 2. It becomes outdated when the denials reach at least 2 and outweigh the confirmations. It is disputed when it has both confirmations and denials and neither rule applies.
 - A fact from OpenStreetMap shows its source and the date of its last edit in OpenStreetMap. It prevails over a contradicting user report, or over denials, until they reach the sum of 2. Then the user fact replaces it in the view, or the OpenStreetMap fact becomes outdated. A confirmation of an OpenStreetMap fact updates its date of last confirmation.
+- Whether a user report contradicts an OpenStreetMap fact follows the rule of M2. The date of the last OpenStreetMap edit of a fact is the calendar day of the last edit of the OpenStreetMap element whose tags give the fact.
+- When a fresh copy of OpenStreetMap data (M6) no longer holds an OpenStreetMap fact and the sum of its confirmations is greater than the sum of its denials, the fact becomes a user fact: it keeps all its votes, confirmations and denials alike, shows the source user report with the date of its last confirmation, and from then on its status follows the rules of a user fact. Otherwise - no votes, only denials, or as many confirmations as denials by weight - it becomes outdated with the reason that it was removed in OpenStreetMap, disappears from the map and the routes, and its votes stay in its history.
+- When a later copy holds a fact of the same type on the same OpenStreetMap element again, it is the same fact again: a converted user fact or an outdated OpenStreetMap fact becomes an OpenStreetMap fact once more, with the source OpenStreetMap, the date of its last OpenStreetMap edit and all its votes. The same element means the same OpenStreetMap identifier; this is a match by identity, never by distance.
+- An OpenStreetMap fact that appears in a fresh copy where a user fact of the same type already lies is a separate fact, and the two are not merged (M3). Whether a fresh copy contradicts a converted user fact follows the rule of M2.
 - One person has one vote per fact: per account for logged-in users, per hashed identifier for others (M9).
 - A status does not change with time alone. The date of the last confirmation is visible and the user judges it.
 
@@ -106,6 +112,41 @@ A user can mark an inaccessible area, for example a sidewalk closed for works or
 
 OpenStreetMap is the data source available from the first minute, so the map is not empty before users report anything. It provides the accessibility attributes of ways and places (wheelchair access, kerbs, incline, surface, smoothness, steps, elevators, toilets, benches) and the base map. Its licence (ODbL) and attribution are respected. When fresh data cannot be fetched, the app works on the last fetched copy and shows its date.
 
+A copy of OpenStreetMap data is used as a whole or not at all: when a fresh copy cannot be fetched or completed, the app keeps the last complete copy unchanged, and a successful fresh copy replaces it for every OpenStreetMap fact. The date of a copy is the calendar day of the state of OpenStreetMap it reflects, not the day it was downloaded, and it is the date the app shows wherever it says how fresh its OpenStreetMap data is. In the prototype a copy is fetched before the demo and the team triggers a fresh copy by hand; nothing refreshes on a schedule.
+
+#### Reading OpenStreetMap tags
+
+Every barrier and amenity of the closed list (M3) is present, absent or unknown on a stretch of way or at a point, by the tags of the OpenStreetMap element it belongs to. A tag value these rules do not list leaves the item unknown: it never makes a barrier absent and never makes an amenity present. Lengths are read in metres and the incline in percent, or in degrees converted to percent; a number in any other form is unknown. The thresholds and value lists are the same for every profile, because a preset only switches barrier types on or off (M1). Every fact these rules give carries the source OpenStreetMap and the date of the last OpenStreetMap edit of its element (M4).
+
+Barriers:
+
+| Item           | Present                                                                                                            | Absent (explicit, can contradict a report)                                                     | Known absent by default                                  | Unknown                                                      | Attribute named in the list |
+| -------------- | ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------ | --------------------------- |
+| Stairs         | the way is `highway=steps`, or a point `barrier=step` on it; number of steps from `step_count`                     | never                                                                                          | the way is not `highway=steps` and has no `barrier=step` | never                                                        | -                           |
+| High kerb      | at a point where the way meets a carriageway: `kerb=raised`, or `kerb:height` above 0.03 m                         | the opposite fact lowered kerb                                                                 | -                                                        | `kerb=rolled` or `kerb=yes` without a height, or no kerb tag | kerbs                       |
+| Poor surface   | `smoothness` of `bad` or worse; without `smoothness`, a `surface` from the poor list                               | `smoothness` of `intermediate` or better; without `smoothness`, a `surface` from the good list | -                                                        | neither tag, or a value on neither list                      | surface                     |
+| Steep incline  | numeric `incline` steeper than 6% in either direction, degrees converted to percent                                | numeric `incline` of at most 6%                                                                | -                                                        | no `incline`, or only `up` or `down`                         | incline                     |
+| Narrow passage | `width` below 0.9 m, or a point `barrier=kissing_gate`, `turnstile`, `stile` or `full-height_turnstile` on the way | `width` of at least 0.9 m and no such point                                                    | -                                                        | no `width`                                                   | width                       |
+
+- Poor surface list: `sett`, `unhewn_cobblestone`, `cobblestone`, `gravel`, `pebblestone`, `grass`, `grass_paver`, `dirt`, `earth`, `ground`, `mud`, `sand`, `rock`, `woodchips`, `stepping_stones`.
+- Good surface list: `asphalt`, `concrete`, `concrete:plates`, `paving_stones`, `compacted`, `fine_gravel`, `metal`, `wood`, `rubber`.
+- `smoothness` wins over `surface` when both are given, because it describes the passability of the actual stretch: the OpenStreetMap wiki defines `intermediate` as usable by a wheelchair and `bad` as not.
+- The kerb is an attribute only of a segment where the walking way meets a carriageway, that is at a crossing; on a stretch of pavement without a crossing there is no kerb to know.
+- Ways for motor traffic are those with `highway` of `trunk`, `primary`, `secondary`, `tertiary`, their `_link` ways, `unclassified`, `residential` and `service`. On them `surface`, `smoothness` and `width` count only when the way has no sidewalk on either side (`sidewalk=no`, `sidewalk=none` or `sidewalk:both=no`). With a sidewalk tagged on the way (`sidewalk` or `sidewalk:both` of `both`, `left`, `right` or `yes`) they are read from `sidewalk:surface`, `sidewalk:both:surface`, `sidewalk:smoothness`, `sidewalk:both:smoothness`, `sidewalk:width` and `sidewalk:both:width`. In every other case, `sidewalk=separate` and a missing sidewalk tag included, they are unknown. `incline` counts on every way.
+
+Amenities:
+
+| Item               | Present                                                                                                        | Absent                                                         | Unknown              |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | -------------------- |
+| Ramp               | `ramp:wheelchair=yes` or `ramp=yes` on steps or an entrance                                                    | `ramp=no` or `ramp:wheelchair=no`                              | otherwise            |
+| Elevator           | a point `highway=elevator`                                                                                     | never                                                          | otherwise            |
+| Lowered kerb       | `kerb=lowered`, `kerb=flush`, `kerb=no`, or `kerb:height` of at most 0.03 m                                    | the opposite fact high kerb                                    | as for the high kerb |
+| Accessible toilet  | `amenity=toilets` with `wheelchair=yes` or `wheelchair=designated`, or any place with `toilets:wheelchair=yes` | `wheelchair=no`, `wheelchair=limited`, `toilets:wheelchair=no` | otherwise            |
+| Rest place         | `amenity=bench`, `leisure=picnic_table`, or a stop or shelter with `bench=yes`                                 | `bench=no`                                                     | otherwise            |
+| Handrail at stairs | on `highway=steps`: `handrail=yes` or `handrail:left`, `handrail:right` or `handrail:center` set to `yes`      | `handrail=no`, or every given side `no`                        | otherwise            |
+
+The thresholds in short: steep incline above 6%, narrow passage below 0.9 m, high kerb above 0.03 m, poor surface by smoothness `bad` or worse and otherwise by the surface lists.
+
 ### M7. Route colors
 
 A route segment has one of four states:
@@ -113,13 +154,15 @@ A route segment has one of four states:
 - red - a prevailing barrier from the profile,
 - green - every attribute relevant to the profile is known and none of them is a barrier,
 - partial data - the known attributes are not barriers, but some relevant ones are missing,
-- grey, dashed - no data.
+- grey, dashed - no data: no attribute relevant to the profile is known other than by the default of no stairs.
 
 A segment without complete data is never green. Only barriers from the profile appear on the map and in the colors; barriers outside the profile are left out of the map so that they do not clutter it, and they stay on the list from M8. A user report that contradicts OpenStreetMap and has not reached the threshold of M4 appears on the map as an unverified report icon, while the color follows OpenStreetMap. Color is never the only carrier of the information: each state also has an icon or a line pattern, and the same information is in the list from M8.
 
+The attribute behind each barrier is the one named in the tag rules of M6: the steps for stairs, the kerbs for a high kerb, the surface for poor surface, the incline for a steep incline and the width for a narrow passage. The kerbs are an attribute only of a segment where the walking way meets a carriageway, that is at a crossing. A way not tagged as steps counts as known to have no stairs; this default never contradicts a report of stairs (M2), and on its own it does not make a segment partial data. A way that OpenStreetMap marks as not accessible for wheelchairs (`wheelchair=no`) is never green, for any profile: a segment of it that would be green is partial data, and the list of M8 says that OpenStreetMap marks the way as not accessible for wheelchairs. The marking adds no barrier, so the route does not avoid the way because of it.
+
 ### M8. Barrier list for the route
 
-After a route is planned, the app shows a text list of the barriers on it, in two groups: those matching the profile, and "additional barriers" outside the profile, so the user can judge them on their own. A third group, amenities on the route, lists the amenities the profile needs that lie near the route; they also have icons on the map and do not change the course of the route. Each item has its type, place, source, date and reliability status. For a segment with partial data or no data, the list names the missing attributes. The list is also the text alternative for the map that WCAG requires.
+After a route is planned, the app shows a text list of the barriers on it, in two groups: those matching the profile, and "additional barriers" outside the profile, so the user can judge them on their own. A third group, amenities on the route, lists the amenities the profile needs that lie near the route; they also have icons on the map and do not change the course of the route. Each item has its type, place, source, date and reliability status. For a segment with partial data or no data, the list names the missing attributes by the names of the tag rules of M6 - kerbs, surface, incline, width - and for a way marked `wheelchair=no` it says that OpenStreetMap marks the way as not accessible for wheelchairs. The list is also the text alternative for the map that WCAG requires.
 
 ### M9. Accounts and anonymous reports
 
@@ -205,7 +248,7 @@ Whether the project is submitted to the Huawei challenge, and in what form, is a
 
 ## Open questions
 
-None at version 2. Product behavior not described here goes to the user.
+None at version 3. Product behavior not described here goes to the user.
 
 ## Decision provenance
 
@@ -213,3 +256,4 @@ All decisions were made by the user on 2026-10-03, in a conversation with the ag
 
 - Version 1: the user decided the split into mandatory and optional features, the target group, the scope of geozones (simple geozones mandatory, corrections optional), light accounts with anonymous reports, and points with the ranking as an optional feature. The descriptions of the features, the initial list of barriers and amenities, the grey style for segments without data, the order of the optional features and the out-of-scope list were proposed by the agent and accepted by the user without separate discussion.
 - Version 2: every rule added in this version was decided by the user in the shape interview recorded in `plans/mvp/MVP_SHAPE.md`, which also records the scenarios each rule was decided on. The contents of the presets and the role of amenities in the profile were decided in phase A of the PRD of the same initiative.
+- Version 3: the rules of reading OpenStreetMap tags (M6, M7, M8) and of the contradiction between OpenStreetMap and a user report (M2, M4) were decided by the user in the shape interview, at the PRD gate and in phase B of `plans/osm_barrier_mapping/`, and the rules of OpenStreetMap copies and of OpenStreetMap facts across fresh copies (M4, M6) in the shape interview, at the PRD gate and in phase B of `plans/osm_data_source/`; those documents record the scenarios each rule was decided on. The tag values and thresholds of M6 were proposed by the agent from common OpenStreetMap tagging practice and the OpenStreetMap wiki and approved by the user on 2026-10-03 as the values the import runs on; the import person of the team confirms or changes them before the demo is recorded, and a change is a new version. The rules of OpenStreetMap facts across fresh copies were given by the user answering for the import person, whose ruling is still to be confirmed. The user approved this version on 2026-10-03.
