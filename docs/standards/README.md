@@ -51,7 +51,7 @@ Two files in this directory are not standards and have no core sections:
 
 The project adds its own directories next to `docs/standards/`, each with its provenance:
 
-- `docs/product/` - the product specification, `docs/product/specification.md`, written by the team. It is the source of truth for the product, named in `CLAUDE.md`, section What we are building. Its first version, written on 2026-10-03, settles the target group and the MVP scope.
+- `docs/product/` - the product specification, `docs/product/specification.md`, written by the team. It is the source of truth for the product, named in `CLAUDE.md`, section What we are building. Its first version, written on 2026-10-03, settles the target group and the MVP scope. Next to it stands `docs/product/user_journeys.md`, written on 2026-10-03 from version 6 of the specification: the steps of a person through every mandatory feature, the input for the list of views of the frontend and for the contract of the programming interface. The specification prevails over it.
 - `docs/hackathon/` - `challenge_requirements.md`, a working summary of the rules and task descriptions of the two HackYeah 2026 challenges the project is submitted to, written on 2026-10-03 from the organizers' PDFs. The PDFs remain the authority and are not stored in the repository.
 - `AI_WORKFLOW.md` in the repository root - the description of how AI tools are used here, required by the Huawei challenge.
 
