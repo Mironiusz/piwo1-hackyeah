@@ -42,7 +42,7 @@ The app presents facts and leaves the judgement to the person: no scores, no sta
 - Routes work in the whole of Kraków. The demo takes place in the district of the Tauron Arena, the venue of HackYeah, with sample reports and geozones marked as sample data.
 - The Kraków jury expects a live demo: state the needs of the chosen group, plan a route, show the concrete barriers and amenities with their source, date and status, show a contradiction between OpenStreetMap and a user report, and show what happens when a source is unavailable.
 - Whether and in what form a HarmonyOS client is built is an open entry in `docs/standards/decision_registry.md`. The MVP must not prevent a second client from using the same data and rules. If the port is built, it is a second client of the same programming interface, native or in React Native for OpenHarmony, not an application embedding the web app. The web frontend is chosen for the browser and keeps nothing the port would need outside that interface (`plans_finished/frontend_stack/FRONTEND_STACK_SHAPE.md`, Domain rules).
-- Authority: `docs/product/specification.md`, version 2, is the source of truth for the product and prevails over this file. The requirements and acceptance criteria of the MVP are in `plans/mvp/MVP_PRD.md`, the scenarios behind its rules in `plans/mvp/MVP_SHAPE.md`, and the constraints of both challenges in `docs/hackathon/challenge_requirements.md`. This file is the summary that interface work starts from.
+- Authority: `docs/product/specification.md`, version 4, is the source of truth for the product and prevails over this file. The requirements and acceptance criteria of the MVP are in `plans/mvp/MVP_PRD.md`, the scenarios behind its rules in `plans/mvp/MVP_SHAPE.md`, and the constraints of both challenges in `docs/hackathon/challenge_requirements.md`. This file is the summary that interface work starts from.
 
 ## Capabilities and Constraints
 
@@ -53,10 +53,10 @@ The MVP is the mandatory features M1-M11 of the specification. In terms of what 
 - Route segment states. Four states: barrier, no barrier, partial data, no data. The specification names them red, green, partial data, and grey dashed. Color is never the only carrier: each state also has an icon or a line pattern, a legend explains them, and the states have to be told apart in grayscale. Only barriers from the profile appear on the map.
 - List for the route. A text list in three groups - barriers from the profile, additional barriers outside the profile, amenities on the route - where each item has its type, place, source, date and status, and a segment with partial or no data names the missing attributes. The list is the text alternative for the map.
 - Reports. A point on the map with a type from a closed list and an optional description; for stairs, an optional number of steps. Before saving, the app shows the existing facts of the same type nearby and asks whether it is the same one, then shows a summary that the user approves. A saved report is not edited by anyone.
-- Confirmations and denials. Every fact, OpenStreetMap facts included, can be confirmed as still there or reported as gone. One person has one vote per fact.
+- Confirmations and denials. Every fact, OpenStreetMap facts included, can be confirmed as still there or reported as gone. A person votes on the same fact again only after a day, and only the latest vote of a person counts. Every fact, an OpenStreetMap fact included, shows one of four statuses: unverified, confirmed, disputed, outdated.
 - Geozones. An inaccessible area marked as a point with a radius from a list and a barrier type, created with a keyboard alone, approved in a summary and not edited afterwards.
 - Accounts. A pseudonym and a password, without an email address. Reports and votes also work without an account. An account can be deleted.
-- Flagging and moderation. Anyone can flag a report or a geozone; the moderator sees flagged content in a separate view and can hide it.
+- Flagging and moderation. Anyone can flag a report, a geozone or a fact converted from OpenStreetMap; the moderator sees flagged content in a separate view and can hide it and restore it.
 - Privacy information. A page stating which personal data the app keeps, for what purpose and for how long, and which it does not keep.
 
 Terms the interface uses:
@@ -97,7 +97,7 @@ Undecided:
 
 ## Evidence on Hand
 
-- `docs/product/specification.md`, version 2: the target group, the features and their rules, personal data and the out-of-scope list.
+- `docs/product/specification.md`, version 4: the target group, the features and their rules, personal data and the out-of-scope list.
 - `plans/mvp/MVP_PRD.md`: twenty functional requirements with their acceptance criteria.
 - `plans/mvp/MVP_SHAPE.md`: twelve scenarios with concrete inputs and expected states, usable as realistic content for screens and for the demo.
 - The organizers' briefs, summarized in `docs/hackathon/challenge_requirements.md`.

@@ -46,4 +46,4 @@ The verdict qualifies the initiative for `plans_finished/`, but the directory st
 
 ## Archiving of 2026-10-03
 
-The parallel work named above is wrapped up: `plans/osm_data_source/` has its final ready verdict. The user decided on 2026-10-03 to move this initiative to `plans_finished/` (U-8 of `plans/consistency_check/CONSISTENCY_CHECK_REVIEW.md`), and the session of `plans/consistency_check/`, asked to clean up `plans/`, moved it on the same day under `docs/standards/standard_agentic_workflow.md` ch. 4.6.
+The parallel work named above is wrapped up: `plans_finished/osm_data_source/` has its final ready verdict. The user decided on 2026-10-03 to move this initiative to `plans_finished/` (U-8 of `plans/consistency_check/CONSISTENCY_CHECK_REVIEW.md`), and the session of `plans/consistency_check/`, asked to clean up `plans/`, moved it on the same day under `docs/standards/standard_agentic_workflow.md` ch. 4.6.
