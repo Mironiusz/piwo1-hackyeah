@@ -1,0 +1,120 @@
+name: Valhalla image
+
+on:
+  workflow_dispatch:
+    inputs:
+      patch_rev:
+        description: Revision of the patch set, raised when a .patch file or the Dockerfile in valhalla/ changes
+        type: string
+        required: true
+        default: "1"
+      overwrite:
+        description: Replace the version tag if it already exists in the registry
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: valhalla-image
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  publish:
+    name: Build, push and smoke-test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Derive the image name and tags
+        id: meta
+        env:
+          PATCH_REV: ${{ inputs.patch_rev }}
+        run: |
+          if [[ ! "$PATCH_REV" =~ ^[1-9][0-9]*$ ]]; then
+            echo "::error::patch_rev must be a positive whole number, got '${PATCH_REV}'"
+            exit 1
+          fi
+          mapfile -t versions < <(sed -nE 's/.*--branch[[:space:]]+([0-9]+\.[0-9]+\.[0-9]+)([[:space:]].*)?$/\1/p' valhalla/Dockerfile | sort -u)
+          if [[ ${#versions[@]} -ne 1 ]]; then
+            echo "::error file=valhalla/Dockerfile::Expected exactly one --branch X.Y.Z in the git clone of valhalla/Dockerfile, found ${#versions[@]}: ${versions[*]}"
+            exit 1
+          fi
+          image="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/valhalla-a11y"
+          {
+            echo "version=${versions[0]}"
+            echo "image=${image}"
+            echo "version_tag=${image}:${versions[0]}-a11y.${PATCH_REV}"
+            echo "sha_tag=${image}:sha-${GITHUB_SHA}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to the GitHub container registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Refuse to replace an existing version tag
+        if: ${{ !inputs.overwrite }}
+        env:
+          VERSION_TAG: ${{ steps.meta.outputs.version_tag }}
+        run: |
+          if answer="$(docker buildx imagetools inspect "$VERSION_TAG" 2>&1)"; then
+            echo "::error::${VERSION_TAG} already exists. Raise patch_rev, or run again with overwrite to replace it."
+            exit 1
+          fi
+          if [[ "${answer,,}" != *"not found"* ]]; then
+            echo "$answer"
+            echo "::error::Could not tell whether ${VERSION_TAG} exists. If the package was never published, nothing can be replaced: run again with overwrite."
+            exit 1
+          fi
+          echo "${VERSION_TAG} does not exist yet."
+
+      - name: Build and push the image
+        id: build
+        uses: docker/build-push-action@v7
+        with:
+          context: valhalla
+          file: valhalla/Dockerfile
+          build-args: CONCURRENCY=4
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.version_tag }}
+            ${{ steps.meta.outputs.sha_tag }}
+          labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Smoke-test the pushed image
+        env:
+          IMAGE_REF: ${{ steps.meta.outputs.image }}@${{ steps.build.outputs.digest }}
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          for binary in valhalla_service valhalla_build_tiles valhalla_convert_transit; do
+            reported="$(docker run --rm --entrypoint "$binary" "$IMAGE_REF" --version)"
+            if [[ "$reported" != "$VERSION" ]]; then
+              echo "::error::${binary} --version printed '${reported}', expected '${VERSION}'"
+              exit 1
+            fi
+            echo "${binary} --version: ${reported}"
+          done
+
+      - name: Show the pull command
+        env:
+          VERSION_TAG: ${{ steps.meta.outputs.version_tag }}
+          SHA_TAG: ${{ steps.meta.outputs.sha_tag }}
+        run: printf 'Published and smoke-tested `%s` and `%s`.\n\nPull it on a server with `docker pull %s`.\n' "$VERSION_TAG" "$SHA_TAG" "$VERSION_TAG" >> "$GITHUB_STEP_SUMMARY"
