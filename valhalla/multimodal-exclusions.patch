@@ -1,0 +1,104 @@
+diff --git a/src/loki/worker.cc b/src/loki/worker.cc
+index e459e4d..8c654b2 100644
+--- a/src/loki/worker.cc
++++ b/src/loki/worker.cc
+@@ -12,6 +12,7 @@
+ #include <stdexcept>
+ #include <string>
+ #include <unordered_set>
++#include <vector>
+ 
+ using namespace valhalla;
+ using namespace valhalla::midgard;
+@@ -21,7 +22,30 @@ using namespace valhalla::loki;
+ 
+ namespace {
+ constexpr std::string_view kDefaultMaxAge = "1800";
++
++// PATCH(multimodal-exclusions): composite costings (multimodal, transit, bikeshare,
++// auto_pedestrian) are expanded by sif::CostFactory::CreateModeCosting into one costing per
++// travel mode, each built from options.costings()[<component type>]. Exclusions stored only on
++// the composite costing are lost there, e.g. on the walking legs of a multimodal route. Return
++// every costing options entry that will actually be instantiated, so exclusions go to all of them.
++std::vector<valhalla::Costing_Options*> exclusion_targets(valhalla::Options& options) {
++  std::vector<valhalla::Costing_Options*> targets;
++  auto* costings = options.mutable_costings();
++  auto add = [&](valhalla::Costing::Type type) {
++    auto it = costings->find(type);
++    if (it != costings->end())
++      targets.push_back(it->second.mutable_options());
++  };
++  auto mapping = valhalla::sif::kCostingTypeMapping.find(options.costing_type());
++  if (mapping == valhalla::sif::kCostingTypeMapping.end()) {
++    add(options.costing_type());
++  } else {
++    for (const auto type : mapping->second)
++      add(type);
++  }
++  return targets;
+ }
++} // namespace
+ 
+ namespace valhalla {
+ namespace loki {
+@@ -159,13 +183,14 @@ void loki_worker_t::parse_costing(Api& api, bool allow_none) {
+   if (options.exclude_polygons_size()) {
+     const auto edges = edges_in_rings(options, *reader, mode_costing[static_cast<size_t>(mode)],
+                                       max_exclude_polygons_length, max_exclude_polygons_vertices);
+-    auto& co = *options.mutable_costings()->find(options.costing_type())->second.mutable_options();
+-    co.mutable_exclude_edges()->Reserve(edges.size());
+-    for (const auto& edge_id : edges) {
+-      auto* avoid = co.add_exclude_edges();
+-      avoid->set_id(edge_id);
+-      // TODO: set correct percent_along in edges_in_rings (for origin & destination edges)
+-      avoid->set_percent_along(0);
++    for (auto* co : exclusion_targets(options)) {
++      co->mutable_exclude_edges()->Reserve(co->exclude_edges_size() + edges.size());
++      for (const auto& edge_id : edges) {
++        auto* avoid = co->add_exclude_edges();
++        avoid->set_id(edge_id);
++        // TODO: set correct percent_along in edges_in_rings (for origin & destination edges)
++        avoid->set_percent_along(0);
++      }
+     }
+   }
+ 
+@@ -180,7 +205,7 @@ void loki_worker_t::parse_costing(Api& api, bool allow_none) {
+       search_.search(*options.mutable_exclude_locations(), mode_costing[static_cast<size_t>(mode)]);
+       search_.clear();
+       std::unordered_set<uint64_t> avoids;
+-      auto& co = *options.mutable_costings()->find(options.costing_type())->second.mutable_options();
++      const auto targets = exclusion_targets(options);
+       for (const auto& result : options.exclude_locations()) {
+         for (const auto& edge : result.correlation().edges()) {
+           auto inserted = avoids.insert(GraphId(edge.graph_id()));
+@@ -189,9 +214,11 @@ void loki_worker_t::parse_costing(Api& api, bool allow_none) {
+           // Also insert shortcut edge if one includes this edge
+           if (inserted.second) {
+             // Add edge and percent along to pbf
+-            auto* avoid = co.add_exclude_edges();
+-            avoid->set_id(GraphId(edge.graph_id()));
+-            avoid->set_percent_along(edge.percent_along());
++            for (auto* co : targets) {
++              auto* avoid = co->add_exclude_edges();
++              avoid->set_id(GraphId(edge.graph_id()));
++              avoid->set_percent_along(edge.percent_along());
++            }
+ 
+             // Check if a shortcut exists
+             GraphId shortcut = reader->GetShortcut(GraphId(edge.graph_id()));
+@@ -202,9 +229,11 @@ void loki_worker_t::parse_costing(Api& api, bool allow_none) {
+                 avoids.insert(shortcut);
+ 
+                 // Add to pbf (with 0 percent along)
+-                auto* avoid_shortcut = co.add_exclude_edges();
+-                avoid_shortcut->set_id(shortcut);
+-                avoid_shortcut->set_percent_along(0);
++                for (auto* co : targets) {
++                  auto* avoid_shortcut = co->add_exclude_edges();
++                  avoid_shortcut->set_id(shortcut);
++                  avoid_shortcut->set_percent_along(0);
++                }
+               }
+             }
+           }

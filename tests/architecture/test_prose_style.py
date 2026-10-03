@@ -19,6 +19,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.architecture.common_vendored_content import is_vendored_path
+
 ROOT_DIR = Path(__file__).resolve().parents[2]
 
 SCANNED_FILE_SUFFIXES: frozenset[str] = frozenset({".py", ".md"})
@@ -103,7 +105,7 @@ a structure of the document.
 """
 
 BOLD_MARKED_LINE = "This is a **bold** phrase in the middle of a sentence."
-"""Test input for the bold rule, shared by the four cases below."""
+"""Test input for the bold rule, shared by the cases below."""
 
 
 @dataclass(frozen=True)
@@ -166,13 +168,15 @@ class ProseStyleScanSummary:
 
 def fetch_scanned_files(root: Path) -> list[Path]:
     """
-    Returns a sorted list of .py and .md files under `root`, skipping the tool directories.
+    Returns a sorted list of .py and .md files under `root`, skipping the tool directories and the third-party
+    content listed in `common_vendored_content.py`, which is written in someone else's style, just like `node_modules`.
     """
     scanned_files: list[Path] = []
 
     for directory, directory_names, file_names in root.walk(on_error=lambda _: None):
         directory_names[:] = [name for name in directory_names if name not in EXCLUDED_DIRECTORY_NAMES and not name.startswith(EXCLUDED_DIRECTORY_PREFIXES)]
-        scanned_files.extend(directory / name for name in file_names if Path(name).suffix in SCANNED_FILE_SUFFIXES)
+        candidate_files = (directory / name for name in file_names if Path(name).suffix in SCANNED_FILE_SUFFIXES)
+        scanned_files.extend(path for path in candidate_files if not is_vendored_path(path.relative_to(root).as_posix()))
 
     return sorted(scanned_files)
 
@@ -292,7 +296,9 @@ def test_repository_has_no_forbidden_characters(repository_scan: ProseStyleScanS
     or an emoji.
 
     The test has no list of exceptions other than `RULE_DEFINING_PATHS` and is to stay that way: adding to it
-    an exception for a document nobody bothered to fix turns the gate into a wish list.
+    an exception for a document nobody bothered to fix turns the gate into a wish list. Third-party content
+    from `common_vendored_content.py` is not such an exception - it stays outside the scan for the same reason
+    as `node_modules`, and a document the team writes never goes on that list.
     """
     violations = repository_scan.forbidden_character_violations
 
@@ -447,6 +453,22 @@ def test_fetch_scanned_files_skips_excluded_directories(tmp_path: Path) -> None:
 
     assert tmp_path / "config" / "settings.py" in scanned
     assert not any("venv" in path.parts for path in scanned)
+
+
+def test_fetch_scanned_files_skips_vendored_content(tmp_path: Path) -> None:
+    """
+    Ensures that the files of a vendored skill and of a vendored agent role do not get into the scan, while
+    an own document next to them does.
+    """
+    (tmp_path / ".claude" / "skills" / "impeccable").mkdir(parents=True)
+    (tmp_path / ".claude" / "skills" / "impeccable" / "SKILL.md").write_text(f"{BOLD_MARKED_LINE}\n", encoding="utf-8")
+    (tmp_path / ".claude" / "agents").mkdir()
+    (tmp_path / ".claude" / "agents" / "impeccable-documenter.md").write_text(f"{BOLD_MARKED_LINE}\n", encoding="utf-8")
+    (tmp_path / ".claude" / "agents" / "dod-reviewer.md").write_text(f"{BOLD_MARKED_LINE}\n", encoding="utf-8")
+
+    scanned = fetch_scanned_files(tmp_path)
+
+    assert scanned == [tmp_path / ".claude" / "agents" / "dod-reviewer.md"]
 
 
 def test_fetch_scanned_files_finds_only_python_and_markdown_files(tmp_path: Path) -> None:

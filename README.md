@@ -2,7 +2,7 @@
 
 A HackYeah 2026 project (3-4 October 2026, Kraków): a community app about the accessibility of places in Kraków. It combines open data (OpenStreetMap, open city data) with reports from people, including photos, shows where every piece of information comes from, how fresh and how reliable it is, and plans routes matched to the needs of people with different disabilities. Web first, with a HarmonyOS port if time allows.
 
-The project is submitted to two partner challenges: "Kraków bez barier" (City of Kraków) and "Imagine What's Next" (Huawei). Their requirements, deliverables and judging criteria are summarized in `docs/hackathon/challenge_requirements.md`. The product specification will live in `docs/product/specification.md`; it is still being written.
+The project is submitted to two partner challenges: "Kraków bez barier" (City of Kraków) and "Imagine What's Next" (Huawei). Their requirements, deliverables and judging criteria are summarized in `docs/hackathon/challenge_requirements.md`. The product specification, with the target group and the MVP scope, is in `docs/product/specification.md`.
 
 There is no product code yet. Build, installation and launch instructions for the app will be added here together with the first code.
 
@@ -14,7 +14,7 @@ The repository was created on 2026-10-03 from a pre-existing project template, "
 
 - `.claude/`, `.agents/`, `.codex/` - the chain skills (`plan-shape`, `plan-prd`, `plan-implement`, `implementation-dod-review`, `load-context`), the subagents `repo-researcher` and `dod-reviewer` with their Codex variants, the `local_docs_context.py` hook with the session start context, the `block_dangerous_commands.py` hook blocking destructive commands as well as `git commit` and `git push`, and settings that block reading secret files.
 - `agent_docs/` - the project description for the hook, the methodology of the chain and the durable memory convention.
-- `docs/standards/` - the standards map, six standards of the workflow core, twelve standards of the Python profile and two registries.
+- `docs/standards/` - the standards map, six standards of the workflow core, twelve standards of the Python profile, one standard of the frontend profile and two registries.
 - `docs/hackathon/` - the summary of the challenge rules; `docs/product/` - the place for the product specification.
 - `tests/architecture/` - the core gates: Claude Code and Codex parity, hooks, prose style, plan document contract, conflict markers.
 - `plans/` and `plans_finished/` - the place for initiatives in progress and their archive.
@@ -38,7 +38,7 @@ make check
 The template's setup steps and their state in this repository:
 
 1. Copy the template files into a new repository, without the template's `.git` directory. Done in the initial commit.
-2. Fill in the places marked `<...>` in `CLAUDE.md`, `AGENTS.md` and `agent_docs/session_context.md`: the project description, the product specification, the team and the agent's permissions for the target environment. `CLAUDE.md` and `AGENTS.md` must be identical except for the tool name - the parity test checks it. Done on 2026-10-03; the team section was removed because there is nothing to record yet, and the target environment waits for the stack decision (`docs/standards/decision_registry.md`).
+2. Fill in the places marked `<...>` in `CLAUDE.md`, `AGENTS.md` and `agent_docs/session_context.md`: the project description, the product specification, the team and the agent's permissions for the target environment. `CLAUDE.md` and `AGENTS.md` must be identical except for the tool name - the parity test checks it. Done on 2026-10-03; the team section was removed because there is nothing to record yet, and the permission levels for the target environment were filled in on 2026-10-03 from `plans_finished/demo_environment/`.
 3. Enter the project name in `pyproject.toml`, `package.json` and `package-lock.json`. Done: `piwo1-hackyeah`.
 4. A Python profile project adds its layer directories to `[tool.mypy]` and `[tool.vulture]` in `pyproject.toml` and to the `security` target in `makefile` together with the first code, and sets up the profile gates (layer boundaries, environment contract, consistency of the periodic task registry) together with the first code of a given layer. Waiting for the first code.
 5. A project outside the Python profile removes the profile standards listed in `docs/standards/README.md`, their rows in the maps in `docs/standards/README.md` and `docs/standards/standard_review.md`, and the Python tools it does not use. The core gates stay, because they are Python tests and need `pytest`. Deferred until the stack is chosen (`docs/standards/decision_registry.md`).

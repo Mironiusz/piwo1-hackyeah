@@ -19,7 +19,7 @@ What is not here:
 - the format for writing an error to the log and the question of whether to log it with a traceback - that is `standard_logging.md`;
 - whether a retry will duplicate the effect - that is `standard_idempotency.md`; this standard says whether to retry, that one whether retrying is safe;
 - the retry strategy for a single call to an external system - that is `standard_architecture.md`;
-- specific API response codes and bodies - they are decided by the product specification pointed to in `CLAUDE.md`.
+- specific API response codes and bodies - they are decided by the programming interface contract `docs/product/api_contract.md`, under the product specification pointed to in `CLAUDE.md`.
 
 ## Deviation rule
 
@@ -41,7 +41,7 @@ The classification is a decision of the code's author, not a consequence of the 
 
 One request is one transaction and one result. There is no partial reaction here: the operation either executed in full or changed nothing.
 
-A caller error is turned into a response describing what is wrong, in the shape set by the specification. The response contains no exception text, table name, query fragment or connection string - this is not theoretical caution, because exactly these channels leak the most information about the system's internals.
+A caller error is turned into a response describing what is wrong, in the shape set by the programming interface contract `docs/product/api_contract.md`. The response contains no exception text, table name, query fragment or connection string - this is not theoretical caution, because exactly these channels leak the most information about the system's internals.
 
 A transient error in request handling is not retried forever, nor for longer than the caller is able to wait. A conflict caused by concurrent modification of the same record is a special case: it goes back to the caller as information about stale state, and is not silently overwritten by a retry. A silent retry after such a conflict erases a change that nobody saw.
 
