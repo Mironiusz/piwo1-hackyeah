@@ -90,7 +90,7 @@ AC-5 (FR-5):
 - `plans_finished/geocoding/` D-16: the check of an address search after the first deployment.
 - `docs/product/specification.md` M10 and AC-15 of `plans/mvp/MVP_PRD.md` have to follow the cuts of this task. That work is outside this task.
 - FR-5 changes `CLAUDE.md`, `AGENTS.md`, `AI_WORKFLOW.md`, `docs/standards/decision_registry.md` and `plans/mvp/MVP_PLAN.md`. It does not change the archived `plans_finished/demo_environment/`.
-- `plans/backend_architecture/BACKEND_ARCHITECTURE_SHAPE.md`, item 3 of its scope, also planned to rewrite D-10 of `plans/mvp/MVP_PLAN.md`. On 2026-10-04 the user decided that this task rewrites D-10 under FR-5, so that initiative only refers to it.
+- `plans_finished/backend_architecture/BACKEND_ARCHITECTURE_SHAPE.md`, item 3 of its scope, also planned to rewrite D-10 of `plans/mvp/MVP_PLAN.md`. On 2026-10-04 the user decided that this task rewrites D-10 under FR-5, so that initiative only refers to it.
 
 ## Risks and notes
 
