@@ -14,7 +14,7 @@ Wheelchair users, parents with baby strollers and people with walking difficulti
 
 ## Scope
 
-- The mandatory features M1-M11 of the specification, version 2, with the rules decided in `plans/mvp/MVP_SHAPE.md`.
+- The mandatory features M1-M11 of the specification, version 3, with the rules decided in `plans/mvp/MVP_SHAPE.md`.
 - The interface requirements of the specification: Polish and English, designed for a phone.
 - Privacy information inside the app, required by the section Personal data of the specification.
 - Area: the whole of Kraków for routes; the demo in the district of the Tauron Arena, with sample data marked as such.
@@ -86,7 +86,7 @@ AC-8 (FR-9). The OpenStreetMap attribution is visible on the map. When fetching 
 
 AC-9 (FR-10). The four segment states can be told apart in a grayscale screenshot. The legend names all four. A barrier outside the profile does not appear on the map. In the run of shape scenario 4, at 11:00 the segment through X follows OpenStreetMap and an unverified report icon stands at X; after the next anonymous confirmation the segment is red and a new route avoids X.
 
-AC-10 (FR-11). For a planned route the list has the three groups; every item shows type, place, source, date and status. For the segment of shape scenario 9 the list says that the incline and the kerbs are unknown.
+AC-10 (FR-11). For a planned route the list has the three groups; every item shows type, place, source, date and status. For the segment of shape scenario 9, read as meeting a carriageway, the list for the preset "I use a wheelchair" says that the incline, the kerbs and the width are unknown (`plans/osm_barrier_mapping/OSM_BARRIER_MAPPING_PRD.md` AC-3).
 
 AC-11 (FR-12). An account is created with a pseudonym and a password, without an email address. After the account is deleted, its pseudonym cannot be found anywhere in the app, and the facts it confirmed keep their statuses.
 
@@ -108,12 +108,12 @@ AC-19 (FR-20). The privacy information page lists every kept item with its purpo
 
 ## Domain rules
 
-The rules are those of the specification, version 2, and the section Domain rules of `plans/mvp/MVP_SHAPE.md`. In short, for reading the acceptance criteria:
+The rules are those of the specification, version 3, and the section Domain rules of `plans/mvp/MVP_SHAPE.md`. In short, for reading the acceptance criteria:
 
 - Weights: a logged-in person counts 1, a person without an account 0.5, the author included.
 - A user fact is confirmed when its confirmations sum to 2; outdated when its denials reach at least 2 and outweigh the confirmations; disputed when it has both confirmations and denials and neither rule applies; unverified otherwise.
 - An OpenStreetMap fact prevails over contradicting reports or denials until they sum to 2.
-- Segment states: barrier - a prevailing barrier from the profile, or an unverified or disputed one that OpenStreetMap does not contradict; no barrier - every attribute behind the barriers of the profile is known and none is a barrier; partial data - the known attributes are not barriers, but some are missing; no data - nothing known.
+- Segment states: barrier - a prevailing barrier from the profile, or an unverified or disputed one that OpenStreetMap does not contradict; no barrier - every attribute behind the barriers of the profile is known, none is a barrier, and OpenStreetMap does not mark the way `wheelchair=no`; partial data - the known attributes are not barriers, but some are missing or the way is marked `wheelchair=no`; no data - no attribute behind the barriers of the profile is known other than by the default of no stairs. The attributes, the default and the marking are those of the specification, version 3, M6 and M7.
 - Dates are calendar days in the Europe/Warsaw zone.
 - Missing information is never shown as accessible, and nothing about a disability is asked or stored.
 - Amenities from the profile count as near the route within 50 m of it. Agent decision at C:60, without asking - the shape says only "near the route"; confirmed by the user at the gate of this PRD on 2026-10-03.
