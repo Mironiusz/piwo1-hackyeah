@@ -24,6 +24,7 @@ Each log entry names the tools and models actually used in that piece of work.
 - `CLAUDE.md` and `AGENTS.md` - the permanent rules, identical for both tools: the repository is written in English and the conversation with the user in Polish, no guessing of contracts (ask instead of adding a fallback), no line comments in code, the agent never commits or pushes, and the hierarchy for resolving rule conflicts.
 - `docs/standards/` - the standards the agents follow, with the standards map as the entry point. The source of truth above them is the product specification in `docs/product/`.
 - Skills in `.claude/skills/` and `.agents/skills/`, identical in both tools: `plan-shape` (turns a raw request into a shaped plan through an interview), `plan-prd` (turns the shape into a PRD and then into an implementation plan, with a confirmation gate in between), `plan-implement` (implements a closed plan and calls the review), `implementation-dod-review` (review against the Definition of Done), `load-context` (dumps a folder into one file for analysis).
+- A third-party design skill, Impeccable 4.5.0 (Apache 2.0), in `.claude/skills/impeccable/` and `.agents/skills/impeccable/`, with four agent roles of its own (`.claude/agents/impeccable-*.md`). The design direction of the route result screen was shaped with it (`PRODUCT.md`, `.impeccable/briefs/`). It is installed and updated by its own installer, so the team does not edit it, and the parity and prose gates skip it.
 - Hooks: `local_docs_context.py` inserts the project description and pointers to the standards at the start of every session; `block_dangerous_commands.py` blocks destructive commands as well as `git commit` and `git push`.
 - `.claude/settings.json` - denies reading and writing secret files.
 
@@ -90,3 +91,18 @@ Every transition between phases is manual, so a human sees each result and can t
 - Request, summarized from Polish: turn the decision taken for the first seed into a rule, so the same conflict is not raised again with every seed.
 - What was done: `docs/standards/standard_agent_docs.md`, section SEED format, now says that a request in a language other than English is quoted verbatim in that language, with an English translation by the agent next to it, marked as not part of the verbatim record. The `plan-shape` skill (in both `.claude/` and `.agents/`), `CLAUDE.md`, `AGENTS.md`, `agent_docs/ai_workflows/shape_prd_workflow.md` and the standards map point to it.
 - Why: two rules collided - the repository is written in English, and a seed is a verbatim record. A translation alone would no longer be a record of what was said; the original alone could not be read by the Huawei jury.
+
+### 2026-10-03 - Agent permissions in the hosted demo
+
+- Tools: Claude Code with Claude Opus 5.5 in the main session, the `plan-implement` skill, no subagents; other Claude Code sessions worked on the same tree at the same time and were coordinated by messages between sessions.
+- Request, summarized from Polish: implement `plans/demo_environment/` without getting in the way of the parallel sessions.
+- What was done: `CLAUDE.md` and `AGENTS.md`, section Target environment, now carry the three permission levels of the agent for the hosted demo on a virtual private server of a member of the team, limited to the services, the database and the logs of the demo, because the server also runs other services of its owner. Reading those logs needs no request, anything else in that environment needs an explicit request, and deleting the demo or its database, changing the secrets of the hosting and touching anything else on the server are forbidden even on request.
+- Why: during the night before the submission the agent can read an error or deploy a fix on request, while the deletion of the demo and its personal data on 4 October 2026 stays with the owner of the repository. The levels are enforced by the rules only, not by the hook for dangerous commands, by the decision of the user.
+- Note: the levels were written before the choice of the hosting was recorded, because the free memory and disk of the server are still to be confirmed (`plans/demo_environment/DEMO_ENVIRONMENT_PLAN.md` Q-1 and D-7).
+
+### 2026-10-03 - Third-party skill outside the repository gates
+
+- Tools: Claude Code with Claude Opus 5.5 in the main session, no skills, no subagents.
+- Request, summarized from Polish: fix the failing tests caused by the Impeccable skill.
+- What was done: the parity and prose gates in `tests/architecture/` skip the third-party skill `impeccable` and its four agent roles, named one by one in `tests/architecture/common_vendored_content.py`; `tests/architecture/test_vendored_content.py` fails when an entry points to something no longer installed. `standard_agentic_workflow.md` ch. 6.1, 6.2 and 6.4, `standard_formatting.md`, `standard_tests.md` and the standards map describe the exemption.
+- Why: since the skill was installed, four architecture tests failed on about two thousand lines of its text, so a red `make test` no longer pointed at the change being checked. The installer generates the Claude Code and Codex variants differently on purpose, and an edit made by hand would be lost with its next update.

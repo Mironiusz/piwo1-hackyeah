@@ -35,7 +35,7 @@ A decision on how the MVP searches addresses and places, taken by the right peop
 ## Out of scope
 
 - Building the search. The code is written as a work package of `plans/mvp/`, together with the rest of the backend, because the backend architecture is decided there (`plans/mvp/MVP_PLAN.md` Q-10) and building the search here first would mean guessing it. Decided by the user with the external API person on 2026-10-03.
-- The other technical decisions delegated in the same conversation have their own initiatives: `plans/api_contract/`, `plans/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/local_database/`, `plans/account_sessions/`. The shape of the search request and response is part of `plans/api_contract/`; the map tiles are part of `plans_finished/frontend_stack/`.
+- The other technical decisions delegated in the same conversation have their own initiatives: `plans/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/local_database/`, `plans/account_sessions/`. The shape of the search request and response is part of `plans/api_contract/`; the map tiles are part of `plans_finished/frontend_stack/`.
 
 ## Functional requirements
 

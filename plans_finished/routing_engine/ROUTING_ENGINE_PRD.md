@@ -69,7 +69,7 @@ AC-3 (FR-3). Applied by hand to scenario 6 of `ROUTING_ENGINE_SHAPE.md`, the dec
 
 AC-4 (FR-4). The decision names a rule for the stretch of a point report and a distance in metres for the kerb, each with its reason. Applied by hand to scenario 4 of `plans/mvp/MVP_SHAPE.md`, they make the report of a high kerb at crossing X contradicted by the lowered kerb of OpenStreetMap, so the segment follows OpenStreetMap until the report reaches 2.0.
 
-AC-5 (FR-5). Q-1 is no longer among the open questions of `plans/mvp/MVP_PLAN.md`. A decision entry there points to this initiative and states the constraints of FR-5. The registry entry Technical directions of the MVP plan says that `plans/routing_engine/` is decided.
+AC-5 (FR-5). Q-1 is no longer among the open questions of `plans/mvp/MVP_PLAN.md`. A decision entry there points to this initiative and states the constraints of FR-5. The registry entry Technical directions of the MVP plan says that `plans_finished/routing_engine/` is decided.
 
 AC-6 (FR-6). The open question about the server in `plans/demo_environment/DEMO_ENVIRONMENT_PLAN.md` names the chosen engine with what it needs from the server instead of the three variants it lists today, with a pointer to this initiative, and checking the 5 seconds of FR-1 on the server of the demo is listed among the checks after the first deployment. The decisions of that plan are unchanged.
 

@@ -60,9 +60,10 @@ What it affects: `standard_database.md`, repository structure, order of work.
 
 Bolding a single word in the middle of a sentence fails in the other direction: the more such emphases, the less each of them means, and the reader starts jumping between the bold fragments and loses the sentence that connects them. The weight of emphasis is carried by order, not by typeface - the most important thing stands at the beginning of the paragraph or at the beginning of the list, not in its middle, wrapped in asterisks.
 
-The rule is guarded by `tests/architecture/test_prose_style.py`, together with the list of forbidden characters. The gate has three properties that are easy to mistake for its bug:
+The rule is guarded by `tests/architecture/test_prose_style.py`, together with the list of forbidden characters. The gate has four properties that are easy to mistake for its bug:
 
-- It scans every `.md` and `.py` file in the tree, including ones not tracked by git, so a red result is sometimes the fault of someone else's file, not of the current change. With a red gate, first check which paths trigger it.
+- It scans every `.md` and `.py` file in the tree outside the tool directories and the third-party content described below, including ones not tracked by git, so a red result is sometimes the fault of someone else's file, not of the current change. With a red gate, first check which paths trigger it.
+- Third-party content installed by its own installer stays outside the gate, for the same reason as `node_modules`: it is written in someone else's style, and an edit made by hand would be overwritten by its next update. Today this is the `impeccable` skill with its agent roles, named one by one in `tests/architecture/common_vendored_content.py`; the rule and its boundaries are in `standard_agentic_workflow.md` ch. 6.1. A document the team writes never goes on that list.
 - A copy of someone else's document in `plans/<INITIATIVE>/attachments/` comes under the gate like any other file. Before copying someone else's document, check it for bold and forbidden characters, and on a hit the user chooses: editing the copy with an explicit note about the divergence, excluding the directory from the gate, or giving up the copy.
 - The bold detector does not exclude inline code. Two pairs of asterisks on one line, for example two dictionary unpackings in Python or two masks with a triple asterisk, trigger the gate even inside backticks. A markdown line holds at most one such occurrence, and the second one is described in words.
 

@@ -11,7 +11,7 @@ The domain model and the target schema of facts and votes are decided by the tas
 
 ## Recipient and trigger
 
-- The recipients are the work packages of `plans/mvp/` that read and write facts and votes - the import, the route, voting, geozones, accounts and moderation - and the routing engine of `plans/routing_engine/`, which reads the stored ways and points (`FACT_SCHEMA_PRD.md` FR-5).
+- The recipients are the work packages of `plans/mvp/` that read and write facts and votes - the import, the route, voting, geozones, accounts and moderation - and the routing engine of `plans_finished/routing_engine/`, which reads the stored ways and points (`FACT_SCHEMA_PRD.md` FR-5).
 - The owner of this task is the db person, as the owner of the whole initiative (`plans/mvp/MVP_PLAN.md` Q-10). Agent decision at C:40, without asking: the task was split out of a task the db person owns, and the user named no other owner.
 - Trigger: the task `FACT_SCHEMA` is implemented - the target schema `docs/product/schema.md` exists and Q-10 of `plans/mvp/MVP_PLAN.md` is closed - and the local setup and the backend skeleton with the Alembic configuration of the work package of D-7 of that plan exist. The trigger is that part of the work package, not the whole of it: the critical tests that `plans_finished/local_database/LOCAL_DATABASE_PLAN.md` D-8 gives that work package - PostGIS existing after `alembic upgrade head`, and the service account refused a `DROP` or `ALTER` of an object of the first revision - need the first revision, so they run after this task. Agent decision at C:40, without asking: it follows from D-7 and D-8 there, under which `plans/fact_schema/` writes the first revision and those tests check it.
 

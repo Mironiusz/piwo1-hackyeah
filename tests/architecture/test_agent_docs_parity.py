@@ -5,6 +5,8 @@ import re
 import tomllib
 from pathlib import Path
 
+from tests.architecture.common_vendored_content import VENDORED_AGENT_ROLE_NAMES, VENDORED_SKILL_NAMES
+
 ROOT_DIR = Path(__file__).resolve().parents[2]
 
 PLAN_REFERENCE = "docs/standards/standard_agentic_workflow.md ch. 6.2"
@@ -192,11 +194,14 @@ def test_every_paired_skill_is_at_parity() -> None:
     Ensures that the content of every skill existing in both locations is
     identical apart from explicitly allowed differences, mainly paths to
     scripts.
+
+    A vendored skill from `common_vendored_content.py` is skipped: its installer
+    generates each variant for its tool, so the two copies differ on purpose.
     """
     claude_skills_dir = ROOT_DIR / ".claude" / "skills"
     agents_skills_dir = ROOT_DIR / ".agents" / "skills"
 
-    shared_skills = sorted(_discover_skill_names(claude_skills_dir) & _discover_skill_names(agents_skills_dir))
+    shared_skills = sorted((_discover_skill_names(claude_skills_dir) & _discover_skill_names(agents_skills_dir)) - VENDORED_SKILL_NAMES)
 
     assert shared_skills, "No pair of skills to compare was found - check whether .claude/skills and .agents/skills exist"
 
@@ -216,11 +221,14 @@ def test_every_paired_agent_role_is_at_parity() -> None:
 
     Until now the agreement of both variants was guarded only by a human, who did not
     manage it: both role pairs diverged in content before this test was created.
+
+    A vendored role from `common_vendored_content.py` is skipped: its Codex variant
+    lives inside the vendored skill, where the installer put it, not in `.codex/agents/`.
     """
     claude_roles_dir = ROOT_DIR / ".claude" / "agents"
     codex_roles_dir = ROOT_DIR / ".codex" / "agents"
 
-    claude_roles = _discover_role_names(claude_roles_dir, ".md")
+    claude_roles = _discover_role_names(claude_roles_dir, ".md") - VENDORED_AGENT_ROLE_NAMES
     codex_roles = _discover_role_names(codex_roles_dir, ".toml")
 
     assert claude_roles, "No role definition was found in .claude/agents - check whether the directory exists"
