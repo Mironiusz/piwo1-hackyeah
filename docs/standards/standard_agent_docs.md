@@ -34,6 +34,8 @@ The user may create the seed file themselves, pasting a ready note instead of di
 
 Without this rule the seed would stop being a reliable point of reference - if it could be corrected as work progresses, no future person could check what was actually requested at the start, as distinct from what was understood later.
 
+A request made in a language other than English is the one place in the chain artifacts where that language stays. The original goes into the seed verbatim, marked with its language, and the agent adds an English translation next to it in the same section, marked as a translation that is not part of the verbatim record - in case of doubt the original applies. Two rules meet here: the repository is written in English (`CLAUDE.md`, section Language and communication style), and the seed is a verbatim record. A seed holding only a translation would stop being a record of what was actually said, and a seed holding only the original could not be read by a reader without the language; the pair keeps both. A request split over several messages of one conversation is quoted message by message, each with its translation.
+
 SEED may carry the detail regulator parameter, canonically written as `C:N` (full definition: `standard_agentic_workflow.md` ch. 3.5). This does not break the inviolability of the seed, because the parameter is part of the verbatim content of the request and applies from the SHAPE header, not from here - a change of the value during the task goes to SHAPE and never comes back to this file.
 
 ## SHAPE format

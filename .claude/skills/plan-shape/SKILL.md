@@ -38,6 +38,8 @@ Date: YYYY-MM-DD
 
 The file has no other sections and once saved it cannot be modified - a change of scope always goes to `_SHAPE.md`, never to the seed. If the seed is too thin for anything to follow from it, save it verbatim anyway, and address the gaps with questions in the shape phase.
 
+A request made in a language other than English stays verbatim in its original language, marked as such, with an English translation by the agent next to it in the same section, marked as a translation that is not part of the verbatim record. Full rule: `docs/standards/standard_agent_docs.md`, section SEED format.
+
 ## Detail regulator
 
 The request may carry a parameter controlling the number and depth of questions: a number from 0 to 100, canonically written as `C:N`. Recognize any form of the label, on one condition - it is immediately followed by a number from this range. The condition is necessary, because seeds in this repository are sometimes written with disk paths starting with the same pattern.
