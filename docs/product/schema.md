@@ -225,7 +225,7 @@ The name of the service account is an entry of the local environment files, so t
 - The status of a fact, its sums and the date of its last confirmation, derived from the votes (M4).
 - The state of a route segment, derived for each route from the copy, the profile in the route request and the facts (M7).
 - The preference profile, the current location and the routes, which are never stored (M1, M2).
-- The sessions of logged-in users, decided in `plans/account_sessions/`.
+- The sessions of logged-in users, decided in `plans_finished/account_sessions/`.
 - The database itself and its accounts, created by the local setup and not by a revision.
 
 ## Who writes what

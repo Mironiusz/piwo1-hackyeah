@@ -80,14 +80,14 @@ AC-8. The contract states that request logs contain only the operation name, out
 
 - The implementation of the operations follows the backend architecture, which the user moved on 2026-10-03 from Q-11 of the MVP plan to a separate initiative set up later; this contract is an input of that initiative.
 - The resources, statuses and closed lists the contract exposes follow the target schema of `plans_finished/fact_schema/`, part of `docs/product/specification.md` since version 6. A repeated save that returns the first fact needs the stored data to recognize the repetition, which that schema does not hold yet; how it is stored is for that initiative to decide.
-- Actor resolution follows `plans/account_sessions/`, settled before this contract (U-3 of `plans_finished/dependency_check/`, `plans/mvp/MVP_PLAN.md` D-8). The route response describes the data of the product, and the routing engine adapts to it (U-5 of `plans_finished/consistency_check/`).
+- Actor resolution follows `plans_finished/account_sessions/`, settled before this contract (U-3 of `plans_finished/dependency_check/`, `plans/mvp/MVP_PLAN.md` D-8). The route response describes the data of the product, and the routing engine adapts to it (U-5 of `plans_finished/consistency_check/`).
 - The frontend initiative is the first consumer and is consulted on the contract. The user approves the contract in place of the frontend person, whose confirmation is still to be obtained. The geocoding initiative has already decided that address search goes through the service.
 - The interface enables parallel frontend and backend work and is intended to be shared by Web and a possible HarmonyOS client.
 
 ## Risks and notes
 
 - The contract is ready before any operation is implemented. The time the implementation needs once the backend architecture is decided is not estimated, so whether it fits before the Kraków demo deadline cannot yet be established.
-- Actor resolution is decided in `plans/account_sessions/` and the route response follows the data of the product (Dependencies); a need of the contract beyond them is raised with the owner of that initiative rather than assumed.
+- Actor resolution is decided in `plans_finished/account_sessions/` and the route response follows the data of the product (Dependencies); a need of the contract beyond them is raised with the owner of that initiative rather than assumed.
 - A change of the target schema is a new version of the specification, and it can change the contract too.
 - The four rules of FR-1, FR-4 and FR-6 on a route request without an account, outdated facts in an area of the map, the pseudonym and an expired session were decided by the user on 2026-10-03 in phase B of this initiative, as product behavior the specification does not describe.
 - Changed after the gate on 2026-10-03, when this initiative was merged into `rm/requirements-preparation`: FR-4, FR-6, AC-4, the flag item of Domain rules, the Dependencies and the item above follow the user's decision that, where this initiative contradicted them, `docs/product/specification.md` version 4, M4 and M11, U-3 of `plans_finished/dependency_check/` and U-5 of `plans_finished/consistency_check/` stay in force.

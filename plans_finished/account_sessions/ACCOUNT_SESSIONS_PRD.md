@@ -25,11 +25,11 @@ Without these decisions, account behavior and moderator authorization cannot be 
 - Implementing account registration, login, logout, deletion, sessions, moderator authorization or vote deduplication. This initiative records the decision; implementation is part of the MVP.
 - Password recovery. A forgotten password can make the account permanently inaccessible.
 - Account profiles, email addresses, disability information or storing a person's preference profile on the account.
-- Deciding other technical matters assigned to `plans/api_contract/`, `plans_finished/frontend_stack/` or `plans/mvp/`.
+- Deciding other technical matters assigned to `plans_finished/api_contract/`, `plans_finished/frontend_stack/` or `plans/mvp/`.
 
 ## Functional requirements
 
-FR-1. Account session behavior. After login, the account remains recognized across browser closure and reopening until 24 hours have passed without activity. Every request in an active session, including a read-only request, renews the 24-hour inactivity period. After the period expires, the request is treated as unauthenticated until the person logs in again. Changed after the gate on 2026-10-03 by the decisions the user made in `plans/api_contract/` (D-5 and D-6 of its plan): a route request and an address search carry no account, so they do not renew the period, and a request made with an expired session, or with the session of a deleted account, is refused and the person is told that they are logged out, never handled as a contribution without an account.
+FR-1. Account session behavior. After login, the account remains recognized across browser closure and reopening until 24 hours have passed without activity. Every request in an active session, including a read-only request, renews the 24-hour inactivity period. After the period expires, the request is treated as unauthenticated until the person logs in again. Changed after the gate on 2026-10-03 by the decisions the user made in `plans_finished/api_contract/` (D-5 and D-6 of its plan): a route request and an address search carry no account, so they do not renew the period, and a request made with an expired session, or with the session of a deleted account, is refused and the person is told that they are logged out, never handled as a contribution without an account.
 
 FR-2. Request actor and role. Each request is handled as an account contribution, an anonymous contribution or a moderator action according to the current account and moderator-role state. Moderator status is assigned by the team. Removing the role prevents moderator access on the account's next request, even if its session is active. Changed after the gate on 2026-10-03, with FR-1: a request made with an expired session, or with the session of a deleted account, is refused instead of being handled as an anonymous contribution.
 
@@ -72,7 +72,7 @@ AC-7 (FR-5). A profile set on one device does not appear on another device after
 - `plans/mvp/MVP_PLAN.md` Q-6 waits for this initiative's account-session decision.
 - The backend owner is responsible for the decision; the frontend person is its consumer and must agree on the request behavior before the decision is handed back to the MVP plan.
 - Vote rules in M4 and account rules in M9 of `docs/product/specification.md` apply to MVP vote and account behavior. The corresponding requirements and acceptance criteria in `plans/mvp/MVP_PRD.md` must stay aligned.
-- `plans/api_contract/` depends on how a request is resolved to an actor. The API contract may be prepared in parallel, but its account behavior must follow the decision from this initiative.
+- `plans_finished/api_contract/` depends on how a request is resolved to an actor. The API contract may be prepared in parallel, but its account behavior must follow the decision from this initiative.
 - No product code exists for this initiative, so this PRD does not assume changes to existing code or a database.
 
 ## Risks and notes

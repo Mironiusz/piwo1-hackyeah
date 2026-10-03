@@ -32,7 +32,7 @@ Following from the seed: the mapping of OpenStreetMap tags to every item of the 
 
 ## Out of scope
 
-The other decisions delegated in the same conversation have their own initiatives: `plans/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans_finished/demo_environment/`, `plans_finished/local_database/`, `plans_finished/geocoding/`, `plans/account_sessions/`. The closed list itself is not changed here; it is decided by the specification.
+The other decisions delegated in the same conversation have their own initiatives: `plans_finished/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans_finished/demo_environment/`, `plans_finished/local_database/`, `plans_finished/geocoding/`, `plans_finished/account_sessions/`. The closed list itself is not changed here; it is decided by the specification.
 
 Two defects of the specification were noticed during this interview and reported to the user, but are not of the class of this scope, because they concern the route and the statuses, not the tag mapping:
 

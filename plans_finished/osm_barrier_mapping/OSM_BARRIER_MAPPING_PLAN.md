@@ -15,7 +15,7 @@ F-4. Version 2 of the specification is named in the Scope and Domain rules of th
 F-5. The MVP plan holds the mapping as open question Q-8, has the decisions D-1 - D-4, D-4 written by the implementation of `plans_finished/osm_data_source/` in a parallel session, and refers to Q-8 in its Risks and in Q-10 with its inputs and caveats. | doc:`plans/mvp/MVP_PLAN.md` lines 25-31, 42, 51, 53, 55, 57 | 2026-10-03
 F-6. The MVP PRD says in AC-10 that the list for the segment of shape scenario 9 names the incline and the kerbs as unknown, and defines the state no data as nothing known. | doc:`plans/mvp/MVP_PRD.md` lines 89, 116 | 2026-10-03
 F-7. The PRD of `plans_finished/osm_data_source/` passed its gate, puts its rules into version 3 of the specification in M4 and M6 together with this initiative, and states them as FR-3 and FR-5 - FR-11. | doc:`plans_finished/osm_data_source/OSM_DATA_SOURCE_PRD.md` lines 26, 39, 47-63, 109 | 2026-10-03
-F-8. The shapes of the routing engine and of the API contract are in the interview and record neither what the route reads from the mapping nor the names of the missing attributes. | doc:`plans_finished/routing_engine/ROUTING_ENGINE_SHAPE.md` lines 3, 17-22; doc:`plans/api_contract/API_CONTRACT_SHAPE.md` lines 3, 17-23 | 2026-10-03
+F-8. The shapes of the routing engine and of the API contract are in the interview and record neither what the route reads from the mapping nor the names of the missing attributes. | doc:`plans_finished/routing_engine/ROUTING_ENGINE_SHAPE.md` lines 3, 17-22; doc:`plans_finished/api_contract/API_CONTRACT_SHAPE.md` lines 3, 17-23 | 2026-10-03
 F-9. No product code exists, so the rule has no call site, schema object or configuration key yet. | cmd:`git ls-files` -> Python code only under `tests/architecture/` and in the agent hooks; doc:`plans/mvp/MVP_PLAN.md` line 13 | 2026-10-03
 F-10. Thresholds and default values of domain rules that are the same in every environment and used in one place belong to the third configuration layer, next to their code. | doc:`docs/standards/standard_config.md:46`; doc:`docs/standards/standard_config.md:61` | 2026-10-03
 F-11. Unit tests run without a database and without the network, and every domain rule has a test of its positive side and of its refusal. | doc:`docs/standards/standard_tests.md:30`; doc:`docs/standards/standard_tests.md:76` | 2026-10-03
@@ -206,7 +206,7 @@ In Current state, append as the last item:
 - `plans_finished/osm_barrier_mapping/` decided on 2026-10-03 (`plans_finished/osm_barrier_mapping/OSM_BARRIER_MAPPING_PLAN.md` D-6, D-7, D-11) what the route reads from the import: for every way of the pedestrian network a state of stairs, poor surface, steep incline and narrow passage - present, absent, absent by default for stairs only, unknown - with the number of steps and the `wheelchair=no` marking, and point facts on the nodes of the way: stairs, a narrow passage and kerb points that are high, lowered or unknown. It also decided how a segment combines them, which segments meet a carriageway, and that only an explicit absence or an opposite kerb point contradicts a user report (`docs/product/specification.md` version 3, M2, M6, M7). Left to this initiative: which stretch of way a point report lies on, and within what distance of an opposite kerb point a kerb report counts as contradicted.
 ```
 
-### Step 6. `plans/api_contract/API_CONTRACT_SHAPE.md`
+### Step 6. `plans_finished/api_contract/API_CONTRACT_SHAPE.md`
 
 In Current state, append as the last item:
 
