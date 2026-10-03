@@ -1,24 +1,24 @@
 # agent_docs
 
-Indeks warstwy agentowej repozytorium. Ta warstwa jest edytowalna przez agenta - w przeciwieństwie do `docs/`, które jest stałym źródłem standardów i wiedzy wygenerowanej maszynowo. Nigdy nie mieszaj tych dwóch: jeśli piszesz nowy standard albo poprawiasz opis jednostki kodu, to idzie do `docs/`; jeśli zapisujesz decyzję albo wzorzec z realnego zadania, to idzie tutaj.
+Index of the agentic layer of the repository. This layer is editable by the agent - unlike `docs/`, which is the fixed source of standards and of machine-generated knowledge. Never mix the two: if you are writing a new standard or correcting the description of a code unit, it goes to `docs/`; if you are recording a decision or a pattern from a real task, it goes here.
 
-## Co tu jest
+## What is here
 
-- `session_context.md` - dwa zdania o projekcie i wskazanie specyfikacji produktu. Hook SessionStart wstawia je na początek każdej sesji, więc plik ma zostać krótki.
-- `ai_workflows/shape_prd_workflow.md` - opis łańcucha seed -> shape -> PRD -> plan, obsługiwanego przez skille `plan-shape` i `plan-prd`, wraz z regułą archiwizacji zakończonej inicjatywy do `plans_finished/` i jej wznowienia. Otwórz przy każdym nowym zadaniu o nieustalonym kształcie i przed zamknięciem albo wznowieniem inicjatywy.
-- `memory/` - trwałe decyzje per jednostka kodu, jeden plik na jednostkę, w folderze grupy odpowiadającej strukturze repozytorium. Konwencja wpisu, jednostka kodu i wybór pliku: patrz `docs/standards/standard_agent_docs.md`.
+- `session_context.md` - two sentences about the project and a pointer to the product specification. The SessionStart hook inserts them at the beginning of every session, so the file is to stay short.
+- `ai_workflows/shape_prd_workflow.md` - a description of the seed -> shape -> PRD -> plan chain, served by the `plan-shape` and `plan-prd` skills, together with the rule for archiving a finished initiative to `plans_finished/` and for resuming it. Open it for every new task whose shape is not yet settled and before closing or resuming an initiative.
+- `memory/` - durable decisions per code unit, one file per unit, in the folder of the group that matches the repository structure. Entry convention, code unit and choice of file: see `docs/standards/standard_agent_docs.md`.
 
-## Jak wybrać plik w memory
+## How to choose a file in memory
 
-Patrz `docs/standards/standard_agent_docs.md`, sekcja "Format wpisu agent_docs/memory".
+See `docs/standards/standard_agent_docs.md`, section "agent_docs/memory entry format".
 
-## Indeks docs/
+## Index of docs/
 
-`docs/` jest stałe i agent nie edytuje go poza zadaniem, które wprost tego dotyczy (`docs/standards/standard_agentic_workflow.md`, rozdz. 5.1).
+`docs/` is fixed and the agent does not edit it outside a task that is explicitly about it (`docs/standards/standard_agentic_workflow.md`, ch. 5.1).
 
-- `docs/standards/` - stałe standardy pisane przez człowieka. Pełna lista, status gotowości i granice każdego standardu są w `docs/standards/README.md` - to jest punkt wejścia do tego katalogu, nie ta lista. Otwieraj konkretny standard wg mapowania w tamtym pliku, nie z góry.
-- Katalogi, które projekt dokłada sam, na przykład zrzut schematu bazy wygenerowany maszynowo albo wiedzę operacyjną o środowisku, projekt wpisuje do mapy w `docs/standards/README.md` razem z ich proweniencją. Zrzut schematu jest obrazem stanu faktycznego serwera, nie źródłem prawdy o schemacie - edycja takiego pliku nie zmienia bazy.
+- `docs/standards/` - fixed standards written by a human. The full list, the readiness status and the boundaries of each standard are in `docs/standards/README.md` - that file is the entry point to this directory, not this list. Open a specific standard according to the mapping in that file, not upfront.
+- Directories that the project adds itself, for example a machine-generated database schema dump or operational knowledge about the environment, are entered by the project in the map in `docs/standards/README.md` together with their provenance. The schema dump is a picture of the actual state of the server, not the source of truth about the schema - editing such a file does not change the database.
 
-Poza `docs/` jest jeszcze jedno źródło, nadrzędne wobec wszystkich: specyfikacja produktu wskazana w `CLAUDE.md`, sekcja Co budujemy. Przy rozbieżności z czymkolwiek innym obowiązuje ona.
+Outside `docs/` there is one more source, superior to all of them: the product specification indicated in `CLAUDE.md`, section What we are building. In case of a discrepancy with anything else, the product specification prevails.
 
-Pełne mapowanie typ zadania -> dokument do otwarcia, w tym kiedy sięgać po `agent_docs/` i po `docs/`, jest w `docs/standards/README.md`.
+The full task type -> document to open mapping, including when to reach for `agent_docs/` and when for `docs/`, is in `docs/standards/README.md`.

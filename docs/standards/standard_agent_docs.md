@@ -1,139 +1,139 @@
-# Standard rozpisywania dokumentacji agentowej
+# Agent documentation standard
 
-Stan dokumentu: 2026-10-03
+Document state: 2026-10-03
 
-Status: gotowy - pełna treść.
+Status: ready - full content.
 
-## Po co ten dokument
+## Why this document exists
 
-Ten standard jest jedynym źródłem prawdy dla formatu pięciu artefaktów łańcucha agentowego (SEED, SHAPE, PRD, PLAN, REVIEW) oraz dla formatu wpisu `agent_docs/memory`. Zamyka problem, który ten plik sam odnotowywał w wersji szkieletowej: konwencja pamięci agentowej miała czterokrotny adres - ten plik, `standard_agentic_workflow.md` rozdz. 5.2, `agent_docs/README.md` i `agent_docs/memory/README.md`. Od teraz pozostałe trzy miejsca odsyłają tutaj, zamiast powtarzać tę samą treść.
+This standard is the single source of truth for the format of the five artifacts of the agentic chain (SEED, SHAPE, PRD, PLAN, REVIEW) and for the format of an `agent_docs/memory` entry. It closes a problem that this file itself recorded in its skeleton version: the agent memory convention had four addresses - this file, `standard_agentic_workflow.md` ch. 5.2, `agent_docs/README.md` and `agent_docs/memory/README.md`. From now on the other three places point here instead of repeating the same content.
 
-## Zakres i granice
+## Scope and boundaries
 
-W środku: format każdego z pięciu artefaktów łańcucha i format wpisu `agent_docs/memory`, wraz z uzasadnieniem - co się psuje, gdy się danej reguły nie przestrzega.
+Inside: the format of each of the five chain artifacts and the format of an `agent_docs/memory` entry, together with the rationale - what breaks when a given rule is not followed.
 
-Czego tu nie ma:
+What is not here:
 
-- sam mechanizm łańcucha, kolejność faz, punkty kontrolne i opis skilli, które go obsługują - to jest w `standard_agentic_workflow.md`;
-- pełny opis dziesięciu kategorii ryzyka blokującego - to jest w `standard_agentic_workflow.md` rozdz. 3.3, tutaj tylko odniesienie;
-- dualizm Claude Code/Codex i test parytetu skilli - to również `standard_agentic_workflow.md`;
-- kiedy inicjatywa przechodzi do archiwum `plans_finished/` i jak wraca - to `standard_agentic_workflow.md` rozdz. 4.6; tutaj jest wyłącznie to, jak zapisać w REVIEW zakres werdyktu, zamknięcie i wznowienie;
-- formatowanie prozy w tych artefaktach: znaki zakazane, cudzysłów i zakaz pogrubień inline - to jest w `standard_formatting.md`. Reguła o wyróżnieniach obowiązuje wszystkie pięć artefaktów łańcucha i wpisy pamięci, mimo że są pisane przez agenta, nie przez człowieka.
+- the chain mechanism itself, the order of phases, the checkpoints and the description of the skills that handle it - that is in `standard_agentic_workflow.md`;
+- the full description of the ten blocking risk categories - that is in `standard_agentic_workflow.md` ch. 3.3, here only a reference;
+- the Claude Code/Codex duality and the skill parity test - that is also `standard_agentic_workflow.md`;
+- when an initiative moves to the `plans_finished/` archive and how it comes back - that is `standard_agentic_workflow.md` ch. 4.6; here there is only how to record in REVIEW the scope of the verdict, the closure and the resumption;
+- prose formatting in these artifacts: forbidden characters, quotation marks and the ban on inline bold - that is in `standard_formatting.md`. The rule on emphasis applies to all five chain artifacts and to memory entries, even though they are written by the agent, not by a human.
 
-## Reguła odstępstwa
+## Deviation rule
 
-Reguła odstępstwa wspólna dla wszystkich standardów (`docs/standards/README.md`) obowiązuje w wersji zaostrzonej: standard opisuje stan docelowy i obowiązuje w pełni od pierwszego commita, bo projekt założony z szablonu nie ma stanu zastanego, który wymagałby okresu przejściowego. Rozluźnienie tej reguły ma być kiedyś jawną decyzją zapisaną w mapie standardów, nie stanem wchodzącym w życie samym.
+The deviation rule shared by all standards (`docs/standards/README.md`) applies in its strict version: the standard describes the target state and applies in full from the first commit, because a project created from the template has no legacy state that would require a transition period. Relaxing this rule is to be, some day, an explicit decision recorded in the standards map, not a state that comes into force on its own.
 
-Zawężenie właściwe dla tego standardu: jednostką odstępstwa jest zadanie (`plans/<INICJATYWA>/<ZADANIE>_*`), nie moduł kodu - ogólna reguła mówi o module dotkniętym zmianą kodu produkcyjnego, co nie ma odpowiednika w dokumentach `plans/`.
+Narrowing specific to this standard: the unit of deviation is the task (`plans/<INITIATIVE>/<TASK>_*`), not a code module - the general rule speaks of a module touched by a change to production code, which has no counterpart in the `plans/` documents.
 
-## Format SEED
+## SEED format
 
-SEED jest dosłownym zapisem zgłoszenia, z jawnym źródłem pochodzenia: rozmowa z użytkownikiem, wklejony mail, notatka ze spotkania, opis z brancha, zgłoszenie od kogoś z zespołu. Jest niemodyfikowalny po zapisaniu - zmiana zakresu zawsze idzie do SHAPE, nigdy do SEED. Jeśli seed jest zbyt ubogi, żeby cokolwiek z niego wynikało, zapisuje się go i tak dosłownie, a braki adresuje się pytaniami w fazie shape - nie poprawia się seeda domysłem, bo wtedy przestaje być zapisem tego, co faktycznie zostało powiedziane.
+SEED is a verbatim record of the request, with an explicit source of origin: a conversation with the user, a pasted email, a meeting note, a branch description, a report from a team member. It cannot be modified once saved - a change of scope always goes to SHAPE, never to SEED. If the seed is too thin for anything to follow from it, it is still saved verbatim, and the gaps are addressed with questions in the shape phase - the seed is not corrected by guesswork, because then it stops being a record of what was actually said.
 
-Użytkownik może stworzyć plik seeda sam, wklejając gotową notatkę zamiast dyktować go w rozmowie - w takim wypadku `plan-shape` nigdy go nie nadpisuje, tylko wczytuje. Jedyny twardy wymóg dla pliku stworzonego ręcznie: musi zawierać jakąkolwiek treść, bo pustego seeda nie da się przetworzyć.
+The user may create the seed file themselves, pasting a ready note instead of dictating it in the conversation - in that case `plan-shape` never overwrites it, it only reads it. The only hard requirement for a manually created file: it must contain some content, because an empty seed cannot be processed.
 
-Bez tej reguły seed przestałby być wiarygodnym punktem odniesienia - gdyby dało się go poprawiać w miarę postępu prac, żadna przyszła osoba nie mogłaby sprawdzić, co faktycznie zostało zgłoszone na starcie, w odróżnieniu od tego, co zrozumiano później.
+Without this rule the seed would stop being a reliable point of reference - if it could be corrected as work progresses, no future person could check what was actually requested at the start, as distinct from what was understood later.
 
-SEED może nieść parametr regulatora szczegółowości, zapisywany wzorcowo jako `C:N` (pełna definicja: `standard_agentic_workflow.md` rozdz. 3.5). Nie łamie to nietykalności seeda, bo parametr jest częścią dosłownej treści zgłoszenia i obowiązuje z nagłówka SHAPE, nie stąd - zmiana wartości w trakcie zadania idzie do SHAPE i nigdy nie wraca do tego pliku.
+SEED may carry the detail regulator parameter, canonically written as `C:N` (full definition: `standard_agentic_workflow.md` ch. 3.5). This does not break the inviolability of the seed, because the parameter is part of the verbatim content of the request and applies from the SHAPE header, not from here - a change of the value during the task goes to SHAPE and never comes back to this file.
 
-## Format SHAPE
+## SHAPE format
 
-SHAPE ma jedenaście sekcji: Problem, Odbiorca i wyzwalacz, Stan obecny, Najmniejszy sensowny zakres, Poza zakresem, Wymagania funkcjonalne, Scenariusze, Podważenie własnych założeń, Reguły domenowe albo jawne TODO, Uwagi o danych/wydajności/bezpieczeństwie, Otwarte pytania. "Odbiorca i wyzwalacz" pyta o odbiorcę zmiany i jej wyzwalacz: osobę w konkretnej roli, konsumenta interfejsu programistycznego, zadanie okresowe workera, inny system. Gdy projekt nie ma interfejsu użytkownika, odbiorcą jest system, a pytanie o personę nie ma odpowiedzi.
+SHAPE has eleven sections: Problem, Recipient and trigger, Current state, Smallest meaningful scope, Out of scope, Functional requirements, Scenarios, Challenging own assumptions, Domain rules or explicit TODO, Notes on data/performance/security, Open questions. "Recipient and trigger" asks about the recipient of the change and its trigger: a person in a specific role, a consumer of the programming interface, a periodic task of the worker, another system. When the project has no user interface, the recipient is a system, and the question about a persona has no answer.
 
-Wywiad prowadzi się jedno pytanie na raz: `AskUserQuestion` dla decyzji zamkniętych, zwykły tekst dla otwartych. Po każdej odpowiedzi dopisuje się minimalną notatkę do właściwej sekcji, usuwa się odpowiadający wpis z "Otwarte pytania" i zapisuje plik - dzięki temu wywiad można przerwać w dowolnym momencie bez utraty postępu.
+The interview is conducted one question at a time: `AskUserQuestion` for closed decisions, plain text for open ones. After each answer a minimal note is added to the appropriate section, the corresponding entry is removed from "Open questions" and the file is saved - thanks to this the interview can be interrupted at any moment without losing progress.
 
-Nagłówek SHAPE niesie dwie linie: stan dokumentu z datą oraz `Regulator: C:N` z wartością regulatora szczegółowości obowiązującą w tym zadaniu (pełna definicja: `standard_agentic_workflow.md` rozdz. 3.5). To jest miejsce, z którego wartość czytają wszystkie trzy skille łańcucha - nie z seeda. Wartość wolno zmienić w trakcie zadania, ale wtedy dokument dostaje jedną linię o tym, od którego momentu obowiązuje nowa, bo bez niej nie da się czytać dokumentu wstecz. Pozycja rozstrzygnięta przez agenta zamiast zapytania niesie przy sobie frazę "Decyzja agenta przy C:N, bez pytania", w miejscu tej pozycji, nie w zbiorczej sekcji na końcu.
+The SHAPE header carries two lines: the document state with a date and `Regulator: C:N` with the value of the detail regulator in force for this task (full definition: `standard_agentic_workflow.md` ch. 3.5). This is the place from which all three chain skills read the value - not from the seed. The value may be changed during the task, but then the document gets one line saying from which point the new one applies, because without it the document cannot be read backwards. An item decided by the agent instead of by asking carries the phrase "Agent decision at C:N, without asking", in the place of that item, not in a collective section at the end.
 
-Sekcja "Podważenie własnych założeń" nie może zostać pusta. Jeśli nic w niej nie budzi wątpliwości, to znak, że problem nie został jeszcze zrozumiany, a nie że jest wyjątkowo jasny.
+The "Challenging own assumptions" section must not stay empty. If nothing in it raises doubts, that is a sign that the problem has not been understood yet, not that it is exceptionally clear.
 
-Każde pytanie dotykające jednej z dziesięciu kategorii ryzyka blokującego (pełna lista i sposób weryfikacji: `standard_agentic_workflow.md` rozdz. 3.3) oznacza się `Block: yes` wraz z nazwą kategorii. Faza kończy się dopiero, gdy wszystkie sekcje są wypełnione i żadna pozycja w "Otwarte pytania" nie ma `Block: yes` - to zabezpieczenie przed przejściem do PRD z nierozstrzygniętym pytaniem, które dotyka kontraktu API, schematu bazy albo innego realnego ryzyka.
+Every question touching one of the ten blocking risk categories (full list and verification method: `standard_agentic_workflow.md` ch. 3.3) is marked `Block: yes` together with the name of the category. The phase ends only when all sections are filled in and no item in "Open questions" has `Block: yes` - this is a safeguard against moving to the PRD with an unresolved question that touches the API contract, the database schema or another real risk.
 
-## Format PRD
+## PRD format
 
-PRD ma dziewięć sekcji: Cel biznesowy, Problem i jego skutki, Zakres, Poza zakresem, Wymagania funkcjonalne, Kryteria akceptacji, Reguły domenowe, Zależności i wpływ na inne moduły, Ryzyka i uwagi. Odpowiada wyłącznie na "co i dlaczego", nigdy na "jak".
+PRD has nine sections: Business goal, Problem and its consequences, Scope, Out of scope, Functional requirements, Acceptance criteria, Domain rules, Dependencies and impact on other modules, Risks and notes. It answers only "what and why", never "how".
 
-Czarna lista treści zakazanych w PRD: modele danych, listy kolumn, migracje, ścieżki plików kodu, nazwy funkcji, decyzje o bibliotekach, szczegóły deploymentu, sekrety i credentiale. Jeśli podczas pisania PRD pojawia się chęć zapisania rozwiązania technicznego, ten materiał należy do PLAN, nie do PRD - mieszanie obu prowadzi do przedwczesnego zamrożenia decyzji technicznych, zanim ktokolwiek potwierdził, że sam problem i zakres są uzgodnione.
+Blacklist of content forbidden in a PRD: data models, column lists, migrations, code file paths, function names, library decisions, deployment details, secrets and credentials. If while writing the PRD there is an urge to record a technical solution, that material belongs to PLAN, not to PRD - mixing the two leads to premature freezing of technical decisions before anyone has confirmed that the problem itself and the scope are agreed.
 
-PRD kończy się bramką potwierdzenia z użytkownikiem, zanim powstanie PLAN. To jedyny punkt kontrolny między "co" a "jak" w całym łańcuchu - nigdy nie przechodzi się przez niego milcząco.
+PRD ends with a confirmation gate with the user before PLAN is created. This is the only checkpoint between "what" and "how" in the whole chain - it is never passed silently.
 
-## Format PLAN
+## PLAN format
 
-PLAN ma dziewięć sekcji: Cel, Fakty, Decyzje, Zakres zmian, Kolejność wdrożenia, Definition of Done, Ryzyka, Otwarte pytania, Pliki uzupełniające. Odpowiada na "jak", oparty na faktach zweryfikowanych w kodzie, bazie i dokumentacji - nigdy na założeniach przyjętych na wiarę.
+PLAN has nine sections: Goal, Facts, Decisions, Scope of changes, Rollout order, Definition of Done, Risks, Open questions, Supplementary files. It answers "how", based on facts verified in the code, the database and the documentation - never on assumptions taken on faith.
 
-Każdy krok w "Zakres zmian" ma konkretne nazwy plików, funkcji i kontraktów danych - nigdy opis w stylu "coś w rodzaju". Decyzja techniczna podjęta samodzielnie zamiast zapytania niesie w sekcji "Decyzje" tę samą frazę co w SHAPE: "Decyzja agenta przy C:N, bez pytania".
+Every step in "Scope of changes" has concrete names of files, functions and data contracts - never a description in the style of "something like". A technical decision taken independently instead of by asking carries in the "Decisions" section the same phrase as in SHAPE: "Agent decision at C:N, without asking".
 
-### Marker stanu planu
+### Plan state marker
 
-Linia stanu dokumentu niesie datę i marker stanu, w jednym z dokładnie dwóch brzmień: "plan w toku" albo "plan zamknięty". Marker jest tą samą konwencją, którą SHAPE już niesie (wywiad w toku, wywiad zamknięty), i nie wprowadza nowego pojęcia.
+The document state line carries a date and a state marker, in one of exactly two wordings: "plan in progress" or "plan closed". The marker is the same convention that SHAPE already carries (interview in progress, interview closed), and it introduces no new concept.
 
 ```text
-Stan dokumentu: 2026-08-17, plan zamknięty
+Document state: 2026-08-17, plan closed
 ```
 
-Lista brzmień jest zamknięta, bo od markera zależy objęcie dokumentu kontrolą opisaną niżej, a drugi człon linii stanu bywał wcześniej zwykłym zdaniem opisowym - bez zamkniętej listy nie da się odróżnić markera od takiego zdania.
+The list of wordings is closed, because inclusion of the document in the check described below depends on the marker, and the second part of the state line used to be an ordinary descriptive sentence - without a closed list the marker cannot be told apart from such a sentence.
 
-Marker rozstrzyga o objęciu kontrolą w pierwszej kolejności, data dopiero w drugiej: kontrola obejmuje plan zamknięty o dacie nie wcześniejszej niż data wejścia reguły w życie, zapisana w stałej `RULE_EFFECTIVE_DATE` testu z sekcji Egzekwowanie. Plan w toku nie podlega jej wcale. Powód jest praktyczny: plan pisany na raty nie ma blokować niezwiązanej pracy na tym samym drzewie, a zamknięcie jest właściwym momentem kontroli, bo dopiero wtedy plan jest podawany do fazy implementacji. Znana cena, przyjęta świadomie: plan porzucony w stanie w toku nigdy pod kontrolę nie wejdzie.
+The marker decides about inclusion in the check first, the date only second: the check covers a closed plan dated no earlier than the date the rule came into force, stored in the `RULE_EFFECTIVE_DATE` constant of the test from the Enforcement section. A plan in progress is not subject to it at all. The reason is practical: a plan written in installments is not supposed to block unrelated work on the same tree, and closing is the right moment for the check, because only then is the plan handed over to the implementation phase. A known price, accepted deliberately: a plan abandoned in the in-progress state will never come under the check.
 
-### Format ustalenia w sekcji Fakty
+### Format of a finding in the Facts section
 
-Sekcja "Fakty" zawiera wyłącznie pozycje ustaleń, po jednej w linii, bez zdania wprowadzającego i bez treści innego rodzaju. Zdanie wprowadzające, jeśli jest potrzebne, stoi przed nagłówkiem sekcji.
+The "Facts" section contains only finding items, one per line, without an introductory sentence and without content of any other kind. The introductory sentence, if needed, stands before the section heading.
 
-Pozycja niesie cztery rzeczy: identyfikator, twierdzenie, dowód i datę sprawdzenia. Zapisuje się je w trzech polach rozdzielonych znakiem kreski pionowej: identyfikator wraz z twierdzeniem, dowód, data sprawdzenia w formacie RRRR-MM-DD. Identyfikator ma kształt `F-N.` z kropką, tak jak identyfikatory w pozostałych sekcjach. Kilka dowodów przy jednym ustaleniu rozdziela średnik.
+An item carries four things: an identifier, a claim, evidence and a check date. They are written in three fields separated by the vertical bar character: the identifier together with the claim, the evidence, the check date in the format YYYY-MM-DD. The identifier has the shape `F-N.` with a period, just like the identifiers in the other sections. Several pieces of evidence for one finding are separated by a semicolon.
 
 ```text
-F-1. Sonda osiągalności bazy czyta adres z konfiguracji, nie ze zmiennej środowiskowej. | kod:`data/engine.py:31`; dok:`docs/standards/standard_config.md` par. Trzy warstwy konfiguracji i cztery miejsca przechowywania | 2026-08-17
+F-1. The database reachability probe reads the address from the configuration, not from an environment variable. | code:`data/engine.py:31`; doc:`docs/standards/standard_config.md` para. Three configuration layers and four storage places | 2026-08-17
 ```
 
-Dowód należy do jednego z pięciu rodzajów, rozpoznawalnych po samym początku zapisu, bez interpretacji treści:
+Evidence belongs to one of five kinds, recognizable by the very beginning of the entry alone, without interpreting the content:
 
-- `kod:` - odczyt kodu ze wskazaniem pliku i linii,
-- `cmd:` - uruchomienie wraz z wynikiem. Rodzaj jest szeroki: obejmuje komendę powłoki, fragment kodu i odczyt stanu środowiska, czyli wszystko, co zostało uruchomione i czego skutek widać w wyniku,
-- `db:` - zapytanie do bazy wraz z wynikiem,
-- `dok:` - odesłanie do dokumentu ze wskazaniem paragrafu albo linii,
-- `ZAŁOŻENIE:` - treść przyjęta bez weryfikacji, oznaczona jawnie.
+- `code:` - reading code with an indication of the file and line,
+- `cmd:` - a run together with its result. The kind is broad: it covers a shell command, a code snippet and reading the state of an environment, that is, everything that was run and whose effect is visible in the result,
+- `db:` - a database query together with its result,
+- `doc:` - a reference to a document with an indication of the paragraph or line,
+- `ASSUMPTION:` - content accepted without verification, explicitly marked.
 
-Ustalenie wyprowadzone z kilku źródeł niesie kilka dowodów przy jednej pozycji. Nie ma osobnego rodzaju dowodu dla wnioskowania i nie ma go mieć - taki rodzaj byłby furtką dokładnie dla tez bez pokrycia, przed którymi ten format chroni.
+A finding derived from several sources carries several pieces of evidence in one item. There is no separate kind of evidence for inference and there is not supposed to be one - such a kind would be a loophole precisely for unsupported claims, which this format protects against.
 
-Oba separatory działają wyłącznie poza zapisem w backtickach: kreska pionowa i średnik zacytowane wewnątrz backticków należą do cytatu, nie do struktury pozycji. Bez tego wyjątku format kazałby przepisać komendę, która faktycznie została uruchomiona - regex z kreską pionową albo zapytanie ze średnikiem przestałyby dać się zacytować dosłownie, a dosłowność cytatu jest tu ważniejsza niż prostota podziału.
+Both separators work only outside text in backticks: a vertical bar and a semicolon quoted inside backticks belong to the quotation, not to the structure of the item. Without this exception the format would force rewriting a command that was actually run - a regex with a vertical bar or a query with a semicolon could no longer be quoted verbatim, and verbatim quotation matters more here than the simplicity of splitting.
 
-Granica kontroli, nazwana tu wprost, żeby zielona bramka nie była czytana jako dowód prawdziwości ustaleń: sprawdzana jest forma dowodu, nigdy jego prawdziwość. Ustalenie zmyślone i zapisane w poprawnej formie przejdzie. Format podnosi koszt zmyślenia i czyni je wykrywalnym przy kontroli ręcznej, nie czyni go niemożliwym. Najwygodniejszą furtką jest tu rodzaj `ZAŁOŻENIE:`, bo pozwala wypełnić formę bez żadnej weryfikacji - użycie go dla czegoś, co dało się sprawdzić, jest złamaniem tej reguły, mimo że kontrola automatyczna tego nie zauważy.
+The boundary of the check, named here explicitly so that a green gate is not read as proof that the findings are true: what is checked is the form of the evidence, never its truth. A made-up finding written in the correct form will pass. The format raises the cost of making things up and makes it detectable in a manual check; it does not make it impossible. The most convenient loophole here is the `ASSUMPTION:` kind, because it lets you fill in the form without any verification - using it for something that could have been checked breaks this rule, even though the automatic check will not notice it.
 
-### Pusta sekcja otwartych pytań
+### Empty open questions section
 
-Plan zamknięty ma pustą sekcję "Otwarte pytania". Sekcja jest pusta, gdy nie ma w niej ani jednej pozycji listy, a pierwszy jej akapit jest stwierdzeniem braku zaczynającym się od słowa "Brak". Zdanie stwierdzające brak pytań jest więc zapisem pustej sekcji, nie pozycją.
+A closed plan has an empty "Open questions" section. The section is empty when it contains not a single list item, and its first paragraph is a statement of absence starting with the word "None". A sentence stating that there are no questions is therefore the record of an empty section, not an item.
 
-### Egzekwowanie
+### Enforcement
 
-Reguły formatu ustalenia, markera stanu i pustej sekcji otwartych pytań egzekwuje `tests/architecture/test_plan_document_contract.py`, dla planów oznaczonych jako zamknięte i nie starszych niż data wejścia reguły w życie (stała `RULE_EFFECTIVE_DATE` w tym teście). Projekt założony z szablonu powstaje po tej dacie, więc kontrola obejmuje każdy jego plan zamknięty. Kontrola idzie razem z resztą testów architektury, więc odpala się sama przy implementacji i przy review.
+The rules on the finding format, the state marker and the empty open questions section are enforced by `tests/architecture/test_plan_document_contract.py`, for plans marked as closed and not older than the date the rule came into force (the `RULE_EFFECTIVE_DATE` constant in that test). A project created from the template comes into being after that date, so the check covers every closed plan of the project. The check runs together with the rest of the architecture tests, so it fires on its own during implementation and during review.
 
-Jeśli weryfikacja w trakcie pisania planu obali założenie z PRD, plan wraca do fazy PRD zamiast po cichu je obchodzić - PRD jest kontraktem, nie szkicem do dowolnej korekty. PLAN kończy się dopiero, gdy spełnia te same kryteria kompletności, których i tak będzie wymagał `plan-implement`: zero TODO, zero pozycji w "Otwarte pytania", każdy krok z jednoznacznym wejściem i wyjściem.
+If verification while writing the plan disproves an assumption from the PRD, the plan goes back to the PRD phase instead of quietly working around it - the PRD is a contract, not a draft open to arbitrary correction. PLAN is finished only when it meets the same completeness criteria that `plan-implement` will require anyway: zero TODOs, zero items in "Open questions", every step with an unambiguous input and output.
 
-## Format REVIEW
+## REVIEW format
 
-REVIEW jest logiem przebiegu implementacji, nie trwałą pamięcią - opisuje stan konkretnego zadania, nie wiedzę uniwersalną o repozytorium. Zapisuje się w nim to, co zostało pominięte, na co agent trafił w trakcie pracy, jakie decyzje padły przy pisaniu kodu i co wymaga powrotu w przyszłości.
+REVIEW is a log of the implementation run, not durable memory - it describes the state of a specific task, not universal knowledge about the repository. It records what was skipped, what the agent ran into during the work, what decisions were made while writing code and what requires coming back to in the future.
 
-Różnica względem wpisu `agent_docs/memory` jest kluczowa: REVIEW opisuje przebieg tego jednego zadania i traci znaczenie, gdy zadanie się zamyka; wpis memory zapisuje trwały wzorzec albo decyzję, użyteczną w przyszłych, niepowiązanych zadaniach dotyczących tego samego modułu. Mylenie tych dwóch miejsc prowadzi do sytuacji, w której trwała wiedza ginie razem z zamkniętym zadaniem, albo odwrotnie - `agent_docs/memory` zapełnia się jednorazową trywią.
+The difference from an `agent_docs/memory` entry is crucial: REVIEW describes the run of this one task and loses its meaning when the task closes; a memory entry records a durable pattern or decision, useful in future, unrelated tasks concerning the same module. Confusing these two places leads to a situation in which durable knowledge disappears together with the closed task, or the other way round - `agent_docs/memory` fills up with one-off trivia.
 
-Luka planu wypełniona samodzielnie w trakcie implementacji, zamiast pytaniem do użytkownika, jest zapisywana w REVIEW z tą samą frazą co w pozostałych artefaktach: "Decyzja agenta przy C:N, bez pytania".
+A plan gap filled in independently during implementation, instead of with a question to the user, is recorded in REVIEW with the same phrase as in the other artifacts: "Agent decision at C:N, without asking".
 
-REVIEW dopisuje `plan-implement`, w trakcie implementacji (gdy trafia na coś, czego plan nie przewidział) i na końcu, jako podsumowanie. `implementation-dod-review`/`dod-reviewer` może REVIEW uzupełnić, ale nie jest jego właścicielem.
+REVIEW is appended to by `plan-implement`, during implementation (when it runs into something the plan did not foresee) and at the end, as a summary. `implementation-dod-review`/`dod-reviewer` may supplement REVIEW, but is not its owner.
 
-REVIEW jest też jedynym miejscem, z którego czyta się zakończenie inicjatywy (`standard_agentic_workflow.md`, rozdz. 4.6). Werdykt review zapisany w REVIEW mówi wprost, jaki zakres obejmuje: całą inicjatywę, jedno zadanie z kilku, sam plan albo część kodu - bez tego zdania czytelnik nie odróżni końcowego `ready` całej sprawy od `ready` jednego etapu, a tylko to pierwsze kwalifikuje katalog do archiwum. W inicjatywie wielozadaniowej rozliczenie jednego zadania jest werdyktem dla tego zadania, nie dla katalogu. Zamknięcie bez werdyktu `ready` - rozliczenie samym review, anulowanie - zapisuje się jawnie w linii stanu dokumentu ("inicjatywa zamknięta", "inicjatywa anulowana") wraz z powodem, w tym samym pliku, nie w osobnym pliku statusu. Linia stanu review nie ma zamkniętej listy brzmień i nie podlega kontroli automatycznej - w odróżnieniu od markera planu opisanego wyżej, który mówi o gotowości planu do implementacji, nigdy o zakończeniu inicjatywy.
+REVIEW is also the only place from which the end of an initiative is read (`standard_agentic_workflow.md`, ch. 4.6). The review verdict recorded in REVIEW states explicitly what scope it covers: the whole initiative, one task out of several, the plan alone or part of the code - without this sentence the reader will not tell the final `ready` of the whole matter apart from the `ready` of one stage, and only the former qualifies the directory for the archive. In a multi-task initiative, settling one task is a verdict for that task, not for the directory. A closure without a `ready` verdict - settling by review alone, cancellation - is recorded explicitly in the document state line ("initiative closed", "initiative cancelled") together with the reason, in the same file, not in a separate status file. The review state line has no closed list of wordings and is not subject to automatic checking - unlike the plan marker described above, which speaks of the plan's readiness for implementation, never of the end of the initiative.
 
-Wznowienie zarchiwizowanej inicjatywy dopisuje się do REVIEW jako kolejny wpis, z datą, powodem i zakresem wznowionej pracy. Dotychczasowe wpisy, w tym zapis zamknięcia, zostają nietknięte - REVIEW jest dziennikiem, w którym historia zamknięcia i wznowienia stoją obok siebie w kolejności zdarzeń. Inicjatywa zamknięta bez REVIEW dostaje ten plik przy wznowieniu, z wpisem o wznowieniu jako pierwszym.
+The resumption of an archived initiative is appended to REVIEW as a further entry, with the date, the reason and the scope of the resumed work. The existing entries, including the closure record, stay untouched - REVIEW is a journal in which the history of closure and resumption stand side by side in the order of events. An initiative closed without a REVIEW gets this file upon resumption, with the resumption entry as the first one.
 
-## Format wpisu agent_docs/memory
+## agent_docs/memory entry format
 
-`agent_docs/memory/` to trwała pamięć decyzji per moduł - coś innego niż globalna auto-memory Claude (`~/.claude/projects/.../memory/`), która trzyma preferencje i kontekst konkretnego użytkownika między sesjami. `agent_docs/memory/` trzyma wiedzę o samym repozytorium, dostępną każdemu narzędziu - Claude Code i Codeksowi jednakowo. Jeśli coś dotyczy wyłącznie sposobu współpracy z konkretnym użytkownikiem, idzie do auto-memory Claude, nie tutaj.
+`agent_docs/memory/` is durable memory of decisions per module - something different from Claude's global auto-memory (`~/.claude/projects/.../memory/`), which keeps the preferences and context of a specific user between sessions. `agent_docs/memory/` keeps knowledge about the repository itself, available to every tool - Claude Code and Codex alike. If something concerns only the way of working with a specific user, it goes to Claude's auto-memory, not here.
 
-Struktura i wybór ścieżki. Plik per jednostka kodu, w folderze grupy odpowiadającej strukturze repozytorium. W profilu Pythona jednostką kodu jest warstwa ze `standard_architecture.md`, więc grupa dla kodu serwisu odpowiada warstwie: `api/`, `service/`, `data/`, `worker/`. Katalogi infrastrukturalne obok kodu serwisu, na przykład `config/` albo `alembic/`, mają własne grupy o tej samej nazwie co katalog. Projekt spoza profilu Pythona ustala jednostkę kodu w `standard_documentation.md` i stosuje tę samą zasadę. Reguła nadrzędna zostaje bez zmian: ścieżka pliku memory wynika wprost ze ścieżki opisywanego kodu, nigdy nie jest zgadywana, a grupa powstaje razem z pierwszym wpisem, nie z góry. Osobna grupa `tests/` jest przewidziana od początku - trzyma wzorce infrastruktury testowej przecinające wiele plików testowych, więc ma tylko `_wspolne.md`, bez plików per jednostka.
+Structure and choice of path. One file per code unit, in a group folder matching the repository structure. In the Python profile the code unit is a layer from `standard_architecture.md`, so the group for service code matches the layer: `api/`, `service/`, `data/`, `worker/`. Infrastructure directories next to the service code, for example `config/` or `alembic/`, have their own groups with the same name as the directory. A project outside the Python profile defines its code unit in `standard_documentation.md` and applies the same principle. The overriding rule stays unchanged: the path of the memory file follows directly from the path of the described code, it is never guessed, and a group is created together with its first entry, not up front. A separate `tests/` group is provided from the start - it keeps patterns of the test infrastructure that cut across many test files, so it has only `_shared.md`, without per-unit files.
 
-Wiedza dotycząca kilku modułów. Plik per moduł nie obsługuje wiedzy przekrojowej, więc są dwa jawne miejsca: `_wspolne.md` w folderze grupy (decyzja dotycząca kilku modułów tej samej grupy) oraz `_przekrojowe.md` w `memory/` (decyzja przecinająca grupy). Oba, tak jak pliki modułowe, powstają dopiero gdy jest co w nich zapisać - nie tworzy się ich z góry.
+Knowledge concerning several modules. A file per module does not handle cross-cutting knowledge, so there are two explicit places: `_shared.md` in the group folder (a decision concerning several modules of the same group) and `_cross_cutting.md` in `memory/` (a decision cutting across groups). Both, just like module files, are created only when there is something to record in them - they are not created up front.
 
-Szablon wpisu. Każdy wpis ma ten sam kształt:
+Entry template. Every entry has the same shape:
 
 ```text
-## YYYY-MM-DD - Krótki tytuł (TICKET-ID albo krótki opis zadania)
+## YYYY-MM-DD - Short title (TICKET-ID or short task description)
 
 - What changed:
 - Why:
@@ -141,33 +141,33 @@ Szablon wpisu. Każdy wpis ma ten sam kształt:
 - Risk / notes:
 ```
 
-Piąte, opcjonalne pole `- Decisions:` dodaje się, gdy wpis rozstrzyga wcześniej otwarte pytanie z innego wpisu. Między plikami memory linkuje się przez wiki-link `[[nazwa-pliku]]` (bez rozszerzenia) - lżejsza konwencja niż pełne ścieżki z backtickami używane gdzie indziej w repo, zarezerwowana wyłącznie dla tej warstwy. Wpisy dopisuje się, nigdy nie nadpisuje - to log append-only.
+A fifth, optional field `- Decisions:` is added when the entry resolves a previously open question from another entry. Memory files link to each other through a wiki-link `[[file-name]]` (without the extension) - a lighter convention than the full paths in backticks used elsewhere in the repo, reserved exclusively for this layer. Entries are appended, never overwritten - this is an append-only log.
 
-Linia orientacyjna. Moduł, który ma `<MODULE>_ALGORITHM.md`, dostaje plik memory od razu, ale zawiera on wyłącznie jedną linię orientacyjną przed pierwszym wpisem:
+Orientation line. A module that has `<MODULE>_ALGORITHM.md` gets a memory file right away, but it contains only one orientation line before the first entry:
 
 ```text
-Co robi moduł: patrz `<ścieżka>/<MODULE>_ALGORITHM.md`, sekcje "Cel algorytmu" i "Ogólna mapa procesu".
+What the module does: see `<path>/<MODULE>_ALGORITHM.md`, sections "Algorithm goal" and "General process map".
 ```
 
-To wskaźnik, nie kopia, więc nigdy się nie dezaktualizuje. Sam log decyzji powstaje dopiero przy pierwszej realnej decyzji. Moduły bez `ALGORITHM.md` nie dostają tej linii ani pliku z góry - dla nich plik powstaje wraz z pierwszym wpisem.
+This is a pointer, not a copy, so it never goes out of date. The decision log itself is created only with the first real decision. Modules without `ALGORITHM.md` get neither this line nor a file up front - for them the file is created together with the first entry.
 
-Kiedy pisać wpis. Zapisuje się decyzję na trwałe, gdy widać jeden z sygnałów: powtarzający się wzorzec zadania w module, powtarzający się finding z code review, nieoczywisty workflow, który następny agent odkrywałby od zera, łatwą do zapomnienia regułę domenową, albo nową decyzję architektoniczną wpływającą na przyszłe zmiany.
+When to write an entry. A decision is recorded durably when one of these signals is visible: a recurring task pattern in the module, a recurring finding from code review, a non-obvious workflow that the next agent would discover from scratch, an easy-to-forget domain rule, or a new architectural decision affecting future changes.
 
-Czego nie robić. Nie dokumentować jednorazowej trywii jako trwałej reguły. Nie pisać generycznych porad pasujących do każdego modułu - wpis ma być konkretny, ugruntowany w tym, co faktycznie się wydarzyło. Nie zapisywać tu stanu bieżącego zadania - to należy do REVIEW. Nie traktować tego jak changelog.
+What not to do. Do not document one-off trivia as a durable rule. Do not write generic advice that fits any module - the entry is to be concrete, grounded in what actually happened. Do not record the state of the current task here - that belongs to REVIEW. Do not treat this as a changelog.
 
-Kto pisze. Wpis dopisuje `plan-implement` na koniec zadania, jako ostatni krok po implementacji i podsumowaniu - dopiero wtedy wiadomo, co okazało się trwałym wzorcem, a co jednorazową okolicznością. Review (`implementation-dod-review`, `dod-reviewer`) może wpis uzupełnić, ale nie jest jego właścicielem.
+Who writes. The entry is appended by `plan-implement` at the end of the task, as the last step after implementation and the summary - only then is it known what turned out to be a durable pattern and what a one-off circumstance. Review (`implementation-dod-review`, `dod-reviewer`) may supplement the entry, but is not its owner.
 
-## Checklista
+## Checklist
 
-- SEED ma jawne źródło pochodzenia i jest niezmieniony od zapisania.
-- SHAPE ma wypełnione wszystkie jedenaście sekcji, zero otwartych `Block: yes`, niepustą sekcję "Podważenie własnych założeń".
-- SHAPE niesie w nagłówku wartość regulatora, a pozycje rozstrzygnięte bez pytania niosą frazę o decyzji agenta.
-- PRD nie zawiera nic z czarnej listy: modeli danych, kolumn, migracji, ścieżek kodu, nazw funkcji, bibliotek, deploymentu, sekretów.
-- PLAN ma konkretne nazwy plików, funkcji i kontraktów danych w każdym kroku "Zakres zmian", zero TODO, zero otwartych pytań.
-- PLAN niesie w linii stanu marker w jednym z dwóch dozwolonych brzmień: plan w toku albo plan zamknięty.
-- Sekcja "Fakty" planu zamkniętego ma same pozycje ustaleń, po jednej w linii, każda z identyfikatorem, twierdzeniem, dowodem jednego z pięciu rodzajów i datą sprawdzenia, w trzech polach rozdzielonych kreską pionową.
-- Rodzaj dowodu `ZAŁOŻENIE:` stoi wyłącznie przy treści, której faktycznie nie dało się sprawdzić - nie jest workiem na to, czego nie chciało się zweryfikować.
-- Sekcja "Otwarte pytania" planu zamkniętego nie ma ani jednej pozycji listy i otwiera się stwierdzeniem braku.
-- Wpis `agent_docs/memory` (jeśli powstał) ma komplet pól, jest dopisany - nie nadpisany - i trafił pod właściwą ścieżkę `memory/<grupa>/<moduł>.md`.
-- REVIEW mówi, jaki zakres obejmuje werdykt, a zamknięcie bez `ready` albo anulowanie stoi jawnie w linii stanu; wznowienie jest dopisanym wpisem, nie poprawką zamknięcia.
-- Żaden z artefaktów nie ma pogrubień w prozie ani pogrubionych etykiet otwierających akapit lub punkt listy - patrz `standard_formatting.md`. Identyfikatory faktów, decyzji i odstępstw (F-1, D-1, O-1) zostają jako zwykły tekst, bo służą do odsyłania, nie do wyróżniania.
+- SEED has an explicit source of origin and is unchanged since it was saved.
+- SHAPE has all eleven sections filled in, zero open `Block: yes`, a non-empty "Challenging own assumptions" section.
+- SHAPE carries the regulator value in its header, and items decided without asking carry the phrase about the agent decision.
+- PRD contains nothing from the blacklist: data models, columns, migrations, code paths, function names, libraries, deployment, secrets.
+- PLAN has concrete names of files, functions and data contracts in every "Scope of changes" step, zero TODOs, zero open questions.
+- PLAN carries in its state line a marker in one of the two allowed wordings: plan in progress or plan closed.
+- The "Facts" section of a closed plan has only finding items, one per line, each with an identifier, a claim, evidence of one of the five kinds and a check date, in three fields separated by a vertical bar.
+- The `ASSUMPTION:` evidence kind stands only next to content that really could not be checked - it is not a bag for what one did not feel like verifying.
+- The "Open questions" section of a closed plan has not a single list item and opens with a statement of absence.
+- The `agent_docs/memory` entry (if one was created) has the full set of fields, is appended - not overwritten - and landed under the correct path `memory/<group>/<module>.md`.
+- REVIEW states what scope the verdict covers, and a closure without `ready` or a cancellation stands explicitly in the state line; a resumption is an appended entry, not a correction of the closure.
+- None of the artifacts has bold in prose or bold labels opening a paragraph or a list item - see `standard_formatting.md`. The identifiers of facts, decisions and deviations (F-1, D-1, O-1) remain plain text, because they serve for cross-referencing, not for emphasis.

@@ -1,58 +1,58 @@
-# Standard bezpieczeństwa kodu
+# Code security standard
 
-Stan dokumentu: 2026-10-03
+Document state: 2026-10-03
 
-Status: gotowy - pełna treść. Pełny opis pozycji tego standardu wobec pozostałych jest w `docs/standards/README.md`.
+Status: ready - full content. The full description of this standard's position relative to the others is in `docs/standards/README.md`.
 
-## Po co ten dokument
+## Why this document exists
 
-Kod serwisu łączy się z bazami danych i z systemami zewnętrznymi oraz przetwarza dane osobowe - błąd bezpieczeństwa w tym miejscu ma inny koszt niż błąd stylu albo wydajności, bo jego skutek może wyjść poza samo repozytorium. Ten standard opisuje wprost, jakiej klasy podatności kod ma unikać i jak sprawdzać, czy zależności zewnętrzne nie niosą znanych luk bezpieczeństwa.
+The service code connects to databases and external systems and processes personal data - a security bug in this place has a different cost than a style or performance bug, because its effect can reach beyond the repository itself. This standard states explicitly which class of vulnerabilities the code is to avoid and how to check whether external dependencies carry known security holes.
 
-## Zakres i granice
+## Scope and boundaries
 
-Ten standard odpowiada za statyczną analizę bezpieczeństwa kodu produkcyjnego, za skan zależności projektu pod kątem znanych, publicznie opisanych podatności (CVE) oraz za obchodzenie się z realnymi danymi osobowymi na środowiskach lokalnych.
+This standard is responsible for static security analysis of production code, for scanning the project's dependencies for known, publicly described vulnerabilities (CVE) and for handling real personal data in local environments.
 
-Czego tu nie ma:
+What is not here:
 
-- Higiena zależności - rozjazd między zadeklarowanymi a faktycznie używanymi pakietami, bez związku z bezpieczeństwem - to `standard_code_quality.md`.
-- Miejsce i format przechowywania sekretów i konfiguracji modułu - to `standard_config.md`. Tutaj tylko wykrywanie sekretów zaszytych bezpośrednio w kodzie.
-- Skan sekretów w historii kontroli wersji - nieobjęty żadnym standardem repozytorium.
-- Właściwy sposób pisania zapytania SQL, schemat bazy jako źródło prawdy, migracje i zakaz triggerów - to `standard_database.md`. Tutaj tylko automatyczne wykrycie odstępstwa od parametryzacji.
+- Dependency hygiene - a mismatch between declared and actually used packages, unrelated to security - that is `standard_code_quality.md`.
+- The place and format for storing the module's secrets and configuration - that is `standard_config.md`. Here only the detection of secrets hardcoded directly in the code.
+- Scanning for secrets in version control history - not covered by any standard of the repository.
+- The proper way to write an SQL query, the database schema as the source of truth, migrations and the ban on triggers - that is `standard_database.md`. Here only the automatic detection of a deviation from parameterization.
 
-## Reguła odstępstwa
+## Deviation rule
 
-Standard opisuje stan docelowy i obowiązuje w pełni od pierwszego commita. Projekt założony z szablonu nie ma kodu zastanego, więc nie ma czego chronić okresem przejściowym - kod niezgodny ze standardem blokuje review niezależnie od tego, kto go pisał i kiedy.
+The standard describes the target state and applies in full from the first commit. A project created from the template has no legacy code, so there is nothing to protect with a transition period - code that does not comply with the standard blocks review regardless of who wrote it and when.
 
-Gdy repozytorium będzie mieć kod zastany, rozluźnienie tej reguły do wersji miękkiej ma być jawną decyzją zapisaną w `docs/standards/README.md` wraz z datą i powodem. Nie jest stanem, który wchodzi w życie sam.
+When the repository has legacy code, relaxing this rule to the soft version is to be an explicit decision recorded in `docs/standards/README.md` together with the date and the reason. It is not a state that comes into force on its own.
 
-Skan podatności zależności działa na poziomie całego repozytorium, nie pojedynczego modułu - nowa podatność w istniejącej zależności może ujawnić się bez żadnej zmiany w kodzie, tylko przez publikację nowego CVE. Reguła odstępstwa obowiązuje mimo to w węższym zakresie: zmiana wprowadzająca nową zależność albo podnosząca jej wersję ma obowiązek sprawdzenia tej zależności, nie ponownego audytu całego drzewa zależności przy każdej niepowiązanej zmianie.
+The dependency vulnerability scan works at the level of the whole repository, not a single module - a new vulnerability in an existing dependency can surface without any change in the code, just through the publication of a new CVE. The deviation rule still applies, in a narrower scope: a change that introduces a new dependency or raises its version is obliged to check that dependency, not to re-audit the whole dependency tree on every unrelated change.
 
-## Statyczna analiza bezpieczeństwa kodu
+## Static security analysis of code
 
-Kod przechodzi statyczną analizę bezpieczeństwa narzędziem bandit bez zgłoszeń o wysokim i średnim poziomie pewności. Bandit wykrywa między innymi: hardkodowane hasła i klucze wpisane wprost do kodu, niebezpieczne wywołania takie jak `eval` albo uruchamianie procesów z `shell=True`, oraz konstrukcje podatne na SQL injection przy budowaniu zapytań przez konkatenację stringów zamiast parametryzacji. Podatność wykryta statycznie i naprawiona przed połączeniem zmiany kosztuje jedno spojrzenie na kod - ta sama podatność znaleziona po wdrożeniu, przez incydent albo audyt zewnętrzny, kosztuje analizę skutków, powiadomienie zainteresowanych stron i naprawę pod presją czasu.
+The code passes static security analysis with the bandit tool without findings at high and medium confidence levels. Bandit detects, among other things: hardcoded passwords and keys written directly into the code, dangerous calls such as `eval` or launching processes with `shell=True`, and constructs vulnerable to SQL injection when queries are built by string concatenation instead of parameterization. A vulnerability detected statically and fixed before the change is merged costs one look at the code - the same vulnerability found after deployment, through an incident or an external audit, costs an impact analysis, notifying the affected parties and a fix under time pressure.
 
-## Skan podatności zależności
+## Dependency vulnerability scan
 
-Zależności projektu są skanowane narzędziem pip-audit pod kątem znanych, publicznie zgłoszonych podatności (CVE) przed wdrożeniem zmiany wprowadzającej nową zależność albo podnoszącej jej wersję. Zależność z odkrytą podatnością, użyta bez świadomości tego faktu, wprowadza do repozytorium znane, udokumentowane w publicznych bazach ryzyko - różnica względem podatności we własnym kodzie polega na tym, że sposób jej wykorzystania jest już opisany publicznie, więc czas między publikacją CVE a próbą jego wykorzystania bywa krótszy niż czas potrzebny na ręczne zauważenie problemu.
+The project's dependencies are scanned with the pip-audit tool for known, publicly reported vulnerabilities (CVE) before deploying a change that introduces a new dependency or raises its version. A dependency with a discovered vulnerability, used without awareness of that fact, brings into the repository a known risk documented in public databases - the difference compared to a vulnerability in our own code is that the way to exploit it is already described publicly, so the time between the publication of a CVE and an attempt to exploit it is sometimes shorter than the time needed to notice the problem manually.
 
-## Realne dane osobowe na środowisku lokalnym
+## Real personal data in the local environment
 
-Realne dane osobowe w lokalnej bazie są dozwolone. To jest decyzja, nie przeoczenie: diagnoza zgłoszenia z produkcji na danych zmyślonych bywa diagnozą innego problemu.
+Real personal data in the local database is allowed. This is a decision, not an oversight: diagnosing a production report on made-up data is sometimes diagnosing a different problem.
 
-Z tej zgody wynika reguła, a nie jej brak: środowisko lokalne przestaje być środowiskiem bez danych osobowych i obowiązują na nim te same zasady, co gdziekolwiek indziej.
+What follows from this permission is a rule, not the absence of one: the local environment stops being an environment without personal data, and the same rules apply there as anywhere else.
 
-Trzy z nich są konkretne i sprawdzalne:
+Three of them are concrete and verifiable:
 
-- eksport czegokolwiek z lokalnej bazy poza maszynę jest zakazany. Dotyczy to wklejenia wyniku zapytania do zgłoszenia, do rozmowy z narzędziem agentowym i do dowolnego dokumentu w chmurze. Zrzut schematu bazy jest bezpieczny dlatego, że nie zawiera ani jednego wiersza danych, a nie dlatego, że nikt tam nie zagląda;
-- poziom logowania na środowisku lokalnym z realnymi danymi zostaje na `INFO` albo wyżej. `DEBUG` w połączeniu z regułą ze `standard_logging.md` zamienia każde niedopatrzenie w kodzie w ekspozycję danych, a lokalnie nikt tych logów nie rotuje ani nie pilnuje;
-- usunięcie tych danych z maszyny ma jedną prostą drogę i trzeba ją znać, zanim będzie potrzebna: reset lokalnej bazy kasuje wolumen razem z zawartością. Robi się to przed oddaniem sprzętu i po skończonej diagnozie, a nie wtedy, gdy ktoś zapyta.
+- exporting anything from the local database outside the machine is forbidden. This covers pasting a query result into a ticket, into a conversation with an agentic tool and into any cloud document. A database schema dump is safe because it does not contain a single row of data, not because nobody looks there;
+- the log level in a local environment with real data stays at `INFO` or higher. `DEBUG` combined with the rule from `standard_logging.md` turns every oversight in the code into data exposure, and locally nobody rotates or watches those logs;
+- removing this data from the machine has one simple path and you have to know it before you need it: resetting the local database deletes the volume together with its contents. You do it before handing over the hardware and after the diagnosis is finished, not when someone asks.
 
-## Checklista
+## Checklist
 
-- Czy nowy albo zmieniony kod przechodzi bandit bez zgłoszeń wysokiego i średniego poziomu pewności?
-- Czy zapytania do bazy danych są budowane przez parametryzację, nie przez konkatenację stringów z danymi wejściowymi?
-- Czy kod nie zawiera hardkodowanych haseł, kluczy ani tokenów?
-- Czy nowa albo podniesiona zależność została sprawdzona narzędziem pip-audit pod kątem znanych CVE?
-- Czy sekret potrzebny nowemu kodowi trafia do wspólnego miejsca prawdy (`standard_config.md`), a nie jest wpisany wprost w kodzie?
-- Czy zmiana nie eksportuje poza maszynę zawartości lokalnej bazy - w zgłoszeniu, w rozmowie z narzędziem agentowym albo w pliku dołączonym do review?
-- Czy zmiana dotykająca logowania nie podnosi szczegółowości logu tam, gdzie mogą przechodzić dane osobowe?
+- Does new or changed code pass bandit without findings at high and medium confidence levels?
+- Are database queries built through parameterization, not through string concatenation with input data?
+- Is the code free of hardcoded passwords, keys and tokens?
+- Has a new or upgraded dependency been checked with pip-audit for known CVEs?
+- Does a secret needed by new code go to the shared source of truth (`standard_config.md`) instead of being written directly in the code?
+- Does the change avoid exporting the contents of the local database outside the machine - in a ticket, in a conversation with an agentic tool or in a file attached to a review?
+- Does a change touching logging avoid raising log verbosity where personal data may pass through?

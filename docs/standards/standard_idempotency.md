@@ -1,90 +1,90 @@
-# Standard idempotencji i uzgadniania danych
+# Idempotency and data reconciliation standard
 
-Stan dokumentu: 2026-10-03
+Document state: 2026-10-03
 
-Status: gotowy - pełna treść. Pełny opis pozycji tego standardu wobec pozostałych jest w `docs/standards/README.md`.
+Status: ready - full content. The full description of this standard's position relative to the others is in `docs/standards/README.md`.
 
-## Po co ten dokument
+## Why this document exists
 
-Serwis przyjmuje zapisy, które z natury mogą się powtórzyć: klient ponawia żądanie po błędzie sieciowym, zadanie okresowe workera uruchamia się co minutę i może zostać uruchomione podwójnie, import wsadowy jest odpalany drugi raz po incydencie. Każde z tych powtórzeń ma dać ten sam efekt co pierwsze wykonanie - nie efekt zdublowany.
+The service accepts writes that by their nature can repeat: a client retries a request after a network error, a periodic task of the worker runs every minute and can be started twice, a batch import is fired a second time after an incident. Each of these repetitions is to have the same effect as the first execution - not a duplicated effect.
 
-Ryzyko nie jest teoretyczne i nie mieszka w sieci. Mieszka w technice: sprawdzenie w Pythonie przed zapisem - odczytaj, czy rekord już istnieje, i zdecyduj - jest poprawne w pojedynczym, sekwencyjnym przebiegu i przepuszcza duplikat, gdy dwa przebiegi tej samej operacji trafią na siebie. Bez jednego miejsca, które to nazywa, ta technika wygląda na wystarczającą, bo w testach zawsze jest.
+The risk is not theoretical and does not live in the network. It lives in the technique: a check in Python before the write - read whether the record already exists, and decide - is correct in a single, sequential run and lets a duplicate through when two runs of the same operation run into each other. Without one place that names this, the technique looks sufficient, because in tests it always is.
 
-Ten standard rozstrzyga trzy pytania: co czyni dwa wykonania "tą samą operacją"; gdzie żyje ostateczna ochrona przed zdublowaniem efektu; i jak wybrać między dostępnymi technikami zapisu zależnie od charakteru operacji.
+This standard settles three questions: what makes two executions "the same operation"; where the final protection against a duplicated effect lives; and how to choose between the available write techniques depending on the nature of the operation.
 
-## Zakres i granice
+## Scope and boundaries
 
-Ten standard odpowiada za:
+This standard is responsible for:
 
-- klucz uzgadniania (reconcile) - co czyni dwa wykonania tą samą logiczną operacją,
-- miejsce ostatecznej ochrony przed zdublowaniem efektu,
-- wybór techniki zapisu (upsert, dedup) zależnie od charakteru operacji,
-- idempotencję wywołania do systemu zewnętrznego, gdy to wywołanie może zostać ponowione.
+- the reconciliation key - what makes two executions the same logical operation,
+- the place of the final protection against a duplicated effect,
+- the choice of write technique (upsert, dedup) depending on the nature of the operation,
+- the idempotency of a call to an external system, when that call can be retried.
 
-Czego tu nie ma:
+What is not here:
 
-- Dostęp do danych, struktura zapytań i połączenie z bazą - to jest `standard_database.md`. Zdanie rozstrzygające granicę: baza mówi, jak sięgnąć po dane, idempotencja mówi, jak nie zdublować efektu.
-- Decyzja, czy i kiedy ponowić operację po błędzie, trwały licznik prób, limity czasu - to jest `standard_errors.md`. Zdanie rozstrzygające: błędy mówią, czy ponowić, idempotencja mówi, że to ponowienie jest bezpieczne, gdy już zapada decyzja o ponowieniu.
+- Data access, query structure and the database connection - that is `standard_database.md`. The sentence that settles the boundary: the database standard says how to reach the data, idempotency says how not to duplicate the effect.
+- The decision whether and when to retry an operation after an error, the durable attempt counter, timeouts - that is `standard_errors.md`. The settling sentence: errors say whether to retry, idempotency says that the retry is safe once the decision to retry has been made.
 
-## Reguła odstępstwa
+## Deviation rule
 
-Standard opisuje stan docelowy i obowiązuje w pełni od pierwszego commita. Projekt założony z szablonu nie ma kodu zastanego, więc nie ma czego chronić okresem przejściowym - kod niezgodny ze standardem blokuje review niezależnie od tego, kto go pisał i kiedy.
+The standard describes the target state and applies in full from the first commit. A project created from the template has no legacy code, so there is nothing to protect with a transition period - code that does not comply with the standard blocks review regardless of who wrote it and when.
 
-Gdy repozytorium będzie mieć kod zastany, rozluźnienie tej reguły do wersji miękkiej ma być jawną decyzją zapisaną w `docs/standards/README.md` wraz z datą i powodem. Nie jest stanem, który wchodzi w życie sam.
+When the repository has legacy code, relaxing this rule to the soft version is to be an explicit decision recorded in `docs/standards/README.md` together with the date and the reason. It is not a state that comes into force on its own.
 
-Doprecyzowanie właściwe dla tego standardu: nowy mechanizm zapisu, który może zostać wywołany więcej niż raz dla tej samej logicznej operacji - przez retry, drugi przebieg schedulera albo ręczny resend - ma ochronę przed duplikatem od pierwszego dnia. Nie jest dopuszczalne dodanie go "na razie bez dedup, poprawimy po zaobserwowaniu duplikatów na produkcji" - to odwraca kolejność, w jakiej ten problem powinien być rozwiązany.
+A clarification specific to this standard: a new write mechanism that can be called more than once for the same logical operation - through a retry, a second scheduler run or a manual resend - has duplicate protection from day one. It is not acceptable to add it "without dedup for now, we will fix it after observing duplicates in production" - this reverses the order in which this problem should be solved.
 
-## Klucz uzgadniania
+## Reconciliation key
 
-Klucz, który czyni dwa wykonania tą samą operacją, jest deterministyczną funkcją tożsamości biznesowej tej operacji - nie technicznego identyfikatora przypisanego w chwili wykonania, takiego jak wartość auto-increment albo losowy identyfikator wygenerowany na nowo przy każdej próbie. Dwa niezależne wykonania tej samej logicznej operacji muszą wyliczyć identyczny klucz - w przeciwnym razie "uzgadnianie" nie ma punktu odniesienia i sprowadza się do zgadywania, czy dany zapis już się wydarzył.
+The key that makes two executions the same operation is a deterministic function of the business identity of that operation - not of a technical identifier assigned at execution time, such as an auto-increment value or a random identifier generated anew on every attempt. Two independent executions of the same logical operation must compute an identical key - otherwise "reconciliation" has no point of reference and comes down to guessing whether a given write has already happened.
 
-Konwencja przyjęta w tym repozytorium: kolumna niosąca taki klucz nazywa się `idempotency_key`, a jej wartość jest skrótem (SHA-256) pól tożsamości biznesowej operacji - typu operacji i identyfikatorów encji, których dotyczy, wraz z każdym innym polem odróżniającym tę operację od innej, logicznie różnej. Zmiana jednego z tych pól jest zmianą tożsamości operacji i ma dać inny klucz; ponowne wykonanie tej samej operacji ma dać ten sam klucz co pierwsze.
+The convention adopted in this repository: the column carrying such a key is called `idempotency_key`, and its value is a hash (SHA-256) of the operation's business identity fields - the operation type and the identifiers of the entities it concerns, together with every other field that distinguishes this operation from another, logically different one. A change of one of these fields is a change of the operation's identity and is to give a different key; re-executing the same operation is to give the same key as the first execution.
 
-Ręczny resend operacji po incydencie może i powinien nosić własny, nowy identyfikator śledzenia próby - żeby odróżnić, która z kilku ręcznych prób to była - ale finalny zapis efektu wciąż przechodzi przez ten sam klucz uzgadniania co automatyczny retry tej samej operacji. Identyfikator śledzenia odpowiada na pytanie "kto i kiedy spróbował"; klucz uzgadniania odpowiada na pytanie "czy efekt tej operacji już istnieje".
+A manual resend of an operation after an incident may and should carry its own, new attempt tracking identifier - to tell which of several manual attempts it was - but the final write of the effect still goes through the same reconciliation key as an automatic retry of the same operation. The tracking identifier answers the question "who tried and when"; the reconciliation key answers the question "does the effect of this operation already exist".
 
-## Backstop przed duplikatem
+## Backstop against duplicates
 
-Sprawdzenie w Python przed zapisem - odczytanie, czy rekord już istnieje, i podjęcie na tej podstawie decyzji o wstawieniu albo aktualizacji - jest optymalizacją, nie ochroną. Dwa równoległe przebiegi tej samej operacji mogą oba przejść ten odczyt, zanim któryś zdąży wykonać zapis, i oba dojść do wniosku, że rekordu jeszcze nie ma. Ostateczna ochrona przed zdublowaniem efektu żyje w bazie, jednym z dwóch sposobów:
+A check in Python before the write - reading whether the record already exists, and on that basis deciding to insert or update - is an optimization, not protection. Two parallel runs of the same operation can both pass this read before either of them manages to write, and both conclude that the record does not exist yet. The final protection against a duplicated effect lives in the database, in one of two ways:
 
-- unique constraint albo unique index na kluczu uzgadniania - baza sama odrzuca drugi zapis tego samego klucza, a kod łapie ten konflikt i traktuje go jako sygnał "operacja już wykonana", nie jako błąd do zgłoszenia dalej;
-- transakcja z blokadą - `SELECT ... FOR UPDATE` na wierszu, który reprezentuje okno, albo blokada doradcza (`pg_advisory_xact_lock`), gdy nie ma jeszcze wiersza do zablokowania - sprawdzająca istnienie i wykonująca zapis atomowo w jednym kroku. Stosowana, gdy sam zapis nie jest permanentnym stanem, tylko oknem czasowym, patrz sekcja niżej.
+- a unique constraint or unique index on the reconciliation key - the database itself rejects a second write of the same key, and the code catches this conflict and treats it as an "operation already performed" signal, not as an error to report further;
+- a transaction with a lock - `SELECT ... FOR UPDATE` on the row that represents the window, or an advisory lock (`pg_advisory_xact_lock`) when there is no row to lock yet - checking existence and performing the write atomically in one step. Used when the write itself is not a permanent state but a time window, see the section below.
 
-Kod, który reaguje na konflikt unikalności zamiast propagować go jako nieoczekiwany błąd, robi to poprawnie: taki konflikt nie jest sytuacją opisaną w `standard_errors.md`, jest oczekiwanym, prawidłowym skutkiem współbieżności - backstop właśnie zrobił to, do czego został wprowadzony.
+Code that reacts to a uniqueness conflict instead of propagating it as an unexpected error does it correctly: such a conflict is not a situation described in `standard_errors.md`, it is an expected, correct result of concurrency - the backstop has just done what it was introduced for.
 
-Jak na niego reagować, jest na PostgreSQL rozstrzygnięte, a nie do wyboru. Naruszenie ograniczenia przewraca całą transakcję: sesja wchodzi w stan błędu i żadna kolejna instrukcja w tej transakcji się nie wykona. Przechwycenie wyjątku i kontynuowanie pracy, które na innych silnikach jest poprawnym wzorcem, tutaj wymagałoby `SAVEPOINT` wokół każdego takiego zapisu - wyłącznie po to, żeby utrzymać transakcję przy życiu. Dlatego domyślną formą jest `INSERT ... ON CONFLICT`: konflikt jest wtedy raportowany jako brak wiersza w `RETURNING`, bez wyjątku i bez niczego do wycofania. `ON CONFLICT DO NOTHING` znaczy "już istnieje, nie ruszaj", `ON CONFLICT DO UPDATE` znaczy "nadpisz stan", i oba są jedną instrukcją, której nie da się przegrać wyścigu. Przechwytywanie wyjątku zostaje wyłącznie tam, gdzie konflikt naprawdę jest błędem do zgłoszenia dalej.
+How to react to it is settled on PostgreSQL, not a matter of choice. A constraint violation brings down the whole transaction: the session enters an error state and no further statement in that transaction will execute. Catching the exception and continuing work, which is a correct pattern on other engines, would here require a `SAVEPOINT` around every such write - solely to keep the transaction alive. That is why the default form is `INSERT ... ON CONFLICT`: the conflict is then reported as a missing row in `RETURNING`, without an exception and without anything to roll back. `ON CONFLICT DO NOTHING` means "already exists, do not touch", `ON CONFLICT DO UPDATE` means "overwrite the state", and both are one statement that cannot lose a race. Catching the exception remains only where the conflict really is an error to report further.
 
-## Dwa rodzaje duplikatu
+## Two kinds of duplicate
 
-Operacja synchronizacji zwykle chroni się przed duplikatem permanentnym: raz zapisany rekord o danym kluczu biznesowym nie ma powstać drugi raz, niezależnie od tego, ile czasu minęło od pierwszego zapisu. Backstop dla tego rodzaju duplikatu jest twardym unique constraint w bazie.
+A synchronization operation usually protects itself against a permanent duplicate: a record with a given business key, once written, is not to be created a second time, regardless of how much time has passed since the first write. The backstop for this kind of duplicate is a hard unique constraint in the database.
 
-Powiadomienia i alerty chronią się przed duplikatem innego rodzaju - okienkowym: to samo zdarzenie zgłoszone drugi raz w krótkim oknie czasu jest duplikatem i ma zostać wyciszone, ale to samo zdarzenie zgłoszone po upływie tego okna jest nowym, zasadnym zgłoszeniem, nie duplikatem starego. Twardy unique constraint na kluczu zdarzenia zablokowałby tu każde następne, prawidłowe wystąpienie na zawsze - dlatego backstop dla tego rodzaju duplikatu jest inny: klucz zdarzenia razem z momentem, do którego duplikat ma być wyciszony, sprawdzane i zapisywane atomowo w jednej transakcji z blokadą, nie przez fizyczny constraint na samym kluczu.
+Notifications and alerts protect themselves against a different kind of duplicate - a windowed one: the same event reported a second time within a short time window is a duplicate and is to be silenced, but the same event reported after that window has passed is a new, legitimate report, not a duplicate of the old one. A hard unique constraint on the event key would block every subsequent, legitimate occurrence here forever - that is why the backstop for this kind of duplicate is different: the event key together with the moment until which the duplicate is to be silenced, checked and written atomically in one transaction with a lock, not through a physical constraint on the key itself.
 
-Wybór między tymi dwoma rodzajami jest świadomą decyzją przy projektowaniu nowego mechanizmu, rozstrzyganą jednym pytaniem: czy powtórzenie tego samego zdarzenia po dowolnie długim czasie ma nadal liczyć się jako duplikat starego zdarzenia, czy jako nowe, niezależne zdarzenie. Permanentny mechanizm zastosowany tam, gdzie zdarzenie faktycznie się powtarza w czasie, zablokuje każde powtórzenie na zawsze po pierwszym; okienkowy mechanizm zastosowany tam, gdzie duplikat ma być permanentny, przepuści go ponownie po wygaśnięciu okna.
+The choice between these two kinds is a deliberate decision when designing a new mechanism, settled by one question: should a repetition of the same event after an arbitrarily long time still count as a duplicate of the old event, or as a new, independent event. A permanent mechanism applied where the event genuinely repeats over time will block every repetition forever after the first one; a windowed mechanism applied where the duplicate is to be permanent will let it through again after the window expires.
 
-## Wybór techniki zapisu
+## Choosing the write technique
 
-Właściwa technika zapisu zależy od dwóch cech operacji: jej rozmiaru (pojedynczy rekord kontra batch) i tego, czy istniejący rekord ma być nadpisywany, czy dane są wyłącznie dopisywane, a nowy wpis nigdy nie zmienia poprzedniego.
+The right write technique depends on two characteristics of the operation: its size (a single record versus a batch) and whether an existing record is to be overwritten, or the data is only appended and a new entry never changes the previous one.
 
-- Batch, dane tylko dopisywane: jedna instrukcja `INSERT ... ON CONFLICT (klucz) DO NOTHING` na cały batch. Nie ma tabeli tymczasowej i nie ma antyzłączenia - konflikt rozstrzyga indeks unikalny, a nie zapytanie porównujące zbiory, więc nie ma też okna między sprawdzeniem i zapisem.
-- Batch, stan nadpisywany: jedna instrukcja `INSERT ... ON CONFLICT (klucz) DO UPDATE SET ...`, a nie dwa kroki, aktualizacja i wstawienie z antyzłączeniem. `ON CONFLICT DO UPDATE` jest jedną instrukcją, więc nie ma dwóch kroków, których kolejność można pomylić.
-- Pojedynczy rekord: ta sama instrukcja co wyżej, z `RETURNING`, żeby kod wiedział, czy wstawił, czy trafił na istniejący. Odczyt przed zapisem zostaje tylko wtedy, gdy sam wynik odczytu jest potrzebny do czegoś innego - nigdy jako sposób podjęcia decyzji o zapisie.
+- Batch, append-only data: one `INSERT ... ON CONFLICT (key) DO NOTHING` statement for the whole batch. There is no temporary table and no anti-join - the conflict is resolved by the unique index, not by a query comparing sets, so there is also no window between the check and the write.
+- Batch, overwritten state: one `INSERT ... ON CONFLICT (key) DO UPDATE SET ...` statement, not two steps, an update and an insert with an anti-join. `ON CONFLICT DO UPDATE` is one statement, so there are no two steps whose order can be mixed up.
+- Single record: the same statement as above, with `RETURNING`, so that the code knows whether it inserted or hit an existing record. A read before the write remains only when the result of the read itself is needed for something else - never as a way of deciding about the write.
 
-Wspólna zasada za tymi trzema: zapis i rozstrzygnięcie konfliktu są jedną instrukcją, a nie sekwencją, w której coś może się wcisnąć. Mechanizm napisany jako odczyt i decyzja dla każdego wiersza z osobna w Pythonie jest jednocześnie wolniejszy i podatny na wyścig - i to drugie jest poważniejsze, bo nie widać go w pomiarze.
+The common principle behind these three: the write and the conflict resolution are one statement, not a sequence into which something can squeeze. A mechanism written as a read and a decision for each row separately in Python is both slower and prone to a race - and the latter is more serious, because it does not show up in measurements.
 
-## Idempotencja wywołania do systemu zewnętrznego
+## Idempotency of a call to an external system
 
-Wywołanie do systemu zewnętrznego, które może zostać ponowione - przez retry po błędzie sieciowym albo przez ręczny resend - przekazuje stabilny, deterministyczny identyfikator operacji, wyliczony tak samo przy każdej próbie, nigdy generowany na nowo (na przykład jako świeży losowy identyfikator) przy każdym wywołaniu. System zewnętrzny, który rozpoznaje taki identyfikator i sam wykonuje pod nim upsert, a nie tylko tworzenie nowego obiektu, rozpoznaje retry jako powtórzenie tej samej operacji, nie jako nową - efekt po drugiej stronie integracji nie dubluje się, mimo że wywołanie sieciowe faktycznie poszło dwa razy.
+A call to an external system that can be retried - through a retry after a network error or through a manual resend - passes a stable, deterministic operation identifier, computed the same way on every attempt, never generated anew (for example as a fresh random identifier) on every call. An external system that recognizes such an identifier and itself performs an upsert under it, rather than only creating a new object, recognizes the retry as a repetition of the same operation, not as a new one - the effect on the other side of the integration is not duplicated, even though the network call actually went out twice.
 
-Wywołanie bez takiego identyfikatora - które tworzy nowy obiekt po drugiej stronie integracji za każdym razem, niezależnie od tego, czy poprzednia próba już się powiodła - nie ma żadnej ochrony przed zdublowaniem efektu na retry. To rozróżnienie ma praktyczne znaczenie właśnie przy timeoucie: timeout, który nastąpił po tym, jak żądanie dotarło do systemu zewnętrznego i zostało tam wykonane, ale przed odebraniem potwierdzenia przez wywołującego, jest z punktu widzenia wywołującego nie do odróżnienia od timeoutu, który nastąpił, zanim żądanie w ogóle dotarło. Retry po każdym z tych dwóch scenariuszy ma inny, prawidłowy skutek tylko wtedy, gdy identyfikator operacji jest stabilny - w przeciwnym razie pierwszy scenariusz kończy się dwoma obiektami po stronie integracji zamiast jednego.
+A call without such an identifier - one that creates a new object on the other side of the integration every time, regardless of whether the previous attempt already succeeded - has no protection against a duplicated effect on retry. This distinction matters in practice precisely on a timeout: a timeout that occurred after the request reached the external system and was executed there, but before the caller received the confirmation, is, from the caller's point of view, indistinguishable from a timeout that occurred before the request arrived at all. A retry after either of these two scenarios has a different, correct result only when the operation identifier is stable - otherwise the first scenario ends with two objects on the integration side instead of one.
 
-## Checklista
+## Checklist
 
-- Czy klucz uzgadniania jest deterministyczną funkcją tożsamości biznesowej operacji, nie technicznego identyfikatora przypisanego przy wykonaniu?
-- Czy dwa niezależne wykonania tej samej logicznej operacji - automatyczny retry, ręczny resend - wyliczają identyczny klucz uzgadniania?
-- Czy ostateczna ochrona przed zdublowaniem żyje w bazie (unique constraint albo transakcja z blokadą), a nie tylko w sprawdzeniu wykonanym w Python przed zapisem?
-- Czy rozstrzygnięcie konfliktu przechodzi przez `INSERT ... ON CONFLICT`, a nie przez przechwycony wyjątek, który na PostgreSQL przewraca całą transakcję?
-- Czy konflikt unikalności jest traktowany jako oczekiwany sygnał "operacja już wykonana", nie jako błąd do zgłoszenia dalej?
-- Czy dla duplikatu okienkowego (throttling powtarzających się zdarzeń) sprawdzenie i zapis okna czasu dzieją się atomowo w jednej transakcji z blokadą (`FOR UPDATE` albo blokada doradcza), nie przez twardy constraint, który zablokowałby też prawidłowe powtórzenie po czasie?
-- Czy technika zapisu - `ON CONFLICT DO NOTHING` kontra `DO UPDATE` - jest dobrana do tego, czy stan ma być nadpisywany, a nie do przyzwyczajenia autora?
-- Czy nowe wywołanie do systemu zewnętrznego, które może zostać ponowione, przekazuje stabilny, deterministyczny identyfikator operacji, nie generowany na nowo przy każdej próbie?
-- Czy nowy mechanizm idempotencji ma test sprawdzający, że dwa wykonania z tymi samymi danymi wejściowymi dają jeden efekt, nie dwa?
+- Is the reconciliation key a deterministic function of the operation's business identity, not of a technical identifier assigned at execution?
+- Do two independent executions of the same logical operation - an automatic retry, a manual resend - compute an identical reconciliation key?
+- Does the final protection against duplication live in the database (a unique constraint or a transaction with a lock), not only in a check performed in Python before the write?
+- Does conflict resolution go through `INSERT ... ON CONFLICT`, rather than through a caught exception, which on PostgreSQL brings down the whole transaction?
+- Is a uniqueness conflict treated as an expected "operation already performed" signal, not as an error to report further?
+- For a windowed duplicate (throttling of repeating events), do the check and the write of the time window happen atomically in one transaction with a lock (`FOR UPDATE` or an advisory lock), not through a hard constraint that would also block a legitimate repetition after time has passed?
+- Is the write technique - `ON CONFLICT DO NOTHING` versus `DO UPDATE` - chosen according to whether the state is to be overwritten, not according to the author's habit?
+- Does a new call to an external system that can be retried pass a stable, deterministic operation identifier, not one generated anew on every attempt?
+- Does the new idempotency mechanism have a test checking that two executions with the same input data give one effect, not two?

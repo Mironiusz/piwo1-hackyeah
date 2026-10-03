@@ -1,72 +1,72 @@
 ---
 name: load-context
-description: użyj tego skilla, gdy potrzebujesz kontekstu folderu, jednostki kodu albo funkcjonalności repozytorium przed analizą, wyjaśnieniem, debugowaniem, refaktoryzacją, dokumentowaniem albo review. uruchom dołączony skrypt dump_context.py na wskazanym folderze, żeby zrobić jeden zrzut do output.txt, i użyj tego zrzutu jako głównego źródła zamiast otwierać wiele plików po kolei.
+description: use this skill when you need the context of a folder, a code unit or a repository feature before analysis, explanation, debugging, refactoring, documenting or review. run the bundled script dump_context.py on the indicated folder to make a single dump into output.txt, and use that dump as the main source instead of opening many files one by one.
 ---
 
-# Wczytanie kontekstu
+# Loading context
 
-Użyj `scripts/dump_context.py`, gdy potrzebujesz kontekstu z folderu repozytorium.
+Use `scripts/dump_context.py` when you need context from a repository folder.
 
-Cel jest prosty: zrobić jeden zrzut wskazanego folderu do `output.txt`, przeczytać ten plik i oprzeć na nim analizę, zamiast ręcznie otwierać wiele plików jeden po drugim.
+The goal is simple: make one dump of the indicated folder into `output.txt`, read that file and base the analysis on it, instead of manually opening many files one after another.
 
-## Domyślna komenda
+## Default command
 
 ```bash
 python scripts/dump_context.py --input <folder> --output output.txt
 ```
 
-Przykład:
+Example:
 
 ```bash
 python scripts/dump_context.py --input ./config --output output.txt
 ```
 
-Po utworzeniu pliku przeczytaj `output.txt` i oprzyj analizę na nim.
+After the file is created, read `output.txt` and base the analysis on it.
 
-## Dostępne flagi
+## Available flags
 
-`--input` jest wymagany i wskazuje folder do zrzucenia.
+`--input` is required and points to the folder to dump.
 
-`--output` ustawia ścieżkę pliku wyjściowego. Domyślnie: `output.txt`.
+`--output` sets the output file path. Default: `output.txt`.
 
-`--extensions` zastępuje domyślną listę dozwolonych rozszerzeń. Domyślnie: `.py .html .js .css .sql .md`.
+`--extensions` replaces the default list of allowed extensions. Default: `.py .html .js .css .sql .md`.
 
-`--ignore-dirs` zastępuje domyślną listę ignorowanych nazw katalogów. Domyślnie ignorowane są katalogi będące technicznym szumem, na przykład `venv`, `.venv`, `__pycache__`, `.git`, `node_modules`, `build`, `dist`, `logs`, `exports` i `old`.
+`--ignore-dirs` replaces the default list of ignored directory names. By default, directories that are technical noise are ignored, for example `venv`, `.venv`, `__pycache__`, `.git`, `node_modules`, `build`, `dist`, `logs`, `exports` and `old`.
 
-`--extra-ignore-dirs` dodaje kolejne ignorowane nazwy katalogów, zachowując domyślne.
+`--extra-ignore-dirs` adds further ignored directory names, keeping the default ones.
 
-`--ignore-extensions` pomija wybrane rozszerzenia w tym przebiegu, nawet jeśli są dozwolone przez `--extensions`.
+`--ignore-extensions` skips selected extensions in this run, even if they are allowed by `--extensions`.
 
-## Przydatne przykłady
+## Useful examples
 
-Zrzut jednostki kodu z domyślnymi ustawieniami:
+Dump of a code unit with default settings:
 
 ```bash
 python scripts/dump_context.py --input ./service --output output.txt
 ```
 
-Zrzut tylko plików Python, Markdown i SQL:
+Dump of only Python, Markdown and SQL files:
 
 ```bash
 python scripts/dump_context.py --input ./service --output output.txt --extensions .py .md .sql
 ```
 
-Zrzut z pominięciem Markdown i CSS:
+Dump skipping Markdown and CSS:
 
 ```bash
 python scripts/dump_context.py --input ./config --output output.txt --ignore-extensions .md .css
 ```
 
-Zrzut z dodatkowo ignorowanymi folderami lokalnymi:
+Dump with additionally ignored local folders:
 
 ```bash
 python scripts/dump_context.py --input ./config --output output.txt --extra-ignore-dirs tmp generated snapshots
 ```
 
-## Bezpieczeństwo
+## Security
 
-Skrypt nigdy nie dołącza plików `.env`, `.env.*`, `.pem`, `.key`, `.p12` ani `.pfx`.
+The script never includes `.env`, `.env.*`, `.pem`, `.key`, `.p12` or `.pfx` files.
 
-`.env.example` jest dozwolony.
+`.env.example` is allowed.
 
-Trzymaj ten przepływ mały. Nie buduj dla tego skilla manifestów, przebiegów na próbę ani raportów audytowych.
+Keep this flow small. Do not build manifests, dry runs or audit reports for this skill.

@@ -1,74 +1,74 @@
-# Standard pracy z gitem
+# Git standard
 
-Stan dokumentu: 2026-10-03
+Document state: 2026-10-03
 
-Status: gotowy - pełna treść. Pełny opis pozycji tego standardu wobec pozostałych jest w `docs/standards/README.md`.
+Status: ready - full content. The full description of this standard's position relative to the others is in `docs/standards/README.md`.
 
-## Po co ten dokument
+## Why this document exists
 
-Zbiór standardów opisuje, jak pisać kod, a ten dokument - jak kod trafia do gałęzi. Kierunek przepływu zmian, rola każdej gałęzi i granica uprawnień agenta, jeśli nie są zapisane, żyją wyłącznie w głowach osób, które je ustaliły, a każda nowa osoba i każda dłuższa przerwa w pracy kosztuje odtwarzanie reguły z historii repozytorium.
+The set of standards describes how to write code, and this document - how code gets into a branch. The direction in which changes flow, the role of each branch and the boundary of the agent's permissions, if they are not written down, live only in the heads of the people who settled them, and every new person and every longer break in work costs reconstructing the rule from the repository history.
 
-Drugi powód dotyczy agenta. Agent pracujący w tym repozytorium ma dostęp do terminala i technicznie może na gicie zrobić wszystko: zacommitować cudzą pracę, wysłać ją na zdalne repozytorium, przepisać historię gałęzi. Hook `block_dangerous_commands.py` blokuje commit i push, ale działa wyłącznie po stronie Claude Code i nie obejmuje przepisywania historii. Granica, która nie jest w pełni wymuszona mechanizmem, musi być przynajmniej zapisana - inaczej nie istnieje w ogóle.
+The second reason concerns the agent. An agent working in this repository has access to a terminal and can technically do anything in git: commit someone else's work, push it to the remote repository, rewrite the history of a branch. The `block_dangerous_commands.py` hook blocks commit and push, but it works only on the Claude Code side and does not cover rewriting history. A boundary that is not fully enforced by a mechanism must at least be written down - otherwise it does not exist at all.
 
-## Zakres i granice
+## Scope and boundaries
 
-Ten standard odpowiada za uprawnienia agenta wobec gita, role gałęzi tego repozytorium oraz kierunki, w których zmiana między nimi przechodzi.
+This standard is responsible for the agent's permissions for git, the branch roles of this repository and the directions in which a change passes between them.
 
-Czego tu nie ma:
+What is not here:
 
-- Komendy do konkretnych sytuacji (cofanie zmian, przenoszenie commitów między gałęziami, odzyskiwanie zgubionej pracy) i konfiguracja środowiska gita (tożsamość autora commitów, klucze i klient SSH). To wiedza operacyjna, którą projekt trzyma poza standardami. Tutaj są reguły, tam czynności.
-- Treść komunikatów commita, w tym konwencja prefiksów. Świadomie nieobjęta żadną regułą tego repozytorium - konsekwencją jest historia niejednorodna i nic jej nie ujednolica.
-- Ustawienia ochrony gałęzi po stronie hostingu repozytorium. Mieszkają poza repozytorium, więc żaden dokument w drzewie nie może ich wymusić ani zweryfikować.
+- Commands for specific situations (undoing changes, moving commits between branches, recovering lost work) and the configuration of the git environment (the identity of the commit author, SSH keys and client). This is operational knowledge that the project keeps outside the standards. Here are the rules, there are the actions.
+- The content of commit messages, including the prefix convention. Deliberately not covered by any rule of this repository - the consequence is a non-uniform history, and nothing unifies it.
+- Branch protection settings on the repository hosting side. They live outside the repository, so no document in the tree can enforce or verify them.
 
-## Reguła odstępstwa
+## Deviation rule
 
-Standard opisuje stan docelowy i obowiązuje w pełni od pierwszego commita. Projekt założony z szablonu nie ma kodu zastanego, więc nie ma czego chronić okresem przejściowym - praca niezgodna ze standardem blokuje review niezależnie od tego, kto ją wykonał i kiedy.
+The standard describes the target state and applies in full from the first commit. A project created from the template has no legacy code, so there is nothing to protect with a transition period - work that does not comply with the standard blocks review regardless of who did it and when.
 
-Gdy repozytorium będzie mieć kod zastany, rozluźnienie tej reguły do wersji miękkiej ma być jawną decyzją zapisaną w `docs/standards/README.md` wraz z datą i powodem. Nie jest stanem, który wchodzi w życie sam.
+When the repository has legacy code, relaxing this rule to the soft version is to be an explicit decision recorded in `docs/standards/README.md` together with the date and the reason. It is not a state that takes effect on its own.
 
-Doprecyzowanie właściwe dla tego standardu: reguła dotyczy każdej pracy z gitem w tym repozytorium, niezależnie od rozmiaru zmiany, i nie działa wstecz na historię już istniejącą. Commit, który powstał przed przyjęciem tego dokumentu, nie jest naruszeniem i nie ma potrzeby go przepisywać.
+A clarification specific to this standard: the rule applies to all work with git in this repository, regardless of the size of the change, and does not act retroactively on already existing history. A commit created before this document was adopted is not a violation and there is no need to rewrite it.
 
-## Uprawnienia agenta wobec gita
+## Agent permissions for git
 
-O przypisaniu operacji do stopnia rozstrzyga jedno kryterium: czy operacja dotyka historii. Nie rozstrzyga tego, czy jest lokalna - operacja lokalna też potrafi historię przepisać, a operacja sięgająca do zdalnego repozytorium potrafi jej nie tknąć.
+The assignment of an operation to a level is decided by one criterion: whether the operation touches history. It is not decided by whether the operation is local - a local operation can also rewrite history, and an operation reaching the remote repository can leave it untouched.
 
-Zakazane bezwarunkowo, bez furtki na wyraźną prośbę użytkownika: `git commit` oraz `git push`. Commit tworzy nowy obiekt w historii i podpisuje go tożsamością człowieka, który go nie napisał. Push wystawia ten obiekt innym ludziom, więc od tego momentu cofnięcie przestaje być czynnością lokalną. Prośba użytkownika nie odblokowuje żadnej z tych dwóch operacji - jeśli commit ma powstać, tworzy go człowiek.
+Forbidden unconditionally, with no loophole for an explicit user request: `git commit` and `git push`. A commit creates a new object in history and signs it with the identity of a human who did not write it. A push exposes this object to other people, so from that moment undoing it stops being a local action. A user request does not unlock either of these two operations - if a commit is to be created, a human creates it.
 
-Dozwolone wyłącznie na wyraźną prośbę użytkownika: `git add` oraz `git rebase`. Stage nie dotyka historii i jest odwracalny jednym poleceniem, więc nie zasługuje na zakaz trwały, ale jest ostatnim krokiem przed commitem i nie ma powodu, żeby działo się z inicjatywy agenta. Rebase przepisuje historię lokalną, której autorem jest człowiek, a reflog daje z niej drogę powrotu - to za mało na zakaz bezwarunkowy i za dużo na inicjatywę agenta.
+Allowed only at the user's explicit request: `git add` and `git rebase`. Staging does not touch history and is reversible with one command, so it does not deserve a permanent ban, but it is the last step before a commit and there is no reason for it to happen on the agent's initiative. Rebase rewrites local history whose author is a human, and the reflog gives a way back from it - that is too little for an unconditional ban and too much for the agent's initiative.
 
-Dozwolone bez pytania: wszystko pozostałe. Operacje odczytowe, w tym `git status`, `git log`, `git diff`, `git show` i `git blame`. Pobieranie zmian ze zdalnego repozytorium, czyli `git fetch` i `git pull`. Odkładanie zmian na bok przez `git stash`. Przełączanie i tworzenie gałęzi przez `git switch` i `git checkout`. Scalanie lokalne przez `git merge`. Dodatkowe katalogi robocze przez `git worktree`.
+Allowed without asking: everything else. Read operations, including `git status`, `git log`, `git diff`, `git show` and `git blame`. Fetching changes from the remote repository, i.e. `git fetch` and `git pull`. Setting changes aside with `git stash`. Switching and creating branches with `git switch` and `git checkout`. Local merging with `git merge`. Additional working directories with `git worktree`.
 
-Operacja, której ten dokument nie wymienia, rozstrzyga się kryterium, nie analogią do najbliższej nazwy. Pytanie brzmi, czy operacja tworzy, przepisuje albo publikuje historię - a nie, czy przypomina którąś z wypisanych.
+An operation that this document does not list is decided by the criterion, not by analogy to the nearest name. The question is whether the operation creates, rewrites or publishes history - not whether it resembles any of the listed ones.
 
-## Role gałęzi i kierunki scalania
+## Branch roles and merge directions
 
-Repozytorium ma trzy role gałęzi. `main` jest gałęzią wydania, `dev` gałęzią integracji, do której trafia zamknięta praca przed wydaniem, i obie są chronione po stronie hostingu repozytorium tak, że bezpośredni push i force-push nie są możliwe na żadnej z nich. Pozostałe to stałe gałęzie robocze, po jednej na osobę w zespole.
+The repository has three branch roles. `main` is the release branch, `dev` is the integration branch, into which finished work goes before the release, and both are protected on the repository hosting side so that a direct push and a force-push are not possible on either of them. The rest are permanent working branches, one per person on the team.
 
-Gałąź robocza jest osobowa i długowieczna. Nie powstaje per zadanie i nie znika po scaleniu - ta sama gałąź obsługuje kolejne zadania tej samej osoby.
+A working branch is personal and long-lived. It is not created per task and it does not disappear after merging - the same branch serves successive tasks of the same person.
 
-Do `main` i do `dev` zmiana wchodzi wyłącznie przez Merge Requesta, w skrócie MR. W drugą stronę, czyli z `main` albo `dev` na gałąź roboczą, zmiana schodzi zwykłym mergem wykonanym lokalnie - tam MR nie jest potrzebny, bo nikt poza właścicielem gałęzi na tę zmianę nie patrzy.
+A change enters `main` and `dev` only through a Merge Request, MR for short. In the other direction, i.e. from `main` or `dev` to a working branch, a change comes down through an ordinary merge performed locally - an MR is not needed there, because nobody except the branch owner looks at that change.
 
-Gdy projekt ma potok CI, każdy Merge Request do `dev` i do `main` uruchamia go, a potok mechanicznie odbija Definition of Done repozytorium. Scalenie wymaga wtedy zielonego potoku. Szablon nie zawiera definicji potoku - projekt dodaje ją dla swojego hostingu repozytorium.
+When the project has a CI pipeline, every Merge Request to `dev` and to `main` runs it, and the pipeline mechanically mirrors the Definition of Done of the repository. Merging then requires a green pipeline. The template does not contain a pipeline definition - the project adds it for its repository hosting.
 
-Potok sprawdza gałąź w chwili przebiegu, nie w chwili scalenia: MR, który zestarzał się po ostatnim przebiegu, bo do `dev` weszła inna zmiana, zachowuje swój ostatni zielony wynik. Reguła miękka dla scalającego domyka tę lukę: przed scaleniem uruchomić potok ponownie, jeśli od jego ostatniego przebiegu do `dev` weszła inna zmiana - nic tego nie wymusza mechanicznie.
+The pipeline checks the branch at the time of the run, not at the time of merging: an MR that has gone stale after its last run, because another change entered `dev`, keeps its last green result. A soft rule for the person merging closes this gap: before merging, run the pipeline again if another change has entered `dev` since its last run - nothing enforces this mechanically.
 
-Gdy środowisko docelowe podnosi wdrożenie w odpowiedzi na scalenie do gałęzi wydania, bez udziału człowieka, Merge Request na tę gałąź jest ostatnim momentem, w którym zmianę widać przed jej wejściem na środowisko z prawdziwymi danymi.
+When the target environment rolls out a deployment in response to a merge into the release branch, without human involvement, the Merge Request to that branch is the last moment at which the change can be seen before it reaches the environment with real data.
 
-Merge Request powstaje po każdym zamkniętym zadaniu, nie po kilku naraz. Jest to reguła miękka i nic jej nie pilnuje, ale jest jedynym miejscem, w którym model gałęzi osobowych różni się w praktyce od zadaniowych: gałąź, która zbiera kilka niepowiązanych zmian, przestaje mieścić się w jednym MR, review dostaje worek zamiast jednej zmiany, a wycofanie pojedynczej rzeczy wymaga rozplątywania reszty.
+A Merge Request is created after every finished task, not after several at once. This is a soft rule and nothing guards it, but it is the only place where the model of personal branches differs in practice from the model of task branches: a branch that collects several unrelated changes stops fitting into one MR, review gets a grab bag instead of one change, and withdrawing a single thing requires untangling the rest.
 
-## Czego ten standard nie egzekwuje
+## What this standard does not enforce
 
-Mechanizm egzekwuje z tego dokumentu jedną regułę i tylko po stronie Claude Code: hook `block_dangerous_commands.py` blokuje `git commit` i `git push`, także z opcją `-C` albo `-c` przed poleceniem, obok komend niszczących pliki i lokalne zmiany. Nie obejmuje `git add` ani `git rebase`. Hook nie ma odpowiednika po stronie Codeksa, więc tam zakaz commita i pusha jest regułą zapisaną, nie wymuszoną. Zapisane jest to wprost, bo reguła miękka opisana jako miękka nadal działa, a reguła miękka wyglądająca na twardą usypia czujność.
+A mechanism enforces one rule from this document, and only on the Claude Code side: the `block_dangerous_commands.py` hook blocks `git commit` and `git push`, also with the `-C` or `-c` option before the command, alongside commands that destroy files and local changes. It does not cover `git add` or `git rebase`. The hook has no counterpart on the Codex side, so there the ban on commit and push is a written rule, not an enforced one. This is written down explicitly, because a soft rule described as soft still works, while a soft rule that looks hard lulls vigilance.
 
-Naruszenie reguł niewymuszonych wykrywa się po fakcie, przez `git log` i autora commita. Nie ma sygnału w momencie, w którym naruszenie się dzieje.
+Violations of the non-enforced rules are detected after the fact, through `git log` and the commit author. There is no signal at the moment the violation happens.
 
-Ochrona gałęzi `dev` i `main` przed bezpośrednim pushem i force-pushem stoi poza repozytorium, po stronie hostingu, i nic w tym drzewie jej nie weryfikuje ani jej nie zastępuje.
+The protection of the `dev` and `main` branches against direct push and force-push lives outside the repository, on the hosting side, and nothing in this tree verifies it or replaces it.
 
-## Checklista
+## Checklist
 
-- Czy operacja, którą agent zamierza wykonać, tworzy, przepisuje albo publikuje historię?
-- Czy prośba użytkownika o `git add` albo `git rebase` była wyraźna, a nie domniemana z kontekstu rozmowy?
-- Czy commit powstał ręką człowieka?
-- Czy zmiana wchodzi do `main` albo `dev` przez Merge Requesta, a nie przez merge wykonany lokalnie?
-- Czy Merge Request zawiera jedno zamknięte zadanie, a nie kilka zebranych po drodze?
-- Czy zmiana schodząca z `main` albo `dev` na gałąź roboczą idzie zwykłym mergem, bez zakładania zbędnego Merge Requesta?
+- Does the operation that the agent intends to perform create, rewrite or publish history?
+- Was the user's request for `git add` or `git rebase` explicit, and not inferred from the context of the conversation?
+- Was the commit created by a human hand?
+- Does the change enter `main` or `dev` through a Merge Request, and not through a merge performed locally?
+- Does the Merge Request contain one finished task, and not several collected along the way?
+- Does a change coming down from `main` or `dev` to a working branch go through an ordinary merge, without opening an unnecessary Merge Request?

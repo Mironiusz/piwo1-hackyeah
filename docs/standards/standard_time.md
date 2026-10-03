@@ -1,143 +1,143 @@
-# Standard czasu i stref czasowych
+# Time and time zone standard
 
-Stan dokumentu: 2026-10-03
+Document state: 2026-10-03
 
-Status: gotowy - pełna treść. Pełny opis pozycji tego standardu wobec pozostałych jest w `docs/standards/README.md`.
+Status: ready - full content. The full description of this standard's position relative to the others is in `docs/standards/README.md`.
 
-## Po co ten dokument
+## Why this document exists
 
-Serwis przechowuje każdy moment w czasie jako parę kolumn: `timestamptz(3)` z samym instantem oraz `<kolumna>_utc_offset_minutes` z przesunięciem strefowym, jakie obowiązywało w chwili zapisu. Ta para odpowiada na dwa różne pytania - "który to moment" i "jaką godzinę widział człowiek, który to wpisał" - i cała jej wartość zależy od tego, że obie kolumny są zapisywane razem. Zapisana połowa nie jest brakiem danych. Jest wierszem, który wygląda poprawnie, ma prawidłowy instant i renderuje godzinę zegarową, której nigdy nie było.
+The service stores every point in time as a pair of columns: `timestamptz(3)` with the instant alone and `<column>_utc_offset_minutes` with the zone offset that was in force at the moment of writing. This pair answers two different questions - "which instant is it" and "what time did the person who entered it see" - and its whole value depends on both columns being written together. A half that was written is not missing data. It is a row that looks correct, has a valid instant and renders a wall-clock time that never existed.
 
-Drugi powód jest osobny od pierwszego: `timestamptz` nie przechowuje strefy ani przesunięcia. Normalizuje wartość do UTC przy zapisie i renderuje ją w strefie sesji przy odczycie. Kod, który tego nie wie, pisze poprawne zapytania i dostaje wartości zależne od konfiguracji serwera, a nie od danych.
+The second reason is separate from the first: `timestamptz` stores neither a zone nor an offset. It normalizes the value to UTC on write and renders it in the session's zone on read. Code that does not know this writes correct queries and gets values that depend on the server configuration, not on the data.
 
-Ten standard rozstrzyga cztery pytania: jaki typ kolumny czasu wybrać dla nowej wartości; co dokładnie oznacza wartość odczytana z pary i jak ją bezpiecznie zapisać; skąd brać "teraz" po stronie bazy i po stronie Pythona; oraz jak liczyć granice doby, gdy doba lokalna nie pokrywa się z dobą UTC.
+This standard settles four questions: which time column type to choose for a new value; what exactly a value read from the pair means and how to write it safely; where to take "now" from on the database side and on the Python side; and how to compute day boundaries when the local day does not coincide with the UTC day.
 
-## Zakres i granice
+## Scope and boundaries
 
-Ten standard odpowiada za:
+This standard is responsible for:
 
-- wybór typu kolumny czasu w PostgreSQL dla nowej wartości (`timestamptz` kontra `date`, oraz `timestamp` bez strefy jako typ zamknięty),
-- semantykę pary instant plus przesunięcie - co przechowuje, jak to czytać i zapisywać z Pythona przez psycopg,
-- konwencję dla wartości "teraz" po obu stronach: `now()` kontra `clock_timestamp()` w SQL, funkcje z jednego miejsca zamiast gołego `datetime.now()` w Pythonie,
-- granice doby i miesiąca liczone względem czasu lokalnego w oknach czasowych zapytań i raportów.
+- choosing the time column type in PostgreSQL for a new value (`timestamptz` versus `date`, and `timestamp` without a zone as a closed type),
+- the semantics of the instant plus offset pair - what it stores, how to read and write it from Python through psycopg,
+- the convention for the value "now" on both sides: `now()` versus `clock_timestamp()` in SQL, functions from one place instead of a bare `datetime.now()` in Python,
+- day and month boundaries computed relative to local time in the time windows of queries and reports.
 
-Czego tu nie ma:
+What is not here:
 
-- Harmonogram uruchomień zadań okresowych, okna uruchomień, blokady i częstotliwość - to jest `standard_worker.md`. Zdanie rozstrzygające: ten standard mówi, co znaczy dana wartość czasu; worker mówi, kiedy zadanie w ogóle wystartuje.
-- Limit czasu (timeout) na wywołaniu do bazy albo do systemu zewnętrznego - to jest `standard_errors.md`. To inny sens słowa "czas": tam chodzi o to, jak długo czekać na odpowiedź, tutaj o to, co oznacza wartość daty zapisana w danych.
-- Duplikat okienkowy w idempotencji, czyli wyciszanie powtórzonego zdarzenia w krótkim oknie czasu - to jest `standard_idempotency.md`. Tam okno jest mechanizmem wyciszania duplikatu, nie tematem reprezentacji czasu.
-- Jeden sposób otwarcia połączenia z bazą i ogólna zasada jednego miejsca definicji wspólnego mechanizmu - to jest `standard_database.md` i `standard_architecture.md`. Ten standard tylko nazywa, jaka opcja strefowa ma być ustawiona na takim połączeniu i dlaczego, nie ustala samej zasady jednego punktu definicji.
+- The schedule of periodic task runs, run windows, locks and frequency - that is `standard_worker.md`. The deciding sentence: this standard says what a given time value means; the worker standard says when a task starts at all.
+- A timeout on a call to the database or to an external system - that is `standard_errors.md`. This is a different sense of the word "time": there it is about how long to wait for a response, here about what a date value stored in the data means.
+- The windowed duplicate in idempotency, that is silencing a repeated event within a short time window - that is `standard_idempotency.md`. There the window is a mechanism for silencing a duplicate, not a topic of time representation.
+- The single way of opening a database connection and the general rule of one place of definition for a shared mechanism - that is `standard_database.md` and `standard_architecture.md`. This standard only names which zone option is to be set on such a connection and why; it does not establish the rule of a single point of definition itself.
 
-## Reguła odstępstwa
+## Deviation rule
 
-Standard opisuje stan docelowy i obowiązuje w pełni od pierwszego commita. Projekt założony z szablonu nie ma kodu zastanego, więc nie ma czego chronić okresem przejściowym - kod niezgodny ze standardem blokuje review niezależnie od tego, kto go pisał i kiedy.
+The standard describes the target state and applies in full from the first commit. A project created from the template has no legacy code, so there is nothing to protect with a transition period - code that does not comply with the standard blocks review regardless of who wrote it and when.
 
-Gdy repozytorium będzie mieć kod zastany, rozluźnienie tej reguły do wersji miękkiej ma być jawną decyzją zapisaną w `docs/standards/README.md` wraz z datą i powodem. Nie jest stanem, który wchodzi w życie sam.
+When the repository has legacy code, relaxing this rule to the soft version is to be an explicit decision recorded in `docs/standards/README.md` together with the date and the reason. It is not a state that comes into force on its own.
 
-Zawężenie właściwe dla tego standardu dotyczy kolumn bazy: każda migracja dodająca albo zmieniająca kolumnę czasu obejmuje również jej kolumnę przesunięcia. Nie da się dodać instanta "na razie bez pary" i wrócić do tego później - wiersze zapisane w tym czasie nie mają skąd odzyskać godziny zegarowej.
+The narrowing specific to this standard concerns database columns: every migration that adds or changes a time column also covers its offset column. You cannot add an instant "without the pair for now" and come back to it later - the rows written in the meantime have nowhere to recover the wall-clock time from.
 
-## Trzy typy czasu w PostgreSQL i wybór między nimi
+## Three time types in PostgreSQL and choosing between them
 
-- `timestamptz` (`timestamp with time zone`) - jedyny typ dla momentu w czasie. Wbrew nazwie nie przechowuje strefy: przy zapisie przelicza wartość do UTC i zapamiętuje sam instant, przy odczycie renderuje go w strefie sesji. Precyzja to `(3)`, czyli milisekundy, zgodnie z formatem, jaki interfejs programistyczny wystawia na zewnątrz.
-- `timestamp` bez strefy - naiwna data i godzina, bez informacji o tym, do jakiego momentu się odnosi. Typ zamknięty dla nowej kolumny. Powód: przy zmianie czasu jedna godzina w roku jest naprawdę dwuznaczna i nic w samej wartości nie mówi, o które z dwóch odczytań chodzi. Ten typ pojawia się wyłącznie jako wynik wyrażenia, nie jako kolumna: `created_at AT TIME ZONE 'Europe/Warsaw'` zwraca właśnie `timestamp` i o to w raportach chodzi.
-- `date` - sama data kalendarzowa, bez godziny i bez strefy. Właściwa tam, gdzie wartość naprawdę jest dniem, nie momentem. Wymóg podania przesunięcia na wejściu interfejsu dotyczy momentu, nie daty - rozciągnięcie go na wartość typu `date` zaczyna odrzucać poprawne zgłoszenia.
+- `timestamptz` (`timestamp with time zone`) - the only type for a point in time. Despite its name it does not store a zone: on write it converts the value to UTC and remembers only the instant, on read it renders it in the session's zone. The precision is `(3)`, that is milliseconds, consistent with the format the programming interface exposes externally.
+- `timestamp` without a zone - a naive date and time, with no information about which instant it refers to. A closed type for a new column. Reason: at a clock change one hour a year is genuinely ambiguous and nothing in the value itself says which of the two readings is meant. This type appears only as the result of an expression, not as a column: `created_at AT TIME ZONE 'Europe/Warsaw'` returns exactly a `timestamp`, and that is what reports need.
+- `date` - a calendar date alone, without a time and without a zone. Appropriate where the value really is a day, not an instant. The requirement to provide an offset at the interface input concerns an instant, not a date - extending it to a `date` value starts rejecting valid requests.
 
-Do tego jedna domena, wspólna dla całego schematu:
+On top of that, one domain shared by the whole schema:
 
 ```sql
 CREATE DOMAIN utc_offset_minutes AS smallint
     CONSTRAINT CK_utc_offset_minutes_range CHECK (VALUE BETWEEN -840 AND 840);
 ```
 
-Zakres od `-840` do `840` to pełny zakres rzeczywistych przesunięć UTC, od `-14:00` do `+14:00`. Wartość poza nim nie jest strefą, tylko błędem w tym, co ją policzyło. Domena jest jednym miejscem, które to mówi dla wszystkich par w schemacie, zamiast powtórzonego warunku przy każdej kolumnie.
+The range from `-840` to `840` is the full range of real UTC offsets, from `-14:00` to `+14:00`. A value outside it is not a zone, but a bug in whatever computed it. The domain is the one place that says this for all pairs in the schema, instead of a condition repeated at every column.
 
-Wybór dla nowej wartości nie jest więc wyborem między typami - jest wyborem, czy wartość jest momentem, czy dniem. Moment to zawsze para: `timestamptz(3)` plus `utc_offset_minutes`. Dzień to `date` i nic więcej.
+So the choice for a new value is not a choice between types - it is a choice of whether the value is an instant or a day. An instant is always a pair: `timestamptz(3)` plus `utc_offset_minutes`. A day is `date` and nothing more.
 
-## Para instant plus przesunięcie: co przechowuje i dlaczego jest parą
+## The instant plus offset pair: what it stores and why it is a pair
 
-Kolumna `timestamptz` przechowuje moment. Kolumna przesunięcia przechowuje liczbę minut, jaką miało przesunięcie UTC w chwili, w której ten moment został zapisany. Razem odtwarzają godzinę zegarową, którą widział człowiek: `2026-07-14T06:00:00+02:00` w lipcu i `2026-01-14T06:00:00+01:00` w styczniu, mimo że oba instanty są przechowane jako UTC.
+The `timestamptz` column stores the instant. The offset column stores the number of minutes of the UTC offset at the moment this instant was written. Together they reconstruct the wall-clock time the person saw: `2026-07-14T06:00:00+02:00` in July and `2026-01-14T06:00:00+01:00` in January, even though both instants are stored as UTC.
 
-Skutek: dwa wiersze tej samej kolumny, zapisane w różnych porach roku, mają różne przesunięcia i to jest poprawne, nie błąd danych.
+Consequence: two rows of the same column, written in different seasons, have different offsets, and that is correct, not a data error.
 
-Dlaczego przesunięcie, a nie nazwa strefy. Interfejs programistyczny dostaje na wejściu offset i tylko offset - `+02:00` to w lipcu Warszawa, Sztokholm, Paryż i kilkanaście innych miejsc. Zapisanie nazwy strefy wymagałoby zgadnięcia faktu, którego wywołujący nigdy nie przesłał, a to jest dokładnie to, czego zabrania `CLAUDE.md`. Tam, gdzie nazwa strefy jest realnym wejściem, na przykład przy wyrażeniu cron, ma ona własną kolumnę.
+Why an offset and not a zone name. The programming interface receives an offset and only an offset as input - `+02:00` in July is Warsaw, Stockholm, Paris and a dozen or so other places. Storing a zone name would require guessing a fact the caller never sent, and that is exactly what `CLAUDE.md` forbids. Where a zone name is a real input, for example in a cron expression, it has its own column.
 
-Porównanie i sortowanie idą po samej kolumnie `timestamptz`. Żaden warunek `WHERE`, żaden indeks i żadne `ORDER BY` w serwisie nie czyta kolumny przesunięcia - jest faktem o renderowaniu, nigdy o filtrowaniu. W szczególności nie wolno grupować raportu po kolumnie przesunięcia: mówi ona, co pokazywał zegar, a nie w jakiej strefie stał.
+Comparison and sorting go by the `timestamptz` column alone. No `WHERE` condition, no index and no `ORDER BY` in the service reads the offset column - it is a fact about rendering, never about filtering. In particular, a report must not be grouped by the offset column: it says what the clock showed, not which zone the clock was in.
 
-## Zapis pary: jedna wartość, nie dwie kolumny
+## Writing the pair: one value, not two columns
 
-Para jest mapowana jako jeden atrybut przez `composite()` w SQLAlchemy. To nie jest wygoda, to jest jedyna rzecz, która czyni zapis połowy pary niemożliwym: skoro nie istnieje atrybut na samo przesunięcie, nie istnieje przypisanie, które zaktualizuje instant i zostawi stare przesunięcie.
+The pair is mapped as one attribute through `composite()` in SQLAlchemy. This is not a convenience, it is the only thing that makes writing half a pair impossible: since there is no attribute for the offset alone, there is no assignment that updates the instant and leaves the old offset.
 
-Warunek `CK_<tabela>_offset_pairs` w bazie odrzuca parę, w której dokładnie jedna kolumna jest `NULL`. Nie wyłapie natomiast przesunięcia, które zostało z poprzedniego zapisu, bo wtedy żadna z kolumn nie jest `NULL`. Dlatego obrona jest trzystopniowa i każdy stopień pilnuje czegoś innego: `composite()` w modelu nie pozwala napisać takiego kodu, warunek w bazie łapie połowę pary, a okresowe zadanie kontrolne workera przelicza przesunięcia i raportuje wiersze, których żadna używana strefa nie tłumaczy. Trzeci stopień istnieje dla przypadku, w którym ktoś napisze surowy SQL albo migrację obok modelu.
+The `CK_<table>_offset_pairs` condition in the database rejects a pair in which exactly one column is `NULL`. It will not catch, however, an offset left over from a previous write, because then neither column is `NULL`. That is why the defense has three stages, and each stage guards something different: `composite()` in the model does not allow writing such code, the condition in the database catches half a pair, and a periodic control task of the worker recomputes the offsets and reports the rows that no zone in use explains. The third stage exists for the case where someone writes raw SQL or a migration bypassing the model.
 
-Kod, który zapisuje moment, nigdy nie wylicza przesunięcia z konfiguracji "przy okazji". Dla wartości podanej przez klienta przesunięcie jest tym, co przyszło na wejściu. Dla wartości stemplowanej serwerowo jest przesunięciem strefy biznesowej w tej chwili, a strefa biznesowa pochodzi z konfiguracji, nie z literału w kodzie ani w DDL.
+Code that writes an instant never computes the offset from the configuration "along the way". For a value provided by the client, the offset is whatever came in as input. For a value stamped by the server, it is the offset of the business zone at that moment, and the business zone comes from the configuration, not from a literal in the code or in the DDL.
 
-Reguła zdania wyżej nie zna wyjątku dla zapisu, którego nie wywołał człowiek. Zapis z przebiegu okresowego, z synchronizacji z systemem zewnętrznym, z danych rozruchowych i z zapytania testowego stemplowany jest tak samo jak zapis z komendy - przesunięciem strefy biznesowej obowiązującym w chwili zapisu. Zero wpisane wprost, żeby oznaczyć zapis maszynowy, nie oznacza niczego: jest poprawnym przesunięciem czasu uniwersalnego, więc przy odczycie nie da się go odróżnić od wiersza zapisanego naprawdę w takiej strefie. Wyjątek nie byłby więc oznaczeniem, tylko wprowadzeniem wartości nierozpoznawalnej - i to samo dotyczy każdej innej wartości umownej wstawionej w miejsce przesunięcia. Znaczenie tej kolumny jest jedno w całym serwisie, niezależnie od tego, co zapis wywołało.
+The rule in the sentence above knows no exception for a write that was not triggered by a human. A write from a periodic run, from a synchronization with an external system, from seed data and from a test query is stamped the same way as a write from a command - with the offset of the business zone in force at the moment of writing. A zero written directly to mark a machine write does not mark anything: it is a valid universal time offset, so on read it cannot be told apart from a row really written in such a zone. An exception would therefore not be a marker, only the introduction of an unrecognizable value - and the same applies to any other conventional value inserted in place of the offset. The meaning of this column is one across the whole service, regardless of what triggered the write.
 
-## Odczyt: sesja przypięta do UTC
+## Reading: a session pinned to UTC
 
-psycopg dekoduje `timestamptz` do świadomego `datetime` w strefie sesji, nie w strefie zapisu - bo strefy zapisu w tej kolumnie nie ma. Nieprzypięta sesja oznacza, że wartość po stronie Pythona zależy od `postgresql.conf` serwera, a nie od danych.
+psycopg decodes `timestamptz` to an aware `datetime` in the session's zone, not in the zone of the write - because there is no zone of the write in this column. An unpinned session means that the value on the Python side depends on the server's `postgresql.conf`, not on the data.
 
-Każde połączenie ustawia więc `options=-c timezone=UTC`, w jednym miejscu, tam gdzie połączenie powstaje (`standard_database.md`). Odczytany `datetime` jest wtedy nudno przewidywalny: zawsze świadomy, zawsze w UTC. Godzina zegarowa dla człowieka powstaje z tego instanta i z zapisanego przesunięcia, nigdy z tego, na co akurat ustawiona jest sesja.
+So every connection sets `options=-c timezone=UTC`, in one place, where the connection is created (`standard_database.md`). The `datetime` read back is then boringly predictable: always aware, always in UTC. The wall-clock time for a person comes from this instant and from the stored offset, never from whatever the session happens to be set to.
 
-To jest pierwsza rzecz do sprawdzenia, gdy znaczniki czasu wracają przesunięte. Test round-trip sprawdza ją wprost, gdy uruchamia odczyt na sesji celowo ustawionej na inną strefę.
+This is the first thing to check when timestamps come back shifted. The round-trip test checks it directly when it runs the read on a session deliberately set to a different zone.
 
-## Czas "teraz": po stronie bazy i po stronie Pythona
+## The time "now": on the database side and on the Python side
 
-W SQL są dwie funkcje i różnią się znaczeniem, nie precyzją:
+In SQL there are two functions and they differ in meaning, not in precision:
 
-- `now()` zwraca moment rozpoczęcia transakcji i nie zmienia się w jej trakcie. To jest domyślny wybór: wszystkie wiersze zapisane jedną komendą mają ten sam znacznik, a przebieg zadania okresowego ocenia wszystkie wiersze względem jednego momentu, więc "przedawnione na godzinę 03:15:00" jest prawdziwym zdaniem o całej paczce.
-- `clock_timestamp()` zwraca realny zegar w chwili wywołania. Właściwa tylko tam, gdzie mierzy się upływ czasu wewnątrz jednej transakcji, na przykład jak długo trwał przebieg zadania.
+- `now()` returns the instant the transaction started and does not change during it. This is the default choice: all rows written by one command have the same timestamp, and a periodic task run evaluates all rows against one instant, so "overdue as of 03:15:00" is a true statement about the whole batch.
+- `clock_timestamp()` returns the real clock at the moment of the call. Appropriate only where elapsed time is measured inside one transaction, for example how long a task run took.
 
-Pomylenie tych dwóch nie daje błędu, daje pomiar równy zeru albo znacznik, który wygląda dziwnie dopiero w logu.
+Confusing these two does not produce an error, it produces a measurement equal to zero or a timestamp that only looks odd in the log.
 
-W Pythonie wartość `datetime.now()` bez podanej strefy jest naiwna i zależy od strefy systemu operacyjnego procesu, który ją wywołał - nie od niczego widocznego w samym kodzie. To samo wywołanie na maszynie z inną strefą systemową daje inny wynik dla tej samej linijki, bez żadnej zmiany w repozytorium.
+In Python, the value of `datetime.now()` without a given zone is naive and depends on the operating system zone of the process that called it - not on anything visible in the code itself. The same call on a machine with a different system zone gives a different result for the same line, without any change in the repository.
 
-Rozwiązaniem są dwie funkcje w jednym wspólnym miejscu, zwracające odpowiednio aktualny moment w UTC i aktualny moment w strefie biznesowej, obie jako wartość świadomą. Kod wybiera jedną z nich, dobraną do tego, do czego czas jest potrzebny: wersję UTC dla znacznika technicznego, wersję lokalną tam, gdzie wartość ma sens w odniesieniu do doby albo godziny zegarowej. Nigdy gołego `datetime.now()`.
+The solution is two functions in one shared place, returning respectively the current instant in UTC and the current instant in the business zone, both as an aware value. Code picks one of them, matched to what the time is needed for: the UTC version for a technical timestamp, the local version where the value makes sense in relation to a day or a wall-clock time. Never a bare `datetime.now()`.
 
-Naiwny `datetime` docierający do sesji bazy jest błędem, nie danymi, i jest wyłapywany w jednym miejscu: walidator na bazowym modelu Pydantic plus asercja w `before_flush`. Świadomy `datetime` w nieoczekiwanej strefie jest natomiast danymi - klient ma prawo przysłać termin w swojej strefie i serwis ma prawo go tak zapisać.
+A naive `datetime` reaching the database session is a bug, not data, and it is caught in one place: a validator on the base Pydantic model plus an assertion in `before_flush`. An aware `datetime` in an unexpected zone, on the other hand, is data - the client has the right to send a deadline in its own zone and the service has the right to store it that way.
 
-Biblioteką stref czasowych jest wyłącznie `zoneinfo` ze standardowej biblioteki Pythona, nie `pytz`. `zoneinfo` rozstrzyga czas letni i zimowy z aktualnej bazy IANA systemu, bez własnej, potencjalnie nieaktualnej kopii danych stref. Nazwy stref są po obu stronach te same, bo PostgreSQL również używa nazw IANA - to jedyny powód, dla którego w schemacie i w kodzie nie ma dwóch różnych zapisów tej samej strefy.
+The only time zone library is `zoneinfo` from the Python standard library, not `pytz`. `zoneinfo` resolves daylight saving and standard time from the system's current IANA database, without its own, potentially outdated copy of zone data. Zone names are the same on both sides, because PostgreSQL also uses IANA names - this is the only reason why the schema and the code do not have two different notations for the same zone.
 
-## Arytmetyka na momentach
+## Arithmetic on instants
 
-Każde dodawanie i odejmowanie na momencie przechodzi przez UTC: przelicz do UTC, dodaj albo odejmij tam, przelicz z powrotem do strefy biznesowej i wylicz przesunięcie na nowo.
+Every addition and subtraction on an instant goes through UTC: convert to UTC, add or subtract there, convert back to the business zone and compute the offset anew.
 
-Nie wolno robić arytmetyki na świadomej wartości bezpośrednio. `aware - timedelta` w Pythonie jest arytmetyką na zegarze ściennym i przenosi pierwotne `tzinfo` bez zmian, więc przy `ZoneInfo` potrafi wyprodukować czas lokalny, którego strefa nigdy nie miała, albo taki, którego przesunięcie jest o godzinę nieaktualne. Wtedy błędny jest sam moment, nie tylko sposób jego pokazania - i tylko dla okien przechodzących przez zmianę czasu, czyli dokładnie tak, jak taki błąd przechodzi przez testy.
+Arithmetic directly on an aware value is not allowed. `aware - timedelta` in Python is wall-clock arithmetic and carries the original `tzinfo` over unchanged, so with `ZoneInfo` it can produce a local time the zone never had, or one whose offset is an hour out of date. Then the instant itself is wrong, not only the way it is shown - and only for windows that cross a clock change, which is exactly how such a bug slips through tests.
 
-## Okna czasowe w danych: doba lokalna kontra doba UTC
+## Time windows in data: local day versus UTC day
 
-Doba kalendarzowa strefy biznesowej nie odpowiada dobie UTC - jej granice w UTC przesuwają się o godzinę między czasem letnim i zimowym. Okno filtrujące "dzisiaj", "wczoraj" albo "ostatnie N dni" nie może wyliczyć tych granic jako samych dat zrzutowanych na `00:00`, bo wtedy jest przesunięte o godzinę w jedną albo drugą stronę, zależnie od pory roku, i systematycznie gubi albo dodaje rekordy z granicznej godziny.
+The calendar day of the business zone does not correspond to the UTC day - its boundaries in UTC shift by an hour between daylight saving time and standard time. A window filtering "today", "yesterday" or "the last N days" cannot compute these boundaries as plain dates cast to `00:00`, because then it is shifted by an hour in one direction or the other, depending on the season, and systematically loses or adds records from the boundary hour.
 
-Po stronie SQL narzędziem jest `AT TIME ZONE` z nazwą IANA, i wynikiem jest naiwny `timestamp` w tej strefie - właśnie to, po czym się kubełkuje:
+On the SQL side the tool is `AT TIME ZONE` with an IANA name, and the result is a naive `timestamp` in that zone - exactly what you bucket by:
 
 ```sql
 date_trunc('day', created_at AT TIME ZONE 'Europe/Warsaw')
 ```
 
-Nazwa strefy pochodzi z parametru zapytania albo z konfiguracji, nigdy z literału skopiowanego do każdego raportu. Dla strefy `Europe/Warsaw` różnica między dobą lokalną i dobą UTC to wszystko, co zostało zapisane między północą a drugą w nocy, więc nie jest to zaokrąglenie.
+The zone name comes from a query parameter or from the configuration, never from a literal copied into every report. For the `Europe/Warsaw` zone, the difference between the local day and the UTC day is everything that was written between midnight and two in the morning, so it is not a rounding error.
 
-Po stronie Pythona granica okna przechodzi przez świadomy `datetime` w strefie biznesowej i dopiero na końcu jest przeliczana do UTC. Funkcje operujące na samych obiektach `date` wyliczają granice w kalendarzu, nie w konkretnej strefie - są bezpieczne tam, gdzie okno trafia do zapytania po kolumnie `date` bez składnika godziny, albo tam, gdzie okno jest z zamierzenia szerokie i przesunięcie o godzinę nic nie zmienia.
+On the Python side, the window boundary goes through an aware `datetime` in the business zone and is converted to UTC only at the very end. Functions operating on plain `date` objects compute boundaries in the calendar, not in a specific zone - they are safe where the window goes into a query on a `date` column without a time component, or where the window is wide by design and a one-hour shift changes nothing.
 
-## Wartości UTC jako klucze
+## UTC values as keys
 
-Wszędzie tam, gdzie moment jest częścią identyfikatora albo klucza idempotencji, używa się jego reprezentacji w UTC.
+Wherever an instant is part of an identifier or an idempotency key, its UTC representation is used.
 
-Powód jest wprost widoczny przy jesiennej zmianie czasu: lokalna reprezentacja powtórzonej godziny `02:30` daje jeden i ten sam napis dla dwóch różnych momentów, więc dwa osobne rekordy zapadłyby się w jeden. Klucz musi być jednym stabilnym napisem na jedno wystąpienie, a to daje tylko UTC.
+The reason is plainly visible at the autumn clock change: the local representation of the repeated hour `02:30` gives one and the same string for two different instants, so two separate records would collapse into one. A key must be one stable string per occurrence, and only UTC provides that.
 
-## Checklista
+## Checklist
 
-- Czy nowa wartość momentu jest parą kolumn: `timestamptz(3)` plus `utc_offset_minutes`, a nie samym `timestamptz`?
-- Czy nowa kolumna czasu jest `timestamptz` albo `date`, nigdy `timestamp` bez strefy?
-- Czy para jest mapowana jako jeden atrybut przez `composite()`, bez osobnego atrybutu na przesunięcie?
-- Czy tabela z nową parą ma warunek `CK_<tabela>_offset_pairs`?
-- Czy żaden warunek `WHERE`, indeks ani `ORDER BY` nie czyta kolumny przesunięcia?
-- Czy żaden raport nie kubełkuje po kolumnie przesunięcia zamiast po `AT TIME ZONE`?
-- Czy przesunięcie wartości podanej przez klienta pochodzi z wejścia, a nie z konfiguracji?
-- Czy przesunięcie wartości stemplowanej serwerowo pochodzi ze strefy biznesowej także dla zapisu maszynowego - okresowego, synchronizującego, rozruchowego i testowego?
-- Czy połączenie z bazą ustawia `timezone=UTC` w jedynym obowiązującym miejscu?
-- Czy wybór między `now()` i `clock_timestamp()` wynika ze znaczenia wartości, a nie z przyzwyczajenia?
-- Czy nowy kod używa funkcji "teraz" z jednego wspólnego miejsca, a nie gołego `datetime.now()`?
-- Czy nowy kod stref czasowych używa wyłącznie `zoneinfo`, nie wprowadza `pytz`?
-- Czy arytmetyka na momencie przechodzi przez UTC, a przesunięcie jest wyliczane po niej na nowo?
-- Czy okno filtrujące dobę po kolumnie z godziną wylicza granice w strefie biznesowej, a nie z samej daty kalendarzowej?
-- Czy moment użyty jako klucz albo identyfikator jest renderowany w UTC?
+- Is a new instant value a pair of columns: `timestamptz(3)` plus `utc_offset_minutes`, and not `timestamptz` alone?
+- Is a new time column `timestamptz` or `date`, never `timestamp` without a zone?
+- Is the pair mapped as one attribute through `composite()`, without a separate attribute for the offset?
+- Does a table with a new pair have the `CK_<table>_offset_pairs` condition?
+- Does no `WHERE` condition, index or `ORDER BY` read the offset column?
+- Does no report bucket by the offset column instead of by `AT TIME ZONE`?
+- Does the offset of a value provided by the client come from the input, not from the configuration?
+- Does the offset of a server-stamped value come from the business zone also for a machine write - periodic, synchronizing, seed and test?
+- Does the database connection set `timezone=UTC` in the single place in force?
+- Does the choice between `now()` and `clock_timestamp()` follow from the meaning of the value, not from habit?
+- Does new code use the "now" functions from one shared place, not a bare `datetime.now()`?
+- Does new time zone code use only `zoneinfo` and avoid introducing `pytz`?
+- Does arithmetic on an instant go through UTC, with the offset computed anew after it?
+- Does a window filtering a day on a column with a time component compute its boundaries in the business zone, not from a plain calendar date?
+- Is an instant used as a key or identifier rendered in UTC?

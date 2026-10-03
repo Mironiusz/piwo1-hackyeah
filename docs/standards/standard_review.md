@@ -1,120 +1,120 @@
-# Standard review i Definition of Done
+# Review and Definition of Done standard
 
-Stan dokumentu: 2026-10-03
+Document state: 2026-10-03
 
-Status: gotowy - pełna treść. Pełny opis pozycji tego standardu wobec pozostałych jest w `docs/standards/README.md`.
+Status: ready - full content. The full description of this standard's position relative to the others is in `docs/standards/README.md`.
 
-## Po co ten dokument
+## Why this document exists
 
-"Review" w tym repozytorium nazywa dziś dwie różne rzeczy pod bardzo podobnymi nazwami: artefakt `<ZADANIE>_REVIEW.md` w łańcuchu agentowym (log przebiegu jednego zadania) i proces oceny, czy zmiana jest gotowa do mergu (to, co robi `dod-reviewer`). Bez jednego miejsca opisującego drugie z nich, kryteria gotowości i kolejność raportu żyją wyłącznie rozproszone po plikach skilla i agenta, w dwóch niezależnie utrzymywanych kopiach (Claude Code i Codex) - a to jest dokładnie ten koszt duplikacji, przed którym przestrzega `standard_architecture.md`.
+"Review" in this repository currently names two different things under very similar names: the `<TASK>_REVIEW.md` artifact in the agentic chain (the run log of one task) and the process of assessing whether a change is ready to merge (what `dod-reviewer` does). Without one place describing the second of them, the readiness criteria and the report order live only scattered across the skill and agent files, in two independently maintained copies (Claude Code and Codex) - and that is exactly the cost of duplication that `standard_architecture.md` warns against.
 
-Ten standard rozstrzyga trzy pytania: co odróżnia review od artefaktu o tej samej nazwie z łańcucha agentowego, jaki jest mechanizm i kolejność raportu review w tym repozytorium, oraz jakie punkty definiują zmianę jako gotową do mergu.
+This standard settles three questions: what distinguishes review from the artifact of the same name in the agentic chain, what the mechanism and the report order of review in this repository are, and which points define a change as ready to merge.
 
-## Zakres i granice
+## Scope and boundaries
 
-Ten standard odpowiada za proces review zmiany i za Definition of Done repozytorium: mechanizm, którym review się wykonuje, kolejność raportu, kryteria tego, co zgłaszać i czego nie, oraz checklistę końcową.
+This standard is responsible for the review process of a change and for the Definition of Done of the repository: the mechanism by which review is performed, the report order, the criteria for what to report and what not, and the final checklist.
 
-Czego tu nie ma:
+What is not here:
 
-- Sam mechanizm łańcucha agentowego prowadzącego do review (seed -> shape -> PRD -> plan -> implementacja -> review) - to jest `standard_agentic_workflow.md`.
-- Artefakt `<ZADANIE>_REVIEW.md` - log przebiegu konkretnego zadania (co pominięto, na co agent trafił, jakie decyzje padły przy kodzie). To dokument opisujący historię jednego zadania i traci znaczenie po jego zamknięciu; ten standard opisuje powtarzalny proces oceny, ważny dla każdej zmiany. Zdanie rozstrzygające: `_REVIEW.md` jest dziennikiem zdarzeń, ten standard jest kryterium oceny.
-- Definition of Done dla wewnętrznej architektury jednej warstwy nie istnieje jako osobna checklista, bo zbiór nie ma dziś standardu opisującego tę architekturę - patrz `docs/standards/README.md`, sekcja granic i długów. Checklista tego standardu stosuje się zawsze, do każdej zmiany.
-- Same reguły, które review sprawdza (jakość kodu, architektura, dokumentacja, formatowanie, bezpieczeństwo i tak dalej) - każda mieszka we właściwym standardzie. Ten dokument mówi, jak i w jakiej kolejności je sprawdzić, nie co dokładnie każda z nich nakazuje.
+- The mechanism of the agentic chain leading to review itself (seed -> shape -> PRD -> plan -> implementation -> review) - that is `standard_agentic_workflow.md`.
+- The `<TASK>_REVIEW.md` artifact - the run log of a specific task (what was skipped, what the agent ran into, which decisions were made in the code). It is a document describing the history of one task and it loses its meaning after the task is closed; this standard describes a repeatable assessment process, valid for every change. The deciding sentence: `_REVIEW.md` is an event log, this standard is an assessment criterion.
+- A Definition of Done for the internal architecture of a single layer does not exist as a separate checklist, because the set currently has no standard describing that architecture - see `docs/standards/README.md`, the unresolved boundaries and debts section. The checklist of this standard always applies, to every change.
+- The rules that review checks (code quality, architecture, documentation, formatting, security and so on) - each of them lives in its proper standard. This document says how and in what order to check them, not what exactly each of them requires.
 
-## Reguła odstępstwa
+## Deviation rule
 
-Standard opisuje stan docelowy i obowiązuje w pełni od pierwszego commita. Projekt założony z szablonu nie ma kodu zastanego, więc nie ma czego chronić okresem przejściowym - kod niezgodny ze standardem blokuje review niezależnie od tego, kto go pisał i kiedy.
+The standard describes the target state and applies in full from the first commit. A project created from the template has no legacy code, so there is nothing to protect with a transition period - code that does not comply with the standard blocks review regardless of who wrote it and when.
 
-Gdy repozytorium będzie mieć kod zastany, rozluźnienie tej reguły do wersji miękkiej ma być jawną decyzją zapisaną w `docs/standards/README.md` wraz z datą i powodem. Nie jest stanem, który wchodzi w życie sam.
+When the repository has legacy code, relaxing this rule to the soft version is to be an explicit decision recorded in `docs/standards/README.md` together with the date and the reason. It is not a state that takes effect on its own.
 
-Doprecyzowanie właściwe dla tego standardu: obowiązek przejścia przez ten proces dotyczy każdej zmiany kodu produkcyjnego w ramach zadania, niezależnie od jej rozmiaru - definicja "modułu dotkniętego" z `docs/standards/README.md` zawęża, których standardów dotyczy obowiązek dostosowania, nie zawęża tego, czy review w ogóle się odbywa. Przyjęcie tego standardu nie wymusza retroaktywnego review zmian już zamergowanych.
+A clarification specific to this standard: the duty to go through this process applies to every change of production code within a task, regardless of its size - the definition of a "module touched by the change" from `docs/standards/README.md` narrows which standards the duty to align applies to, it does not narrow whether review takes place at all. Adopting this standard does not force a retroactive review of changes already merged.
 
-## Mechanizm review w tym repozytorium
+## Review mechanism in this repository
 
-Review wykonuje skill `implementation-dod-review`, wołany wprost albo przez subagenta `dod-reviewer`. Skill ma kanoniczną parę objętą testem parytetu (`standard_agentic_workflow.md`, rozdz. 6.2): `.claude/skills/implementation-dod-review/SKILL.md` dla Claude Code i `.agents/skills/implementation-dod-review/SKILL.md` dla Codeksa, identyczne co do znaku poza różnicami jawnie dozwolonymi przez ten test.
+Review is performed by the `implementation-dod-review` skill, called directly or through the `dod-reviewer` subagent. The skill has a canonical pair covered by the parity test (`standard_agentic_workflow.md`, ch. 6.2): `.claude/skills/implementation-dod-review/SKILL.md` for Claude Code and `.agents/skills/implementation-dod-review/SKILL.md` for Codex, identical down to the character except for the differences explicitly allowed by that test.
 
-Subagent `dod-reviewer` (`.claude/agents/dod-reviewer.md`) istnieje wyłącznie w Claude Code - subagenci w tym sensie są mechanizmem Claude-only, bez odpowiednika w `.agents/` (`standard_agentic_workflow.md`, rozdz. 6.4). `.codex/agents/dod-reviewer.toml` jest odpowiednikiem po stronie Codeksa w innym mechanizmie (natywna rola Codeksa, nie subagent) - zgodny treściowo z wersją Claude i objęty kontrolą parytetu par ról w `tests/architecture/test_agent_docs_parity.py`. Kontrola porównuje instrukcje odczytane z obu wariantów i dopuszcza między nimi dokładnie jedną jawnie nazwaną różnicę: nazwę uruchamiacza komend, bo Codex nie zna narzędzi o nazwach `Bash` i `PowerShell`. Rozjazd w czymkolwiek innym zatrzymuje testy, zamiast czekać na wychwycenie okiem.
+The `dod-reviewer` subagent (`.claude/agents/dod-reviewer.md`) exists only in Claude Code - subagents in this sense are a Claude-only mechanism, with no counterpart in `.agents/` (`standard_agentic_workflow.md`, ch. 6.4). `.codex/agents/dod-reviewer.toml` is the counterpart on the Codex side in a different mechanism (a native Codex role, not a subagent) - consistent in content with the Claude version and covered by the role pair parity check in `tests/architecture/test_agent_docs_parity.py`. The check compares the instructions read from both variants and allows exactly one explicitly named difference between them: the name of the command runner, because Codex does not know tools named `Bash` and `PowerShell`. A divergence in anything else stops the tests, instead of waiting to be caught by eye.
 
-Subagent `dod-reviewer` nie ma dostępu do `Edit` ani `Write` i działa w `permissionMode: plan` - nie może wprowadzić poprawki, tylko ją opisać. To wymuszenie na poziomie uprawnień, nie tylko instrukcji: review ocenia gotowość zmiany, nie naprawia jej za autora.
+The `dod-reviewer` subagent has no access to `Edit` or `Write` and runs in `permissionMode: plan` - it cannot introduce a fix, only describe it. This is enforced at the permission level, not only by instructions: review assesses the readiness of a change, it does not fix it for the author.
 
-Review wywołuje się automatycznie na końcu `plan-implement` (`standard_agentic_workflow.md`, rozdz. 4.3, krok 8) oraz ręcznie, w dowolnym momencie, na żądanie użytkownika - na aktualnym diffie, jeśli kontekst gita jest dostępny, albo na plikach wskazanych przez użytkownika, gdy nie jest.
+Review is invoked automatically at the end of `plan-implement` (`standard_agentic_workflow.md`, ch. 4.3, step 8) and manually, at any moment, at the user's request - on the current diff, if git context is available, or on the files indicated by the user, when it is not.
 
-## Mapa standard - narzędzie weryfikujące
+## Standard - verifying tool map
 
-Tabela niżej mapuje każdy standard na komendę, która sprawdza jego regułę automatycznie - tam, gdzie taka komenda istnieje. Kolumna Grupa mówi, czy standard należy do rdzenia workflow, czy do profilu Pythona. Projekt spoza profilu Pythona usuwa wiersze profilu razem z plikami standardów, według `docs/standards/README.md`. Żadna z tych komend nie pokrywa całej checklisty swojego standardu: sprawdza mechaniczną, powtarzalną część (składnię, format, znany wzorzec), nie regułę domenową ani decyzję architektoniczną. Przegląd checklisty standardu względem zmiany odbywa się zawsze, niezależnie od tego, czy komenda dla niego istnieje.
+The table below maps each standard to the command that checks its rule automatically - where such a command exists. The Group column says whether the standard belongs to the workflow core or to the Python profile. A project outside the Python profile removes the profile rows together with the standard files, according to `docs/standards/README.md`. None of these commands covers the whole checklist of its standard: it checks the mechanical, repeatable part (syntax, format, a known pattern), not a domain rule or an architectural decision. The review of a standard's checklist against the change always takes place, regardless of whether a command exists for it.
 
-| Standard                       | Grupa          | Automatyczna weryfikacja                                                                                                                                 |
+| Standard                       | Group          | Automatic verification                                                                                                                                   |
 | ------------------------------ | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `standard_agentic_workflow.md` | rdzeń          | `pytest tests/architecture/test_agent_docs_parity.py tests/architecture/test_session_context_hook.py tests/architecture/test_dangerous_commands_hook.py` |
-| `standard_agent_docs.md`       | rdzeń          | `pytest tests/architecture/test_plan_document_contract.py`                                                                                               |
-| `standard_review.md`           | rdzeń          | brak narzędzia - przegląd ręczny (ten dokument)                                                                                                          |
-| `standard_documentation.md`    | rdzeń          | brak narzędzia - przegląd ręczny                                                                                                                         |
-| `standard_formatting.md`       | rdzeń          | `ruff format --check .`, `npx --no-install prettier --check "**/*.md"`, `pytest tests/architecture/test_prose_style.py`                                  |
-| `standard_git.md`              | rdzeń          | `pytest tests/architecture/test_conflict_markers.py`                                                                                                     |
-| `standard_architecture.md`     | profil Pythona | brak narzędzia - przegląd ręczny                                                                                                                         |
-| `standard_config.md`           | profil Pythona | brak w szablonie - test kontraktu środowiska powstaje z pierwszą pozycją środowiska                                                                      |
-| `standard_database.md`         | profil Pythona | `bandit` (reguła B608, sklejanie zapytania ze stringów)                                                                                                  |
-| `standard_errors.md`           | profil Pythona | brak narzędzia - przegląd ręczny                                                                                                                         |
-| `standard_idempotency.md`      | profil Pythona | brak narzędzia - przegląd ręczny                                                                                                                         |
-| `standard_code_quality.md`     | profil Pythona | `ruff check .`, `mypy`, `vulture`, `deptry .`                                                                                                            |
-| `standard_logging.md`          | profil Pythona | `ruff check .` (reguła G, leniwe placeholdery zamiast f-stringa)                                                                                         |
-| `standard_naming.md`           | profil Pythona | `ruff check .` (reguła N)                                                                                                                                |
-| `standard_security.md`         | profil Pythona | `bandit`, `pip-audit` (tylko przy nowej albo podniesionej zależności)                                                                                    |
-| `standard_tests.md`            | profil Pythona | `pytest`                                                                                                                                                 |
-| `standard_time.md`             | profil Pythona | brak narzędzia - przegląd ręczny                                                                                                                         |
-| `standard_worker.md`           | profil Pythona | brak w szablonie - test spójności rejestru zadań powstaje z pierwszym zadaniem okresowym                                                                 |
+| `standard_agentic_workflow.md` | core           | `pytest tests/architecture/test_agent_docs_parity.py tests/architecture/test_session_context_hook.py tests/architecture/test_dangerous_commands_hook.py` |
+| `standard_agent_docs.md`       | core           | `pytest tests/architecture/test_plan_document_contract.py`                                                                                               |
+| `standard_review.md`           | core           | no tool - manual review (this document)                                                                                                                  |
+| `standard_documentation.md`    | core           | no tool - manual review                                                                                                                                  |
+| `standard_formatting.md`       | core           | `ruff format --check .`, `npx --no-install prettier --check "**/*.md"`, `pytest tests/architecture/test_prose_style.py`                                  |
+| `standard_git.md`              | core           | `pytest tests/architecture/test_conflict_markers.py`                                                                                                     |
+| `standard_architecture.md`     | Python profile | no tool - manual review                                                                                                                                  |
+| `standard_config.md`           | Python profile | not in the template - the environment contract test is created with the first environment entry                                                          |
+| `standard_database.md`         | Python profile | `bandit` (rule B608, building a query by concatenating strings)                                                                                          |
+| `standard_errors.md`           | Python profile | no tool - manual review                                                                                                                                  |
+| `standard_idempotency.md`      | Python profile | no tool - manual review                                                                                                                                  |
+| `standard_code_quality.md`     | Python profile | `ruff check .`, `mypy`, `vulture`, `deptry .`                                                                                                            |
+| `standard_logging.md`          | Python profile | `ruff check .` (rule G, lazy placeholders instead of an f-string)                                                                                        |
+| `standard_naming.md`           | Python profile | `ruff check .` (rule N)                                                                                                                                  |
+| `standard_security.md`         | Python profile | `bandit`, `pip-audit` (only for a new or upgraded dependency)                                                                                            |
+| `standard_tests.md`            | Python profile | `pytest`                                                                                                                                                 |
+| `standard_time.md`             | Python profile | no tool - manual review                                                                                                                                  |
+| `standard_worker.md`           | Python profile | not in the template - the task registry consistency test is created with the first periodic task                                                         |
 
-Komenda uruchamia się z korzenia repozytorium, w środowisku z zainstalowaną grupą zależności `dev`. Tabela wskazuje samo narzędzie, nie nazwę targetu w `makefile` - targety mogą się przemianować, narzędzie stojące za regułą standardu nie zmienia się przy takiej zmianie.
+The command runs from the repository root, in an environment with the `dev` dependency group installed. The table points to the tool itself, not to the target name in the `makefile` - targets may be renamed, while the tool behind a standard's rule does not change with such a change.
 
-## Kolejność raportu i werdykt
+## Report order and verdict
 
-Raport review ma zawsze pięć sekcji, w tej kolejności:
+A review report always has five sections, in this order:
 
-1. Blockery - problemy, które oznaczają, że zmiana nie jest gotowa.
-2. Ryzyka - problemy, które mogą być akceptowalne, ale wymagają świadomej decyzji, nie przeoczenia.
-3. Usprawnienia - opcjonalne porządki i sugestie jakościowe, niewymagane do gotowości.
-4. Weryfikacja - przejście po wszystkich standardach z mapy wyżej, każdy z jednym z czterech stanów: nie dotyczy (zmiana nie dotyka obszaru tego standardu, z krótkim powodem), sprawdzono automatycznie (standard ma zmapowaną komendę, komenda została odpalona, a wynik albo jego streszczenie jest w raporcie), sprawdzono ręcznie (standard nie ma zmapowanej komendy, więc weryfikacją jest wyłącznie przegląd checklisty), niesprawdzone (reviewer nie zdążył przed limitem wywołań; pozycja wymaga dokończenia, zanim werdykt obejmie ten standard). Naruszenie znalezione po drodze idzie do Blockerów albo Ryzyk, nie zostaje tutaj.
-5. Werdykt - jeden z trzech: `ready`, `ready after minor fixes`, `not ready`.
+1. Blockers - problems which mean that the change is not ready.
+2. Risks - problems that may be acceptable, but require a conscious decision, not an oversight.
+3. Improvements - optional cleanups and quality suggestions, not required for readiness.
+4. Verification - a pass over all the standards from the map above, each with one of four states: not applicable (the change does not touch the area of this standard, with a short reason), checked automatically (the standard has a mapped command, the command was run, and the result or its summary is in the report), checked manually (the standard has no mapped command, so the verification is only a review of the checklist), not checked (the reviewer did not get to it before the call limit; the item needs to be completed before the verdict covers this standard). A violation found along the way goes to Blockers or Risks, it does not stay here.
+5. Verdict - one of three: `ready`, `ready after minor fixes`, `not ready`.
 
-Ta kolejność nie jest przypadkowa: blockery i ryzyka muszą być widoczne, zanim czytelnik dotrze do drobnych usprawnień, inaczej realne zagrożenie ginie w szumie stylistycznych uwag. Werdykt jest zawsze ostatni, bo jest wnioskiem z sekcji wyżej, nie punktem wyjścia do ich uzasadniania.
+This order is not accidental: blockers and risks must be visible before the reader reaches the minor improvements, otherwise a real threat gets lost in the noise of stylistic remarks. The verdict is always last, because it is a conclusion from the sections above, not a starting point for justifying them.
 
-Przejście po całej mapie, nie tylko po standardach, które reviewer po przeczytaniu diffu uzna za właściwe, jest zamierzonym wymogiem. Wybór relevantnych standardów zostawiony wyłącznie ocenie reviewera jest niewidoczny z zewnątrz - pominięcie standardu, którego zmiana faktycznie dotyka, wygląda z raportu identycznie jak jego świadome i uzasadnione wykluczenie. Jawna lista wszystkich standardów z mapy, z jednym ze stanów przy każdym, zamienia to w coś, co czytelnik raportu może zweryfikować sam, bez odtwarzania toku myślenia reviewera.
+Going through the whole map, not only through the standards that the reviewer, after reading the diff, deems relevant, is an intended requirement. A choice of the relevant standards left solely to the reviewer's judgment is invisible from the outside - omitting a standard that the change actually touches looks identical in the report to its conscious and justified exclusion. An explicit list of all the standards from the map, with one of the states next to each, turns this into something the reader of the report can verify themselves, without reconstructing the reviewer's train of thought.
 
-`ready after minor fixes` jest zarezerwowany dla sytuacji, w której jedyne znalezione problemy są w sekcji Ryzyka albo Usprawnienia, nie Blockery - obecność choćby jednego blockera wyklucza ten werdykt.
+`ready after minor fixes` is reserved for a situation in which the only problems found are in the Risks or Improvements section, not in Blockers - the presence of even one blocker rules out this verdict.
 
-Przebieg waży więcej niż review. Tam, gdzie da się podnieść środowisko i uruchomić przebieg, odczyt kodu i dokumentów nie zastępuje przebiegu. Znana porażka przebiegu w zakresie zmiany (testy, łańcuch na środowisku, testy e2e) wyklucza werdykt `ready`, nawet gdy litera kryterium akceptacji jest spełniona. Przed werdyktem reviewer sprawdza, czy przebieg późniejszy niż ocena kryterium nie przeczy ocenianemu zakresowi, i ocenia kod gałęzi docelowej, nie to, która inicjatywa miała daną rzecz domknąć.
+A run weighs more than review. Where the environment can be brought up and a run performed, reading the code and the documents does not replace the run. A known failure of a run within the scope of the change (tests, the chain on the environment, e2e tests) rules out the `ready` verdict, even when the letter of the acceptance criterion is met. Before the verdict, the reviewer checks whether a run later than the assessment of the criterion contradicts the assessed scope, and assesses the code of the target branch, not which initiative was supposed to close a given thing.
 
-Werdykt nazywa swój zakres: całą inicjatywę, jedno zadanie z kilku, sam plan albo wskazane pliki. Od tego zdania zależy, co dzieje się z katalogiem inicjatywy po review: końcowe `ready` dla całej inicjatywy kwalifikuje ją do archiwum `plans_finished/`, `ready` dla jednego zadania, planu albo części kodu nie (`standard_agentic_workflow.md`, rozdz. 4.6). Review tę kwalifikację raportuje, ale nie wykonuje przeniesienia - pozostaje w trybie odczytu, a przenosi `plan-implement` po powrocie z review albo agent, któremu użytkownik polecił porządki wprost. Review wywołane na inicjatywie już jawnie zakończonej mówi o tym w raporcie zamiast oceniać ją od nowa.
+The verdict names its scope: the whole initiative, one task out of several, the plan alone or the indicated files. What happens to the initiative directory after review depends on this sentence: a final `ready` for the whole initiative qualifies it for the `plans_finished/` archive, `ready` for one task, a plan or a part of the code does not (`standard_agentic_workflow.md`, ch. 4.6). Review reports this qualification but does not perform the move - it stays in read-only mode, and the move is done by `plan-implement` after returning from review or by an agent that the user explicitly told to tidy up. Review invoked on an initiative that is already explicitly closed says so in the report instead of assessing it anew.
 
-## Co zgłaszać i czego nie zgłaszać
+## What to report and what not to report
 
-Review podpiera każdy finding konkretną ścieżką pliku i powodem - ogólna uwaga bez wskazania miejsca nie daje autorowi zmiany niczego do poprawienia. Review nie zgaduje kontraktu, którego nie znajduje w kodzie ani w standardach - brakujący plik, standard, granica modułu, test albo dokument jest zgłaszany jawnie jako brak, nie domyślany.
+Review backs every finding with a specific file path and a reason - a general remark without pointing to a place gives the author of the change nothing to fix. Review does not guess a contract that it does not find in the code or in the standards - a missing file, standard, module boundary, test or document is reported explicitly as missing, not assumed.
 
-Review nie zgłasza:
+Review does not report:
 
-- spekulatywnych przepisań, których zmiana nie wymaga,
-- preferencji stylistycznych bez konkretnego, nazwanego ryzyka,
-- problemów zastanych, spoza zakresu bieżącej zmiany, chyba że utrudniają zrozumienie samej zmiany.
+- speculative rewrites that the change does not require,
+- stylistic preferences without a specific, named risk,
+- pre-existing problems, outside the scope of the current change, unless they make it harder to understand the change itself.
 
-Uzasadnienie: review oceniający zmianę względem wszystkiego, co kiedykolwiek było niedoskonałe w repozytorium, przestaje być użyteczny - autor zmiany nie może naprawić całej historii kodu w jednym PR, a rozmycie uwagi na problemy zastane odciąga ją od problemów, które ta konkretna zmiana faktycznie wprowadziła.
+Rationale: a review that assesses a change against everything that has ever been imperfect in the repository stops being useful - the author of the change cannot fix the whole history of the code in one PR, and spreading attention over pre-existing problems draws it away from the problems that this specific change actually introduced.
 
-## Checklista
+## Checklist
 
-Zadanie można uznać za zakończone, gdy:
+A task can be considered finished when:
 
-- zmiany są zgodne z zasadami DRY, SOLID i KISS,
-- kod jest prosty, czytelny i nie zawiera niepotrzebnych fallbacków,
-- fallbacki wynikają z realnej potrzeby bezpieczeństwa kodu, a nie z nieznajomości kontraktu,
-- niejasne miejsca zostały jasno wskazane zamiast zgadywania,
-- potencjalne błędy lub ryzyka zostały opisane użytkownikowi,
-- kod nie zawiera komentarzy linijkowych,
-- funkcje wymagające wyjaśnienia mają docstringi opisujące po ludzku, co robią,
-- formatowanie kodu jest zgodne z zasadami z tego pliku,
-- jeśli implementacja była większa lub zmieniała jakiś moduł, całość musi być po zmianie zgodne ze wszystkimi standardami z /docs/standards
-- odpowiedź końcowa jasno opisuje, co zostało zmienione,
-- odpowiedź końcowa wyjaśnia, dlaczego zmiany zostały wykonane,
-- odpowiedź końcowa opisuje podjęte decyzje,
-- odpowiedź końcowa wskazuje potencjalne problemy,
-- odpowiedź końcowa mówi wprost, czego nie udało się ustalić, jeśli coś było niejasne,
-- sekcja Weryfikacja przechodzi po wszystkich standardach z mapy, nie tylko po podzbiorze uznanym za właściwy, i dla standardu ze zmapowaną komendą ta komenda faktycznie została odpalona, nie tylko oceniona na oko,
-- kryteria akceptacji rozliczono przebiegiem wszędzie, gdzie przebieg był możliwy, a żaden znany przebieg nie przeczy werdyktowi.
+- the changes follow the DRY, SOLID and KISS principles,
+- the code is simple, readable and contains no unnecessary fallbacks,
+- fallbacks come from a real need for code safety, not from not knowing the contract,
+- unclear places have been clearly pointed out instead of guessed,
+- potential bugs or risks have been described to the user,
+- the code contains no line comments,
+- functions that need explanation have docstrings describing in plain language what they do,
+- the code formatting follows the rules from this file,
+- if the implementation was larger or changed a module, the whole must, after the change, comply with all the standards from /docs/standards
+- the final reply clearly describes what was changed,
+- the final reply explains why the changes were made,
+- the final reply describes the decisions made,
+- the final reply points out potential problems,
+- the final reply says directly what could not be determined, if something was unclear,
+- the Verification section goes through all the standards from the map, not only through a subset deemed relevant, and for a standard with a mapped command that command was actually run, not only judged by eye,
+- the acceptance criteria were settled by a run wherever a run was possible, and no known run contradicts the verdict.

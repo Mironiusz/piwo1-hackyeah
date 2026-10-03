@@ -1,17 +1,17 @@
-# Rejestr nazw
+# Naming registry
 
-Stan dokumentu: 2026-10-03
+Document state: 2026-10-03
 
-## Czym jest ten plik
+## What this file is
 
-Rejestr nazw faktycznie używanych w repozytorium. Opisuje stan faktyczny, nie docelowy - w odróżnieniu od `standard_naming.md`, który ustala reguły. Gdy rejestr i standard się rozchodzą, standard mówi, co ma być, a rejestr, co jest; rozjazd między nimi jest informacją, nie błędem jednego z nich.
+A registry of names actually used in the repository. It describes the actual state, not the target one - unlike `standard_naming.md`, which sets the rules. When the registry and the standard diverge, the standard says what should be and the registry says what is; the divergence between them is information, not an error of either of them.
 
-Reguła odstępstwa stosuje się tu inaczej niż do standardów: rejestr opisuje stan faktyczny z definicji, więc nie da się być z nim niezgodnym. Można go mieć nieaktualnym - i to jest jedyny sposób, w jaki ten plik może być zły.
+The deviation rule applies here differently than to the standards: the registry describes the actual state by definition, so it is impossible to be non-compliant with it. It can only be outdated - and that is the only way this file can be wrong.
 
-## Jak się tego używa
+## How to use it
 
-Zanim wymyślisz nazwę dla nowego pliku, funkcji albo stałej, sprawdź, czy ten wzorzec już tu jest. Jeśli jest - użyj go. Jeśli nie ma, a nazwa ma szansę się powtórzyć, dopisz ją tutaj wraz z pierwszym miejscem użycia. Dzięki temu druga osoba nie wymyśli dla tej samej rzeczy innej nazwy.
+Before you invent a name for a new file, function or constant, check whether the pattern is already here. If it is, use it. If it is not, and the name is likely to repeat, add it here together with its first place of use. This way a second person will not invent a different name for the same thing.
 
-## Stan na dziś
+## Current state
 
-Rejestr jest pusty, bo szablon nie ma kodu. Pierwsze wpisy powstają razem z pierwszymi plikami, funkcjami i stałymi projektu, w sekcjach według rodzaju nazwy: nazwy w bazie danych, nazwy plików, nazwy funkcji, nazwy stałych z zapytaniami, nazwy celów w `makefile`, nazwy w testach. Reguła docelowa stoi w `standard_naming.md`, tutaj ma stać stan faktyczny.
+The registry is empty, because the project has no code yet. The first entries are created together with the first files, functions and constants of the project, in sections by kind of name: names in the database, file names, function names, names of query constants, `makefile` target names, names in tests. The target rule is in `standard_naming.md`; the actual state goes here.

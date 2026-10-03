@@ -1,114 +1,114 @@
 ---
 name: plan-prd
-description: Zamienia gotowy luźny plan (shape) w PRD, a potem w plan implementacji, w dwóch rozdzielonych fazach z bramką potwierdzenia między nimi. PRD odpowiada na co i dlaczego bez decyzji technicznych, plan implementacji na jak, ze zweryfikowanymi faktami z kodu i bazy. Drugi skill łańcucha plan-shape -> plan-prd -> plan-implement. Użyj po zamknięciu wywiadu w plan-shape, na pliku `_SHAPE.md`.
+description: Turns a finished loose plan (shape) into a PRD, and then into an implementation plan, in two separate phases with a confirmation gate between them. The PRD answers what and why without technical decisions, the implementation plan answers how, with facts verified in the code and the database. The second skill of the chain plan-shape -> plan-prd -> plan-implement. Use after the interview in plan-shape is closed, on the `_SHAPE.md` file.
 ---
 
-# Od shape do PRD i planu implementacji
+# From shape to PRD and implementation plan
 
-Cel: dokończyć łańcuch `plan-shape -> plan-prd -> plan-implement`, produkując `_PRD.md` i `_PLAN.md` w dwóch wyraźnie rozdzielonych fazach. Rozdział jest konieczny, bo PRD ma zakaz treści technicznych, a plan implementacji jej wymaga - mieszanie obu w jednym przebiegu prowadzi do przedwczesnego zamrożenia decyzji technicznych.
+Goal: complete the chain `plan-shape -> plan-prd -> plan-implement`, producing `_PRD.md` and `_PLAN.md` in two clearly separated phases. The separation is necessary, because the PRD bans technical content while the implementation plan requires it - mixing both in one run leads to premature freezing of technical decisions.
 
-## Wznowienie
+## Resumption
 
-Prefiks zadania i nazwę inicjatywy odczytaj ze ścieżki pliku, na którym jesteś wołany - nigdy nie wymyślaj własnych. Jeśli `_PRD.md` już istnieje, ale `_PLAN.md` nie, to wznowienie: przejdź od razu do fazy B. Jeśli oba istnieją, zapytaj usera, co ma się zmienić, zamiast zaczynać od zera.
+Read the task prefix and the initiative name from the path of the file you are called on - never invent your own. If `_PRD.md` already exists but `_PLAN.md` does not, this is a resumption: go straight to phase B. If both exist, ask the user what is to change, instead of starting from scratch.
 
-## Archiwum
+## Archive
 
-Plik pod `plans_finished/` należy do inicjatywy jawnie zakończonej albo anulowanej. Nie pisz PRD ani planu w archiwum: praca nad taką inicjatywą zaczyna się od jej wznowienia, czyli powrotu całego katalogu do `plans/` na polecenie usera, według `docs/standards/standard_agentic_workflow.md` rozdz. 4.6. Sam odczyt archiwalnego shape'a albo pytanie o dawny wynik nie jest wznowieniem.
+A file under `plans_finished/` belongs to an initiative explicitly finished or cancelled. Do not write a PRD or a plan in the archive: work on such an initiative starts with its resumption, that is, the return of the whole directory to `plans/` on the user's instruction, according to `docs/standards/standard_agentic_workflow.md` ch. 4.6. Merely reading an archived shape or asking about a past result is not a resumption.
 
-## Regulator szczegółowości
+## Detail regulator
 
-Wartość regulatora odczytaj z nagłówka `<ZADANIE>_SHAPE.md`, nigdy z seeda. Brak nagłówka z wartością znaczy 40.
+Read the regulator value from the header of `<TASK>_SHAPE.md`, never from the seed. No header with a value means 40.
 
-W fazie A regulator nie zmienia niczego poza głębokością pytań o zakres i reguły domenowe - PRD i tak nie rozstrzyga rozwiązań technicznych, a bramka potwierdzenia przed fazą B obowiązuje na każdej pozycji skali.
+In phase A the regulator changes nothing except the depth of questions about the scope and the domain rules - the PRD does not decide technical solutions anyway, and the confirmation gate before phase B applies at every position of the scale.
 
-W fazie B regulator steruje tym, ile decyzji technicznych podejmujesz sam, a ile stawiasz użytkownikowi:
+In phase B the regulator controls how many technical decisions you make yourself and how many you put to the user:
 
-- 0-19: wyłącznie pytania blokujące. Wszystkie decyzje techniczne podejmujesz sam i zapisujesz w `## Decyzje` wraz z powodem.
-- 20-39: dodatkowo wybory, których odwrócenie wymagałoby przepisania pracy już wykonanej.
-- 40-59: dodatkowo każdy wybór o odmiennych konsekwencjach dla zakresu albo dla zadań przyszłych. To jest poziom domyślny.
-- 60-79: dodatkowo kierunek rozwiązania tam, gdzie istnieje więcej niż jedno sensowne podejście, nawet jeśli jedno z nich wyraźnie przeważa.
-- 80-100: pytasz o każdą decyzję mającą więcej niż jeden rozsądny wariant, łącznie z kolejnością kroków, granicami zmiany i sposobem weryfikacji.
+- 0-19: only blocking questions. You make all technical decisions yourself and record them in `## Decisions` together with the reason.
+- 20-39: additionally, choices whose reversal would require rewriting work already done.
+- 40-59: additionally, every choice with different consequences for the scope or for future tasks. This is the default level.
+- 60-79: additionally, the direction of the solution where more than one sensible approach exists, even if one of them clearly prevails.
+- 80-100: you ask about every decision that has more than one reasonable variant, including the order of steps, the boundaries of the change and the method of verification.
 
-Blokady i zakaz zgadywania kontraktu stoją poza zasięgiem regulatora na każdym progu. Obowiązek sprawdzenia w kodzie, bazie i dokumentacji wszystkiego, co PRD zakłada, także - regulator nie zwalnia z kroku 5, tylko z pytania o to, co ten krok już ustalił.
+Blocks and the ban on guessing a contract stand outside the regulator's reach at every threshold. So does the obligation to check in the code, the database and the documentation everything the PRD assumes - the regulator does not release you from step 5, only from asking about what that step has already established.
 
-Decyzję podjętą samodzielnie zamiast zapytania oznacz w `## Decyzje` frazą "Decyzja agenta przy C:N, bez pytania".
+Mark a decision taken independently instead of by asking in `## Decisions` with the phrase "Agent decision at C:N, without asking".
 
-Pełna definicja mechanizmu: `docs/standards/standard_agentic_workflow.md` rozdz. 3.5.
+Full definition of the mechanism: `docs/standards/standard_agentic_workflow.md` ch. 3.5.
 
-## Faza A: PRD
+## Phase A: PRD
 
-1. Wczytaj `<ZADANIE>_SHAPE.md` oraz `<ZADANIE>_SEED.md`.
-2. Przerwij, jeśli shape ma nierozstrzygnięte pytania `Block: yes`. Nie próbuj ich rozstrzygać domysłem - zadaj je userowi i dopisz odpowiedzi do shape'a, potem wróć.
-3. Napisz `<ZADANIE>_PRD.md` wg szablonu:
+1. Read `<TASK>_SHAPE.md` and `<TASK>_SEED.md`.
+2. Stop if the shape has unresolved `Block: yes` questions. Do not try to resolve them by guessing - put them to the user and add the answers to the shape, then come back.
+3. Write `<TASK>_PRD.md` according to the template:
 
 ```text
-# PRD: <tytuł zadania>
+# PRD: <task title>
 
-Stan dokumentu: YYYY-MM-DD
+Document state: YYYY-MM-DD
 
-## Cel biznesowy
+## Business goal
 
-## Problem i jego skutki
+## Problem and its consequences
 
-## Zakres
+## Scope
 
-## Poza zakresem
+## Out of scope
 
-## Wymagania funkcjonalne
+## Functional requirements
 
-## Kryteria akceptacji
+## Acceptance criteria
 
-## Reguły domenowe
+## Domain rules
 
-## Zależności i wpływ na inne moduły
+## Dependencies and impact on other modules
 
-## Ryzyka i uwagi
+## Risks and notes
 ```
 
-Twarda czarna lista treści zakazanych w PRD: modele danych, listy kolumn, migracje, ścieżki plików kodu, nazwy funkcji, decyzje o bibliotekach, szczegóły deploymentu, sekrety i credentiale. PRD odpowiada na "co i dlaczego", nigdy na "jak". Jeśli podczas pisania PRD pojawia się chęć zapisania rozwiązania technicznego, ten materiał należy do `_PLAN.md`, nie tutaj.
+Hard blacklist of content forbidden in a PRD: data models, column lists, migrations, code file paths, function names, library decisions, deployment details, secrets and credentials. The PRD answers "what and why", never "how". If while writing the PRD there is an urge to record a technical solution, that material belongs to `_PLAN.md`, not here.
 
-4. Pokaż userowi, co powstało, i zapytaj o potwierdzenie przed przejściem do fazy B. To jedyna bramka między "co" i "jak", więc nie przechodź jej milcząco.
+4. Show the user what was created and ask for confirmation before moving to phase B. This is the only gate between "what" and "how", so do not pass it silently.
 
-## Faza B: plan implementacji
+## Phase B: implementation plan
 
-5. Otwórz dokumenty wskazane przez mapowanie zadanie -> dokument w `AGENTS.md` / `CLAUDE.md` dla tego typu zadania. Zweryfikuj w kodzie, bazie i dokumentacji wszystko, co PRD zakłada, i zapisz ustalenia w sekcji `## Fakty` w formacie opisanym w `docs/standards/standard_agent_docs.md`, sekcja Format PLAN: identyfikator, twierdzenie, dowód jednego z pięciu rodzajów i data sprawdzenia. Nie powtarzaj tu wzorca - standard jest jego jedynym adresem, a kontrola automatyczna czyta go stamtąd.
-6. Wylicz promień rażenia zmiany, zanim spiszesz zakres zmian: wszystkie miejsca wywołań, obiekty schematu bazy, klucze konfiguracji i kontrole automatyczne, których planowana zmiana dotyka pośrednio. Wyprowadź tę listę z odczytów z kroku 5, nie ze zgadywania. Jeśli wychodzi poza zakres uzgodniony w PRD, zatrzymaj się i zapytaj usera o podział planu, zamiast rozszerzać zakres po cichu. To zatrzymanie jest czym innym niż powrót z kroku 8: tam PRD okazało się błędne, tu PRD może być poprawne, a jedynie za wąskie.
-7. Napisz `<ZADANIE>_PLAN.md` wg szablonu:
+5. Open the documents pointed to by the task -> document mapping in `AGENTS.md` / `CLAUDE.md` for this type of task. Verify in the code, the database and the documentation everything the PRD assumes, and record the findings in the `## Facts` section in the format described in `docs/standards/standard_agent_docs.md`, section PLAN format: identifier, claim, evidence of one of the five kinds and check date. Do not repeat the pattern here - the standard is its only address, and the automatic check reads it from there.
+6. Calculate the blast radius of the change before you write down the scope of changes: all call sites, database schema objects, configuration keys and automatic checks that the planned change touches indirectly. Derive this list from the reads in step 5, not from guessing. If it goes beyond the scope agreed in the PRD, stop and ask the user about splitting the plan, instead of quietly extending the scope. This stop is something different from the return from step 8: there the PRD turned out to be wrong, here the PRD may be correct, merely too narrow.
+7. Write `<TASK>_PLAN.md` according to the template:
 
 ```text
-# Plan: <tytuł zadania>
+# Plan: <task title>
 
-Stan dokumentu: YYYY-MM-DD, plan w toku
+Document state: YYYY-MM-DD, plan in progress
 
-## Cel
+## Goal
 
-## Fakty
+## Facts
 
-## Decyzje
+## Decisions
 
-## Zakres zmian
+## Scope of changes
 
-## Kolejność wdrożenia
+## Rollout order
 
 ## Definition of Done
 
-## Ryzyka
+## Risks
 
-## Otwarte pytania
+## Open questions
 
-## Pliki uzupełniające
+## Supplementary files
 ```
 
-Każdy krok w `## Zakres zmian` musi mieć konkretne nazwy plików, funkcji i kontraktów danych, a nie opis w stylu "coś w rodzaju".
+Every step in `## Scope of changes` must have concrete names of files, functions and data contracts, not a description in the style of "something like".
 
-8. Jeśli weryfikacja z kroku 5 obali założenie z PRD, zatrzymaj się i wróć do fazy A. PRD jest kontraktem, więc nie wolno go cicho obejść w planie.
-9. Zakończ, gdy plan spełnia kryteria kompletności, których `plan-implement` i tak będzie wymagał: zero TODO, zero pozycji w `## Otwarte pytania`, każdy krok z jednoznacznym wejściem i wyjściem. Zmień wtedy marker w linii stanu na `plan zamknięty` - dopiero on wciąga dokument pod kontrolę formatu ustaleń, więc plan pisany na raty zostaje przy `plan w toku` do samego końca. Powiedz userowi, że można wołać `plan-implement`. Nie wołaj go samodzielnie.
+8. If the verification from step 5 disproves an assumption from the PRD, stop and go back to phase A. The PRD is a contract, so it must not be quietly worked around in the plan.
+9. Finish when the plan meets the completeness criteria that `plan-implement` will require anyway: zero TODOs, zero items in `## Open questions`, every step with an unambiguous input and output. Then change the marker in the state line to `plan closed` - only that marker pulls the document under the finding format check, so a plan written in installments stays at `plan in progress` until the very end. Tell the user that `plan-implement` can be called. Do not call it yourself.
 
-## Zasady
+## Rules
 
-- Zero zgadywania kontraktów, nazw, zakresów - to pytanie do usera, nie decyzja modelu.
-- Faza A i faza B są rozdzielone bramką potwierdzenia - nigdy nie przechodź z PRD do planu bez pokazania PRD userowi.
-- Pytania do usera stawiaj tak samo jak w `plan-shape`: zachowanie w czasie na konkretnym przebiegu z godzinami i stanem po każdym kroku, skutek liczbą, a artefakt, o który pytasz, przytoczony fragmentem, nie samą ścieżką.
-- Wymaganie wyjęte z zakresu znika z listy wymagań i lista zostaje przenumerowana, a powód cięcia trafia do `## Poza zakresem`. Pozycja oznaczona adnotacją "poza zakresem" zostawiona na liście przy każdym czytaniu wymaga rozstrzygania, czy się liczy.
-- Człowiekowi przypisuj w planie wyłącznie kroki, których agent wykonać nie może albo nie powinien: instalację aplikacji, zmianę ustawień systemu, commit, push, Merge Request, operację na bazie współdzielonej i zgody wymagane regułami bezpieczeństwa. Resztę wykonuje agent. Kroki człowieka zbierz w jednej zwięzłej liście na końcu `## Kolejność wdrożenia`.
-- Oba dokumenty nie mają pogrubień w prozie ani pogrubionych etykiet otwierających akapit lub punkt listy - wyróżnia kolejność, nie krój pisma. Patrz `docs/standards/standard_formatting.md`, sekcja o wyróżnieniach w prozie. Identyfikatory faktów, decyzji i wymagań w rodzaju F-1, D-1, WF-1 zostają zwykłym tekstem, bo służą do odsyłania, nie do wyróżniania.
+- Zero guessing of contracts, names, scopes - that is a question for the user, not a decision of the model.
+- Phase A and phase B are separated by a confirmation gate - never move from the PRD to the plan without showing the PRD to the user.
+- Put questions to the user the same way as in `plan-shape`: behavior over time on a concrete run with times and the state after each step, the effect as a number, and the artifact you are asking about quoted as a fragment, not by its path alone.
+- A requirement taken out of the scope disappears from the requirements list and the list is renumbered, and the reason for the cut goes to `## Out of scope`. An item marked with an "out of scope" annotation and left on the list requires deciding, at every reading, whether it counts.
+- In the plan, assign to a human only the steps that the agent cannot or should not perform: installing an application, changing system settings, commit, push, Merge Request, an operation on a shared database and consents required by security rules. The agent performs the rest. Collect the human's steps in one concise list at the end of `## Rollout order`.
+- Neither document has bold in prose or bold labels opening a paragraph or a list item - order provides the emphasis, not the typeface. See `docs/standards/standard_formatting.md`, the section on emphasis in prose. Identifiers of facts, decisions and requirements such as F-1, D-1, WF-1 remain plain text, because they serve for cross-referencing, not for emphasis.

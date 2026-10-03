@@ -41,7 +41,7 @@
               "${CLAUDE_PROJECT_DIR}/.claude/hooks/local_docs_context.py"
             ],
             "timeout": 10,
-            "statusMessage": "Ładowanie krótkiego kontekstu repo"
+            "statusMessage": "Loading short repository context"
           }
         ]
       }
@@ -57,7 +57,7 @@
               "${CLAUDE_PROJECT_DIR}/.claude/hooks/block_dangerous_commands.py"
             ],
             "timeout": 5,
-            "statusMessage": "Sprawdzanie komendy przed uruchomieniem"
+            "statusMessage": "Checking the command before running it"
           }
         ]
       }

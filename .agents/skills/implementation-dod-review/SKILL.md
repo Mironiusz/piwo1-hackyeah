@@ -1,39 +1,39 @@
 ---
 name: implementation-dod-review
-description: review zmian w implementacji względem Definition of Done repozytorium. użyj, gdy user prosi o sprawdzenie gotowości, review architektury, ocenę jakości jednostki kodu, weryfikację dokumentacji, audyt zmienionych plików albo przygotowanie zmiany do mergu.
+description: review of implementation changes against the repository's Definition of Done. use when the user asks for a readiness check, an architecture review, a quality assessment of a code unit, documentation verification, an audit of changed files or preparing a change for merge.
 ---
 
-# Proces review
+# Review process
 
-Oceń implementację względem Definition of Done repozytorium.
+Assess the implementation against the repository's Definition of Done.
 
-Przed czytaniem kodu otwórz `docs/standards/README.md` - mapę wszystkich standardów, z osobną sekcją na każdy standard, mówiącą, za co odpowiada i jaki ma status (gotowy, częściowy, szkielet). Mapa zastępuje jakąkolwiek stałą listę standardów wypisaną tutaj, więc ten skill nie starzeje się w miarę dokładania kolejnych plików do katalogu.
+Before reading the code, open `docs/standards/README.md` - the map of all standards, with a separate section for each standard, saying what it is responsible for and what status it has (ready, partial, skeleton). The map replaces any fixed list of standards written out here, so this skill does not go stale as further files are added to the directory.
 
-Sprawdź też `docs/standards/decision_registry.md`. Brak reguły w danym obszarze może być zapisanym odroczeniem, nie luką - zgłaszanie jako braku czegoś, co jest świadomie odłożone wraz z powodem, jest szumem.
+Also check `docs/standards/decision_registry.md`. The absence of a rule in a given area may be a recorded deferral, not a gap - reporting as missing something that is deliberately postponed together with a reason is noise.
 
-Potem obejrzyj zmienione pliki. Jeśli kontekst gita jest dostępny, zakresem review jest aktualny diff. Jeśli nie jest, zakresem są pliki albo kod wskazane przez użytkownika.
+Then look at the changed files. If git context is available, the scope of the review is the current diff. If it is not, the scope is the files or code indicated by the user.
 
-Sprawdź zmianę względem każdego standardu z mapy w `docs/standards/standard_review.md`, sekcja "Mapa standard - narzędzie weryfikujące" - nie tylko względem tych, które po przeczytaniu diffu wydają się właściwe. Dla standardu ze zmapowaną komendą odpal ją naprawdę, przez `Bash` albo `PowerShell`, zamiast oceniać zgodność na oko. Reguła odstępstwa jest zaostrzona, dopóki `docs/standards/README.md` nie zapisze jawnej decyzji o jej rozluźnieniu: projekt bez kodu zastanego nie ma czego chronić okresem przejściowym, więc niezgodność ze standardem blokuje review niezależnie od tego, kto pisał dany fragment i kiedy.
+Check the change against every standard from the map in `docs/standards/standard_review.md`, section "Standard - verifying tool map" - not only against those that seem relevant after reading the diff. For a standard with a mapped command, actually run it, via `Bash` or `PowerShell`, instead of judging compliance by eye. The deviation rule is strict until `docs/standards/README.md` records an explicit decision to relax it: a project without legacy code has nothing to protect with a transition period, so non-compliance with a standard blocks the review regardless of who wrote the given fragment and when.
 
-Przebieg waży więcej niż review. Znana porażka przebiegu w zakresie zmiany (testy, łańcuch na środowisku, testy e2e) trzyma werdykt na niegotowe, nawet gdy litera kryterium akceptacji jest spełniona. Przed werdyktem sprawdź, czy żaden przebieg późniejszy niż ocena kryterium nie przeczy zakresowi, który oceniasz, i oceniaj kod gałęzi docelowej, nie to, która inicjatywa miała daną rzecz domknąć.
+A run weighs more than a review. A known failure of a run within the scope of the change (tests, the chain on an environment, e2e tests) keeps the verdict at not ready, even when the letter of the acceptance criterion is met. Before the verdict, check that no run later than the assessment of the criterion contradicts the scope you are assessing, and assess the code of the target branch, not which initiative was supposed to close a given thing.
 
-Nie wymyślaj brakującego kontekstu. Jeśli brakuje wymaganego pliku, standardu, granicy odpowiedzialności, testu albo dokumentu - zgłoś to wprost.
+Do not invent missing context. If a required file, standard, responsibility boundary, test or document is missing - report it plainly.
 
-Czego nie zgłaszać:
+What not to report:
 
-- spekulacyjnych przepisań, których zmiana nie potrzebuje,
-- preferencji stylistycznych bez konkretnego ryzyka - z zastrzeżeniem, że reguła zapisana w standardzie nie jest preferencją stylistyczną: naruszenie `standard_formatting.md`, na przykład pogrubienie w prozie albo znak z listy zakazanych, zgłaszasz normalnie,
-- problemów istniejących przed zmianą i leżących poza jej zakresem, chyba że blokują zrozumienie samej zmiany,
-- braku reguły w obszarze objętym wpisem w rejestrze decyzji odroczonych.
+- speculative rewrites that the change does not need,
+- stylistic preferences without a concrete risk - with the caveat that a rule recorded in a standard is not a stylistic preference: you report a violation of `standard_formatting.md`, for example bold in prose or a character from the forbidden list, normally,
+- problems that existed before the change and lie outside its scope, unless they block understanding of the change itself,
+- the absence of a rule in an area covered by an entry in the deferred decisions registry.
 
-Zgłoś ustalenia w tej kolejności:
+Report findings in this order:
 
-1. Blokery - rzeczy, z powodu których zmiana nie jest skończona.
-2. Ryzyka - rzeczy, które mogą być akceptowalne, ale wymagają świadomej decyzji.
-3. Ulepszenia - opcjonalne porządki i sugestie jakościowe.
-4. Weryfikacja - lista wszystkich standardów z mapy w `standard_review.md`, każdy z jednym z trzech stanów: nie dotyczy (z krótkim powodem), sprawdzono automatycznie (komenda z mapy odpalona, wynik albo jego streszczenie w raporcie), sprawdzono ręcznie (standard nie ma zmapowanej komendy). Pominięcie standardu bez jednego z tych trzech stanów jest niekompletną Weryfikacją.
-5. Werdykt - jeden z trzech: gotowe, gotowe po drobnych poprawkach, niegotowe - wraz z zakresem, który obejmuje: cała inicjatywa, jedno zadanie z kilku, sam plan albo wskazane pliki.
+1. Blockers - things because of which the change is not finished.
+2. Risks - things that may be acceptable but require a conscious decision.
+3. Improvements - optional cleanups and quality suggestions.
+4. Verification - a list of all standards from the map in `standard_review.md`, each with one of three states: not applicable (with a short reason), checked automatically (the command from the map was run, the result or its summary in the report), checked manually (the standard has no mapped command). Skipping a standard without one of these three states is an incomplete Verification.
+5. Verdict - one of three: ready, ready after minor fixes, not ready - together with the scope it covers: the whole initiative, one task out of several, the plan alone or the indicated files.
 
-Zakres werdyktu rozstrzyga o dalszym losie katalogu inicjatywy, więc nazwij go wprost: końcowe `ready` dla całej inicjatywy kwalifikuje ją do archiwum `plans_finished/`, `ready` dla jednego zadania, planu albo części kodu nie (`docs/standards/standard_agentic_workflow.md` rozdz. 4.6). Zgłoś tę kwalifikację w raporcie, ale niczego nie przenoś - review pozostaje w trybie odczytu, a przeniesienie należy do `plan-implement` albo do agenta, któremu user polecił porządki wprost. Review wywołane na inicjatywie już jawnie zakończonej mówi o tym w raporcie, zamiast oceniać ją od nowa.
+The scope of the verdict decides the further fate of the initiative directory, so name it explicitly: a final `ready` for the whole initiative qualifies it for the `plans_finished/` archive, a `ready` for one task, the plan or part of the code does not (`docs/standards/standard_agentic_workflow.md` ch. 4.6). Report this qualification in the report, but do not move anything - the review stays in read-only mode, and the move belongs to `plan-implement` or to an agent whom the user has explicitly instructed to clean up. A review called on an initiative that is already explicitly finished says so in the report, instead of assessing it anew.
 
-Wybieraj konkretną informację zwrotną na poziomie pliku, nie ogólne porady.
+Choose concrete file-level feedback, not general advice.

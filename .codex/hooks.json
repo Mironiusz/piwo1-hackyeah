@@ -9,7 +9,7 @@
             "command": "python3 .codex/hooks/local_docs_context.py",
             "commandWindows": "python .codex/hooks/local_docs_context.py",
             "timeout": 10,
-            "statusMessage": "Ładowanie krótkiego kontekstu repo"
+            "statusMessage": "Loading short repository context"
           }
         ]
       }

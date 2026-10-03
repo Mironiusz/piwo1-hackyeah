@@ -1,96 +1,111 @@
-# Mapa standardów
+# Standards map
 
-Stan dokumentu: 2026-10-03
+Document state: 2026-10-03
 
-Ten katalog jest zbiorem wszystkich standardów obowiązujących w repozytorium. Ten plik jest punktem wejścia do zbioru - nie otwieraj standardu z pominięciem tej mapy, bo status dokumentu i jego grupa są zapisane tutaj.
+This directory is the set of all standards in force in the repository. This file is the entry point to the set - do not open a standard while skipping this map, because the status of a document and its group are recorded here.
 
-Źródłem prawdy dla każdej reguły jest standard, nie `CLAUDE.md` ani `AGENTS.md`. Przy rozbieżności między rdzeniem repozytorium a standardem obowiązuje standard - rdzeń celowo zatrzymuje tylko twarde zakazy stosowalne bez kontekstu, a uzasadnienia, wyjątki i przypadki graniczne mieszkają tutaj. Ponad wszystkim stoi specyfikacja produktu wskazana w `CLAUDE.md`, sekcja Co budujemy: przy rozbieżności między standardem a specyfikacją obowiązuje specyfikacja.
+The source of truth for every rule is the standard, not `CLAUDE.md` or `AGENTS.md`. In case of a discrepancy between the repository core and a standard, the standard prevails - the core deliberately keeps only hard bans applicable without context, while justifications, exceptions and edge cases live here. Above everything stands the product specification named in `CLAUDE.md`, section What we are building: in case of a discrepancy between a standard and the specification, the specification prevails.
 
-## Standardy
+## Standards
 
-Zbiór dzieli się na dwie grupy:
+The set is divided into two groups:
 
-- Rdzeń workflow - sześć standardów opisujących pracę z agentami, dokumentację, formatowanie, review i gita. Obowiązują w każdym projekcie założonym z szablonu.
-- Profil Pythona - dwanaście standardów serwisu w Pythonie z bazą PostgreSQL, migracjami Alembica i osobnym procesem worker. Projekt, który nie jest takim serwisem, usuwa ich pliki, ich wiersze z tej mapy i z mapy w `standard_review.md`, a odwołania do nich w rdzeniu zastępuje własnymi standardami albo usuwa.
+- Workflow core - six standards describing work with agents, documentation, formatting, review and git. They apply in every project created from the template.
+- Python profile - twelve standards for a Python service with a PostgreSQL database, Alembic migrations and a separate worker process. A project that is not such a service removes their files, their rows from this map and from the map in `standard_review.md`, and replaces references to them in the core with its own standards or removes them. In this project the decision is deferred until the technology stack is chosen - entry in `decision_registry.md`. Until then the profile stays in the repository unchanged.
 
-Znaczenie statusów: gotowy - dokument ma pełną treść reguł. częściowy - dokument ma treść, ale co najmniej jedna jego reguła czeka na decyzję albo pomiar; powód jest w samym standardzie. szkielet - dokument ma tylko sekcje rdzeniowe z jednozdaniowymi opisami tego, co ma tu powstać.
+Meaning of the statuses: ready - the document has the full content of its rules. partial - the document has content, but at least one of its rules is waiting for a decision or a measurement; the reason is in the standard itself. skeleton - the document has only the core sections with one-sentence descriptions of what is to be written there.
 
-| Plik                           | Grupa          | Status | Za co odpowiada                                                                      |
-| ------------------------------ | -------------- | ------ | ------------------------------------------------------------------------------------ |
-| `standard_agentic_workflow.md` | rdzeń          | gotowy | łańcuch seed -> plan -> review, hooki, subagenci, parytet Claude Code i Codeksa      |
-| `standard_agent_docs.md`       | rdzeń          | gotowy | format SEED, SHAPE, PRD, PLAN, REVIEW i wpisów `agent_docs/memory`                   |
-| `standard_review.md`           | rdzeń          | gotowy | proces review, mapa standard - narzędzie, Definition of Done                         |
-| `standard_documentation.md`    | rdzeń          | gotowy | dokumentacja jednostek kodu i ton prozy                                              |
-| `standard_formatting.md`       | rdzeń          | gotowy | formatowanie kodu i markdownu, znaki zakazane, zakaz pogrubień w prozie              |
-| `standard_git.md`              | rdzeń          | gotowy | uprawnienia agenta wobec gita, role gałęzi, kierunki scalania                        |
-| `standard_architecture.md`     | profil Pythona | gotowy | granica warstw, jedno miejsce dla reguł przekrojowych, wywołania zewnętrzne          |
-| `standard_config.md`           | profil Pythona | gotowy | trzy warstwy konfiguracji, pliki środowiska, walidacja, sekrety                      |
-| `standard_database.md`         | profil Pythona | gotowy | forma zmian schematu, prywatność bazy, dostęp do danych, zapytania                   |
-| `standard_errors.md`           | profil Pythona | gotowy | obsługa błędów, ponowienia, limity czasu                                             |
-| `standard_idempotency.md`      | profil Pythona | gotowy | klucz idempotencji, uzgadnianie, deduplikacja                                        |
-| `standard_code_quality.md`     | profil Pythona | gotowy | statyczna analiza, złożoność, komentarze, wydajność                                  |
-| `standard_logging.md`          | profil Pythona | gotowy | format wpisu logu, poziomy, dane osobowe w logu                                      |
-| `standard_naming.md`           | profil Pythona | gotowy | nazwy plików, funkcji i stałych                                                      |
-| `standard_security.md`         | profil Pythona | gotowy | statyczna analiza bezpieczeństwa, podatności zależności, dane na środowisku lokalnym |
-| `standard_tests.md`            | profil Pythona | gotowy | warstwy testów, testy krytyczne, testy obowiązkowe                                   |
-| `standard_time.md`             | profil Pythona | gotowy | model czasu, strefy, okna czasowe w danych                                           |
-| `standard_worker.md`           | profil Pythona | gotowy | proces worker, kontrakt zadania okresowego, blokady                                  |
+| File                           | Group          | Status | Responsible for                                                                  |
+| ------------------------------ | -------------- | ------ | -------------------------------------------------------------------------------- |
+| `standard_agentic_workflow.md` | core           | ready  | the seed -> plan -> review chain, hooks, subagents, Claude Code and Codex parity |
+| `standard_agent_docs.md`       | core           | ready  | the format of SEED, SHAPE, PRD, PLAN, REVIEW and `agent_docs/memory` entries     |
+| `standard_review.md`           | core           | ready  | the review process, the standard - tool map, Definition of Done                  |
+| `standard_documentation.md`    | core           | ready  | documentation of code units and the tone of prose                                |
+| `standard_formatting.md`       | core           | ready  | code and markdown formatting, forbidden characters, no bold in prose             |
+| `standard_git.md`              | core           | ready  | agent permissions for git, branch roles, merge directions                        |
+| `standard_architecture.md`     | Python profile | ready  | layer boundary, one place for cross-cutting rules, external calls                |
+| `standard_config.md`           | Python profile | ready  | three configuration layers, environment files, validation, secrets               |
+| `standard_database.md`         | Python profile | ready  | form of schema changes, database privacy, data access, queries                   |
+| `standard_errors.md`           | Python profile | ready  | error handling, retries, timeouts                                                |
+| `standard_idempotency.md`      | Python profile | ready  | idempotency key, reconciliation, deduplication                                   |
+| `standard_code_quality.md`     | Python profile | ready  | static analysis, complexity, comments, performance                               |
+| `standard_logging.md`          | Python profile | ready  | log entry format, levels, personal data in logs                                  |
+| `standard_naming.md`           | Python profile | ready  | names of files, functions and constants                                          |
+| `standard_security.md`         | Python profile | ready  | static security analysis, dependency vulnerabilities, data in local environments |
+| `standard_tests.md`            | Python profile | ready  | test layers, critical tests, mandatory tests                                     |
+| `standard_time.md`             | Python profile | ready  | time model, time zones, time windows in data                                     |
+| `standard_worker.md`           | Python profile | ready  | the worker process, the periodic task contract, locks                            |
 
-Granice między standardami opisuje sekcja Zakres i granice w każdym z nich.
+The boundaries between the standards are described in the Scope and boundaries section of each of them.
 
-## Rejestry obok standardów
+## Registries next to the standards
 
-Dwa pliki w tym katalogu nie są standardami i nie mają sekcji rdzeniowych:
+Two files in this directory are not standards and have no core sections:
 
-- `naming_registry.md` - rozwijalny rejestr nazw faktycznie używanych w repozytorium, opisujący stan faktyczny, nie docelowy. `standard_naming.md` odsyła do niego wprost. W szablonie jest pusty.
-- `decision_registry.md` - decyzje świadomie odłożone, z powodem odroczenia i warunkiem rozstrzygnięcia. Patrzy w przyszłość, w odróżnieniu od sekcji granic i długów na końcu tego pliku, która patrzy w przeszłość. W szablonie jest pusty.
+- `naming_registry.md` - an expandable registry of names actually used in the repository, describing the actual state, not the target one. `standard_naming.md` refers to it directly. It is empty for now.
+- `decision_registry.md` - decisions deliberately postponed, with the reason for the deferral and the condition for resolving them. It looks to the future, unlike the section on boundaries and debts at the end of this file, which looks to the past.
 
-## Reguła odstępstwa
+## Project documents outside the standards
 
-Wspólna dla wszystkich standardów, w wersji zaostrzonej wobec repozytorium bez zastanego kodu:
+The project adds its own directories next to `docs/standards/`, each with its provenance:
 
-Standard opisuje stan docelowy i obowiązuje w pełni od pierwszego commita. Projekt założony z szablonu nie ma kodu zastanego, więc nie ma czego chronić okresem przejściowym - kod niezgodny ze standardem blokuje review niezależnie od tego, kto go pisał i kiedy.
+- `docs/product/` - the product specification, `docs/product/specification.md`, written by the team. It is the source of truth for the product, named in `CLAUDE.md`, section What we are building. On 2026-10-03 it is still being written and the file does not exist yet - entry in `decision_registry.md`.
+- `docs/hackathon/` - `challenge_requirements.md`, a working summary of the rules and task descriptions of the two HackYeah 2026 challenges the project is submitted to, written on 2026-10-03 from the organizers' PDFs. The PDFs remain the authority and are not stored in the repository.
+- `AI_WORKFLOW.md` in the repository root - the description of how AI tools are used here, required by the Huawei challenge.
 
-Gdy repozytorium będzie mieć kod zastany - na przykład po pierwszym wydaniu na produkcję - rozluźnienie tej reguły do wersji miękkiej ma być jawną decyzją zapisaną w tym pliku wraz z datą i powodem. W wersji miękkiej niezgodny kod nie blokuje review, dopóki nikt go nie modyfikuje, a obowiązek dostosowania powstaje w module dotkniętym zmianą, czyli w jednostce kodu ze `standard_documentation.md`, w której zmiana modyfikuje choć jeden plik. Wersja miękka nie jest stanem, który wchodzi w życie sam.
+## Deviation rule
 
-Każdy standard powtarza tę regułę w swojej sekcji `Reguła odstępstwa`, z ewentualnym zawężeniem właściwym dla tematu. Wyjątek: `naming_registry.md` opisuje stan faktyczny z definicji, więc reguła stosuje się do niego inaczej - zapisane wprost w samym rejestrze.
+Common to all standards, in the strict version for a repository without legacy code:
 
-## Co otworzyć przed zadaniem
+A standard describes the target state and applies in full from the first commit. A project created from the template has no legacy code, so there is nothing to protect with a transition period - code that does not comply with a standard blocks review regardless of who wrote it and when.
 
-| Typ zadania                                                    | Dokumenty do otwarcia przed pracą                                                                     |
-| -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Cokolwiek dotyczące zachowania produktu                        | specyfikacja produktu wskazana w `CLAUDE.md` - to jest źródło prawdy, nie punkt odniesienia           |
-| Nowe zadanie o nieustalonym kształcie                          | `agent_docs/ai_workflows/shape_prd_workflow.md` i skill `plan-shape`, zanim powstanie jakikolwiek kod |
-| Zamknięcie, anulowanie albo wznowienie inicjatywy w `plans/`   | `standard_agentic_workflow.md` rozdz. 4.6                                                             |
-| Ocena gotowości zmiany do mergu                                | skill `implementation-dod-review` oraz `standard_review.md` z pozostałymi standardami z mapy          |
-| Praca nad czymś, co ktoś już wcześniej zmieniał                | `agent_docs/memory/`, jeśli istnieje wpis                                                             |
-| Cokolwiek dotyczące gita, gałęzi albo Merge Requesta           | `standard_git.md`                                                                                     |
-| Pisanie albo aktualizacja dokumentacji kodu                    | `standard_documentation.md`                                                                           |
-| Formatowanie kodu i markdownu                                  | `standard_formatting.md`                                                                              |
-| Nowa jednostka kodu albo zmiana struktury istniejącej          | `standard_architecture.md` oraz `standard_naming.md`, sekcja o nazwach plików                         |
-| Jakość kodu, komentarze, złożoność, wydajność                  | `standard_code_quality.md`                                                                            |
-| Bezpieczeństwo kodu, statyczna analiza, podatności zależności  | `standard_security.md`                                                                                |
-| Testy                                                          | `standard_tests.md`                                                                                   |
-| Nazewnictwo plików i funkcji                                   | `standard_naming.md` oraz `naming_registry.md`                                                        |
-| Konfiguracja i sekrety                                         | `standard_config.md`                                                                                  |
-| Logowanie                                                      | `standard_logging.md`                                                                                 |
-| Obsługa błędów, ponowienia, limity czasu                       | `standard_errors.md`                                                                                  |
-| Idempotencja, uzgadnianie, deduplikacja                        | `standard_idempotency.md`                                                                             |
-| Czas, strefy czasowe, okna czasowe w danych                    | `standard_time.md`                                                                                    |
-| Cokolwiek dotyka tabeli, kolumny, widoku albo schematu         | `standard_database.md`, zrzut schematu dla stanu faktycznego, specyfikacja produktu dla docelowego    |
-| Zadanie okresowe workera, blokada, okno czasowe, częstotliwość | `standard_worker.md`                                                                                  |
-| Uprawnienia, widoczność odczytu                                | `standard_architecture.md`, sekcja o jednym miejscu dla reguł przekrojowych                           |
+When the repository has legacy code - for example after the first production release - relaxing this rule to the soft version is to be an explicit decision recorded in this file together with the date and the reason. In the soft version non-compliant code does not block review as long as nobody modifies it, and the obligation to adapt arises in the module touched by the change, that is, in the code unit from `standard_documentation.md` in which the change modifies at least one file. The soft version is not a state that comes into force by itself.
 
-Projekt dopisuje do tej tabeli własne dokumenty, na przykład wiedzę operacyjną o środowisku albo zrzut schematu bazy, razem z ich proweniencją.
+Each standard repeats this rule in its `Deviation rule` section, possibly narrowed in a way specific to its topic. Exception: `naming_registry.md` describes the actual state by definition, so the rule applies to it differently - this is written directly in the registry itself.
 
-Jeśli po przeczytaniu wskazanych dokumentów kontrakt nadal nie jest jednoznaczny, to pytanie do użytkownika, nie miejsce na fallback - patrz hierarchia rozstrzygania konfliktów w `CLAUDE.md` i `AGENTS.md`. Sprawdź przy tym `decision_registry.md`: brak reguły może być zapisanym odroczeniem, nie luką.
+## What to open before a task
 
-## Granice nierozstrzygnięte i długi
+| Task type                                                                  | Documents to open before the work                                                                      |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Anything about product behavior                                            | the product specification named in `CLAUDE.md` - it is the source of truth, not a reference point      |
+| Scope, deliverables, deadlines, judging or the rules of the challenges     | `docs/hackathon/challenge_requirements.md`                                                             |
+| A new task of undetermined shape                                           | `agent_docs/ai_workflows/shape_prd_workflow.md` and the `plan-shape` skill, before any code is written |
+| Closing, cancelling or resuming an initiative in `plans/`                  | `standard_agentic_workflow.md` ch. 4.6                                                                 |
+| Assessing whether a change is ready to merge                               | the `implementation-dod-review` skill and `standard_review.md` with the other standards from the map   |
+| Work on something that somebody has already changed before                 | `agent_docs/memory/`, if an entry exists                                                               |
+| Anything about git, branches or a Merge Request                            | `standard_git.md`                                                                                      |
+| Using AI tools in a new way, or changing a skill, hook, agent role or rule | `AI_WORKFLOW.md` - the Huawei challenge requires it to stay current                                    |
+| Writing or updating code documentation                                     | `standard_documentation.md`                                                                            |
+| Code and markdown formatting                                               | `standard_formatting.md`                                                                               |
+| A new code unit or a change to the structure of an existing one            | `standard_architecture.md` and `standard_naming.md`, section File names                                |
+| Code quality, comments, complexity, performance                            | `standard_code_quality.md`                                                                             |
+| Code security, static analysis, dependency vulnerabilities                 | `standard_security.md`                                                                                 |
+| Tests                                                                      | `standard_tests.md`                                                                                    |
+| Naming of files and functions                                              | `standard_naming.md` and `naming_registry.md`                                                          |
+| Configuration and secrets                                                  | `standard_config.md`                                                                                   |
+| Logging                                                                    | `standard_logging.md`                                                                                  |
+| Error handling, retries, timeouts                                          | `standard_errors.md`                                                                                   |
+| Idempotency, reconciliation, deduplication                                 | `standard_idempotency.md`                                                                              |
+| Time, time zones, time windows in data                                     | `standard_time.md`                                                                                     |
+| Anything that touches a table, column, view or schema                      | `standard_database.md`, the schema dump for the actual state, the product specification for the target |
+| A periodic worker task, a lock, a time window, a frequency                 | `standard_worker.md`                                                                                   |
+| Permissions, read visibility                                               | `standard_architecture.md`, section One place for cross-cutting rules                                  |
 
-Ta sekcja jest dziennikiem decyzji już podjętych i długu już zastanego. Rośnie o wpis za każdym razem, gdy inicjatywa zostawia po sobie świadomie nienaprawione znalezisko - artefakt `REVIEW.md` danej inicjatywy notuje je w skali jednego zadania, a tutaj trafia to, co ten zakres przekracza.
+The project adds its own documents to this table, for example operational knowledge about the environment or a database schema dump, together with their provenance.
 
-Długi, z którymi szablon startuje:
+If after reading the indicated documents the contract is still not unambiguous, it is a question for the user, not a place for a fallback - see the hierarchy for resolving conflicts in `CLAUDE.md` and `AGENTS.md`. Check `decision_registry.md` at the same time: a missing rule may be a recorded deferral, not a gap.
 
-- Zbiór nie ma standardu opisującego wewnętrzną architekturę jednej warstwy, czyli podział odpowiedzialności między pliki w jej katalogu. Reguła podziału napisana przed powstaniem kodu byłaby zgadywaniem. Warunek powstania: warstwa ma tyle plików, że ich podział zaczyna budzić pytania przy review.
-- `standard_documentation.md` nie ma sekcji Zakres i granice ani checklisty.
-- Bramki profilu Pythona, które sprawdzają kod (granice warstw, kontrakt środowiska, spójność rejestru zadań okresowych), nie są częścią szablonu, bo szablon nie ma kodu. Projekt zakłada je razem z pierwszym kodem danej warstwy.
+## Unresolved boundaries and debts
+
+This section is a log of decisions already made and debt already present. It grows by an entry every time an initiative leaves behind a finding deliberately left unfixed - the `REVIEW.md` artifact of a given initiative records them at the scale of one task, and what goes beyond that scope ends up here.
+
+Debts the template starts with:
+
+- The set has no standard describing the internal architecture of a single layer, that is, the split of responsibilities between files in its directory. A split rule written before the code exists would be guessing. Condition for writing it: a layer has so many files that their split starts raising questions in review.
+- `standard_documentation.md` has no Scope and boundaries section and no checklist.
+- The Python profile gates that check code (layer boundaries, environment contract, consistency of the periodic task registry) are not part of the template, because the template has no code. The project sets them up together with the first code of a given layer.
+
+Decisions recorded on 2026-10-03, when the project was set up from the template:
+
+- The whole repository is written in English, including the standards, skills and architecture tests translated from the Polish template; the conversation with the user stays in Polish. Reason: the Huawei challenge requires English project documentation. The rule lives in `CLAUDE.md` and `AGENTS.md`, section Language and communication style.
+- The ten blocking risk categories of the template (`standard_agentic_workflow.md` ch. 3.3) are kept unchanged, although they were chosen for a service with a database and an API. A decision of the user, not a gap.

@@ -1,93 +1,93 @@
 # Workflow: seed -> shape -> PRD -> plan
 
-Ten dokument opisuje metodologię łańcucha realizowanego przez skille `plan-shape`, `plan-prd` i `plan-implement`. Używaj go razem z `AGENTS.md` / `CLAUDE.md` - nie zastępuje reguł repozytorium, tylko je uzupełnia o proces prowadzący od surowego zgłoszenia do zaimplementowanej zmiany.
+This document describes the methodology of the chain carried out by the `plan-shape`, `plan-prd` and `plan-implement` skills. Use it together with `AGENTS.md` / `CLAUDE.md` - it does not replace the repository rules, it only supplements them with the process that leads from a raw request to an implemented change.
 
-Wzorzec ma dziesięć kategorii ryzyka blokującego dobranych dla serwisu z bazą danych i interfejsem programistycznym, odbiorcę zmiany zamiast persony i seed jako osobny, niemodyfikowalny artefakt zamiast sekcji wewnątrz notatek. Projekt o innym profilu ryzyka zmienia listę kategorii jednocześnie w trzech miejscach: tutaj, w skillu `plan-shape` i w `docs/standards/standard_agentic_workflow.md` rozdz. 3.3.
+The pattern has ten blocking risk categories chosen for a service with a database and a programming interface, the recipient of the change instead of a persona, and the seed as a separate, immutable artifact instead of a section inside the notes. A project with a different risk profile changes the list of categories simultaneously in three places: here, in the `plan-shape` skill and in `docs/standards/standard_agentic_workflow.md` ch. 3.3.
 
-## Sekwencja
+## Sequence
 
 ```
-plan-shape   <opis zadania albo wskazanie na gotowy plik seeda>
-plan-prd     <ZADANIE>_SHAPE.md
-plan-implement  <ZADANIE>_PLAN.md
+plan-shape   <task description or a pointer to a ready seed file>
+plan-prd     <TASK>_SHAPE.md
+plan-implement  <TASK>_PLAN.md
 ```
 
-Każde wywołanie jest ręczne. Skill kończy pracę, mówi wprost co powstało i co można zawołać dalej, ale nie uruchamia następnego skilla sam - każda granica faz jest punktem kontrolnym, w którym można zobaczyć wynik i zawrócić.
+Every call is manual. A skill finishes its work, says plainly what was produced and what can be called next, but does not start the next skill on its own - every phase boundary is a checkpoint at which you can see the result and turn back.
 
-## Artefakty
+## Artifacts
 
-Jeden generyczny łańcuch skilli obsługuje dowolne zadanie poprzez parametr - prefiks nazwy zadania i nazwę inicjatywy (katalog w `plans/`). Nie tworzymy osobnego skilla per zadanie.
+One generic chain of skills handles any task through a parameter - the task name prefix and the initiative name (a directory in `plans/`). We do not create a separate skill per task.
 
-Pięć plików, każdy z jednym dozwolonym rodzajem treści - pełne szablony sekcji są wpisane bezpośrednio w skille `plan-shape` i `plan-prd`. Domyślnie płasko w `plans/<INICJATYWA>/`; gdy inicjatywa niesie więcej niż jedno zadanie, dopuszczalny jest podkatalog per zadanie, `plans/<INICJATYWA>/<ZADANIE>/` - szczegóły i przykład w `docs/standards/standard_agentic_workflow.md`, sekcja 3.2:
+Five files, each with one allowed kind of content - the full section templates are written directly into the `plan-shape` and `plan-prd` skills. By default flat in `plans/<INITIATIVE>/`; when an initiative carries more than one task, a subdirectory per task is allowed, `plans/<INITIATIVE>/<TASK>/` - details and an example in `docs/standards/standard_agentic_workflow.md`, section 3.2:
 
-- `<ZADANIE>_SEED.md` - surowe zgłoszenie, niemodyfikowalne po zapisaniu.
-- `<ZADANIE>_SHAPE.md` - luźny plan z wywiadem doprecyzowującym.
-- `<ZADANIE>_PRD.md` - co ma się stać i dlaczego.
-- `<ZADANIE>_PLAN.md` - jak to zrobić technicznie.
-- `<ZADANIE>_REVIEW.md` - stan i przebieg zadania, nie trwała pamięć.
+- `<TASK>_SEED.md` - the raw request, immutable once saved.
+- `<TASK>_SHAPE.md` - a loose plan with the clarifying interview.
+- `<TASK>_PRD.md` - what is to happen and why.
+- `<TASK>_PLAN.md` - how to do it technically.
+- `<TASK>_REVIEW.md` - the state and run of the task, not durable memory.
 
-## Archiwizacja i wznowienie
+## Archiving and resumption
 
-`plans/` trzyma wyłącznie inicjatywy w toku. Inicjatywa jawnie zakończona albo jawnie anulowana przechodzi w całości, pod tą samą nazwą i z podkatalogami zadań, do `plans_finished/<INICJATYWA>/`. Dowodem jest końcowy werdykt `ready` obejmujący cały zakres inicjatywy albo inne jawne zamknięcie zapisane w jej review - komplet plików, zamknięty wywiad, zamknięty plan, rozliczenie jednego zadania z kilku, werdykt dla części prac ani wiek katalogu nim nie są. Przy jednoznacznym dowodzie agent przenosi katalog sam (w łańcuchu robi to `plan-implement` po powrocie z review); przy sprzecznym albo niejednoznacznym stanie pyta użytkownika i zostawia katalog na miejscu. Przeniesienie nie zmienia seedów, dawnych wpisów review i memory ani zamrożonych materiałów - aktualizuje tylko edytowalne odwołania i pilnuje, żeby narzędzia czytające pliki inicjatywy dalej działały.
+`plans/` holds only initiatives in progress. An initiative that is explicitly finished or explicitly cancelled moves as a whole, under the same name and with its task subdirectories, to `plans_finished/<INITIATIVE>/`. The evidence is a final `ready` verdict covering the whole scope of the initiative or another explicit closure recorded in its review - a complete set of files, a closed interview, a closed plan, settling one task out of several, a verdict for part of the work or the age of the directory are not evidence. With unambiguous evidence the agent moves the directory on its own (in the chain this is done by `plan-implement` after returning from the review); with a contradictory or ambiguous state it asks the user and leaves the directory in place. The move does not change seeds, old review and memory entries or frozen materials - it updates only editable references and makes sure that the tools reading the files of the initiative keep working.
 
-Wznowienie tej samej pracy to powrót katalogu z `plans_finished/` do `plans/` z dopisanym do review wpisem o wznowieniu; sam odczyt archiwum niczego nie wznawia, a nowy zakres dostaje nową inicjatywę. Zanim założysz nowy katalog, sprawdź obie lokalizacje - nazwa obecna w archiwum oznacza wznowienie, nie drugi seed. Pełna reguła wraz z uzasadnieniami: `docs/standards/standard_agentic_workflow.md` rozdz. 4.6.
+Resuming the same work means returning the directory from `plans_finished/` to `plans/` with a resumption entry added to the review; merely reading the archive resumes nothing, and a new scope gets a new initiative. Before you create a new directory, check both locations - a name present in the archive means resumption, not a second seed. The full rule together with the rationale: `docs/standards/standard_agentic_workflow.md` ch. 4.6.
 
 ## Seed
 
-Zawsze zapisuj dosłowną treść zgłoszenia i jawne źródło pochodzenia: rozmowa z użytkownikiem, wklejony mail, notatka ze spotkania, opis z brancha, zgłoszenie od kogoś z zespołu. Użytkownik może stworzyć plik seeda sam, zamiast dyktować go w rozmowie - `plan-shape` nigdy nie nadpisuje istniejącego seeda, tylko go wczytuje.
+Always record the verbatim content of the request and the explicit source: conversation with the user, pasted email, meeting note, branch description, report from a team member. The user may create the seed file themselves instead of dictating it in the conversation - `plan-shape` never overwrites an existing seed, it only loads it.
 
-Jeśli seed jest zbyt ubogi, żeby cokolwiek z niego wynikało, zapisz go i tak dosłownie, a braki adresuj pytaniami w fazie shape. Seed nie jest miejscem na domysły agenta - to zapis tego, co faktycznie zostało powiedziane, nic więcej.
+If the seed is too thin for anything to follow from it, record it verbatim anyway, and address the gaps with questions in the shape phase. The seed is not a place for the agent's guesses - it is a record of what was actually said, nothing more.
 
-## Kategorie ryzyka blokującego
+## Blocking risk categories
 
-Pytanie w fazie shape dotykające jednej z tych kategorii musi być oznaczone `Block: yes` i wstrzymuje przejście do PRD, dopóki nie zostanie rozstrzygnięte:
+A question in the shape phase that touches one of these categories must be marked `Block: yes` and holds back the transition to the PRD until it is resolved:
 
-1. Kontrakt tokenu dostępowego i zakresów uprawnień - czy zawartość tokenu, sposób rozwiązania go na aktora i zakresy uprawnień są ustalone z wystawcą tokenu i z konsumentami interfejsu, a nie założone.
-2. Stabilność kontraktu interfejsu programistycznego - czy zmiana dotyka kształtu żądania, odpowiedzi, ścieżki albo semantyki pola, którego używa konsument spoza tego repozytorium.
-3. Schemat bazy - czy tabela, kolumna, widok albo typ istnieją. Weryfikacja: zrzut schematu dla stanu faktycznego, specyfikacja produktu dla docelowego.
-4. Forma zmiany schematu - blokada obowiązuje przy każdej zmianie schematu. Weryfikacja: czy zmiana idzie formą opisaną w `docs/standards/standard_database.md`, czyli rewizją Alembica z surowym SQL-em.
-5. Źródło prawdy dla danych - gdy ta sama informacja jest w kilku miejscach i nie wiadomo, które jest autorytatywne. Zawsze pytanie do użytkownika, nie do rozstrzygnięcia czytaniem kodu.
-6. Semantyka czasu i przesunięcia strefowego - czy zapis albo odczyt wartości czasu może zmienić jej przesunięcie.
-7. Idempotencja i deduplikacja - czy zmiana może dać podwójny zapis, zgubić rekord przy ponowieniu albo dotyka klucza uzgadniania.
-8. Widoczność odczytu i uprawnienia - czy zmiana dotyka tego, kto co może przeczytać albo zrobić.
-9. Dane osobowe - imiona i nazwiska, dane kontaktowe oraz każda informacja o działaniach albo ocenie konkretnej osoby. Dotyczy też logów i raportów.
-10. Wolumen i koszt zapytania - gdy nie da się oszacować liczby wierszy albo zmiana leży na ścieżce odczytu wykonywanego przy każdym wyświetleniu listy.
+1. Access token and permission scope contract - whether the token contents, the way it is resolved to an actor and the permission scopes are agreed with the token issuer and with the interface consumers, rather than assumed.
+2. Stability of the programming interface (API) contract - whether the change touches the shape of a request, a response, a path or the semantics of a field used by a consumer outside this repository.
+3. Database schema - whether the table, column, view or type exists. Verification: the schema dump for the actual state, the product specification for the target state.
+4. Form of a schema change - the block applies to every schema change. Verification: whether the change follows the form described in `docs/standards/standard_database.md`, that is, an Alembic revision with raw SQL.
+5. Source of truth for data - when the same information is in several places and it is not known which one is authoritative. Always a question to the user, not something to resolve by reading the code.
+6. Time semantics and zone offset - whether writing or reading a time value can change its offset.
+7. Idempotency and deduplication - whether the change can produce a double write or lose a record on retry, or whether it touches the reconciliation key.
+8. Read visibility and permissions - whether the change touches who can read or do what.
+9. Personal data - first and last names, contact data, and any information about the actions or the assessment of a specific person. This also applies to logs and reports.
+10. Query volume and cost - when the number of rows cannot be estimated or the change lies on the path of a read performed at every display of a list.
 
-## Regulator szczegółowości
+## Detail regulator
 
-Zgłoszenie może nieść parametr sterujący liczbą i głębokością pytań: liczbę od 0 do 100, zapisywaną wzorcowo jako `C:N`. Rozpoznawana jest każda forma etykiety, pod warunkiem że bezpośrednio po niej stoi liczba z tego zakresu - inaczej ścieżka dyskowa Windowsa byłaby czytana jako parametr. Dwa różne wystąpienia w jednym seedzie zatrzymują agenta na pytaniu o to, którą wartość przyjąć, zadanym przed pierwszym pytaniem wywiadu.
+A request may carry a parameter that controls the number and depth of questions: a number from 0 to 100, written in reference form as `C:N`. Any form of label is recognized, provided that it is directly followed by a number from that range - otherwise a Windows disk path would be read as the parameter. Two different occurrences in one seed stop the agent on a question about which value to adopt, asked before the first interview question.
 
-Wartość podaje się w seedzie, a obowiązuje z nagłówka `<ZADANIE>_SHAPE.md`, gdzie `plan-shape` wpisuje ją jako linię `Regulator: C:N`. Pozostałe skille czytają ją wyłącznie stamtąd. Brak parametru znaczy 40. Wartość wolno zmienić w trakcie zadania - wtedy nagłówek niesie nową, a dokument jedną linię o momencie zmiany.
+The value is given in the seed, and it applies from the header of `<TASK>_SHAPE.md`, where `plan-shape` writes it as the line `Regulator: C:N`. The other skills read it only from there. No parameter means 40. The value may be changed during the task - the header then carries the new value, and the document one line about the moment of the change.
 
-Pięć progów, każdy zawiera wszystko, co niższy:
+Five thresholds, each containing everything the lower one does:
 
-1. 0-19 - wyłącznie pytania blokujące, wszystko pozostałe rozstrzyga agent.
-2. 20-39 - dodatkowo wybory, których odwrócenie wymagałoby przepisania pracy już wykonanej.
-3. 40-59 - dodatkowo każdy wybór o odmiennych konsekwencjach dla zakresu albo dla zadań przyszłych. Poziom domyślny.
-4. 60-79 - dodatkowo to, co niżej byłoby wyprowadzone jako konsekwencja, oraz granice zakresu nienazwane wprost w zgłoszeniu.
-5. 80-100 - pytanie o każdą decyzję mającą więcej niż jeden rozsądny wariant.
+1. 0-19 - only blocking questions, the agent resolves everything else.
+2. 20-39 - additionally, choices whose reversal would require rewriting work already done.
+3. 40-59 - additionally, every choice with different consequences for the scope or for future tasks. The default level.
+4. 60-79 - additionally, what would be derived as a consequence at lower thresholds, and scope boundaries not named explicitly in the request.
+5. 80-100 - a question about every decision that has more than one reasonable variant.
 
-Blokady są nietykalne na całej skali: dziesięć kategorii wyżej i zakaz zgadywania kontraktu obowiązują tak samo przy 0, jak przy 100. Pytania techniczne padają wyłącznie w fazie B `plan-prd`, niezależnie od wartości.
+Blocks are untouchable across the whole scale: the ten categories above and the ban on guessing the contract apply the same way at 0 as at 100. Technical questions are asked only in phase B of `plan-prd`, regardless of the value.
 
-Przed każdym pytaniem agent sprawdza, czy odpowiedzi nie ma w repozytorium - obowiązek niezależny od regulatora, działający także przy 100. Pytanie o rzecz znalezioną pada tylko przy jednym z czterech sygnałów i mówi wprost, który to sygnał:
+Before every question the agent checks whether the answer is already in the repository - an obligation independent of the regulator, applying also at 100. A question about something that was found is asked only on one of four signals and states plainly which signal it is:
 
-1. Dwa źródła mówią co innego o tej samej rzeczy, w tym różnica między stanem faktycznym a docelowym.
-2. Temat objęty otwartym wpisem w `docs/standards/decision_registry.md` albo opisany w standardzie o statusie częściowym.
-3. Odpowiedź wyłącznie w artefakcie zamkniętego zadania w `plans/`, bez potwierdzenia w kodzie, standardzie albo specyfikacji produktu.
-4. Dokument nieaktualizowany po jawnie wskazanym zdarzeniu, które mogło go unieważnić. Wymaga konkretnego zdarzenia odniesienia, nie działa jako ogólny termin ważności.
+1. Two sources say different things about the same thing, including a difference between the actual and the target state.
+2. The topic is covered by an open entry in `docs/standards/decision_registry.md` or described in a standard with partial status.
+3. The answer is only in an artifact of a closed task in `plans/`, without confirmation in the code, a standard or the product specification.
+4. A document not updated after an explicitly identified event that may have invalidated it. Requires a specific reference event, does not work as a general expiry date.
 
-Pozycja rozstrzygnięta przez agenta zamiast zapytania niesie frazę "Decyzja agenta przy C:N, bez pytania".
+An item resolved by the agent instead of by asking carries the phrase "Agent decision at C:N, without asking".
 
-Pełna definicja mechanizmu: `docs/standards/standard_agentic_workflow.md` rozdz. 3.5.
+Full definition of the mechanism: `docs/standards/standard_agentic_workflow.md` ch. 3.5.
 
-## Czarna lista treści w PRD
+## PRD content blacklist
 
-PRD odpowiada na "co i dlaczego", nigdy na "jak". Zakazane: modele danych, listy kolumn, migracje, ścieżki plików kodu, nazwy funkcji, decyzje o bibliotekach, szczegóły deploymentu, sekrety i credentiale. Jeśli podczas pisania PRD pojawia się chęć zapisania rozwiązania technicznego, ten materiał należy do planu implementacji, nie do PRD.
+A PRD answers "what and why", never "how". Forbidden: data models, column lists, migrations, code file paths, function names, library decisions, deployment details, secrets and credentials. If while writing the PRD there is an urge to record a technical solution, that material belongs to the implementation plan, not to the PRD.
 
-## Podważenie własnych założeń
+## Challenging own assumptions
 
-Faza shape wymaga sekcji, w której agent zapisuje pytania, jakie zadał sam sobie o własne rozumienie problemu, wraz z tym, co z nich wyszło. Ta sekcja nie może być pusta - jeśli nic nie budzi wątpliwości, problem nie został jeszcze zrozumiany.
+The shape phase requires a section in which the agent records the questions it asked itself about its own understanding of the problem, together with what came out of them. This section must not be empty - if nothing raises doubts, the problem has not been understood yet.
 
-## Odbiorca zamiast persony
+## Recipient instead of a persona
 
-Zamiast pytać o personę i jej dostęp, faza shape pyta o odbiorcę zmiany i jej wyzwalacz: osobę w konkretnej roli, żądanie konsumenta interfejsu programistycznego, zadanie okresowe, inny system czytający wynik. Gdy projekt nie ma interfejsu użytkownika, odbiorcą jest system, a pytanie o personę nie ma odpowiedzi.
+Instead of asking about a persona and its access, the shape phase asks about the recipient of the change and its trigger: a person in a specific role, a request from a programming interface consumer, a periodic task, another system reading the result. When the project has no user interface, the recipient is a system, and the question about a persona has no answer.

@@ -12,7 +12,7 @@ HOOK_PATH = ROOT_DIR / ".claude" / "hooks" / "block_dangerous_commands.py"
 
 
 def _run_hook(command: str) -> subprocess.CompletedProcess[str]:
-    """Uruchamia hook tak, jak robi to Claude Code, z wejściem JSON podanym na stdin."""
+    """Runs the hook the way Claude Code does it, with the JSON input given on stdin."""
     payload = {
         "cwd": str(ROOT_DIR),
         "tool_name": "PowerShell",
@@ -22,7 +22,7 @@ def _run_hook(command: str) -> subprocess.CompletedProcess[str]:
 
 
 def _read_decision(result: subprocess.CompletedProcess[str]) -> str | None:
-    """Zwraca decyzję PreToolUse z odpowiedzi hooka albo brak decyzji dla dozwolonej komendy."""
+    """Returns the PreToolUse decision from the hook response, or no decision for an allowed command."""
     if not result.stdout.strip():
         return None
 
@@ -49,7 +49,7 @@ def _read_decision(result: subprocess.CompletedProcess[str]) -> str | None:
     ],
 )
 def test_hook_denies_commands_that_can_destroy_local_work(command: str) -> None:
-    """Pilnuje wariantów destrukcyjnych poleceń znalezionych przez audyt."""
+    """Guards the variants of destructive commands found by the audit."""
     result = _run_hook(command)
 
     assert result.returncode == 0
@@ -59,17 +59,17 @@ def test_hook_denies_commands_that_can_destroy_local_work(command: str) -> None:
 @pytest.mark.parametrize(
     "command",
     [
-        "git commit -m 'zmiana'",
+        "git commit -m 'change'",
         "git commit --amend --no-edit",
-        "git -C ../inne-repo commit -m 'zmiana'",
-        "git -c user.name=agent commit -m 'zmiana'",
+        "git -C ../other-repo commit -m 'change'",
+        "git -c user.name=agent commit -m 'change'",
         "git push",
         "git push origin main",
-        "git -C ../inne-repo push --force",
+        "git -C ../other-repo push --force",
     ],
 )
 def test_hook_denies_commands_that_create_or_publish_history(command: str) -> None:
-    """Pilnuje reguły z `CLAUDE.md`, że commit i wypchnięcie na zdalne repozytorium wykonuje człowiek."""
+    """Guards the rule from `CLAUDE.md` that a human creates commits and pushes to the remote repository."""
     result = _run_hook(command)
 
     assert result.returncode == 0
@@ -92,7 +92,7 @@ def test_hook_denies_commands_that_create_or_publish_history(command: str) -> No
     ],
 )
 def test_hook_denies_commands_that_print_secret_file_contents(command: str) -> None:
-    """Pilnuje, że zawartość pliku zmiennych środowiskowych nie trafia na wyjście polecenia."""
+    """Ensures that the contents of an environment variables file do not reach the command output."""
     result = _run_hook(command)
 
     assert result.returncode == 0
@@ -111,10 +111,10 @@ def test_hook_denies_commands_that_print_secret_file_contents(command: str) -> N
 )
 def test_hook_denies_tree_search_without_secret_exclusion(command: str) -> None:
     """
-    Pilnuje, że przeszukanie korzenia drzewa bez wykluczenia sekretów jest zatrzymane przed uruchomieniem.
+    Ensures that searching the tree root without excluding secrets is stopped before it runs.
 
-    Znana granica reguły: rozpoznawana jest flaga rekursji w zapisie z myślnikiem, więc windowsowe
-    `findstr /s` przechodzi.
+    A known boundary of the rule: the recursion flag is recognized in the hyphen notation, so the Windows
+    `findstr /s` passes.
     """
     result = _run_hook(command)
 
@@ -134,7 +134,7 @@ def test_hook_denies_tree_search_without_secret_exclusion(command: str) -> None:
     ],
 )
 def test_hook_leaves_commands_that_cannot_leak_secrets(command: str) -> None:
-    """Pilnuje, że ochrona sekretów nie blokuje stawiania środowiska ani zawężonego wyszukiwania."""
+    """Ensures that the secrets protection does not block setting up the environment or a narrowed search."""
     result = _run_hook(command)
 
     assert result.returncode == 0
@@ -148,7 +148,7 @@ def test_hook_leaves_commands_that_cannot_leak_secrets(command: str) -> None:
         "git restore --staged README.md",
         "git checkout feature/docs",
         "find . -name '*.py' -print",
-        "Write-Output 'gotowe'",
+        "Write-Output 'done'",
         "git status --short",
         "git log --oneline --grep commit",
         "git fetch origin",
@@ -157,16 +157,16 @@ def test_hook_leaves_commands_that_cannot_leak_secrets(command: str) -> None:
     ],
 )
 def test_hook_leaves_non_destructive_commands_to_normal_permissions(command: str) -> None:
-    """Pilnuje, że blokada nie zastępuje zwykłego systemu uprawnień dla bezpiecznych poleceń."""
+    """Ensures that the block does not replace the regular permission system for safe commands."""
     result = _run_hook(command)
 
     assert result.returncode == 0
     assert _read_decision(result) is None
 
 
-@pytest.mark.parametrize("invalid_payload", ["", "[]", "nie-json"])
+@pytest.mark.parametrize("invalid_payload", ["", "[]", "not-json"])
 def test_hook_fails_closed_without_exiting_with_error(invalid_payload: str) -> None:
-    """Pilnuje, że awaria wejścia blokuje komendę poprawną decyzją zamiast wyłączać hook kodem 1."""
+    """Ensures that an input failure blocks the command with a valid decision instead of disabling the hook with exit code 1."""
     result = subprocess.run([sys.executable, str(HOOK_PATH)], input=invalid_payload, text=True, capture_output=True, timeout=5, check=False)
 
     assert result.returncode == 0
@@ -175,7 +175,7 @@ def test_hook_fails_closed_without_exiting_with_error(invalid_payload: str) -> N
 
 
 def test_hook_configuration_uses_exec_form_for_python_script() -> None:
-    """Pilnuje zarejestrowania hooka jako programu Python z osobnym argumentem ścieżki."""
+    """Ensures that the hook is registered as a Python program with a separate path argument."""
     settings = json.loads((ROOT_DIR / ".claude" / "settings.json").read_text(encoding="utf-8"))
     handler = settings["hooks"]["PreToolUse"][0]["hooks"][0]
 

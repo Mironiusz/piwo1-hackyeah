@@ -1,15 +1,15 @@
 """
-Pilnuje reguł ze `standard_agent_docs.md`, sekcja Format PLAN, których nie sprawdza żadne inne
-narzędzie w repozytorium: formatu pozycji w sekcji Fakty oraz pustej sekcji Otwarte pytania.
+Enforces the rules from `standard_agent_docs.md`, section PLAN format, that no other tool in the
+repository checks: the format of the items in the Facts section and the empty Open questions section.
 
-Zasięg kontroli jest wąski celowo. Obejmuje wyłącznie plany oznaczone markerem "plan zamknięty"
-i nie starsze niż data wejścia reguły w życie. Plan w toku zostaje poza nią, żeby dokument pisany
-na raty nie blokował niezwiązanej pracy na tym samym drzewie, a plan sprzed daty progowej zostaje
-poza nią, bo retrofit wymagałby wpisania dat sprawdzenia, których dziś nikt nie zna - czyli złamania
-reguły, którą ta kontrola wprowadza.
+The scope of the check is narrow on purpose. It covers only plans marked with the "plan closed" marker
+and not older than the date the rule took effect. A plan in progress stays outside it, so that a document
+written in installments does not block unrelated work on the same tree, and a plan from before the threshold
+date stays outside it, because a retrofit would require writing in check dates nobody knows today - that is,
+breaking the very rule this check introduces.
 
-Granica jest jedna i warto ją nazwać przy samym kodzie: sprawdzana jest forma dowodu, nigdy jego
-prawdziwość. Ustalenie zmyślone i zapisane w poprawnej formie przejdzie tę bramkę.
+There is one boundary and it is worth naming right next to the code: the form of the evidence is checked,
+never its truthfulness. A made-up finding written in the correct form will pass this gate.
 """
 
 from __future__ import annotations
@@ -26,33 +26,33 @@ ROOT_DIR = Path(__file__).resolve().parents[2]
 
 PLAN_GLOB_PATTERNS: tuple[str, ...] = ("plans/**/PLAN.md", "plans/**/*_PLAN.md", "plans_finished/**/PLAN.md", "plans_finished/**/*_PLAN.md")
 """
-Cztery wzorce: dwie postacie nazwy w dwóch lokalizacjach. Repozytorium stosuje nazwę bez prefiksu
-zadania, a standard i skille opisują wzorzec z prefiksem - kontrola przyjmująca tylko jedną z tych
-form przestałaby widzieć dokumenty przy pierwszym artefakcie nazwanym drugą. Drugą lokalizacją jest
-archiwum `plans_finished/` ze `standard_agentic_workflow.md`, rozdz. 4.6: plan zamknięty przenosi
-się tam razem z całą inicjatywą i ma podlegać tej samej kontroli co przed przeniesieniem, inaczej
-archiwizacja byłaby drogą obejścia bramki. Podwójna gwiazdka obejmuje podkatalogi zadań dopuszczone
-w rozdz. 3.2 tego samego standardu, których wzorzec z jednym poziomem nie widział.
+Four patterns: two forms of the name in two locations. The repository uses the name without the task
+prefix, while the standard and the skills describe the pattern with the prefix - a check accepting only one
+of these forms would stop seeing documents at the first artifact named with the other. The second location
+is the `plans_finished/` archive from `standard_agentic_workflow.md`, ch. 4.6: a closed plan moves there
+together with the whole initiative and is to be subject to the same check as before the move, otherwise
+archiving would be a way around the gate. The double asterisk covers the task subdirectories allowed
+in ch. 3.2 of the same standard, which a one-level pattern did not see.
 """
 
 RULE_EFFECTIVE_DATE = date(2026, 8, 17)
 """
-Data wejścia reguły w życie, opisana w `standard_agent_docs.md`, sekcja Egzekwowanie. Projekt
-założony z szablonu powstaje po tej dacie, więc kontrola obejmuje każdy jego plan zamknięty.
-Stała, nie odczyt zegara systemowego: próg ruchomy zmieniałby zakres
-kontroli z dnia na dzień, bez żadnej zmiany w repozytorium.
+The date the rule took effect, described in `standard_agent_docs.md`, section Enforcement. A project
+created from the template comes into existence after this date, so the check covers every closed plan of it.
+A constant, not a read of the system clock: a moving threshold would change the scope
+of the check from day to day, without any change in the repository.
 """
 
-CLOSED_STATE_MARKER = "plan zamknięty"
-IN_PROGRESS_STATE_MARKER = "plan w toku"
+CLOSED_STATE_MARKER = "plan closed"
+IN_PROGRESS_STATE_MARKER = "plan in progress"
 
-EVIDENCE_PREFIXES: tuple[str, ...] = ("kod:", "cmd:", "db:", "dok:")
-ASSUMPTION_MARKER = "ZAŁOŻENIE:"
+EVIDENCE_PREFIXES: tuple[str, ...] = ("code:", "cmd:", "db:", "doc:")
+ASSUMPTION_MARKER = "ASSUMPTION:"
 
-FACTS_HEADING = "## Fakty"
-OPEN_QUESTIONS_HEADING = "## Otwarte pytania"
+FACTS_HEADING = "## Facts"
+OPEN_QUESTIONS_HEADING = "## Open questions"
 
-NO_OPEN_QUESTIONS_PREFIX = "Brak"
+NO_OPEN_QUESTIONS_PREFIX = "None"
 
 FIELD_SEPARATOR = "|"
 EVIDENCE_SEPARATOR = ";"
@@ -60,21 +60,21 @@ INLINE_CODE_MARKER = "`"
 EXPECTED_FIELD_COUNT = 3
 
 FACT_LINE_PATTERN = re.compile(r"^(F-\d+)\.\s+(\S.*)$")
-STATE_LINE_PATTERN = re.compile(r"^Stan dokumentu:\s*(\d{4}-\d{2}-\d{2})\s*(?:,\s*(.+?))?\s*$")
+STATE_LINE_PATTERN = re.compile(r"^Document state:\s*(\d{4}-\d{2}-\d{2})\s*(?:,\s*(.+?))?\s*$")
 CHECKED_DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 SECTION_HEADING_PATTERN = re.compile(r"^##\s")
 LIST_ITEM_PATTERN = re.compile(r"^\s*(?:[-*+]|\d+\.)\s")
 
-UNKNOWN_IDENTIFIER = "bez identyfikatora"
+UNKNOWN_IDENTIFIER = "no identifier"
 
 
 @dataclass(frozen=True)
 class PlanDocumentState:
     """
-    Stan dokumentu planu odczytany z linii nagłówka: data oraz marker, jeśli linia go niesie.
+    The state of a plan document read from the header line: the date and the marker, if the line carries one.
 
-    Brak markera nie jest tu naruszeniem - dokument bez niego po prostu zostaje poza zasięgiem
-    kontroli, tak jak dokument oznaczony jako plan w toku.
+    A missing marker is not a violation here - a document without it simply stays outside the scope
+    of the check, just like a document marked as a plan in progress.
     """
 
     state_date: date | None
@@ -83,8 +83,8 @@ class PlanDocumentState:
     @property
     def is_under_gate(self) -> bool:
         """
-        Mówi, czy dokument podlega kontroli. Rozstrzyga marker, a data dopiero w drugiej
-        kolejności - plan w toku zostaje poza kontrolą niezależnie od tego, jak jest świeży.
+        Says whether the document is subject to the check. The marker decides, and the date only comes
+        second - a plan in progress stays outside the check no matter how fresh it is.
         """
         if self.marker != CLOSED_STATE_MARKER:
             return False
@@ -95,8 +95,8 @@ class PlanDocumentState:
 @dataclass(frozen=True)
 class FactViolation:
     """
-    Pozycja sekcji Fakty niezgodna z formatem, wraz z powodem odrzucenia gotowym do przeczytania
-    bez otwierania standardu.
+    An item of the Facts section that does not match the format, together with the rejection reason ready
+    to read without opening the standard.
     """
 
     path: str
@@ -106,13 +106,13 @@ class FactViolation:
 
     @property
     def report_line(self) -> str:
-        """Jedna linia komunikatu nieudanego testu, ze ścieżką, numerem linii i identyfikatorem."""
+        """One line of the failed test message, with the path, the line number and the identifier."""
         return f"{self.path}:{self.line_number} - {self.identifier}: {self.reason}"
 
 
 @dataclass(frozen=True)
 class OpenQuestionViolation:
-    """Treść w sekcji Otwarte pytania, która sprawia, że plan zamknięty ma ją niepustą."""
+    """Content in the Open questions section that makes a closed plan have it non-empty."""
 
     path: str
     line_number: int
@@ -120,14 +120,14 @@ class OpenQuestionViolation:
 
     @property
     def report_line(self) -> str:
-        """Jedna linia komunikatu nieudanego testu, ze ścieżką i numerem linii."""
+        """One line of the failed test message, with the path and the line number."""
         return f"{self.path}:{self.line_number} - {self.reason}"
 
 
 def fetch_plan_documents(root: Path) -> list[Path]:
     """
-    Zwraca posortowaną listę dokumentów planu spod `root`, w obu konwencjach nazwy, z bieżącej
-    pracy i z archiwum, także z podkatalogów zadań. Plik trafiony dwoma wzorcami liczy się raz.
+    Returns a sorted list of plan documents under `root`, in both naming conventions, from current
+    work and from the archive, also from task subdirectories. A file hit by two patterns counts once.
     """
     documents: set[Path] = set()
 
@@ -139,8 +139,8 @@ def fetch_plan_documents(root: Path) -> list[Path]:
 
 def fetch_document_state(path: Path) -> PlanDocumentState:
     """
-    Czyta dokument i zwraca stan z pierwszej linii `Stan dokumentu`. Dokument bez takiej linii
-    albo z datą, której nie da się odczytać, dostaje stan pusty i przez to zostaje poza kontrolą.
+    Reads the document and returns the state from the first `Document state` line. A document without
+    such a line or with a date that cannot be read gets an empty state and therefore stays outside the check.
     """
     for line in path.read_text(encoding="utf-8").splitlines():
         match = STATE_LINE_PATTERN.match(line.strip())
@@ -153,8 +153,8 @@ def fetch_document_state(path: Path) -> PlanDocumentState:
 
 def resolve_readable_date(text: str) -> date | None:
     """
-    Zwraca datę odczytaną z tekstu albo `None`, gdy tekst jest samym układem cyfr i kresek,
-    a nie istniejącą datą.
+    Returns the date read from the text, or `None` when the text is just an arrangement of digits and
+    hyphens, not an existing date.
     """
     try:
         return date.fromisoformat(text)
@@ -164,8 +164,8 @@ def resolve_readable_date(text: str) -> date | None:
 
 def resolve_section_lines(lines: Sequence[str], heading: str) -> list[tuple[int, str]]:
     """
-    Wycina linie jednej sekcji dokumentu wraz z ich numerami, od nagłówka `heading` do następnego
-    nagłówka tego samego poziomu. Sam nagłówek nie wchodzi do wyniku.
+    Cuts out the lines of one document section together with their numbers, from the `heading` heading to
+    the next heading of the same level. The heading itself is not part of the result.
     """
     section: list[tuple[int, str]] = []
     inside_section = False
@@ -186,12 +186,12 @@ def resolve_section_lines(lines: Sequence[str], heading: str) -> list[tuple[int,
 
 def resolve_fact_violations(path: str, lines: Sequence[str]) -> list[FactViolation]:
     """
-    Wskazuje pozycje sekcji Fakty, które nie mają kształtu wymaganego przez standard: identyfikatora
-    z twierdzeniem, dowodu jednego z pięciu rodzajów i daty sprawdzenia, w trzech polach rozdzielonych
-    kreską pionową.
+    Points out the items of the Facts section that do not have the shape required by the standard: an
+    identifier with a claim, evidence of one of the five kinds and a check date, in three fields separated
+    by a vertical bar.
 
-    Każda pozycja dostaje najwyżej jedno zgłoszenie, z pierwszym napotkanym powodem - komunikat ma
-    powiedzieć, co poprawić, a nie wyliczyć wszystkie skutki tej samej pomyłki.
+    Each item gets at most one report, with the first reason encountered - the message is meant to say
+    what to fix, not to list every consequence of the same mistake.
     """
     violations: list[FactViolation] = []
 
@@ -205,7 +205,7 @@ def resolve_fact_violations(path: str, lines: Sequence[str]) -> list[FactViolati
 
         if identifier_match is None:
             violations.append(
-                FactViolation(path=path, line_number=line_number, identifier=UNKNOWN_IDENTIFIER, reason="linia sekcji Fakty nie jest pozycją ustalenia - brakuje identyfikatora w kształcie F-N.")
+                FactViolation(path=path, line_number=line_number, identifier=UNKNOWN_IDENTIFIER, reason="a line of the Facts section is not a finding item - the F-N shaped identifier is missing.")
             )
             continue
 
@@ -215,7 +215,7 @@ def resolve_fact_violations(path: str, lines: Sequence[str]) -> list[FactViolati
         if len(fields) != EXPECTED_FIELD_COUNT:
             violations.append(
                 FactViolation(
-                    path=path, line_number=line_number, identifier=identifier, reason=f"pozycja ma {len(fields)} pól zamiast trzech rozdzielonych kreską pionową: twierdzenie, dowód, data sprawdzenia."
+                    path=path, line_number=line_number, identifier=identifier, reason=f"the item has {len(fields)} fields instead of three separated by a vertical bar: claim, evidence, check date."
                 )
             )
             continue
@@ -223,29 +223,29 @@ def resolve_fact_violations(path: str, lines: Sequence[str]) -> list[FactViolati
         claim, evidence_field, checked_date = fields
 
         if FACT_LINE_PATTERN.match(claim) is None:
-            violations.append(FactViolation(path=path, line_number=line_number, identifier=identifier, reason="identyfikator stoi bez twierdzenia - pierwsze pole ma nieść treść ustalenia."))
+            violations.append(FactViolation(path=path, line_number=line_number, identifier=identifier, reason="the identifier stands without a claim - the first field carries the finding."))
             continue
 
         unknown_evidence = resolve_unknown_evidence(evidence_field)
 
         if unknown_evidence is not None:
-            violations.append(FactViolation(path=path, line_number=line_number, identifier=identifier, reason=f"dowód nie zaczyna się od żadnego z pięciu dozwolonych rodzajów: {unknown_evidence!r}."))
+            violations.append(FactViolation(path=path, line_number=line_number, identifier=identifier, reason=f"the evidence does not start with any of the five allowed kinds: {unknown_evidence!r}."))
             continue
 
         if CHECKED_DATE_PATTERN.match(checked_date) is None or resolve_readable_date(checked_date) is None:
-            violations.append(FactViolation(path=path, line_number=line_number, identifier=identifier, reason=f"data sprawdzenia nie jest datą w formacie RRRR-MM-DD: {checked_date!r}."))
+            violations.append(FactViolation(path=path, line_number=line_number, identifier=identifier, reason=f"the check date is not a date in the YYYY-MM-DD format: {checked_date!r}."))
 
     return violations
 
 
 def resolve_separated_fields(text: str, separator: str) -> list[str]:
     """
-    Dzieli tekst separatorem i przycina białe znaki, pomijając wystąpienia separatora stojące
-    wewnątrz zapisu w backtickach.
+    Splits the text on the separator and trims whitespace, skipping occurrences of the separator that stand
+    inside text in backticks.
 
-    Wyjątek dla backticków nie jest kosmetyczny: dowód potrafi cytować komendę z regexem albo
-    zapytanie z własnym średnikiem, a dosłowność cytatu jest tu ważniejsza niż prostota podziału.
-    Bez tego wyjątku format wymuszałby przepisanie komendy, która faktycznie została uruchomiona.
+    The backtick exception is not cosmetic: evidence can quote a command with a regex or a query with
+    its own semicolon, and the literalness of the quote matters more here than the simplicity of the split.
+    Without this exception the format would force rewriting a command that was actually run.
     """
     fields: list[str] = []
     current: list[str] = []
@@ -269,8 +269,8 @@ def resolve_separated_fields(text: str, separator: str) -> list[str]:
 
 def resolve_unknown_evidence(evidence_field: str) -> str | None:
     """
-    Zwraca pierwszy dowód, który nie otwiera się żadnym z pięciu dozwolonych rodzajów, albo `None`,
-    gdy całe pole jest poprawne. Kilka dowodów przy jednej pozycji rozdziela średnik.
+    Returns the first piece of evidence that does not open with any of the five allowed kinds, or `None`
+    when the whole field is correct. Several pieces of evidence for one item are separated by a semicolon.
     """
     allowed_openings = (*EVIDENCE_PREFIXES, ASSUMPTION_MARKER)
 
@@ -283,18 +283,18 @@ def resolve_unknown_evidence(evidence_field: str) -> str | None:
 
 def resolve_open_question_violations(path: str, lines: Sequence[str]) -> list[OpenQuestionViolation]:
     """
-    Wskazuje treść, przez którą sekcja Otwarte pytania przestaje być pusta: pozycję listy oraz
-    pierwszy akapit inny niż stwierdzenie braku.
+    Points out the content that makes the Open questions section stop being empty: a list item and
+    a first paragraph other than a statement of absence.
 
-    Zdanie zaczynające się od słowa Brak jest zapisem pustej sekcji, nie pozycją - dziewięć z dziesięciu
-    planów istniejących w chwili powstania tej kontroli zapisuje brak właśnie tak.
+    A sentence starting with the word None is the record of an empty section, not an item - nine out of ten
+    plans existing at the moment this check was created record the absence exactly like that.
     """
     violations: list[OpenQuestionViolation] = []
     section_lines = [(line_number, line.strip()) for line_number, line in resolve_section_lines(lines, OPEN_QUESTIONS_HEADING) if line.strip()]
 
     for position, (line_number, line) in enumerate(section_lines):
         if LIST_ITEM_PATTERN.match(line):
-            violations.append(OpenQuestionViolation(path=path, line_number=line_number, reason="sekcja Otwarte pytania planu zamkniętego ma pozycję listy."))
+            violations.append(OpenQuestionViolation(path=path, line_number=line_number, reason="the Open questions section of a closed plan has a list item."))
             continue
 
         if position == 0 and not line.startswith(NO_OPEN_QUESTIONS_PREFIX):
@@ -302,7 +302,7 @@ def resolve_open_question_violations(path: str, lines: Sequence[str]) -> list[Op
                 OpenQuestionViolation(
                     path=path,
                     line_number=line_number,
-                    reason=f"sekcja Otwarte pytania planu zamkniętego nie otwiera się stwierdzeniem braku - oczekiwano akapitu zaczynającego się od {NO_OPEN_QUESTIONS_PREFIX!r}.",
+                    reason=f"the Open questions section of a closed plan does not open with a statement of absence - expected a paragraph starting with {NO_OPEN_QUESTIONS_PREFIX!r}.",
                 )
             )
 
@@ -311,8 +311,8 @@ def resolve_open_question_violations(path: str, lines: Sequence[str]) -> list[Op
 
 def build_violation_report(header: str, violations: Sequence[FactViolation | OpenQuestionViolation]) -> str:
     """
-    Składa komunikat nieudanego testu: nagłówek mówiący, co poszło nie tak, i po jednej linii
-    na naruszenie, każda ze ścieżką i numerem linii do poprawienia.
+    Builds the failed test message: a header saying what went wrong, and one line per violation,
+    each with the path and the line number to fix.
     """
     return "\n".join([header, *(violation.report_line for violation in violations)])
 
@@ -320,14 +320,13 @@ def build_violation_report(header: str, violations: Sequence[FactViolation | Ope
 @pytest.fixture(scope="module")
 def gated_plan_documents() -> list[tuple[str, list[str]]]:
     """
-    Zwraca ścieżkę i linie każdego dokumentu planu objętego kontrolą, czytając każdy plik raz
-    na moduł zamiast raz na test.
+    Returns the path and the lines of every plan document covered by the check, reading each file once
+    per module instead of once per test.
 
-    Pusta lista jest błędem, gdy repozytorium ma plany oznaczone jako zamknięte, a żaden nie
-    przechodzi progu daty: kontrola, która nie widzi ani jednego dokumentu, wygląda wtedy na
-    działającą i nie pilnuje niczego. Gdy repozytorium nie ma jeszcze żadnego planu zamkniętego,
-    jak świeży projekt z szablonu, testy korzystające z tej fixture są pomijane z powodem
-    widocznym w podsumowaniu przebiegu.
+    An empty list is an error when the repository has plans marked as closed but none of them passes
+    the date threshold: a check that sees not a single document then looks like it works and guards
+    nothing. When the repository has no closed plan yet, like a fresh project from the template, the tests
+    using this fixture are skipped with a reason visible in the run summary.
     """
     documents: list[tuple[str, list[str]]] = []
     closed_document_count = 0
@@ -344,41 +343,41 @@ def gated_plan_documents() -> list[tuple[str, list[str]]]:
         documents.append((path.relative_to(ROOT_DIR).as_posix(), path.read_text(encoding="utf-8").splitlines()))
 
     if not documents and not closed_document_count:
-        pytest.skip(f"Repozytorium nie ma jeszcze planu oznaczonego {CLOSED_STATE_MARKER!r} - kontrola zacznie działać z pierwszym takim planem.")
+        pytest.skip(f"The repository has no plan marked {CLOSED_STATE_MARKER!r} yet - the check starts working with the first such plan.")
 
-    assert documents, f"Żaden plan zamknięty nie jest objęty kontrolą - sprawdź próg {RULE_EFFECTIVE_DATE.isoformat()}"
+    assert documents, f"No closed plan is covered by the check - verify the threshold {RULE_EFFECTIVE_DATE.isoformat()}"
 
     return documents
 
 
 def test_every_closed_plan_states_evidence_for_each_fact(gated_plan_documents: list[tuple[str, list[str]]]) -> None:
     """
-    Pilnuje, że każda pozycja sekcji Fakty w planie zamkniętym niesie identyfikator, twierdzenie,
-    dowód jednego z pięciu rodzajów i datę sprawdzenia.
+    Ensures that every item of the Facts section in a closed plan carries an identifier, a claim,
+    evidence of one of the five kinds and a check date.
     """
     violations: list[FactViolation] = []
 
     for path, lines in gated_plan_documents:
         violations.extend(resolve_fact_violations(path, lines))
 
-    assert not violations, build_violation_report("Pozycje sekcji Fakty niezgodne ze standard_agent_docs.md, sekcja Format PLAN:", violations)
+    assert not violations, build_violation_report("Items of the Facts section not compliant with standard_agent_docs.md, section PLAN format:", violations)
 
 
 def test_every_closed_plan_has_no_open_questions(gated_plan_documents: list[tuple[str, list[str]]]) -> None:
     """
-    Pilnuje, że plan oznaczony jako zamknięty ma pustą sekcję Otwarte pytania - dokument z realnym
-    pytaniem w środku nie jest gotowy do podania do fazy implementacji.
+    Ensures that a plan marked as closed has an empty Open questions section - a document with a real
+    question inside is not ready to be handed to the implementation phase.
     """
     violations: list[OpenQuestionViolation] = []
 
     for path, lines in gated_plan_documents:
         violations.extend(resolve_open_question_violations(path, lines))
 
-    assert not violations, build_violation_report("Niepuste sekcje Otwarte pytania w planach zamkniętych, wbrew standard_agent_docs.md:", violations)
+    assert not violations, build_violation_report("Non-empty Open questions sections in closed plans, contrary to standard_agent_docs.md:", violations)
 
 
 def write_plan_document(path: Path, content: str = "# Plan\n") -> Path:
-    """Zapisuje dokument planu pod wskazaną ścieżką, tworząc brakujące katalogi inicjatywy."""
+    """Writes a plan document at the given path, creating the missing initiative directories."""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
 
@@ -387,72 +386,72 @@ def write_plan_document(path: Path, content: str = "# Plan\n") -> Path:
 
 def test_fetch_plan_documents_finds_both_naming_conventions_in_both_locations(tmp_path: Path) -> None:
     """
-    Pilnuje, że kontrola widzi nazwę stosowaną w repozytorium i nazwę opisaną w standardzie,
-    w bieżącej pracy i w archiwum, także w podkatalogu zadania inicjatywy wielozadaniowej.
+    Ensures that the check sees the name used in the repository and the name described in the standard,
+    in current work and in the archive, also in the task subdirectory of a multi-task initiative.
     """
     expected = [
-        write_plan_document(tmp_path / "plans" / "bez_prefiksu" / "PLAN.md"),
-        write_plan_document(tmp_path / "plans" / "z_prefiksem" / "ZADANIE_PLAN.md"),
-        write_plan_document(tmp_path / "plans" / "wielozadaniowa" / "ZADANIE-2" / "ZADANIE-2_PLAN.md"),
-        write_plan_document(tmp_path / "plans_finished" / "zamknieta_bez_prefiksu" / "PLAN.md"),
-        write_plan_document(tmp_path / "plans_finished" / "zamknieta_z_prefiksem" / "ZADANIE_PLAN.md"),
-        write_plan_document(tmp_path / "plans_finished" / "zamknieta_wielozadaniowa" / "ZADANIE-1" / "ZADANIE-1_PLAN.md"),
+        write_plan_document(tmp_path / "plans" / "without_prefix" / "PLAN.md"),
+        write_plan_document(tmp_path / "plans" / "with_prefix" / "TASK_PLAN.md"),
+        write_plan_document(tmp_path / "plans" / "multi_task" / "TASK-2" / "TASK-2_PLAN.md"),
+        write_plan_document(tmp_path / "plans_finished" / "closed_without_prefix" / "PLAN.md"),
+        write_plan_document(tmp_path / "plans_finished" / "closed_with_prefix" / "TASK_PLAN.md"),
+        write_plan_document(tmp_path / "plans_finished" / "closed_multi_task" / "TASK-1" / "TASK-1_PLAN.md"),
     ]
 
     assert fetch_plan_documents(tmp_path) == sorted(expected)
 
 
 def test_fetch_plan_documents_reports_each_document_once(tmp_path: Path) -> None:
-    """Pilnuje, że plik pasujący do więcej niż jednego wzorca nie wchodzi pod kontrolę dwa razy."""
-    document = write_plan_document(tmp_path / "plans" / "inicjatywa" / "PLAN.md")
+    """Ensures that a file matching more than one pattern does not come under the check twice."""
+    document = write_plan_document(tmp_path / "plans" / "initiative" / "PLAN.md")
 
     assert fetch_plan_documents(tmp_path) == [document]
 
 
 def test_fetch_plan_documents_treats_a_missing_archive_as_empty(tmp_path: Path) -> None:
-    """Pilnuje, że brak katalogu archiwum nie jest błędem - repozytorium bez archiwizacji ma zwykłą listę."""
-    document = write_plan_document(tmp_path / "plans" / "inicjatywa" / "PLAN.md")
+    """Ensures that a missing archive directory is not an error - a repository without archiving has a plain list."""
+    document = write_plan_document(tmp_path / "plans" / "initiative" / "PLAN.md")
 
     assert not (tmp_path / "plans_finished").exists()
     assert fetch_plan_documents(tmp_path) == [document]
 
 
 def test_fetch_plan_documents_skips_other_artifacts(tmp_path: Path) -> None:
-    """Pilnuje, że pozostałe artefakty łańcucha nie trafiają pod kontrolę formatu planu, w żadnej lokalizacji."""
+    """Ensures that the other chain artifacts do not come under the plan format check, in any location."""
     for location in ("plans", "plans_finished"):
-        (tmp_path / location / "inicjatywa").mkdir(parents=True)
-        (tmp_path / location / "inicjatywa" / "SHAPE.md").write_text("# Shape\n", encoding="utf-8")
-        (tmp_path / location / "inicjatywa" / "PRD.md").write_text("# PRD\n", encoding="utf-8")
-        (tmp_path / location / "inicjatywa" / "REVIEW.md").write_text("# Review\n", encoding="utf-8")
+        (tmp_path / location / "initiative").mkdir(parents=True)
+        (tmp_path / location / "initiative" / "SHAPE.md").write_text("# Shape\n", encoding="utf-8")
+        (tmp_path / location / "initiative" / "PRD.md").write_text("# PRD\n", encoding="utf-8")
+        (tmp_path / location / "initiative" / "REVIEW.md").write_text("# Review\n", encoding="utf-8")
 
     assert fetch_plan_documents(tmp_path) == []
 
 
 def test_archiving_a_faulty_closed_plan_keeps_its_violations(tmp_path: Path) -> None:
     """
-    Pilnuje, że przeniesienie inicjatywy do archiwum nie jest drogą obejścia bramki: wadliwy plan
-    zamknięty zgłasza po przeniesieniu te same naruszenia co przed nim, różniąc się tylko ścieżką.
+    Ensures that moving an initiative to the archive is not a way around the gate: a faulty closed plan
+    reports the same violations after the move as before it, differing only in the path.
     """
     faulty_plan = "\n".join(
         [
             "# Plan",
             "",
-            f"Stan dokumentu: 2026-09-17, {CLOSED_STATE_MARKER}",
+            f"Document state: 2026-09-17, {CLOSED_STATE_MARKER}",
             "",
             FACTS_HEADING,
             "",
-            "F-1. Ustalenie bez dowodu i daty.",
+            "F-1. A finding without evidence and date.",
             "",
             OPEN_QUESTIONS_HEADING,
             "",
-            "- Czy konsument gwarantuje unikalność klucza?",
+            "- Does the consumer guarantee key uniqueness?",
             "",
         ]
     )
-    active_path = write_plan_document(tmp_path / "plans" / "inicjatywa" / "PLAN.md", faulty_plan)
+    active_path = write_plan_document(tmp_path / "plans" / "initiative" / "PLAN.md", faulty_plan)
 
     def resolve_gated_violations() -> list[tuple[int, str]]:
-        """Zbiera naruszenia każdego planu pod kontrolą jako pary linia-powód, bez ścieżki."""
+        """Collects the violations of every plan under the check as line-reason pairs, without the path."""
         collected: list[tuple[int, str]] = []
 
         for path in fetch_plan_documents(tmp_path):
@@ -466,7 +465,7 @@ def test_archiving_a_faulty_closed_plan_keeps_its_violations(tmp_path: Path) -> 
     violations_before = resolve_gated_violations()
     assert len(violations_before) == 2
 
-    archived_dir = tmp_path / "plans_finished" / "inicjatywa"
+    archived_dir = tmp_path / "plans_finished" / "initiative"
     archived_dir.parent.mkdir()
     active_path.parent.rename(archived_dir)
 
@@ -476,9 +475,9 @@ def test_archiving_a_faulty_closed_plan_keeps_its_violations(tmp_path: Path) -> 
 
 
 def test_fetch_document_state_reads_date_and_closed_marker(tmp_path: Path) -> None:
-    """Pilnuje, że linia stanu z markerem zamknięcia wciąga dokument pod kontrolę."""
+    """Ensures that a state line with the closed marker brings the document under the check."""
     path = tmp_path / "PLAN.md"
-    path.write_text(f"# Plan\n\nStan dokumentu: 2026-08-17, {CLOSED_STATE_MARKER}\n", encoding="utf-8")
+    path.write_text(f"# Plan\n\nDocument state: 2026-08-17, {CLOSED_STATE_MARKER}\n", encoding="utf-8")
 
     state = fetch_document_state(path)
 
@@ -488,25 +487,25 @@ def test_fetch_document_state_reads_date_and_closed_marker(tmp_path: Path) -> No
 
 
 def test_fetch_document_state_leaves_a_plan_in_progress_outside_the_gate(tmp_path: Path) -> None:
-    """Pilnuje, że plan w toku zostaje poza kontrolą, mimo daty po progu."""
+    """Ensures that a plan in progress stays outside the check, despite a date after the threshold."""
     path = tmp_path / "PLAN.md"
-    path.write_text(f"Stan dokumentu: 2026-12-31, {IN_PROGRESS_STATE_MARKER}\n", encoding="utf-8")
+    path.write_text(f"Document state: 2026-12-31, {IN_PROGRESS_STATE_MARKER}\n", encoding="utf-8")
 
     assert not fetch_document_state(path).is_under_gate
 
 
 def test_fetch_document_state_leaves_a_plan_older_than_the_rule_outside_the_gate(tmp_path: Path) -> None:
-    """Pilnuje, że plan zamknięty sprzed daty wejścia reguły nie wymaga retrofitu."""
+    """Ensures that a closed plan from before the rule took effect does not require a retrofit."""
     path = tmp_path / "PLAN.md"
-    path.write_text(f"Stan dokumentu: 2026-08-16, {CLOSED_STATE_MARKER}\n", encoding="utf-8")
+    path.write_text(f"Document state: 2026-08-16, {CLOSED_STATE_MARKER}\n", encoding="utf-8")
 
     assert not fetch_document_state(path).is_under_gate
 
 
 def test_fetch_document_state_leaves_a_plan_without_a_marker_outside_the_gate(tmp_path: Path) -> None:
-    """Pilnuje, że dziesięć planów z samą datą w linii stanu zostaje poza kontrolą."""
+    """Ensures that the ten plans with only a date in the state line stay outside the check."""
     path = tmp_path / "PLAN.md"
-    path.write_text("Stan dokumentu: 2026-08-18\n", encoding="utf-8")
+    path.write_text("Document state: 2026-08-18\n", encoding="utf-8")
 
     state = fetch_document_state(path)
 
@@ -515,46 +514,46 @@ def test_fetch_document_state_leaves_a_plan_without_a_marker_outside_the_gate(tm
 
 
 def test_resolve_fact_violations_accepts_a_well_formed_position() -> None:
-    """Pilnuje, że pozycja z kompletem pól i dwoma dowodami przechodzi bez zgłoszenia."""
+    """Ensures that an item with the full set of fields and two pieces of evidence passes without a report."""
     lines = [
         FACTS_HEADING,
         "",
-        "F-1. Sonda czyta adres z konfiguracji. | kod:`data/engine.py:31`; dok:`docs/standards/standard_config.md` par. Jedno miejsce odczytu | 2026-08-17",
+        "F-1. The probe reads the address from the configuration. | code:`data/engine.py:31`; doc:`docs/standards/standard_config.md` para. One place of reading | 2026-08-17",
         "",
-        "## Decyzje",
-        "F-2. To już nie jest fakt.",
+        "## Decisions",
+        "F-2. This is no longer a fact.",
     ]
 
     assert resolve_fact_violations("PLAN.md", lines) == []
 
 
 def test_resolve_fact_violations_accepts_an_explicit_assumption() -> None:
-    """Pilnuje, że jawnie oznaczone założenie jest dopuszczalnym rodzajem dowodu."""
-    lines = [FACTS_HEADING, f"F-1. Konsument woła ten endpoint raz na minutę. | {ASSUMPTION_MARKER} brak pomiaru po stronie konsumenta | 2026-08-17"]
+    """Ensures that an explicitly marked assumption is an allowed kind of evidence."""
+    lines = [FACTS_HEADING, f"F-1. The consumer calls this endpoint once a minute. | {ASSUMPTION_MARKER} no measurement on the consumer side | 2026-08-17"]
 
     assert resolve_fact_violations("PLAN.md", lines) == []
 
 
 def test_resolve_fact_violations_accepts_a_separator_quoted_inside_inline_code() -> None:
     """
-    Pilnuje, że kreska pionowa i średnik zacytowane w backtickach nie rozdzielają pól.
+    Ensures that a vertical bar and a semicolon quoted in backticks do not split fields.
 
-    Wejście jest wzięte z życia: dowód cytuje regex z kreską pionową, a bez tego wyjątku format
-    kazałby przepisać komendę, która faktycznie została uruchomiona.
+    The input is taken from real life: the evidence quotes a regex with a vertical bar, and without this
+    exception the format would require rewriting a command that was actually run.
     """
-    lines = [FACTS_HEADING, 'F-1. Parser TOML jest w bibliotece standardowej. | cmd:`rg "tomllib|tomli" --glob "*.py"` -> brak wystąpień | 2026-08-17']
+    lines = [FACTS_HEADING, 'F-1. The TOML parser is in the standard library. | cmd:`rg "tomllib|tomli" --glob "*.py"` -> no occurrences | 2026-08-17']
 
     assert resolve_fact_violations("PLAN.md", lines) == []
 
 
 def test_resolve_separated_fields_splits_only_outside_inline_code() -> None:
-    """Pilnuje podziału po separatorze poza backtickami i braku podziału w środku cytatu."""
+    """Ensures splitting on the separator outside backticks and no splitting inside a quote."""
     assert resolve_separated_fields("a | `b | c` | d", FIELD_SEPARATOR) == ["a", "`b | c`", "d"]
 
 
 def test_resolve_fact_violations_flags_a_position_without_evidence() -> None:
-    """Pilnuje, że ustalenie zapisane jednym zdaniem, bez pól, jest zgłaszane wraz z identyfikatorem."""
-    lines = [FACTS_HEADING, "F-1. Sonda czyta adres z konfiguracji. Źródło: data/engine.py."]
+    """Ensures that a finding written as one sentence, without fields, is reported together with its identifier."""
+    lines = [FACTS_HEADING, "F-1. The probe reads the address from the configuration. Source: data/engine.py."]
 
     violations = resolve_fact_violations("PLAN.md", lines)
 
@@ -564,25 +563,25 @@ def test_resolve_fact_violations_flags_a_position_without_evidence() -> None:
 
 
 def test_resolve_fact_violations_flags_an_unknown_evidence_kind() -> None:
-    """Pilnuje, że dowód spoza pięciu rodzajów jest zgłaszany razem ze swoją treścią."""
-    lines = [FACTS_HEADING, "F-3. Serwis zwraca kod 409 przy powtórzeniu. | wiem z rozmowy | 2026-08-17"]
+    """Ensures that evidence outside the five kinds is reported together with its content."""
+    lines = [FACTS_HEADING, "F-3. The service returns code 409 on a repeat. | I know it from a conversation | 2026-08-17"]
 
     violations = resolve_fact_violations("PLAN.md", lines)
 
     assert len(violations) == 1
-    assert "wiem z rozmowy" in violations[0].reason
+    assert "I know it from a conversation" in violations[0].reason
 
 
 def test_resolve_fact_violations_flags_a_second_evidence_without_its_kind() -> None:
-    """Pilnuje, że dowód dopisany po średniku też musi nieść swój rodzaj."""
-    lines = [FACTS_HEADING, "F-4. Kontrola typów nie obejmuje testów. | kod:`pyproject.toml` sekcja mypy; tak samo w drugim narzędziu | 2026-08-17"]
+    """Ensures that evidence added after a semicolon must also carry its kind."""
+    lines = [FACTS_HEADING, "F-4. Type checking does not cover the tests. | code:`pyproject.toml` section mypy; same in the second tool | 2026-08-17"]
 
     assert len(resolve_fact_violations("PLAN.md", lines)) == 1
 
 
 def test_resolve_fact_violations_flags_a_position_without_an_identifier() -> None:
-    """Pilnuje, że akapit bez identyfikatora w sekcji Fakty jest zgłaszany."""
-    lines = [FACTS_HEADING, "Ustalenia poniżej pochodzą z odczytu repozytorium."]
+    """Ensures that a paragraph without an identifier in the Facts section is reported."""
+    lines = [FACTS_HEADING, "The findings below come from reading the repository."]
 
     violations = resolve_fact_violations("PLAN.md", lines)
 
@@ -591,8 +590,8 @@ def test_resolve_fact_violations_flags_a_position_without_an_identifier() -> Non
 
 
 def test_resolve_fact_violations_flags_a_checked_date_that_is_not_a_date() -> None:
-    """Pilnuje, że układ cyfr niebędący istniejącą datą nie przechodzi jako data sprawdzenia."""
-    lines = [FACTS_HEADING, "F-5. Środowisko stoi na Pythonie 3.13. | cmd:`python --version` -> `Python 3.13.14` | 2026-13-45"]
+    """Ensures that an arrangement of digits that is not an existing date does not pass as a check date."""
+    lines = [FACTS_HEADING, "F-5. The environment runs on Python 3.13. | cmd:`python --version` -> `Python 3.13.14` | 2026-13-45"]
 
     violations = resolve_fact_violations("PLAN.md", lines)
 
@@ -601,20 +600,20 @@ def test_resolve_fact_violations_flags_a_checked_date_that_is_not_a_date() -> No
 
 
 def test_resolve_fact_violations_ignores_a_document_without_the_section() -> None:
-    """Pilnuje, że brak sekcji Fakty nie produkuje zgłoszenia z powietrza."""
-    assert resolve_fact_violations("PLAN.md", ["# Plan", "", "## Cel", "F-1. To stoi poza sekcją Fakty."]) == []
+    """Ensures that a missing Facts section does not produce a report out of thin air."""
+    assert resolve_fact_violations("PLAN.md", ["# Plan", "", "## Goal", "F-1. This stands outside the Facts section."]) == []
 
 
 def test_resolve_open_question_violations_accepts_a_statement_of_absence() -> None:
-    """Pilnuje, że zdanie o braku pytań jest zapisem pustej sekcji, nie pozycją."""
-    lines = [OPEN_QUESTIONS_HEADING, "", "Brak. Wszystkie pozycje zostały rozstrzygnięte w fazie shape.", "", "## Pliki uzupełniające"]
+    """Ensures that a sentence about the absence of questions is the record of an empty section, not an item."""
+    lines = [OPEN_QUESTIONS_HEADING, "", "None. All items were resolved in the shape phase.", "", "## Supplementary files"]
 
     assert resolve_open_question_violations("PLAN.md", lines) == []
 
 
 def test_resolve_open_question_violations_flags_a_list_item() -> None:
-    """Pilnuje, że realne pytanie zapisane pozycją listy zatrzymuje kontrolę."""
-    lines = [OPEN_QUESTIONS_HEADING, "", "Brak rozstrzygnięcia w dwóch miejscach.", "", "- Czy konsument gwarantuje unikalność klucza?"]
+    """Ensures that a real question written as a list item stops the check."""
+    lines = [OPEN_QUESTIONS_HEADING, "", "None settled yet in two places.", "", "- Does the consumer guarantee key uniqueness?"]
 
     violations = resolve_open_question_violations("PLAN.md", lines)
 
@@ -623,8 +622,8 @@ def test_resolve_open_question_violations_flags_a_list_item() -> None:
 
 
 def test_resolve_open_question_violations_flags_a_paragraph_other_than_absence() -> None:
-    """Pilnuje, że akapit nieotwierający się stwierdzeniem braku jest zgłaszany."""
-    lines = [OPEN_QUESTIONS_HEADING, "Czekamy na odpowiedź w sprawie kanału alertu."]
+    """Ensures that a paragraph not opening with a statement of absence is reported."""
+    lines = [OPEN_QUESTIONS_HEADING, "We are waiting for an answer about the alert channel."]
 
     violations = resolve_open_question_violations("PLAN.md", lines)
 
@@ -633,12 +632,12 @@ def test_resolve_open_question_violations_flags_a_paragraph_other_than_absence()
 
 
 def test_build_violation_report_keeps_the_header_and_every_violation() -> None:
-    """Pilnuje, że komunikat niesie nagłówek i po jednej linii na każde naruszenie."""
+    """Ensures that the message carries the header and one line for every violation."""
     violations = [
-        FactViolation(path="plans/x/PLAN.md", line_number=12, identifier="F-1", reason="brak dowodu."),
-        OpenQuestionViolation(path="plans/x/PLAN.md", line_number=40, reason="pozycja listy."),
+        FactViolation(path="plans/x/PLAN.md", line_number=12, identifier="F-1", reason="missing evidence."),
+        OpenQuestionViolation(path="plans/x/PLAN.md", line_number=40, reason="list item."),
     ]
 
-    report = build_violation_report("Nagłówek:", violations)
+    report = build_violation_report("Header:", violations)
 
-    assert report.splitlines() == ["Nagłówek:", "plans/x/PLAN.md:12 - F-1: brak dowodu.", "plans/x/PLAN.md:40 - pozycja listy."]
+    assert report.splitlines() == ["Header:", "plans/x/PLAN.md:12 - F-1: missing evidence.", "plans/x/PLAN.md:40 - list item."]

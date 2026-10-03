@@ -1,2 +1,2 @@
-Repozytorium <nazwa projektu> to <jedno zdanie o tym, czym jest projekt>.
-Źródłem prawdy o produkcie jest <ścieżka do specyfikacji produktu> - przy rozbieżności z czymkolwiek innym obowiązuje ona.
+Repository piwo1-hackyeah is a HackYeah 2026 project: a community app about the accessibility of places in Kraków, built from open data and people's reports with photos, with routes matched to the needs of people with different disabilities - web first, a HarmonyOS port if time allows, for the challenges "Kraków bez barier" and Huawei "Imagine What's Next" (requirements: docs/hackathon/challenge_requirements.md).
+The source of truth for the product is docs/product/specification.md - it prevails over anything else; it is still being written, and until it exists every question about product behavior goes to the user. Everything in the repository is written in English, the conversation with the user is in Polish.

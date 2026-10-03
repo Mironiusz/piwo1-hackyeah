@@ -13,8 +13,8 @@ CODEX_HOOK_PATH = ROOT_DIR / ".codex" / "hooks" / "local_docs_context.py"
 
 def _run_hook(project_dir: Path, home_dir: Path) -> str:
     """
-    Uruchamia hook SessionStart tak, jak robi to narzędzie agentowe, z katalogiem projektu i katalogiem
-    domowym podmienionymi na tymczasowe. Zwraca kontekst dodany do sesji.
+    Runs the SessionStart hook the way the agentic tool does it, with the project directory and the home
+    directory swapped for temporary ones. Returns the context added to the session.
     """
     environment = {**os.environ, "CLAUDE_PROJECT_DIR": str(project_dir), "HOME": str(home_dir), "USERPROFILE": str(home_dir)}
     payload = json.dumps({"cwd": str(project_dir)})
@@ -24,14 +24,14 @@ def _run_hook(project_dir: Path, home_dir: Path) -> str:
 
 
 def _make_skill(skills_dir: Path, name: str) -> None:
-    """Zakłada w podanym katalogu skill o podanej nazwie z pustym plikiem SKILL.md."""
+    """Creates a skill with the given name in the given directory, with an empty SKILL.md file."""
     (skills_dir / name).mkdir(parents=True)
     (skills_dir / name / "SKILL.md").write_text("", encoding="utf-8")
 
 
 def _make_project(tmp_path: Path, session_context: str | None) -> Path:
-    """Zakłada minimalny projekt: katalog standardów, jeden skill projektu i opcjonalny opis sesji."""
-    project_dir = tmp_path / "projekt"
+    """Creates a minimal project: the standards directory, one project skill and an optional session description."""
+    project_dir = tmp_path / "project"
     (project_dir / "docs" / "standards").mkdir(parents=True)
     _make_skill(project_dir / ".claude" / "skills", "plan-shape")
 
@@ -43,40 +43,40 @@ def _make_project(tmp_path: Path, session_context: str | None) -> Path:
 
 
 def test_hook_warns_when_personal_skill_shadows_project_skill(tmp_path: Path) -> None:
-    """Pilnuje, że skill osobisty o nazwie skilla projektu daje ostrzeżenie ze ścieżką i nazwą."""
-    project_dir = _make_project(tmp_path, "Opis projektu.")
-    home_dir = tmp_path / "dom"
+    """Ensures that a personal skill with the name of a project skill produces a warning with the path and the name."""
+    project_dir = _make_project(tmp_path, "Project description.")
+    home_dir = tmp_path / "home"
     _make_skill(home_dir / ".claude" / "skills", "plan-shape")
-    _make_skill(home_dir / ".claude" / "skills", "inny-skill")
+    _make_skill(home_dir / ".claude" / "skills", "other-skill")
 
     context = _run_hook(project_dir, home_dir)
 
-    assert "UWAGA: skille osobiste przykrywają skille projektu" in context
+    assert "WARNING: personal skills shadow project skills" in context
     assert "plan-shape" in context
-    assert "inny-skill" not in context
+    assert "other-skill" not in context
 
 
 def test_hook_is_silent_about_collisions_when_names_differ(tmp_path: Path) -> None:
-    """Pilnuje, że bez wspólnej nazwy hook nie ostrzega, a opis projektu trafia do kontekstu dosłownie."""
-    project_dir = _make_project(tmp_path, "Opis projektu.\n")
-    home_dir = tmp_path / "dom"
-    _make_skill(home_dir / ".claude" / "skills", "inny-skill")
+    """Ensures that without a shared name the hook does not warn, and the project description reaches the context verbatim."""
+    project_dir = _make_project(tmp_path, "Project description.\n")
+    home_dir = tmp_path / "home"
+    _make_skill(home_dir / ".claude" / "skills", "other-skill")
 
     context = _run_hook(project_dir, home_dir)
 
-    assert "UWAGA" not in context
-    assert context.startswith("Opis projektu.")
+    assert "WARNING" not in context
+    assert context.startswith("Project description.")
 
 
 def test_hook_says_when_session_context_is_missing(tmp_path: Path) -> None:
-    """Pilnuje, że brak opisu projektu jest nazwany wprost, zamiast zostać zastąpiony domysłem."""
+    """Ensures that a missing project description is named outright instead of being replaced with a guess."""
     project_dir = _make_project(tmp_path, None)
 
-    context = _run_hook(project_dir, tmp_path / "dom")
+    context = _run_hook(project_dir, tmp_path / "home")
 
-    assert context.startswith("Brak opisu projektu w agent_docs/session_context.md")
+    assert context.startswith("No project description in agent_docs/session_context.md")
 
 
 def test_codex_hook_is_identical_to_claude_hook() -> None:
-    """Pilnuje, że wariant hooka dla Codeksa nie rozjedzie się z wariantem dla Claude Code."""
+    """Ensures that the hook variant for Codex does not diverge from the variant for Claude Code."""
     assert CODEX_HOOK_PATH.read_bytes() == CLAUDE_HOOK_PATH.read_bytes()

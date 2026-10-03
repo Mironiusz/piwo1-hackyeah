@@ -1,21 +1,30 @@
-# agentic-workflow
+# piwo1-hackyeah
 
-Szablon startowy nowych projektów: workflow agentowy dla Claude Code i Codeksa oraz profil standardów serwisu w Pythonie. Szablon nie zawiera kodu żadnego produktu.
+A HackYeah 2026 project (3-4 October 2026, Kraków): a community app about the accessibility of places in Kraków. It combines open data (OpenStreetMap, open city data) with reports from people, including photos, shows where every piece of information comes from, how fresh and how reliable it is, and plans routes matched to the needs of people with different disabilities. Web first, with a HarmonyOS port if time allows.
 
-## Co jest w środku
+The project is submitted to two partner challenges: "Kraków bez barier" (City of Kraków) and "Imagine What's Next" (Huawei). Their requirements, deliverables and judging criteria are summarized in `docs/hackathon/challenge_requirements.md`. The product specification will live in `docs/product/specification.md`; it is still being written.
 
-- `.claude/`, `.agents/`, `.codex/` - skille łańcucha (`plan-shape`, `plan-prd`, `plan-implement`, `implementation-dod-review`, `load-context`), subagenci `repo-researcher` i `dod-reviewer` z wariantami dla Codeksa, hook `local_docs_context.py` z kontekstem startowym sesji, hook `block_dangerous_commands.py` blokujący komendy niszczące oraz `git commit` i `git push`, ustawienia blokujące odczyt plików sekretów.
-- `agent_docs/` - opis projektu dla hooka, metodologia łańcucha i konwencja pamięci trwałej.
-- `docs/standards/` - mapa standardów, sześć standardów rdzenia workflow, dwanaście standardów profilu Pythona i dwa puste rejestry.
-- `tests/architecture/` - bramki rdzenia: parytet Claude Code i Codeksa, hooki, styl prozy, kontrakt dokumentu planu, markery konfliktu.
-- `plans/` i `plans_finished/` - miejsce na inicjatywy w toku i ich archiwum, puste.
-- `pyproject.toml`, `makefile`, `package.json`, `.prettierrc` - narzędzia jakości i formatowania.
+There is no product code yet. Build, installation and launch instructions for the app will be added here together with the first code.
 
-Pełny opis systemu jest w `docs/standards/standard_agentic_workflow.md`, a punkt wejścia do standardów w `docs/standards/README.md`.
+## Origin of the workflow
 
-## Wymagania
+The repository was created on 2026-10-03 from a pre-existing project template, "agentic-workflow": an agentic workflow for Claude Code and Codex together with a set of standards for a Python service. The template contains no product code. It was translated from Polish to English and filled in for this project during the hackathon. How AI tools are used here is described in `AI_WORKFLOW.md`.
 
-Na maszynie muszą być `make`, `python` w wersji 3.13 oraz `node` z `npm` dla prettiera formatującego markdown. Narzędzia Pythona idą do środowiska wirtualnego, prettier do `node_modules` w wersji przypiętej w `package.json`.
+## What is inside
+
+- `.claude/`, `.agents/`, `.codex/` - the chain skills (`plan-shape`, `plan-prd`, `plan-implement`, `implementation-dod-review`, `load-context`), the subagents `repo-researcher` and `dod-reviewer` with their Codex variants, the `local_docs_context.py` hook with the session start context, the `block_dangerous_commands.py` hook blocking destructive commands as well as `git commit` and `git push`, and settings that block reading secret files.
+- `agent_docs/` - the project description for the hook, the methodology of the chain and the durable memory convention.
+- `docs/standards/` - the standards map, six standards of the workflow core, twelve standards of the Python profile and two registries.
+- `docs/hackathon/` - the summary of the challenge rules; `docs/product/` - the place for the product specification.
+- `tests/architecture/` - the core gates: Claude Code and Codex parity, hooks, prose style, plan document contract, conflict markers.
+- `plans/` and `plans_finished/` - the place for initiatives in progress and their archive.
+- `pyproject.toml`, `makefile`, `package.json`, `.prettierrc` - quality and formatting tools.
+
+The full description of the system is in `docs/standards/standard_agentic_workflow.md`, and the entry point to the standards is `docs/standards/README.md`.
+
+## Requirements
+
+The machine needs `make`, `python` 3.13 and `node` with `npm` for prettier, which formats markdown. The Python tools go into a virtual environment, prettier into `node_modules` in the version pinned in `package.json`.
 
 ```bash
 python -m venv venv
@@ -24,25 +33,27 @@ npm ci
 make check
 ```
 
-## Jak założyć projekt z szablonu
+## Setup from the template
 
-1. Skopiuj pliki szablonu do nowego repozytorium, bez katalogu `.git` szablonu.
-2. Wypełnij miejsca oznaczone `<...>` w `CLAUDE.md`, `AGENTS.md` i `agent_docs/session_context.md`: opis projektu, specyfikację produktu, zespół i uprawnienia agenta wobec środowiska docelowego. `CLAUDE.md` i `AGENTS.md` mają być identyczne poza nazwą narzędzia - pilnuje tego test parytetu.
-3. Wpisz nazwę projektu w `pyproject.toml`, `package.json` i `package-lock.json`.
-4. Projekt w profilu Pythona dopisuje katalogi warstw do `[tool.mypy]` i `[tool.vulture]` w `pyproject.toml` oraz do celu `security` w `makefile` razem z pierwszym kodem, a bramki profilu (granice warstw, kontrakt środowiska, spójność rejestru zadań okresowych) zakłada razem z pierwszym kodem danej warstwy.
-5. Projekt spoza profilu Pythona usuwa standardy profilu wymienione w `docs/standards/README.md`, ich wiersze w mapach `docs/standards/README.md` i `docs/standards/standard_review.md` oraz narzędzia Pythona, których nie używa. Bramki rdzenia zostają, bo są testami w Pythonie i wymagają `pytest`.
-6. Lista dziesięciu kategorii ryzyka blokującego jest dobrana dla serwisu z bazą danych i interfejsem programistycznym. Projekt o innym profilu ryzyka zmienia ją w trzech miejscach wymienionych w `docs/standards/standard_agentic_workflow.md` rozdz. 3.3.
-7. Uruchom `make check`.
+The template's setup steps and their state in this repository:
 
-## Skille osobiste a skille projektu
+1. Copy the template files into a new repository, without the template's `.git` directory. Done in the initial commit.
+2. Fill in the places marked `<...>` in `CLAUDE.md`, `AGENTS.md` and `agent_docs/session_context.md`: the project description, the product specification, the team and the agent's permissions for the target environment. `CLAUDE.md` and `AGENTS.md` must be identical except for the tool name - the parity test checks it. Done on 2026-10-03; the team section was removed because there is nothing to record yet, and the target environment waits for the stack decision (`docs/standards/decision_registry.md`).
+3. Enter the project name in `pyproject.toml`, `package.json` and `package-lock.json`. Done: `piwo1-hackyeah`.
+4. A Python profile project adds its layer directories to `[tool.mypy]` and `[tool.vulture]` in `pyproject.toml` and to the `security` target in `makefile` together with the first code, and sets up the profile gates (layer boundaries, environment contract, consistency of the periodic task registry) together with the first code of a given layer. Waiting for the first code.
+5. A project outside the Python profile removes the profile standards listed in `docs/standards/README.md`, their rows in the maps in `docs/standards/README.md` and `docs/standards/standard_review.md`, and the Python tools it does not use. The core gates stay, because they are Python tests and need `pytest`. Deferred until the stack is chosen (`docs/standards/decision_registry.md`).
+6. The list of ten blocking risk categories is chosen for a service with a database and an API. A project with a different risk profile changes it in the three places listed in `docs/standards/standard_agentic_workflow.md` ch. 3.3. Kept unchanged by decision of the user.
+7. Run `make check`.
 
-Gdy w `~/.claude/skills` leży skill o nazwie skilla projektu, Claude Code ładuje kopię osobistą zamiast projektowej, bez żadnego komunikatu. Hook SessionStart ostrzega o takiej kolizji na starcie sesji, a regułę opisuje `docs/standards/standard_agentic_workflow.md` rozdz. 6.5.
+## Personal skills versus project skills
 
-## Przenoszenie poprawek do szablonu
+When `~/.claude/skills` holds a skill with the name of a project skill, Claude Code loads the personal copy instead of the project one, without any message. The SessionStart hook warns about such a collision at the start of a session, and the rule is described in `docs/standards/standard_agentic_workflow.md` ch. 6.5.
 
-Szablon służy wyłącznie na start: projekty założone z niego nie dostają jego późniejszych zmian same, a szablon nie dostaje poprawek z projektów. Poprawkę workflow zrobioną w projekcie przenosi się do szablonu ręcznie:
+## Carrying fixes back to the template
 
-- plik rdzenia (skill, subagent, hook, bramka, standard rdzenia albo profilu) przenosi się w całości, po usunięciu treści specyficznej dla projektu: nazw produktu i systemów, odwołań do specyfikacji, decyzji i inicjatyw projektu,
-- plik części projektowej (`CLAUDE.md`, `AGENTS.md`, `agent_docs/session_context.md`, mapa standardów, rejestry) przenosi się wyłącznie w części ogólnej.
+The template is used only for the start: projects created from it do not receive its later changes by themselves, and the template does not receive fixes from projects. A workflow fix made in a project is carried over to the template by hand:
 
-Po przeniesieniu `make check` w szablonie ma przechodzić, a grep po nazwie projektu źródłowego ma nie dawać trafień.
+- a core file (skill, subagent, hook, gate, core or profile standard) is carried over as a whole, after removing project-specific content: product and system names, references to the specification, decisions and initiatives of the project,
+- a file of the project part (`CLAUDE.md`, `AGENTS.md`, `agent_docs/session_context.md`, the standards map, the registries) is carried over only in its general part.
+
+After carrying a fix over, `make check` has to pass in the template, and a grep for the name of the source project must return no hits. The template itself is written in Polish, so a fix from this repository has to be translated back.

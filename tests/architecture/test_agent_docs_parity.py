@@ -7,41 +7,41 @@ from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
 
-PLAN_REFERENCE = "docs/standards/standard_agentic_workflow.md rozdz. 6.2"
+PLAN_REFERENCE = "docs/standards/standard_agentic_workflow.md ch. 6.2"
 CODEX_ONLY_SKILLS: frozenset[str] = frozenset()
 """
-Skille dopuszczone wyłącznie po stronie Codeksa. Zbiór jest pusty i taki ma zostać - warunki
-dopisania wyjątku opisuje standard_agentic_workflow.md rozdz. 6.1.
+Skills allowed only on the Codex side. The set is empty and is to stay that way - the conditions for
+adding an exception are described in standard_agentic_workflow.md ch. 6.1.
 """
 
 CODEX_ROLE_INSTRUCTIONS_KEY = "developer_instructions"
 FRONTMATTER_MARKER = "---"
-AGENT_ROLE_REFERENCE = "docs/standards/standard_agentic_workflow.md rozdz. 6.4"
+AGENT_ROLE_REFERENCE = "docs/standards/standard_agentic_workflow.md ch. 6.4"
 
 _NORMALIZATIONS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"^# (AGENTS|CLAUDE)\.md$"), "# <ROOT>.md"),
-    (re.compile(r"(Codex|Claude Code) ma stosować"), "<NARZĘDZIE> ma stosować"),
+    (re.compile(r"(Codex|Claude Code) is to apply"), "<TOOL> is to apply"),
     (re.compile(r"\.claude/skills/[\w-]+/scripts/"), "scripts/"),
 ]
 
 AGENT_ROLE_NORMALIZATIONS: list[tuple[re.Pattern[str], str]] = [
-    (re.compile(r"przez `Bash` albo `PowerShell`|przez terminal"), "przez <URUCHAMIACZ>"),
+    (re.compile(r"via `Bash` or `PowerShell`|via the terminal"), "via <RUNNER>"),
 ]
 """
-Jedyna dozwolona różnica między wariantem roli dla Claude Code a wariantem dla Codeksa: nazwa
-narzędzia, którym rola uruchamia komendy. Jest realna, nie kosmetyczna - po stronie Claude Code
-narzędzia nazywają się `Bash` i `PowerShell`, a Codex takich nazw nie zna. Każda inna różnica
-ma być naprawiona w treści plików, nie ukryta dopisaniem drugiej pozycji na tę listę.
+The only allowed difference between the role variant for Claude Code and the variant for Codex: the name
+of the tool the role runs commands with. It is real, not cosmetic - on the Claude Code side the tools
+are called `Bash` and `PowerShell`, and Codex does not know such names. Every other difference
+is to be fixed in the content of the files, not hidden by adding a second item to this list.
 """
 
 
 def _normalize_line(line: str, normalizations: list[tuple[re.Pattern[str], str]]) -> str:
     """
-    Zamienia znane, zamierzone różnice (nazwa narzędzia w rdzeniu, ścieżka
-    do skryptu skilla, nazwa uruchamiacza komend w definicji roli) na wspólną
-    formę, żeby diff widział tylko realne rozjazdy. Każda reguła na liście
-    normalizacji to jedna świadomie dozwolona różnica - dopisanie kolejnej
-    ma być decyzją, nie przypadkiem.
+    Replaces known, intended differences (the tool name in the core, the path
+    to a skill script, the name of the command runner in a role definition) with a common
+    form, so that the diff sees only real divergences. Each rule on the normalization
+    list is one deliberately allowed difference - adding another one
+    is to be a decision, not an accident.
     """
     normalized = line
 
@@ -53,18 +53,18 @@ def _normalize_line(line: str, normalizations: list[tuple[re.Pattern[str], str]]
 
 def _normalized_lines(path: Path) -> list[str]:
     """
-    Czyta plik i zwraca znormalizowane linie. Path.read_text robi uniwersalną
-    translację końców linii do \\n, więc CRLF kontra LF nigdy nie jest różnicą.
+    Reads the file and returns the normalized lines. Path.read_text does universal
+    translation of line endings to \\n, so CRLF versus LF is never a difference.
     """
     return [_normalize_line(line, _NORMALIZATIONS) for line in path.read_text(encoding="utf-8").splitlines()]
 
 
 def _real_differences(name_a: str, lines_a: list[str], name_b: str, lines_b: list[str]) -> list[str]:
     """
-    Zwraca opisy realnych różnic między dwoma zestawami linii po normalizacji.
-    Pusta lista znaczy pełny parytet. Używa difflib zamiast pozycji
-    linia-po-linii, żeby wstawiona albo usunięta sekcja w jednym pliku nie
-    rozjechała numeracji i nie wygenerowała fałszywych różnic dla reszty pliku.
+    Returns descriptions of the real differences between two sets of lines after normalization.
+    An empty list means full parity. Uses difflib instead of line-by-line
+    positions, so that a section inserted or removed in one file does not
+    shift the numbering and generate false differences for the rest of the file.
     """
     matcher = difflib.SequenceMatcher(a=lines_a, b=lines_b, autojunk=False)
     differences: list[str] = []
@@ -73,28 +73,28 @@ def _real_differences(name_a: str, lines_a: list[str], name_b: str, lines_b: lis
         if tag == "equal":
             continue
 
-        differences.append(f"{name_a} linia {i1 + 1}: {lines_a[i1:i2]!r}\n{name_b} linia {j1 + 1}: {lines_b[j1:j2]!r}")
+        differences.append(f"{name_a} line {i1 + 1}: {lines_a[i1:i2]!r}\n{name_b} line {j1 + 1}: {lines_b[j1:j2]!r}")
 
     return differences
 
 
 def _assert_parity(path_a: Path, path_b: Path, pair_name: str) -> None:
     """
-    Asercja parytetu dla jednej pary plików, z odesłaniem do planu wdrożenia
-    po listę dozwolonych wyjątków i uzasadnienie testu.
+    Parity assertion for one pair of files, with a reference to the rollout plan
+    for the list of allowed exceptions and the rationale of the test.
     """
-    assert path_a.is_file(), f"Brak pliku {path_a} dla pary {pair_name}"
-    assert path_b.is_file(), f"Brak pliku {path_b} dla pary {pair_name}"
+    assert path_a.is_file(), f"Missing file {path_a} for the pair {pair_name}"
+    assert path_b.is_file(), f"Missing file {path_b} for the pair {pair_name}"
 
     differences = _real_differences(path_a.name, _normalized_lines(path_a), path_b.name, _normalized_lines(path_b))
-    assert not differences, f"Para {pair_name} rozjechała się poza dozwolone różnice:\n" + "\n".join(differences) + f"\nZobacz {PLAN_REFERENCE} po listę dozwolonych wyjątków."
+    assert not differences, f"The pair {pair_name} diverged beyond the allowed differences:\n" + "\n".join(differences) + f"\nSee {PLAN_REFERENCE} for the list of allowed exceptions."
 
 
 def _strip_blank_edges(lines: list[str]) -> list[str]:
     """
-    Odcina puste linie z początku i z końca listy. Wariant markdown ma pustą
-    linię po frontmatterze i na końcu pliku, wariant TOML nie ma ani jednej -
-    to różnica formatu, nie treści.
+    Cuts blank lines off the beginning and the end of the list. The markdown variant has a blank
+    line after the frontmatter and at the end of the file, the TOML variant has none -
+    that is a difference of format, not of content.
     """
     trimmed = list(lines)
 
@@ -109,10 +109,10 @@ def _strip_blank_edges(lines: list[str]) -> list[str]:
 
 def fetch_claude_role_instructions(path: Path) -> list[str]:
     """
-    Czyta definicję roli po stronie Claude Code i zwraca same znormalizowane
-    linie instrukcji, bez frontmatteru. Frontmatter niesie konfigurację
-    narzędzia (lista narzędzi, tryb uprawnień, limit tur), która nie ma
-    odpowiednika po stronie Codeksa i nie podlega parytetowi.
+    Reads the role definition on the Claude Code side and returns only the normalized
+    instruction lines, without the frontmatter. The frontmatter carries the tool
+    configuration (tool list, permission mode, turn limit), which has no
+    counterpart on the Codex side and is not subject to parity.
     """
     lines = path.read_text(encoding="utf-8").splitlines()
 
@@ -125,13 +125,13 @@ def fetch_claude_role_instructions(path: Path) -> list[str]:
 
 def fetch_codex_role_instructions(path: Path) -> list[str]:
     """
-    Czyta definicję roli po stronie Codeksa i zwraca znormalizowane linie
-    z klucza `developer_instructions`.
+    Reads the role definition on the Codex side and returns the normalized lines
+    of the `developer_instructions` key.
 
-    Porównanie idzie po wartości odczytanej parserem, nie po surowym tekście
-    pliku: wartość niesie literalne sekwencje ucieczki końca linii, które
-    parser zamienia na prawdziwe znaki, a surowy tekst pokazywałby je jako
-    różnicę wobec wariantu markdown.
+    The comparison goes by the value read by the parser, not by the raw text
+    of the file: the value carries literal line-ending escape sequences, which
+    the parser turns into real characters, while the raw text would show them as
+    a difference against the markdown variant.
     """
     document = tomllib.loads(path.read_text(encoding="utf-8"))
     instructions = document[CODEX_ROLE_INSTRUCTIONS_KEY]
@@ -141,8 +141,8 @@ def fetch_codex_role_instructions(path: Path) -> list[str]:
 
 def _discover_skill_names(skills_dir: Path) -> set[str]:
     """
-    Zwraca nazwy skilli (podkatalogów zawierających SKILL.md) w danym
-    katalogu skills/.
+    Returns the names of the skills (subdirectories containing SKILL.md) in the given
+    skills/ directory.
     """
     if not skills_dir.is_dir():
         return set()
@@ -152,7 +152,7 @@ def _discover_skill_names(skills_dir: Path) -> set[str]:
 
 def _discover_role_names(roles_dir: Path, suffix: str) -> set[str]:
     """
-    Zwraca nazwy ról (pliki o podanym rozszerzeniu) w danym katalogu definicji ról.
+    Returns the names of the roles (files with the given extension) in the given role definition directory.
     """
     if not roles_dir.is_dir():
         return set()
@@ -162,18 +162,18 @@ def _discover_role_names(roles_dir: Path, suffix: str) -> set[str]:
 
 def test_agents_and_claude_core_files_are_at_parity() -> None:
     """
-    Pilnuje, że AGENTS.md i CLAUDE.md nie rozjadą się poza nazwę narzędzia -
-    to samo repo ma czytać Codex i Claude Code, więc reguły muszą być
-    identyczne.
+    Ensures that AGENTS.md and CLAUDE.md do not diverge beyond the tool name -
+    the same repo is to be read by Codex and Claude Code, so the rules must be
+    identical.
     """
     _assert_parity(ROOT_DIR / "AGENTS.md", ROOT_DIR / "CLAUDE.md", "AGENTS.md / CLAUDE.md")
 
 
 def test_every_local_skill_exists_in_both_claude_and_agents() -> None:
     """
-    Pilnuje pełnego parytetu poza ścisłą listą zatwierdzonych skilli
-    Codex-only i nie pozwala, aby allowlista ukrywała martwy wpis albo kopię
-    utworzoną również po stronie Claude.
+    Ensures full parity outside the strict list of approved Codex-only
+    skills and does not let the allowlist hide a dead entry or a copy
+    also created on the Claude side.
     """
     claude_skills = _discover_skill_names(ROOT_DIR / ".claude" / "skills")
     agents_skills = _discover_skill_names(ROOT_DIR / ".agents" / "skills")
@@ -181,24 +181,24 @@ def test_every_local_skill_exists_in_both_claude_and_agents() -> None:
     only_in_claude = sorted(claude_skills - agents_skills)
     only_in_agents = sorted((agents_skills - claude_skills) - CODEX_ONLY_SKILLS)
 
-    assert not only_in_claude, f"Skille istnieją tylko w .claude/skills/, brakuje w .agents/skills/: {only_in_claude}"
-    assert not only_in_agents, f"Nieznane skille istnieją tylko w .agents/skills/, brakuje w .claude/skills/: {only_in_agents}"
-    assert agents_skills >= CODEX_ONLY_SKILLS, f"Allowlista Codex-only zawiera brakujące skille: {sorted(CODEX_ONLY_SKILLS - agents_skills)}"
-    assert CODEX_ONLY_SKILLS.isdisjoint(claude_skills), f"Skill Codex-only ma niedozwoloną kopię w .claude/skills/: {sorted(CODEX_ONLY_SKILLS & claude_skills)}"
+    assert not only_in_claude, f"Skills exist only in .claude/skills/, missing in .agents/skills/: {only_in_claude}"
+    assert not only_in_agents, f"Unknown skills exist only in .agents/skills/, missing in .claude/skills/: {only_in_agents}"
+    assert agents_skills >= CODEX_ONLY_SKILLS, f"The Codex-only allowlist contains missing skills: {sorted(CODEX_ONLY_SKILLS - agents_skills)}"
+    assert CODEX_ONLY_SKILLS.isdisjoint(claude_skills), f"A Codex-only skill has a disallowed copy in .claude/skills/: {sorted(CODEX_ONLY_SKILLS & claude_skills)}"
 
 
 def test_every_paired_skill_is_at_parity() -> None:
     """
-    Pilnuje, że treść każdego skilla istniejącego w obu lokalizacjach jest
-    identyczna poza jawnie dozwolonymi różnicami, głównie ścieżkami do
-    skryptów.
+    Ensures that the content of every skill existing in both locations is
+    identical apart from explicitly allowed differences, mainly paths to
+    scripts.
     """
     claude_skills_dir = ROOT_DIR / ".claude" / "skills"
     agents_skills_dir = ROOT_DIR / ".agents" / "skills"
 
     shared_skills = sorted(_discover_skill_names(claude_skills_dir) & _discover_skill_names(agents_skills_dir))
 
-    assert shared_skills, "Nie znaleziono żadnej pary skilli do porównania - sprawdź, czy .claude/skills i .agents/skills istnieją"
+    assert shared_skills, "No pair of skills to compare was found - check whether .claude/skills and .agents/skills exist"
 
     for skill_name in shared_skills:
         _assert_parity(
@@ -210,12 +210,12 @@ def test_every_paired_skill_is_at_parity() -> None:
 
 def test_every_paired_agent_role_is_at_parity() -> None:
     """
-    Pilnuje, że instrukcja każdej roli agentowej brzmi tak samo w wariancie dla
-    Claude Code i w wariancie dla Codeksa, poza jedyną jawnie dopuszczoną
-    różnicą w nazwie uruchamiacza komend.
+    Ensures that the instruction of every agent role reads the same in the variant for
+    Claude Code and in the variant for Codex, apart from the only explicitly allowed
+    difference in the name of the command runner.
 
-    Do tej pory zgodność obu wariantów pilnował wyłącznie człowiek i nie
-    upilnował: obie pary ról rozjechały się treściowo, zanim ten test powstał.
+    Until now the agreement of both variants was guarded only by a human, who did not
+    manage it: both role pairs diverged in content before this test was created.
     """
     claude_roles_dir = ROOT_DIR / ".claude" / "agents"
     codex_roles_dir = ROOT_DIR / ".codex" / "agents"
@@ -223,9 +223,9 @@ def test_every_paired_agent_role_is_at_parity() -> None:
     claude_roles = _discover_role_names(claude_roles_dir, ".md")
     codex_roles = _discover_role_names(codex_roles_dir, ".toml")
 
-    assert claude_roles, "Nie znaleziono żadnej definicji roli w .claude/agents - sprawdź, czy katalog istnieje"
+    assert claude_roles, "No role definition was found in .claude/agents - check whether the directory exists"
     assert claude_roles == codex_roles, (
-        f"Role bez pary: tylko w .claude/agents {sorted(claude_roles - codex_roles)}, tylko w .codex/agents {sorted(codex_roles - claude_roles)}. Zobacz {AGENT_ROLE_REFERENCE}."
+        f"Roles without a pair: only in .claude/agents {sorted(claude_roles - codex_roles)}, only in .codex/agents {sorted(codex_roles - claude_roles)}. See {AGENT_ROLE_REFERENCE}."
     )
 
     for role_name in sorted(claude_roles):
@@ -235,5 +235,5 @@ def test_every_paired_agent_role_is_at_parity() -> None:
         differences = _real_differences(claude_path.name, fetch_claude_role_instructions(claude_path), codex_path.name, fetch_codex_role_instructions(codex_path))
 
         assert not differences, (
-            f"Para ról {role_name} rozjechała się poza dozwolone różnice:\n" + "\n".join(differences) + f"\nZobacz {AGENT_ROLE_REFERENCE} po uzasadnienie i listę dozwolonych wyjątków."
+            f"The role pair {role_name} diverged beyond the allowed differences:\n" + "\n".join(differences) + f"\nSee {AGENT_ROLE_REFERENCE} for the rationale and the list of allowed exceptions."
         )

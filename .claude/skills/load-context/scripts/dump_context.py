@@ -26,7 +26,7 @@ ALLOWED_SPECIAL_FILES = {".env.example"}
 
 
 def parse_args() -> argparse.Namespace:
-    """Parsuje argumenty CLI dla prostego dumpowania kontekstu folderu."""
+    """Parses the CLI arguments for a simple dump of a folder's context."""
     parser = argparse.ArgumentParser(description="Dump selected text files from a folder into one output.txt style context file.")
     parser.add_argument("--input", required=True, help="Folder to dump, for example ./database_schema_export.")
     parser.add_argument("--output", default="output.txt", help="Output file path. Default: output.txt.")
@@ -38,7 +38,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def normalize_extensions(values: list[str]) -> set[str]:
-    """Normalizuje listę rozszerzeń do postaci z kropką i małymi literami."""
+    """Normalizes the list of extensions to a lowercase form with a leading dot."""
     normalized = set()
 
     for value in values:
@@ -53,7 +53,7 @@ def normalize_extensions(values: list[str]) -> set[str]:
 
 
 def should_include_file(path: Path, allowed_extensions: set[str], ignored_extensions: set[str]) -> bool:
-    """Sprawdza, czy plik powinien wejść do dumpa kontekstu."""
+    """Checks whether a file should go into the context dump."""
     name = path.name.lower()
     suffix = path.suffix.lower()
 
@@ -73,7 +73,7 @@ def should_include_file(path: Path, allowed_extensions: set[str], ignored_extens
 
 
 def display_path(path: Path, cwd: Path) -> str:
-    """Zwraca krótką ścieżkę do nagłówka pliku w dumpie."""
+    """Returns a short path for the file header in the dump."""
     try:
         relative_path = path.resolve().relative_to(cwd.resolve())
         return f"./{relative_path.as_posix()}"
@@ -82,7 +82,7 @@ def display_path(path: Path, cwd: Path) -> str:
 
 
 def save_files_content_to_txt(root_folder: Path, output_file: Path, ignore_dirs: set[str], allowed_extensions: set[str], ignored_extensions: set[str]) -> tuple[int, int]:
-    """Rekurencyjnie zapisuje treść wybranych plików tekstowych do jednego pliku output.txt style."""
+    """Recursively writes the content of the selected text files into one output.txt style file."""
     included_count = 0
     failed_count = 0
     cwd = Path.cwd()
@@ -106,7 +106,7 @@ def save_files_content_to_txt(root_folder: Path, output_file: Path, ignore_dirs:
                     content = file_path.read_text(encoding="utf-8", errors="replace")
                 except OSError as error:
                     failed_count += 1
-                    print(f"Nie udało się odczytać pliku {file_path}: {error}")
+                    print(f"Could not read file {file_path}: {error}")
                     continue
 
                 outfile.write(f"==== {display_path(file_path, cwd)} ====\n")
@@ -118,7 +118,7 @@ def save_files_content_to_txt(root_folder: Path, output_file: Path, ignore_dirs:
 
 
 def main() -> None:
-    """Uruchamia prosty dump kontekstu folderu do jednego pliku tekstowego."""
+    """Runs a simple dump of a folder's context into one text file."""
     args = parse_args()
     root_folder = Path(args.input)
     output_file = Path(args.output)
@@ -127,13 +127,13 @@ def main() -> None:
     ignored_extensions = normalize_extensions(args.ignore_extensions)
 
     if not root_folder.is_dir():
-        raise SystemExit(f"Folder wejściowy nie istnieje albo nie jest folderem: {root_folder}")
+        raise SystemExit(f"Input folder does not exist or is not a folder: {root_folder}")
 
     included_count, failed_count = save_files_content_to_txt(root_folder, output_file, ignore_dirs, allowed_extensions, ignored_extensions)
 
-    print(f"Zawartość plików została zapisana do {output_file}")
-    print(f"Uwzględnione pliki: {included_count}")
-    print(f"Nieudane odczyty: {failed_count}")
+    print(f"File contents were written to {output_file}")
+    print(f"Included files: {included_count}")
+    print(f"Failed reads: {failed_count}")
 
 
 if __name__ == "__main__":

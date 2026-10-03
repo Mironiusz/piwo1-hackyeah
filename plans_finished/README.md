@@ -1,9 +1,9 @@
 # plans_finished
 
-Archiwum inicjatyw jawnie zakończonych albo jawnie anulowanych. Każdy katalog tutaj jest całą inicjatywą przeniesioną z `plans/` pod tą samą nazwą i z tym samym układem plików, razem z podkatalogami zadań, jeśli je miała - archiwizacja nie zmienia nazw ani prefiksów, nie scala katalogów i nie wybiera plików. `plans/` trzyma wyłącznie pracę w toku.
+Archive of initiatives that have been explicitly finished or explicitly cancelled. Every directory here is a whole initiative moved from `plans/` under the same name and with the same file layout, together with its task subdirectories, if it had any - archiving does not change names or prefixes, does not merge directories and does not choose files. `plans/` holds only work in progress.
 
-Ten plik nie jest rejestrem statusów. O tym, dlaczego inicjatywa tu leży, mówią jej własne artefakty: końcowy werdykt `ready` obejmujący cały zakres albo jawne zamknięcie lub anulowanie zapisane w jej review.
+This file is not a status registry. Why an initiative lies here is told by its own artifacts: a final `ready` verdict covering the whole scope, or an explicit closure or cancellation recorded in its review.
 
-Kryterium archiwizacji, kto i kiedy przenosi, jak chronić historię (seedy, dawne wpisy review i memory, zamrożone materiały) i jak wznowić inicjatywę przez powrót do `plans/`: `docs/standards/standard_agentic_workflow.md`, rozdz. 4.6.
+The archiving criterion, who moves an initiative and when, how to protect history (seeds, old review and memory entries, frozen materials) and how to resume an initiative by returning it to `plans/`: `docs/standards/standard_agentic_workflow.md`, ch. 4.6.
 
-Odwołania do `plans/<INICJATYWA>/` w seedach, dawnych wpisach review i memory zarchiwizowanych inicjatyw są zapisem historycznym i wskazują dawne miejsce - katalog o tej nazwie leży wtedy tutaj.
+References to `plans/<INITIATIVE>/` in seeds, old review entries and memory of archived initiatives are a historical record and point to the old location - a directory with that name then lies here.

@@ -2,12 +2,12 @@
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
-# Ta sekcja istnieje wyłącznie po to, żeby lista zależności miała jedno miejsce czytelne dla wszystkich
-# narzędzi kontrolnych - projekt nie jest pakietem do dystrybucji. Wersja jest stała i nic nie znaczy.
-# Nazwę i zależności serwisu wpisuje projekt. Zależność, której kod nie importuje wprost (sterownik ładowany
-# po nazwie dialektu, punkt wejścia, wsparcie runtime), dostaje wpis w DEP002 niżej razem z powodem.
+# This section exists only so that the dependency list has one place readable by all
+# the check tools - the project is not a package for distribution. The version is fixed and means nothing.
+# The project fills in the service name and dependencies. A dependency the code does not import directly (a driver loaded
+# by the dialect name, an entry point, runtime support) gets an entry in DEP002 below together with the reason.
 [project]
-name = "nazwa-projektu"
+name = "piwo1-hackyeah"
 version = "0.0.0"
 requires-python = ">=3.13"
 dependencies = []
@@ -24,16 +24,16 @@ dev = [
     "vulture==2.16",
 ]
 
-# Kod nie jest pakowany: do kontenera trafia przez COPY, a nie przez instalację, i jest wykonywany
-# z PYTHONPATH. Pusta lista modułów wyłącza automatyczne wykrywanie pakietów, przez co instalacja
-# zakłada same metadane z zależnościami - bez drugiej kopii kodu w katalogu pakietów.
+# The code is not packaged: it gets into the container through COPY, not through installation, and it is executed
+# from PYTHONPATH. An empty module list turns off automatic package discovery, so the installation
+# creates only the metadata with the dependencies - without a second copy of the code in the packages directory.
 [tool.setuptools]
 py-modules = []
 
-# Katalog z metadanymi pakietu i katalog roboczy budowy, jedno i drugie tworzone przy każdej instalacji,
-# lądują w .cache zamiast w korzeniu repozytorium. Setuptools nie tworzy katalogu wskazanego w egg-base,
-# więc .cache/.gitkeep jest wersjonowany - bez niego instalacja na świeżym klonie pada przy budowaniu
-# metadanych.
+# The package metadata directory and the build working directory, both created on every installation,
+# land in .cache instead of the repository root. Setuptools does not create the directory given in egg-base,
+# so .cache/.gitkeep is versioned - without it the installation on a fresh clone fails while building
+# the metadata.
 [tool.distutils.egg_info]
 egg-base = ".cache"
 
@@ -44,8 +44,8 @@ build-base = ".cache/build"
 target-version = "py313"
 line-length = 200
 src = ["."]
-# Katalogi robocze narzędzi zbierają się w .cache, żeby korzeń repozytorium pokazywał wyłącznie to,
-# co ktoś napisał. Każde narzędzie ma na to własny klucz i każdy z nich stoi w tym pliku.
+# The working directories of the tools gather in .cache, so that the repository root shows only what
+# somebody wrote. Each tool has its own key for that and each of those keys stands in this file.
 cache-dir = ".cache/ruff"
 exclude = [
     ".venv",
@@ -57,9 +57,9 @@ exclude = [
     "dist",
     "node_modules",
 ]
-# Pliki markdown wychodzą z zasięgu: ruff od 0.16 formatuje bloki kodu w dokumentacji, a przy włączonym
-# docstring-code-format oznaczało to, że "make format" przepisuje przykłady w docs/ razem z kodem.
-# Formatowanie przykładów w docstringach samego kodu zostaje włączone i działa dalej.
+# Markdown files are out of scope: since 0.16 ruff formats code blocks in documentation, and with
+# docstring-code-format turned on this meant that "make format" rewrites the examples in docs/ together with the code.
+# Formatting of examples in the docstrings of the code itself stays on and keeps working.
 extend-exclude = ["*.md"]
 force-exclude = true
 
@@ -85,7 +85,7 @@ fixable = ["ALL"]
 [tool.ruff.lint.mccabe]
 max-complexity = 15
 
-# N803 wyłączone w tests/: fixture'y celowo nazywane jak klasa, którą zwracają, nie literówka.
+# N803 turned off in tests/: fixtures are deliberately named like the class they return, not a typo.
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["N803"]
 
@@ -96,34 +96,34 @@ line-ending = "lf"
 skip-magic-trailing-comma = false
 docstring-code-format = true
 
-# Lista katalogów obejmuje dziś wyłącznie hooki, bo szablon nie ma kodu serwisu. Projekt dopisuje tu
-# katalogi warstw razem z pierwszym kodem. Projekt korzystający z modeli Pydantica dopisuje też wtyczkę
-# pydantic.mypy: bez niej mypy zgłasza brak argumentów przy tworzeniu modelu ustawień, bo nie wie, że
-# wartości pochodzą ze środowiska.
+# The directory list covers only the hooks today, because the template has no service code. The project adds here
+# the layer directories together with the first code. A project using Pydantic models also adds the
+# pydantic.mypy plugin: without it mypy reports missing arguments when creating the settings model, because it does not know that
+# the values come from the environment.
 [tool.mypy]
 files = [".claude/hooks"]
 cache_dir = ".cache/mypy"
 
 [tool.vulture]
-# Skanowane są także testy: użycie w teście jest użyciem.
+# Tests are scanned too: a use in a test is a use.
 paths = [".claude/hooks", "tests"]
-# Próg pewności podniesiony z domyślnych sześćdziesięciu, bo pola modeli Pydantica i kolumny ORM składa
-# biblioteka po nazwie, a vulture tego nie widzi i zgłasza je jako martwe. Co bramka przy tym progu
-# przestaje widzieć: nieużywaną funkcję, klasę, metodę, atrybut i zmienną - vulture przypisuje im
-# sześćdziesiąt procent pewności. Nieużywane importy i zmienne lokalne łapie dalej ruff rodziną reguł F,
-# a nieużywane parametry funkcji i kod nieosiągalny zostają widoczne tutaj, bo mają sto procent.
+# The confidence threshold is raised from the default sixty, because Pydantic model fields and ORM columns are assembled
+# by the library by name, and vulture does not see that and reports them as dead. What the gate stops seeing at this
+# threshold: an unused function, class, method, attribute and variable - vulture assigns them
+# sixty percent confidence. Unused imports and local variables are still caught by ruff with the F rule family,
+# and unused function parameters and unreachable code stay visible here, because they have one hundred percent.
 min_confidence = 61
 
 [tool.deptry]
-# Grupa dev to narzędzia uruchamiane z linii poleceń, a nie importowane przez kod. Bez tego wpisu deptry
-# zgłasza każde z nich jako zadeklarowane i nieużywane, bo szuka ich w importach - a tam ich nigdy nie będzie.
+# The dev group is tools run from the command line, not imported by the code. Without this entry deptry
+# reports each of them as declared and unused, because it looks for them in the imports - and they will never be there.
 optional_dependencies_dev_groups = ["dev"]
-# Bandit nie ma tu sekcji konfiguracji i jest to decyzja, nie przeoczenie. Wyciszenie ma obowiązywać
-# tylko w tym miejscu, w którym stoi jego powód, a bandit potrafi wyciszać wyłącznie globalnie - jedna
-# lista w tym pliku uciszałaby też kod, który jeszcze nie powstał. Zasięg stoi więc przy wywołaniach
-# w makefile, razem z powodem każdego wyciszenia. Pozycja bandit[toml] zostaje na liście zależności
-# jako zabezpieczenie: gdyby ktoś tu kiedyś dopisał [tool.bandit], bandit bez tego dodatku zignorowałby
-# sekcję po cichu, bez żadnego błędu.
+# Bandit has no configuration section here and that is a decision, not an oversight. A suppression is to apply
+# only in the place where its reason stands, and bandit can suppress only globally - one
+# list in this file would also silence code that does not exist yet. The scope therefore stands next to the calls
+# in the makefile, together with the reason for each suppression. The bandit[toml] entry stays on the dependency list
+# as a safeguard: if somebody ever added [tool.bandit] here, bandit without this extra would ignore
+# the section quietly, without any error.
 
 [tool.coverage.run]
 data_file = ".cache/coverage"
@@ -134,6 +134,6 @@ testpaths = ["tests"]
 pythonpath = ["."]
 cache_dir = ".cache/pytest"
 markers = [
-    "integration: testy integracyjne (sklejają kilka warstw; bez realnej sieci i bez prawdziwej bazy)",
-    "critical: testy krytyczne (realne zależności: np. DB; mają szybko wywalić środowisko gdy coś nie działa)",
+    "integration: integration tests (they glue several layers together; no real network and no real database)",
+    "critical: critical tests (real dependencies, e.g. a DB; they should fail the environment fast when something does not work)",
 ]

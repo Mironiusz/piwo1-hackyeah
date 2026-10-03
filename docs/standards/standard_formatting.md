@@ -1,121 +1,121 @@
-# Standard formatowania kodu
+# Code formatting standard
 
-Stan dokumentu: 2026-10-03
+Document state: 2026-10-03
 
-Status: gotowy - pełna treść. Pełny opis pozycji tego standardu wobec pozostałych jest w `docs/standards/README.md`.
+Status: ready - full content. The full description of this standard's position relative to the others is in `docs/standards/README.md`.
 
-## Po co ten dokument
+## Why this document exists
 
-Formatowanie jest tym, co review widzi jako pierwsze, zanim dojdzie do logiki zmiany - linia, która łamie się w innym miejscu niż resztę pliku, cudzysłów innego rodzaju niż sąsiednie, znak, który wygląda jak myślnik, ale nim nie jest. Żaden z tych szczegółów nie zmienia zachowania programu, ale każdy z nich kosztuje uwagę recenzenta, którą powinien dostać sam diff logiki, nie jego wizualna otoczka. Ten standard ustala jeden kształt dla tych szczegółów, żeby review mogło je pominąć, a nie oceniać przy każdej zmianie od nowa.
+Formatting is what review sees first, before it gets to the logic of the change - a line that breaks in a different place than the rest of the file, a quotation mark of a different kind than the neighboring ones, a character that looks like a dash but is not one. None of these details changes the behavior of the program, but each of them costs the reviewer attention that should go to the logic diff itself, not to its visual wrapping. This standard sets one shape for these details, so that review can skip them instead of judging them anew with every change.
 
-Większość reguł niżej jest już dziś wymuszana automatycznie przez `ruff format` na podstawie ustawień w `pyproject.toml` - w przeciwieństwie do większości standardów tego repozytorium, dostosowanie istniejącego kodu do reguł tego standardu nie wymaga przepisywania niczego ręcznie. Wystarczy odpalić formatter na dotkniętym module.
+Most of the rules below are already enforced automatically today by `ruff format` based on the settings in `pyproject.toml` - unlike most standards in this repository, aligning existing code with the rules of this standard does not require rewriting anything by hand. It is enough to run the formatter on the touched module.
 
-## Zakres i granice
+## Scope and boundaries
 
-Ten standard odpowiada za formatowanie kodu: długość linii i moment łamania wywołania na wiele linii, znaki zakazane, cudzysłowy i wyróżnienia - w kodzie Python i w prozie dokumentacji. Odpowiada też za formatowanie plików markdown przez prettier: które narzędzie, z jaką konfiguracją i którym celem `make` je uruchamia.
+This standard is responsible for code formatting: line length and the moment a call is broken into multiple lines, forbidden characters, quotation marks and emphasis - in Python code and in documentation prose. It is also responsible for formatting markdown files with prettier: which tool, with which configuration and which `make` target runs it.
 
-Znaki zakazane mają dziś dwie wersje: skróconą w `CLAUDE.md`/`AGENTS.md` (twarde zakazy stosowalne bez kontekstu) i pełną, z uzasadnieniem, tutaj - to zamierzona architektura opisana w `docs/standards/README.md`, nie duplikacja do naprawienia. Skrócona wersja w `CLAUDE.md`/`AGENTS.md` numerycznie różni się od pełnej listy poniżej - ten rozjazd jest znany i pozostaje nienaprawiony.
+Forbidden characters currently have two versions: a shortened one in `CLAUDE.md`/`AGENTS.md` (hard bans applicable without context) and a full one, with rationale, here - this is the intended architecture described in `docs/standards/README.md`, not duplication to be fixed. The shortened version in `CLAUDE.md`/`AGENTS.md` differs numerically from the full list below - this mismatch is known and remains unfixed.
 
-Czego tu nie ma: komentarze linijkowe i docstringi - to jest w `standard_code_quality.md`.
+What is not here: line comments and docstrings - those are in `standard_code_quality.md`.
 
-## Reguła odstępstwa
+## Deviation rule
 
-Standard opisuje stan docelowy i obowiązuje w pełni od pierwszego commita. Projekt założony z szablonu nie ma kodu zastanego, więc nie ma czego chronić okresem przejściowym - kod niezgodny ze standardem blokuje review niezależnie od tego, kto go pisał i kiedy.
+The standard describes the target state and applies in full from the first commit. A project created from the template has no legacy code, so there is nothing to protect with a transition period - code that does not comply with the standard blocks review regardless of who wrote it and when.
 
-Gdy repozytorium będzie mieć kod zastany, rozluźnienie tej reguły do wersji miękkiej ma być jawną decyzją zapisaną w `docs/standards/README.md` wraz z datą i powodem. Nie jest stanem, który wchodzi w życie sam.
+When the repository has legacy code, relaxing this rule to the soft version is to be an explicit decision recorded in `docs/standards/README.md` together with the date and the reason. It is not a state that takes effect on its own.
 
-Doprecyzowanie właściwe dla tego standardu: dla reguł wymuszanych automatycznie przez `ruff format` (długość linii, cudzysłów w kodzie) i przez prettiera (układ pliku markdown) obowiązek dostosowania sprowadza się do odpalenia `make format`, nie do ręcznej pracy. Dla reguł niewymuszanych automatycznie - znaki zakazane w dokumentacji, cudzysłów w prozie - obowiązek dostosowania jest zwykłym przeglądem zmienionego tekstu, tak jak w każdym innym standardzie.
+A clarification specific to this standard: for rules enforced automatically by `ruff format` (line length, quotation marks in code) and by prettier (layout of a markdown file), the duty to align comes down to running `make format`, not to manual work. For rules not enforced automatically - forbidden characters in documentation, quotation marks in prose - the duty to align is an ordinary review of the changed text, as in every other standard.
 
-## Długość linii i łamanie wywołań
+## Line length and breaking calls
 
-Limit długości linii to 200 znaków, ustawiony w `pyproject.toml` (`[tool.ruff] line-length = 200`) i egzekwowany przez `ruff format`. Wywołanie funkcji i definicja funkcji, których parametry mieszczą się w tym limicie rozdzielone spacjami po przecinku, stoją w jednej linii. Po przekroczeniu limitu każdy parametr trafia w osobną linię, z przecinkiem na końcu, a zamykający nawias wraca do wcięcia linii, w której wywołanie się zaczęło.
+The line length limit is 200 characters, set in `pyproject.toml` (`[tool.ruff] line-length = 200`) and enforced by `ruff format`. A function call and a function definition whose parameters fit within this limit, separated by spaces after commas, stay on one line. Once the limit is exceeded, each parameter goes on a separate line, with a comma at the end, and the closing parenthesis returns to the indentation of the line in which the call started.
 
-Ten podział nie jest decyzją podejmowaną ręcznie przy pisaniu kodu - jest efektem odpalenia `ruff format` na pliku. Pisanie kodu z myślą "to na pewno będzie za długie, więc od razu łamię linię" jest zbędne: formatter złamie ją sam, jeśli trzeba, i scali z powrotem, jeśli nie trzeba.
+This split is not a decision made by hand while writing code - it is the effect of running `ruff format` on the file. Writing code with the thought "this will surely be too long, so I break the line right away" is unnecessary: the formatter will break it itself if needed, and join it back if not.
 
-Limit 200 znaków jest wyższy niż domyślne 79 czy 88 przyjęte gdzie indziej w ekosystemie Pythona. Uzasadnienie: funkcje w tym repozytorium często mają kilka parametrów nazwanych (`timeout`, `autocommit`, `limit`), a przy krótszym limicie sama sygnatura funkcji z adnotacjami typów i wartościami domyślnymi łamałaby się na wiele linii już przy umiarkowanej liczbie parametrów, mimo że w jednej linii jest równie czytelna. Wyższy limit oznacza mniej sztucznych łamań linii bez straty czytelności na współczesnym, szerokim ekranie.
+The 200-character limit is higher than the default 79 or 88 adopted elsewhere in the Python ecosystem. Rationale: functions in this repository often have several named parameters (`timeout`, `autocommit`, `limit`), and with a shorter limit the function signature alone, with type annotations and default values, would break into multiple lines already at a moderate number of parameters, even though it is just as readable on one line. A higher limit means fewer artificial line breaks without loss of readability on a modern, wide screen.
 
-Magic trailing comma jest respektowana (`[tool.ruff.format] skip-magic-trailing-comma = false`): przecinek zostawiony po ostatnim elemencie listy albo argumencie wymusza wielolinijkowy zapis, nawet jeśli całość zmieściłaby się w jednej linii. To jest świadomy wyjątek od reguły "formatter decyduje o łamaniu wyłącznie na podstawie długości" - dostępny, gdy autor kodu uzna, że lista argumentów jest czytelniejsza rozbita, mimo że zmieściłaby się w limicie, na przykład bo każdy z nich zasługuje na osobne spojrzenie przy review.
+The magic trailing comma is respected (`[tool.ruff.format] skip-magic-trailing-comma = false`): a comma left after the last element of a list or after the last argument forces a multi-line layout, even if the whole would fit on one line. This is a deliberate exception to the rule "the formatter decides on breaking solely based on length" - available when the author of the code decides that the argument list is more readable split, even though it would fit within the limit, for example because each argument deserves a separate look during review.
 
-## Cudzysłowy
+## Quotation marks
 
-W kodzie Python cudzysłów jest zawsze podwójny (`[tool.ruff.format] quote-style = "double"`), wymuszany automatycznie przez `ruff format`. Wybór między `'` i `"` nie jest decyzją do podjęcia przy pisaniu - jedyny przypadek, w którym formatter sam użyje pojedynczego, to string zawierający dosłowny znak `"`, żeby uniknąć jego escapowania.
+In Python code the quotation mark is always double (`[tool.ruff.format] quote-style = "double"`), enforced automatically by `ruff format`. The choice between `'` and `"` is not a decision to be made while writing - the only case in which the formatter itself uses a single one is a string containing a literal `"` character, to avoid escaping it.
 
-W prozie - docstringach, komentarzach, treści standardów, komunikacji - cudzysłów jest używany tylko wtedy, gdy jest do czegoś potrzebny: dosłowny cytat, nazwa pola albo fragmentu kodu wklejonego w tekst. Cudzysłów postawiony wokół słowa bez żadnej z tych funkcji, tylko dla podkreślenia, jest szumem: zaciera różnicę między miejscem, w którym cudzysłów faktycznie znaczy "to jest dosłowny cytat czegoś", a miejscem, w którym jest tylko ozdobnikiem. Niezależnie od kontekstu, jedynym dozwolonym znakiem jest zwykły ASCII `"` - nigdy zakrzywiony, patrz sekcja niżej.
+In prose - docstrings, comments, the content of standards, communication - quotation marks are used only when they are needed for something: a literal quote, the name of a field or a code fragment pasted into the text. A quotation mark placed around a word without any of these functions, only for emphasis, is noise: it blurs the difference between a place where the quotation mark actually means "this is a literal quote of something" and a place where it is only decoration. Regardless of context, the only allowed character is the plain ASCII `"` - never a curly one, see the section below.
 
-## Wyróżnienia w prozie
+## Emphasis in prose
 
-Proza nie używa pogrubienia: ani wewnątrz zdania, ani jako etykiety otwierającej akapit czy punkt listy. Dotyczy to standardów, dokumentacji w `docs/`, warstwy `agent_docs/` oraz wszystkich artefaktów zadania w `plans/` - SEED, SHAPE, PRD, PLAN i REVIEW. Pogrubienie zostaje dozwolone wyłącznie tam, gdzie jest elementem struktury dokumentu, a nie podkreśleniem treści: w nagłówku i w komórce tabeli.
+Prose does not use bold: neither inside a sentence, nor as a label opening a paragraph or a list item. This applies to the standards, the documentation in `docs/`, the `agent_docs/` layer and all task artifacts in `plans/` - SEED, SHAPE, PRD, PLAN and REVIEW. Bold remains allowed only where it is an element of the document structure, not emphasis of content: in a heading and in a table cell.
 
-Uzasadnienie jest to samo co przy cudzysłowie w sekcji wyżej, tylko koszt jest wyższy. Etykieta w rodzaju:
-
-```markdown
-**Na co wpływa:** `standard_database.md`, struktura repozytorium, kolejność pracy.
-```
-
-udaje nagłówek, którym nie jest. Nie trafia do spisu treści, nie da się do niej odesłać z innego dokumentu, a przy czytaniu wygląda na szkielet dokumentu, mimo że jest zwykłym akapitem. Jeśli fragment naprawdę jest osobną częścią dokumentu, ma dostać nagłówek. Jeśli nie jest, wystarczy zwykłe zdanie:
+The rationale is the same as for quotation marks in the section above, only the cost is higher. A label such as:
 
 ```markdown
-Na co wpływa: `standard_database.md`, struktura repozytorium, kolejność pracy.
+**What it affects:** `standard_database.md`, repository structure, order of work.
 ```
 
-Pogrubienie pojedynczego słowa w środku zdania psuje się w drugą stronę: im więcej takich wyróżnień, tym mniej każde z nich znaczy, a czytający zaczyna skakać po pogrubieniach i gubi zdanie, które je łączy. Ciężar wyróżnienia bierze na siebie kolejność, nie krój pisma - rzecz najważniejsza stoi na początku akapitu albo na początku listy, a nie w jego środku obłożona gwiazdkami.
+pretends to be a heading that it is not. It does not get into the table of contents, it cannot be referenced from another document, and when reading it looks like the skeleton of the document, even though it is an ordinary paragraph. If a fragment really is a separate part of the document, it should get a heading. If it is not, an ordinary sentence is enough:
 
-Regułę pilnuje `tests/architecture/test_prose_style.py`, razem z listą znaków zakazanych. Bramka ma trzy własności, które łatwo wziąć za jej błąd:
+```markdown
+What it affects: `standard_database.md`, repository structure, order of work.
+```
 
-- Skanuje każdy plik `.md` i `.py` w drzewie, także nieśledzony przez gita, więc czerwień bywa winą cudzego pliku, nie bieżącej zmiany. Przy czerwonej bramce najpierw sprawdza się, które ścieżki ją zapalają.
-- Kopia cudzego dokumentu w `plans/<INICJATYWA>/attachments/` wchodzi pod bramkę jak każdy inny plik. Przed skopiowaniem cudzego dokumentu sprawdza się w nim pogrubienia i znaki zakazane, a przy trafieniu użytkownik wybiera: redakcja kopii z jawną notą o rozjeździe, wykluczenie katalogu z bramki albo rezygnacja z kopii.
-- Detektor pogrubień nie wyłącza kodu inline. Dwie pary gwiazdek w jednej linii, na przykład dwa rozpakowania słownika w Pythonie albo dwie maski z potrójną gwiazdką, zapalają bramkę także w backtickach. W jednej linii markdown stoi najwyżej jedno takie wystąpienie, a drugie opisuje się słowami.
+Bolding a single word in the middle of a sentence fails in the other direction: the more such emphases, the less each of them means, and the reader starts jumping between the bold fragments and loses the sentence that connects them. The weight of emphasis is carried by order, not by typeface - the most important thing stands at the beginning of the paragraph or at the beginning of the list, not in its middle, wrapped in asterisks.
 
-## Formatowanie markdown
+The rule is guarded by `tests/architecture/test_prose_style.py`, together with the list of forbidden characters. The gate has three properties that are easy to mistake for its bug:
 
-Pliki markdown formatuje prettier, tak jak kod Python formatuje `ruff format`. Plik markdown musi przechodzić `prettier --check` bez różnic przed połączeniem zmiany; sprawdza to `make lint` (a przez niego `make check`), a doprowadza do porządku `make format`. Ruff markdownu nie obejmuje świadomie - powód stoi w `standard_code_quality.md`, sekcja Statyczna analiza i formatowanie.
+- It scans every `.md` and `.py` file in the tree, including ones not tracked by git, so a red result is sometimes the fault of someone else's file, not of the current change. With a red gate, first check which paths trigger it.
+- A copy of someone else's document in `plans/<INITIATIVE>/attachments/` comes under the gate like any other file. Before copying someone else's document, check it for bold and forbidden characters, and on a hit the user chooses: editing the copy with an explicit note about the divergence, excluding the directory from the gate, or giving up the copy.
+- The bold detector does not exclude inline code. Two pairs of asterisks on one line, for example two dictionary unpackings in Python or two masks with a triple asterisk, trigger the gate even inside backticks. A markdown line holds at most one such occurrence, and the second one is described in words.
 
-Konfiguracja stoi w dwóch śledzonych plikach w korzeniu repozytorium. `.prettierrc` niesie opcje: końce linii LF, brak zawijania prozy (`proseWrap: preserve`), szerokość 200 znaków spójna z limitem ruffa, wcięcie dwóch spacji dla list zagnieżdżonych. `package.json` przypina dokładną wersję prettiera w `devDependencies`, a `npm ci` instaluje ją do `node_modules`; `node` i `npm` są wymaganiem wstępnym po stronie developera, wymienionym w `README.md` repozytorium. Cele `make` wołają `npx --no-install`, żeby użyć wyłącznie przypiętej kopii i przerwać, gdy jej nie ma - goły `npx prettier` pobrałby po cichu najnowsze wydanie i sprawdzał plik inną wersją niż edytor.
+## Markdown formatting
 
-Oba pliki czyta również rozszerzenie prettiera w VS Code, którym `.vscode/settings.json` formatuje markdown przy zapisie. Przy obecnym pliku konfiguracji rozszerzenie ignoruje własne ustawienia `prettier.*` w VS Code, a kopię z `node_modules` wybiera przed wersją wbudowaną, więc zapis z edytora i `make format` dają identyczny wynik. Podniesienie wersji prettiera jest zmianą w `package.json`, nie aktualizacją rozszerzenia.
+Markdown files are formatted by prettier, just as Python code is formatted by `ruff format`. A markdown file must pass `prettier --check` without differences before the change is merged; this is checked by `make lint` (and through it by `make check`), and put in order by `make format`. Ruff deliberately does not cover markdown - the reason is in `standard_code_quality.md`, section Static analysis and formatting.
 
-Co prettier zmienia w pliku: wyrównuje kolumny tabel do najszerszej komórki, normalizuje puste linie wokół nagłówków i bloków, ustawia wcięcie kontynuacji punktu listy, ujednolica znaczniki wyróżnień i formatuje bloki kodu w płotkach z językiem, który zna (`json`, `yaml`), do tej samej szerokości 200 znaków. Czego nie zmienia: treści i zawijania akapitów, bloków `python` i `sql`, których nie parsuje. Nazwa techniczna z podkreśleniem stojąca w prozie bez backticków bywa czytana jako kursywa i przepisywana na gwiazdki (`trigger_params` na `trigger*params`), dlatego nazwa techniczna w prozie stoi w backtickach. Powód jest mechaniczny, nie stylistyczny: formater nie tyka tego, co jest oznaczone jako kod.
+The configuration lives in two tracked files in the repository root. `.prettierrc` carries the options: LF line endings, no prose wrapping (`proseWrap: preserve`), a width of 200 characters consistent with the ruff limit, a two-space indentation for nested lists. `package.json` pins the exact prettier version in `devDependencies`, and `npm ci` installs it into `node_modules`; `node` and `npm` are a prerequisite on the developer's side, listed in the repository's `README.md`. The `make` targets call `npx --no-install` to use only the pinned copy and to abort when it is missing - a bare `npx prettier` would silently download the latest release and check the file with a different version than the editor.
 
-## Szerokość tabel w dokumentacji
+Both files are also read by the prettier extension in VS Code, through which `.vscode/settings.json` formats markdown on save. With the configuration file present, the extension ignores its own `prettier.*` settings in VS Code and picks the copy from `node_modules` over the bundled version, so a save from the editor and `make format` give an identical result. Upgrading the prettier version is a change in `package.json`, not an extension update.
 
-Komórka tabeli w prozie dokumentacji nosi krótką frazę albo jedno krótkie zdanie, nie kilka zdań uzasadnienia. Powód jest mechaniczny, nie estetyczny: prettier, tak jak każdy formater markdown, wyrównuje całą kolumnę do szerokości jej najdłuższej komórki, więc jedna rozwlekła komórka rozciąga do tej samej szerokości każdy wiersz tabeli, także te, które same w sobie są krótkie. Efekt widać w źródle jako linie po kilkaset znaków, których nie da się przeczytać bez przewijania w bok - to jest to zwężenie widocznego pola, o które chodzi w tej regule, nie subiektywne wrażenie.
+What prettier changes in a file: it aligns table columns to the widest cell, normalizes blank lines around headings and blocks, sets the continuation indentation of a list item, unifies emphasis markers and formats fenced code blocks in a language it knows (`json`, `yaml`) to the same width of 200 characters. What it does not change: the content and wrapping of paragraphs, and `python` and `sql` blocks, which it does not parse. A technical name with an underscore standing in prose without backticks is sometimes read as italics and rewritten into asterisks (`trigger_params` into `trigger*params`), which is why a technical name in prose stands in backticks. The reason is mechanical, not stylistic: the formatter does not touch what is marked as code.
 
-Tabela, w której każdy wiersz i tak jest osobnym akapitem uzasadnienia - decyzja z powodem, ryzyko z konsekwencją i mitygacją, odrzucona alternatywa z wyjaśnieniem - nie jest tabelą tylko z nazwy. Taki układ ma dostać formę właściwą prozie: nagłówek na wiersz, jeśli wiersz ma stabilny identyfikator używany gdzie indziej w dokumentacji (na przykład `D14`, `R7`), albo punkt listy, jeśli identyfikatora nie ma. Tabela zostaje tabelą tam, gdzie faktycznie zestawia krótkie, równoległe fakty do skanowania wzrokiem - kod HTTP obok nazwy błędu, pole obok tego, kto może je zmienić - i w takim przypadku pojedynczy wiersz, który się rozrósł, warto skrócić do frazy, a resztę wyjaśnienia przenieść do zwykłego akapitu pod tabelą, zamiast zostawiać go w komórce.
+## Table width in documentation
 
-## Znaki zakazane
+A table cell in documentation prose carries a short phrase or one short sentence, not several sentences of rationale. The reason is mechanical, not aesthetic: prettier, like every markdown formatter, aligns the whole column to the width of its longest cell, so one long-winded cell stretches every row of the table to the same width, including the rows that are short on their own. The effect is visible in the source as lines of several hundred characters, which cannot be read without scrolling sideways - this is the narrowing of the visible field that this rule is about, not a subjective impression.
 
-Kod i dokumentacja w tym repozytorium nie zawierają poniższych znaków. Część z nich to oczywiste znaki typograficzne czata (myślniki, cudzysłowy zakrzywione, wielokropek, strzałki, znak mnożenia) - ich obecność w kodzie albo dokumentacji zdradza tekst wygenerowany bez przejścia przez styl repozytorium. Część to celowo dobrane homoglify: znaki wizualnie nieodróżnialne od zwykłych znaków ASCII, które model językowy mógłby wstawić bez zauważenia różnicy - dla tych znaków punkt kodowy jest podany wprost, żeby uniknąć pomyłki przy czytaniu tej listy na oko.
+A table in which every row is a separate paragraph of rationale anyway - a decision with a reason, a risk with a consequence and a mitigation, a rejected alternative with an explanation - is a table in name only. Such a layout should get the form proper to prose: a heading per row, if the row has a stable identifier used elsewhere in the documentation (for example `D14`, `R7`), or a list item, if it has no identifier. A table stays a table where it actually juxtaposes short, parallel facts for scanning by eye - an HTTP code next to the error name, a field next to who can change it - and in such a case a single row that has grown is worth shortening to a phrase, with the rest of the explanation moved to an ordinary paragraph below the table, instead of leaving it in the cell.
 
-- `—` (U+2014, myślnik em) - zamiast niego zwykły `-`.
-- `–` (U+2013, myślnik en) - zamiast niego zwykły `-`.
-- `−` (U+2212, minus) - zamiast niego zwykły `-`.
-- `“` (U+201C, cudzysłów otwierający zakrzywiony) - zamiast niego zwykły `"`.
-- `”` (U+201D, cudzysłów zamykający zakrzywiony) - zamiast niego zwykły `"`.
-- `‘` (U+2018, apostrof otwierający zakrzywiony) - zamiast niego zwykły `'`.
-- `’` (U+2019, apostrof zamykający zakrzywiony) - zamiast niego zwykły `'`.
-- `ʼ` (U+02BC, modyfikujący apostrof) - zamiast niego zwykły `'`.
-- `…` (U+2026, wielokropek) - zamiast niego trzy zwykłe kropki `...`.
-- `·` (U+00B7, kropka środkowa) - zamiast niej zwykła kropka albo myślnik, zależnie od kontekstu.
-- `→` (U+2192, strzałka w prawo) - zamiast niej `->`.
-- `←` (U+2190, strzałka w lewo) - zamiast niej `<-`.
-- `↔` (U+2194, strzałka dwustronna) - zamiast niej `<->`.
-- `×` (U+00D7, znak mnożenia) - zamiast niego litera `x` albo `*`, zależnie od kontekstu.
-- `а` (U+0430, cyrylickie litera "a") - wygląda identycznie jak łacińskie "a" (U+0061), ale to inny punkt kodowy - zamiast niego zwykłe łacińskie `a`.
-- `;` (U+037E, grecki znak zapytania) - wygląda identycznie jak zwykły średnik (U+003B), ale to inny punkt kodowy - zamiast niego, gdy potrzebny jest średnik, zwykły `;`.
-- `∕` (U+2215, ukośnik dzielenia) - wygląda podobnie do zwykłego ukośnika (U+002F), ale to inny punkt kodowy - zamiast niego zwykły `/`.
-- Emotikony, na przykład 🙂 🚀 ✅ - bezwzględnie nie są używane w kodzie ani w dokumentacji.
+## Forbidden characters
 
-## Checklista
+Code and documentation in this repository do not contain the characters below. Some of them are obvious typographic characters of a chat (dashes, curly quotation marks, the ellipsis, arrows, the multiplication sign) - their presence in code or documentation betrays text generated without passing through the repository's style. Some are deliberately chosen homoglyphs: characters visually indistinguishable from ordinary ASCII characters, which a language model could insert without noticing the difference - for these characters the code point is given explicitly, to avoid a mistake when reading this list by eye.
 
-- Czy nowy albo zmieniony kod przeszedł przez `ruff format` przed połączeniem zmiany, zamiast łamać linie i wybierać cudzysłów ręcznie?
-- Czy żadna linia kodu nie przekracza 200 znaków (poza przypadkami, w których `ruff format` sam by ją zostawił dłuższą - np. długi string, który się nie dzieli)?
-- Czy magic trailing comma jest używana świadomie, tam gdzie autor chce wielolinijkowego zapisu mimo że zmieściłby się w limicie, nie przypadkiem?
-- Czy string w kodzie Python używa cudzysłowu podwójnego, poza przypadkiem stringa zawierającego dosłowny znak `"`?
-- Czy cudzysłów w prozie (docstring, komentarz, dokumentacja) występuje tylko dla dosłownego cytatu, nazwy pola albo fragmentu kodu w tekście, nie jako ozdobnik?
-- Czy nowy albo zmieniony plik markdown przeszedł przez `make format` przed połączeniem zmiany i `make lint` nie zgłasza dla niego różnic prettiera?
-- Czy nazwa techniczna z podkreśleniem, stojąca w prozie pliku markdown, jest w backtickach, żeby prettier nie przepisał jej jako wyróżnienia?
-- Czy proza jest wolna od pogrubień - zarówno w środku zdania, jak i w postaci etykiety otwierającej akapit albo punkt listy - a pogrubienie występuje wyłącznie w nagłówkach i komórkach tabel?
-- Czy żadna komórka tabeli nie niesie więcej niż krótkiej frazy albo jednego krótkiego zdania, a tabela, której wiersze są w istocie osobnymi akapitami uzasadnienia, została zamieniona na nagłówki albo listę?
-- Czy kod i dokumentacja nie zawierają żadnego znaku z listy znaków zakazanych, w tym homoglifów?
-- Czy żadna linia markdown nie ma dwóch par gwiazdek, także w kodzie inline w backtickach?
-- Czy tekst nie zawiera emotikonów?
+- `—` (U+2014, em dash) - use a plain `-` instead.
+- `–` (U+2013, en dash) - use a plain `-` instead.
+- `−` (U+2212, minus sign) - use a plain `-` instead.
+- `“` (U+201C, left curly double quotation mark) - use a plain `"` instead.
+- `”` (U+201D, right curly double quotation mark) - use a plain `"` instead.
+- `‘` (U+2018, left curly single quotation mark) - use a plain `'` instead.
+- `’` (U+2019, right curly single quotation mark) - use a plain `'` instead.
+- `ʼ` (U+02BC, modifier letter apostrophe) - use a plain `'` instead.
+- `…` (U+2026, ellipsis) - use three plain dots `...` instead.
+- `·` (U+00B7, middle dot) - use a plain period or a dash instead, depending on context.
+- `→` (U+2192, rightwards arrow) - use `->` instead.
+- `←` (U+2190, leftwards arrow) - use `<-` instead.
+- `↔` (U+2194, left right arrow) - use `<->` instead.
+- `×` (U+00D7, multiplication sign) - use the letter `x` or `*` instead, depending on context.
+- `а` (U+0430, Cyrillic letter "a") - looks identical to the Latin "a" (U+0061), but it is a different code point - use a plain Latin `a` instead.
+- `;` (U+037E, Greek question mark) - looks identical to an ordinary semicolon (U+003B), but it is a different code point - when a semicolon is needed, use a plain `;` instead.
+- `∕` (U+2215, division slash) - looks similar to an ordinary slash (U+002F), but it is a different code point - use a plain `/` instead.
+- Emojis, for example 🙂 🚀 ✅ - are absolutely never used in code or in documentation.
+
+## Checklist
+
+- Has new or changed code gone through `ruff format` before the change is merged, instead of breaking lines and choosing quotation marks by hand?
+- Does no line of code exceed 200 characters (except for cases in which `ruff format` itself would leave it longer - e.g. a long string that does not split)?
+- Is the magic trailing comma used deliberately, where the author wants a multi-line layout even though it would fit within the limit, and not by accident?
+- Does a string in Python code use double quotation marks, except for a string containing a literal `"` character?
+- Do quotation marks in prose (docstring, comment, documentation) appear only for a literal quote, the name of a field or a code fragment in the text, and not as decoration?
+- Has a new or changed markdown file gone through `make format` before the change is merged, and does `make lint` report no prettier differences for it?
+- Is a technical name with an underscore, standing in the prose of a markdown file, in backticks, so that prettier does not rewrite it as emphasis?
+- Is the prose free of bold - both in the middle of a sentence and in the form of a label opening a paragraph or a list item - and does bold appear only in headings and table cells?
+- Does no table cell carry more than a short phrase or one short sentence, and has a table whose rows are in essence separate paragraphs of rationale been converted into headings or a list?
+- Do code and documentation contain no character from the list of forbidden characters, including homoglyphs?
+- Does no markdown line have two pairs of asterisks, including in inline code in backticks?
+- Does the text contain no emojis?

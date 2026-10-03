@@ -1,107 +1,107 @@
-# Standard architektury systemu
+# System architecture standard
 
-Stan dokumentu: 2026-10-03
+Document state: 2026-10-03
 
-Status: gotowy - pełna treść.
+Status: ready - full content.
 
-## Po co ten dokument
+## Why this document exists
 
-Kod, który nie należy do jednej konkretnej jednostki - bo jest wspólną infrastrukturą albo mechanizmem przecinającym wiele miejsc naraz - nie ma naturalnego właściciela, więc decyzje o nim zapadają osobno i po cichu się rozjeżdżają. Ten standard daje im wspólny punkt odniesienia.
+Code that does not belong to one specific unit - because it is shared infrastructure or a mechanism that cuts across many places at once - has no natural owner, so decisions about it are made separately and quietly drift apart. This standard gives them a common point of reference.
 
-Drugi powód dotyczy reguł przekrojowych, czyli wołanych z wielu miejsc, takich jak uprawnienia i widoczność odczytu. Reguła wołana z wielu miejsc ma jedno źródło, bo dwie kopie rozjeżdżają się po cichu: zawodzi bez błędu, gdy ktoś odtworzy jej warunek w endpoincie zamiast ją wywołać. Ten standard stawia dla nich regułę, zanim powstanie pierwszy endpoint.
+The second reason concerns cross-cutting rules, that is rules called from many places, such as permissions and read visibility. A rule called from many places has one source, because two copies drift apart silently: it fails without an error when someone recreates its condition in an endpoint instead of calling it. This standard sets a rule for them before the first endpoint exists.
 
-## Zakres i granice
+## Scope and boundaries
 
-Ten standard odpowiada za styl architektoniczny ponad pojedynczą jednostką kodu: granicę warstw serwisu, jedno miejsce dla reguł przekrojowych, helpery wspólne, loggery, cache, spójność bibliotek i wywołania systemów zewnętrznych.
+This standard is responsible for the architectural style above a single code unit: the service layer boundary, one place for cross-cutting rules, shared helpers, loggers, cache, library consistency and calls to external systems.
 
-Czego tu nie ma:
+What is not here:
 
-- wewnętrzna architektura pojedynczej warstwy, czyli podział odpowiedzialności między pliki w jej katalogu - zbiór standardów nie ma osobnego dokumentu na ten temat;
-- format, poziomy i treść wpisu logu - to `standard_logging.md`, tutaj tylko to, skąd logger pochodzi;
-- co się dzieje po błędzie - to `standard_errors.md`;
-- miejsce i format konfiguracji - to `standard_config.md`, tutaj tylko wymóg jednego miejsca prawdy;
-- kto konkretnie ma jakie uprawnienia - to przesądza specyfikacja produktu wskazana w `CLAUDE.md`, tutaj tylko reguła, gdzie ta wiedza mieszka.
+- the internal architecture of a single layer, that is the split of responsibilities between the files in its directory - the set of standards has no separate document on this topic;
+- the format, levels and content of a log entry - that is `standard_logging.md`, here only where the logger comes from;
+- what happens after an error - that is `standard_errors.md`;
+- the location and format of configuration - that is `standard_config.md`, here only the requirement of one source of truth;
+- who exactly has which permissions - that is decided by the product specification pointed to in `CLAUDE.md`, here only the rule about where this knowledge lives.
 
-## Reguła odstępstwa
+## Deviation rule
 
-Standard opisuje stan docelowy i obowiązuje w pełni od pierwszego commita. Projekt założony z szablonu nie ma kodu zastanego, więc nie ma czego chronić okresem przejściowym - kod niezgodny ze standardem blokuje review niezależnie od tego, kto go pisał i kiedy.
+The standard describes the target state and applies in full from the first commit. A project created from the template has no legacy code, so there is nothing to protect with a transition period - code that does not comply with the standard blocks review regardless of who wrote it and when.
 
-Gdy repozytorium będzie mieć kod zastany, rozluźnienie tej reguły do wersji miękkiej ma być jawną decyzją zapisaną w `docs/standards/README.md` wraz z datą i powodem. Nie jest stanem, który wchodzi w życie sam.
+When the repository has legacy code, relaxing this rule to the soft version is to be an explicit decision recorded in `docs/standards/README.md` together with the date and the reason. It is not a state that comes into force on its own.
 
-## Granica warstw
+## Layer boundary
 
-Serwis ma trzy warstwy o rozdzielnych odpowiedzialnościach.
+The service has three layers with separate responsibilities.
 
-Warstwa wejścia przyjmuje żądanie: waliduje jego kształt, ustala, kto działa, i tłumaczy wynik na odpowiedź. Nie zawiera reguł domenowych. Endpoint, który sprawdza warunek domenowy samodzielnie, jest naruszeniem tej granicy - nawet gdy warunek jest jednolinijkowy, bo jednolinijkowy warunek jest dokładnie tym, co ktoś skopiuje do drugiego endpointu, gdy będzie potrzebny drugi raz.
+The input layer accepts the request: it validates its shape, establishes who is acting, and translates the result into a response. It contains no domain rules. An endpoint that checks a domain condition on its own violates this boundary - even when the condition is a one-liner, because a one-line condition is exactly what someone will copy into a second endpoint when it is needed a second time.
 
-Warstwa reguł decyduje, co wolno i co się stanie. Tu mieszkają wszystkie warunki przejść stanu, uprawnienia i walidacja domenowa. Ta warstwa nie wie, że została zawołana z żądania - to samo wywołanie musi być poprawne z zadania okresowego workera.
+The rules layer decides what is allowed and what will happen. All state transition conditions, permissions and domain validation live here. This layer does not know that it was called from a request - the same call must be correct when made from a periodic task of the worker.
 
-Warstwa danych zapisuje i czyta. Nie podejmuje decyzji o tym, czy zapis wolno wykonać.
+The data layer writes and reads. It does not decide whether a write may be performed.
 
-Kierunek zależności jest jednostronny: wejście woła reguły, reguły wołają dane. Warstwa danych nie wie o istnieniu warstwy wejścia.
+The dependency direction is one-way: input calls rules, rules call data. The data layer does not know that the input layer exists.
 
-## Jedno miejsce dla reguł przekrojowych
+## One place for cross-cutting rules
 
-Reguła przekrojowa, czyli wołana z wielu miejsc - na przykład matryca uprawnień albo predykat widoczności odczytu - żyje w jednym module i jest wołana, nigdy odtwarzana.
+A cross-cutting rule, that is one called from many places - for example the permission matrix or the read visibility predicate - lives in one module and is called, never recreated.
 
-Reguła wołana z wielu miejsc ma jedno źródło, bo dwie kopie rozjeżdżają się po cichu. Zmianę łatwo wprowadzić w jednym miejscu i nie wprowadzić w drugim - a wtedy oba zachowania współistnieją, w zależności od tego, którym wywołaniem się trafi. Warunek liczony w dwóch miejscach z dwóch różnych zestawów danych rozjedzie się przy pierwszej zmianie reguły.
+A rule called from many places has one source, because two copies drift apart silently. It is easy to make a change in one place and not make it in the other - and then both behaviors coexist, depending on which call you happen to hit. A condition computed in two places from two different data sets will drift apart at the first change of the rule.
 
-Konsekwencja praktyczna: zapytanie listujące i zapytanie po szczegół używają tego samego predykatu widoczności, nie dwóch podobnych. Jeśli różnią się z powodów wydajnościowych, ta różnica jest jawna, opisana i pokryta testem po obu stronach.
+Practical consequence: the listing query and the detail query use the same visibility predicate, not two similar ones. If they differ for performance reasons, this difference is explicit, described and covered by a test on both sides.
 
-## Helpery wspólne
+## Shared helpers
 
-Kod infrastrukturalny używany w więcej niż jednym miejscu - dostęp do bazy, budowanie konfiguracji, wspólne klienty - ma jedno miejsce definicji, z którego wszyscy korzystają. Nie kopiuje się jego logiki, nawet w drobnej, ulepszonej wersji. Gdy ten sam mechanizm istnieje w dwóch miejscach, poprawka w jednym nie dotrze do drugiego, a użytkownicy tego samego mechanizmu zaczynają się po cichu różnić - do dnia, w którym zawiedzie akurat ta nieaktualizowana kopia.
+Infrastructure code used in more than one place - database access, building configuration, shared clients - has one place of definition that everyone uses. Its logic is not copied, not even in a small, improved version. When the same mechanism exists in two places, a fix in one will not reach the other, and the users of the same mechanism start to differ silently - until the day when precisely the copy that was not updated fails.
 
-Gdy wspólny helper już istnieje, korzystanie z niego jest obowiązkowe. Ręczne odtworzenie jego logiki niżej poziomu - przez wywołanie surowego mechanizmu biblioteki - jest dopuszczalne wyłącznie wtedy, gdy helper faktycznie nie pokrywa danego przypadku, nigdy z wygody. Częściowe odtworzenie, bez jednego z zabezpieczeń helpera, tworzy cichy wyjątek od reguły obowiązującej wszędzie indziej.
+When a shared helper already exists, using it is mandatory. Manually recreating its logic at a lower level - by calling the raw library mechanism - is allowed only when the helper genuinely does not cover the given case, never for convenience. A partial recreation, missing one of the helper's safeguards, creates a silent exception to a rule that applies everywhere else.
 
-Sekrety i dane konfiguracyjne mają jedno miejsce prawdy - patrz `standard_config.md`.
+Secrets and configuration data have one source of truth - see `standard_config.md`.
 
-## Loggery
+## Loggers
 
-Repozytorium ma jeden centralny mechanizm dostarczania loggera, wspólny dla wszystkich warstw i obu punktów wejścia procesu. Żadne miejsce nie konfiguruje własnego, równoległego mechanizmu logowania obok centralnego - własnego handlera ani własnego globalnego wywołania konfiguracji. Równoległy mechanizm oznacza, że te logi trafiają gdzie indziej niż reszta, a przy diagnozowaniu awarii brakuje właśnie tej jednej, nieprzewidywalnie milczącej części obrazu.
+The repository has one central mechanism for providing a logger, shared by all layers and both process entry points. No place configures its own parallel logging mechanism next to the central one - neither its own handler nor its own global configuration call. A parallel mechanism means that those logs end up somewhere other than the rest, and when diagnosing a failure, exactly that one, unpredictably silent part of the picture is missing.
 
-Logger pochodzi zawsze z tego mechanizmu, z nazwą w jednej wspólnej hierarchii, której korzeniem jest nazwa projektu. Logger spoza tej hierarchii nie dziedziczy centralnej konfiguracji, nawet działając w tym samym procesie.
+The logger always comes from this mechanism, with a name in one shared hierarchy whose root is the project name. A logger outside this hierarchy does not inherit the central configuration, even when running in the same process.
 
-Świadomy fallback na wypadek pracy poza pełnym środowiskiem aplikacji jest dopuszczalny, ale musi być jawny i wąski - ograniczony do sytuacji braku dostępności centralnego mechanizmu, nie do każdego możliwego błędu importu.
+A deliberate fallback for working outside the full application environment is allowed, but it must be explicit and narrow - limited to the situation where the central mechanism is unavailable, not to every possible import error.
 
 ## Cache
 
-Każdy cache współdzielony między wywołaniami ma jawną strategię unieważniania: czas życia, porównanie ze źródłem albo jawne wywołanie unieważniające. Brak jakiejkolwiek strategii jest dopuszczalny wyłącznie wtedy, gdy dane źródłowe faktycznie nie zmieniają się w czasie życia procesu - a to założenie musi być zapisane, nie domyślne. Cache bez unieważniania nie psuje się głośno: system działa dalej, tylko coraz bardziej rozjeżdża się z rzeczywistością, a objaw pojawia się daleko od przyczyny.
+Every cache shared between calls has an explicit invalidation strategy: a time to live, a comparison with the source or an explicit invalidating call. Having no strategy at all is allowed only when the source data genuinely does not change during the lifetime of the process - and this assumption must be written down, not implicit. A cache without invalidation does not break loudly: the system keeps working, only drifting further and further from reality, and the symptom appears far from the cause.
 
-Cache nigdy nie przechowuje wyniku nieudanej próby jako wartości do zwrócenia. Zapamiętany błąd zamienia jednorazową awarię źródła w trwałą awarię funkcjonalności aż do restartu procesu - dokładne przeciwieństwo tego, po co cache istnieje.
+A cache never stores the result of a failed attempt as a value to return. A remembered error turns a one-off failure of the source into a permanent failure of the functionality until the process restarts - the exact opposite of why the cache exists.
 
-Zasięg życia cache jest świadomym wyborem dopasowanym do tego, jak dane są współdzielone, nie skutkiem tego, gdzie wygodnie było umieścić zmienną. Zbyt szeroki przecieka nieaktualne dane między niezależnymi jednostkami pracy; zbyt wąski tylko przenosi koszt na bazę, którą miał odciążyć.
+The lifetime scope of a cache is a deliberate choice matched to how the data is shared, not a consequence of where it was convenient to put the variable. Too wide a scope leaks stale data between independent units of work; too narrow a scope only shifts the cost onto the database it was meant to relieve.
 
-## Spójność bibliotek
+## Library consistency
 
-Dla danego rodzaju problemu - dostęp do bazy, obsługa czasu i stref, walidacja i reprezentacja danych, komunikacja z systemem zewnętrznym, ponawianie operacji - repozytorium utrzymuje jedno narzędzie. Nie wprowadza się drugiego, równoległego sposobu rozwiązania tego samego problemu bez jawnej, udokumentowanej decyzji o migracji. Dwa narzędzia do jednego problemu oznaczają, że każda przyszła poprawka i każda aktualizacja bezpieczeństwa musi być rozważona dwa razy, a zwykle wykonuje się ją raz - tam, gdzie ktoś akurat pracuje.
+For a given kind of problem - database access, handling time and zones, data validation and representation, communication with an external system, retrying operations - the repository maintains one tool. A second, parallel way of solving the same problem is not introduced without an explicit, documented migration decision. Two tools for one problem mean that every future fix and every security update has to be considered twice, and it is usually done once - wherever someone happens to be working.
 
-Stos jest przesądzony w specyfikacji produktu wskazanej w `CLAUDE.md` i to on jest punktem odniesienia dla tej reguły. Nowa biblioteka wchodzi do repozytorium świadomie, nie dlatego że była pod ręką.
+The stack is decided in the product specification pointed to in `CLAUDE.md`, and it is the point of reference for this rule. A new library enters the repository deliberately, not because it was at hand.
 
-Gdy repozytorium ma już bibliotekę pokrywającą dany problem, nowy kod korzysta z niej, zamiast pisać własną, równoległą implementację tej samej logiki. Ręczne przepisanie logiki, którą biblioteka rozwiązuje poprawnie razem z przypadkami brzegowymi łatwymi do przeoczenia, wprowadza ryzyko błędu, który w bibliotece został dawno znaleziony i naprawiony.
+When the repository already has a library covering a given problem, new code uses it instead of writing its own parallel implementation of the same logic. Manually rewriting logic that the library solves correctly, together with edge cases that are easy to overlook, introduces the risk of a bug that was found and fixed in the library long ago.
 
-## Wywołania systemów zewnętrznych
+## Calls to external systems
 
-Każda zależność zewnętrzna serwisu - obca usługa, obca baza, wystawca tokenów, współdzielony zasób plikowy, kanał alertu - jest nazwana i ma jedno miejsce wywołania w warstwie danych. Reguły korzystające z odczytu systemu zewnętrznego wołają jeden szew w warstwie reguł, który odpowiada za ten odczyt, nie moduł warstwy danych wprost.
+Every external dependency of the service - a third-party service, a third-party database, a token issuer, a shared file resource, an alert channel - is named and has one call site in the data layer. Rules that use a read from an external system call one seam in the rules layer that is responsible for that read, not the data layer module directly.
 
-Każdą integrację wychodzącą obowiązują trzy wymogi: jawnie zdecydowana i udokumentowana strategia ponawiania, własne nazwane wyjątki zamiast surowych wyjątków biblioteki transportowej oraz jeden sposób czytania konfiguracji. Brak ponawiania jest dopuszczalną strategią, jeśli jest zapisany razem z powodem - na przykład integracja wołana z przebiegu bez nadzoru nie ponawia w obrębie wywołania, bo ponowieniem jest następny przebieg.
+Every outgoing integration is subject to three requirements: an explicitly decided and documented retry strategy, its own named exceptions instead of raw exceptions of the transport library, and one way of reading configuration. Not retrying is an acceptable strategy if it is written down together with the reason - for example an integration called from an unattended run does not retry within the call, because the next run is the retry.
 
-Odczyt systemu zewnętrznego wolno wykonać wyłącznie z przebiegu bez nadzoru albo z administracyjnego wymuszenia tej samej pracy, nigdy z obsługi żądania, bo czas odpowiedzi serwisu zależałby wtedy od cudzej usługi. Wyjątkiem jest wywołanie, bez którego żądania nie da się obsłużyć w ogóle, na przykład pobranie kluczy publicznych do sprawdzenia tokenu wołającego. Taki wyjątek jest jawny i ograniczony: nie ponawia w obrębie wywołania, bo niedostępność kończy żądanie odmową, którą wołający sam ponawia; ma jawny limit czasu; jego koszt ogranicza cache z jawnym czasem życia, który nie zapamiętuje nieudanego pobrania; a wywołanie blokujące idzie z obsługi żądania przez pulę wątków.
+A read from an external system may be performed only from an unattended run or from an administrative forcing of the same work, never from request handling, because the service's response time would then depend on someone else's service. The exception is a call without which the request cannot be handled at all, for example fetching public keys to verify the caller's token. Such an exception is explicit and limited: it does not retry within the call, because unavailability ends the request with a refusal that the caller retries itself; it has an explicit timeout; its cost is limited by a cache with an explicit time to live that does not remember a failed fetch; and the blocking call goes from request handling through a thread pool.
 
-Zdarzenie wysyłane do systemu zewnętrznego w następstwie komendy zapisuje się w transakcji tej komendy, a transport wykonuje wyłącznie worker, bez otwartej transakcji bazy podczas oczekiwania na odpowiedź. Transport ma jedno miejsce w warstwie danych, a reguły treści zdarzenia, klasyfikacji odpowiedzi i ponawiania mają jedno miejsce w warstwie reguł.
+An event sent to an external system as a consequence of a command is written in that command's transaction, and the transport is performed only by the worker, without an open database transaction while waiting for the response. The transport has one place in the data layer, and the rules for the event content, response classification and retrying have one place in the rules layer.
 
-## Checklista
+## Checklist
 
-- Czy zmiana nie przenosi reguły domenowej do warstwy wejścia?
-- Czy kierunek zależności między warstwami pozostaje jednostronny?
-- Czy zmiana woła regułę przekrojową, na przykład matrycę uprawnień albo predykat widoczności, zamiast odtwarzać jej warunek na miejscu?
-- Czy zapytanie listujące i zapytanie po szczegół używają tego samego predykatu widoczności?
-- Czy nowy kod infrastrukturalny trafia do jednego wspólnego miejsca, zamiast do kolejnej kopii?
-- Czy zmiana nie omija istniejącego wspólnego helpera bez jawnego, uzasadnionego powodu?
-- Czy logger pochodzi z centralnego mechanizmu i ze wspólnej hierarchii projektu?
-- Czy zmiana nie wprowadza równoległego mechanizmu logowania obok centralnego?
-- Czy każdy nowy cache ma jawną strategię unieważniania, nie przechowuje błędu jako wyniku i ma świadomie dobrany zasięg?
-- Czy zmiana nie wprowadza drugiej biblioteki do problemu, który repozytorium już rozwiązuje inną?
-- Czy nowa integracja wychodząca ma jawną strategię ponawiania, własne wyjątki i jeden sposób czytania konfiguracji?
-- Czy odczyt systemu zewnętrznego nie stoi na ścieżce obsługi żądania, a jeśli stoi, to czy jest jawnym wyjątkiem z limitem czasu, bez ponawiania i z cache, który nie pamięta porażki?
-- Czy zdarzenie do systemu zewnętrznego jest zapisane w transakcji komendy, a transport idzie z workera bez otwartej transakcji bazy?
+- Does the change avoid moving a domain rule into the input layer?
+- Does the dependency direction between layers stay one-way?
+- Does the change call a cross-cutting rule, for example the permission matrix or the visibility predicate, instead of recreating its condition in place?
+- Do the listing query and the detail query use the same visibility predicate?
+- Does new infrastructure code go to one shared place instead of into another copy?
+- Does the change avoid bypassing an existing shared helper without an explicit, justified reason?
+- Does the logger come from the central mechanism and from the shared project hierarchy?
+- Does the change avoid introducing a parallel logging mechanism next to the central one?
+- Does every new cache have an explicit invalidation strategy, avoid storing an error as a result, and have a deliberately chosen scope?
+- Does the change avoid introducing a second library for a problem that the repository already solves with another one?
+- Does a new outgoing integration have an explicit retry strategy, its own exceptions and one way of reading configuration?
+- Is a read from an external system kept off the request handling path, and if it is on it, is it an explicit exception with a timeout, without retrying and with a cache that does not remember a failure?
+- Is an event to an external system written in the command's transaction, and does the transport go from the worker without an open database transaction?

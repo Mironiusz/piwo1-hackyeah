@@ -1,83 +1,83 @@
-# Standard nazewnictwa
+# Naming standard
 
-Stan dokumentu: 2026-10-03
+Document state: 2026-10-03
 
-Status: gotowy - pełna treść.
+Status: ready - full content.
 
-## Po co ten dokument
+## Why this document exists
 
-Nazwa pliku i nazwa funkcji są pierwszą informacją, jaką dostaje ktoś szukający czegoś w repozytorium - i jedyną, którą widzi, zanim cokolwiek otworzy. Gdy ta sama odpowiedzialność nazywa się w trzech miejscach na trzy sposoby, szukanie przestaje działać: trzeba znać historię repozytorium, żeby wiedzieć, czego szukać. Ten standard ustala nazwy docelowe, żeby ta wiedza nie była potrzebna.
+A file name and a function name are the first information that someone searching for something in the repository gets - and the only one they see before opening anything. When the same responsibility is named in three different ways in three places, searching stops working: you have to know the history of the repository to know what to search for. This standard sets the target names so that this knowledge is not needed.
 
-## Zakres i granice
+## Scope and boundaries
 
-Ten standard odpowiada za konwencje nazw plików i funkcji.
+This standard is responsible for the naming conventions of files and functions.
 
-Czego tu nie ma:
+What is not here:
 
-- rejestr nazw faktycznie występujących w repozytorium - to `naming_registry.md`, który opisuje stan faktyczny, nie docelowy;
-- co dokładnie robi dana warstwa kodu i czego nie robi - to `standard_architecture.md`, sekcja o granicy warstw;
-- nazwy w bazie danych: tabele, kolumny, indeksy, constrainty - to `standard_database.md` oraz specyfikacja produktu wskazana w `CLAUDE.md`;
-- nazwy ścieżek w interfejsie programistycznym - przesądza je specyfikacja produktu wskazana w `CLAUDE.md`.
+- the registry of names actually present in the repository - that is `naming_registry.md`, which describes the actual state, not the target one;
+- what exactly a given code layer does and what it does not do - that is `standard_architecture.md`, section Layer boundary;
+- names in the database: tables, columns, indexes, constraints - that is `standard_database.md` and the product specification indicated in `CLAUDE.md`;
+- path names in the programming interface - those are settled by the product specification indicated in `CLAUDE.md`.
 
-## Reguła odstępstwa
+## Deviation rule
 
-Standard opisuje stan docelowy i obowiązuje w pełni od pierwszego commita. Projekt założony z szablonu nie ma kodu zastanego, więc nie ma czego chronić okresem przejściowym - kod niezgodny ze standardem blokuje review niezależnie od tego, kto go pisał i kiedy.
+The standard describes the target state and applies in full from the first commit. A project created from the template has no legacy code, so there is nothing to protect with a transition period - code that does not comply with the standard blocks review regardless of who wrote it and when.
 
-Gdy repozytorium będzie mieć kod zastany, rozluźnienie tej reguły do wersji miękkiej ma być jawną decyzją zapisaną w `docs/standards/README.md` wraz z datą i powodem. Nie jest stanem, który wchodzi w życie sam.
+When the repository has legacy code, relaxing this rule to the soft version is to be an explicit decision recorded in `docs/standards/README.md` together with the date and the reason. It is not a state that takes effect on its own.
 
-## Język nazw w kodzie
+## Language of names in code
 
-Identyfikatory w kodzie są po angielsku: nazwy funkcji, zmiennych, klas, stałych, plików, testów i fixture'ów. Docstringi, komunikaty błędów, treść logów i cała dokumentacja są po polsku, zgodnie z rdzeniem reguł.
+Identifiers in code are in English: names of functions, variables, classes, constants, files, tests and fixtures. Docstrings, error messages, log content and all documentation are in English as well.
 
-Powód nie jest estetyczny. Kod miesza się z nazwami z bibliotek, które są angielskie i pozostaną angielskie - `logging`, `pytest`, warstwa dostępu do bazy. Polska nazwa funkcji stojąca obok angielskiej nazwy z biblioteki wymusza przeskakiwanie między dwoma językami w jednej linii, a przy pochodnych formach (liczba mnoga, odmiana przez przypadki) prowadzi do nazw, które trudno przewidzieć przy szukaniu. Nazwa `entries` jest jedna; `wpisy`, `wpisow`, `wpisy_pliku` to trzy wersje tego samego pojęcia.
+The reason is not aesthetic. Code mixes with names from libraries, which are English and will stay English - `logging`, `pytest`, the database access layer. A Polish function name standing next to an English name from a library forces jumping between two languages within one line, and with derived forms (plural, declension by case) it leads to names that are hard to predict when searching. The name `entries` is one; `wpisy`, `wpisow`, `wpisy_pliku` are three versions of the same concept.
 
-Dokumentacja i docstringi zostają po polsku bez wyjątku; ta reguła dotyczy wyłącznie identyfikatorów.
+Originally this rule covered only identifiers; docstrings, error messages, log content and documentation followed on 2026-10-03, when the team switched the repository to English because the Huawei challenge requires English project documentation - conversation with the user stays in Polish, see `CLAUDE.md`, section Language and communication style.
 
-## Nazwy zakazane
+## Forbidden names
 
-Nazwa pliku ani funkcji nie może być ogólna do tego stopnia, że nie mówi nic o zawartości: `utils.py`, `helpers.py`, `misc.py`, `common.py` bez tematu, `process_data`, `handle_items`, `do_work`, `manager`. Taka nazwa jest zaproszeniem do wrzucania wszystkiego, co nie miało lepszego miejsca - a plik, do którego wszystko pasuje, po pół roku nie ma właściciela ani granicy.
+A file or function name must not be so generic that it says nothing about the content: `utils.py`, `helpers.py`, `misc.py`, `common.py` without a topic, `process_data`, `handle_items`, `do_work`, `manager`. Such a name is an invitation to throw in everything that had no better place - and a file into which everything fits has, after half a year, neither an owner nor a boundary.
 
-Plik ze wspólnymi pomocnikami jest dopuszczalny, ale nazwany tematem, nie funkcją w projekcie: `common_dates.py`, nie `common.py`.
+A file with shared helpers is acceptable, but named after its topic, not after its function in the project: `common_dates.py`, not `common.py`.
 
-## Nazwy funkcji: czasownik mówiący o odpowiedzialności
+## Function names: a verb that states the responsibility
 
-Prefiks nazwy funkcji mówi, do której odpowiedzialności ona należy. Cztery prefiksy obowiązujące:
+The prefix of a function name says which responsibility the function belongs to. The four binding prefixes:
 
-- `fetch_` - odczyt danych ze źródła zewnętrznego wobec tej funkcji: bazy, pliku, usługi. Sam odczyt, bez decyzji o tym, co z danymi zrobić.
-- `build_` - złożenie wartości albo struktury z danych już posiadanych. Bez odczytu i bez zapisu.
-- `resolve_` - decyzja domenowa: wybór, klasyfikacja, rozstrzygnięcie na podstawie reguł. Zwraca decyzję, nie wykonuje jej.
-- `apply_` - wykonanie decyzji: zapis, wysłanie, zmiana stanu.
+- `fetch_` - reading data from a source external to this function: a database, a file, a service. Reading only, without deciding what to do with the data.
+- `build_` - assembling a value or a structure from data already at hand. No reading and no writing.
+- `resolve_` - a domain decision: choice, classification, settlement based on rules. It returns the decision, it does not execute it.
+- `apply_` - executing a decision: writing, sending, changing state.
 
-Nazwa `get_` nie jest używana dla odczytu ze źródła - dla tego jest `fetch_`. `get_` bywa mylące, bo w wielu bibliotekach oznacza tani dostęp do już posiadanej wartości, a nie zapytanie do bazy, którego koszt jest o kilka rzędów wielkości inny.
+The name `get_` is not used for reading from a source - `fetch_` is for that. `get_` can be misleading, because in many libraries it means cheap access to a value already held, not a database query whose cost is several orders of magnitude different.
 
-Funkcja, której nazwa wymagałaby dwóch prefiksów naraz, robi dwie rzeczy - to jest sygnał do podziału, nie do wyboru jednego z prefiksów.
+A function whose name would require two prefixes at once does two things - that is a signal to split it, not to pick one of the prefixes.
 
-## Nazwy plików
+## File names
 
-Jednostką kodu jest warstwa. Z tego wynika kształt nazw: katalog nazywa warstwę, plik nazywa odpowiedzialność wewnątrz tej warstwy.
+The code unit is the layer. This determines the shape of names: the directory names the layer, the file names the responsibility inside that layer.
 
-Katalogi warstw stoją w korzeniu repozytorium: `api` przyjmuje żądania, `service` trzyma reguły, `data` czyta i zapisuje, a `worker` wyzwala zadania okresowe. Nazwa pliku w takim katalogu mówi, za co w tej warstwie odpowiada, na przykład `api/errors.py`, `api/health.py`, `service/readiness.py`, `data/engine.py`.
+Layer directories sit in the repository root: `api` accepts requests, `service` holds the rules, `data` reads and writes, and `worker` triggers periodic tasks. The name of a file in such a directory says what it is responsible for in that layer, for example `api/errors.py`, `api/health.py`, `service/readiness.py`, `data/engine.py`.
 
-Sufiksu z nazwą warstwy w nazwie pliku nie ma i jest to zamierzone. Gdy warstwa jest jednostką, to ona jest katalogiem, a plik nie ma czego po katalogu powtarzać - `data/database_probe.py` jest tym samym co `data/data_database_probe.py`, tylko krótszym o powtórzenie. To odwrotność reguły, która obowiązywałaby, gdyby jednostką była poddomena.
+There is no suffix with the layer name in the file name, and this is intentional. When the layer is the unit, the layer is the directory, and the file has nothing to repeat after the directory - `data/database_probe.py` is the same as `data/data_database_probe.py`, only shorter by the repetition. This is the reverse of the rule that would apply if the unit were a subdomain.
 
-Nazwa pliku z pomocnikiem wspólnym dla wielu warstw ma odwrotny kształt niż nazwa pliku warstwy: temat wspólny idzie prefiksem (`common_<temat>.py`). To rozróżnienie pozwala odpowiedzieć na pytanie "czy mogę to zmienić, nie patrząc na resztę repozytorium" po samej nazwie pliku. Dwa jawne miejsca na wiedzę przekrojową w jednej warstwie i między warstwami opisuje `standard_agent_docs.md` dla pamięci trwałej i ta reguła dla kodu.
+The name of a file with a helper shared by many layers has the reverse shape of a layer file name: the shared topic goes in as a prefix (`common_<topic>.py`). This distinction makes it possible to answer the question "can I change this without looking at the rest of the repository" from the file name alone. The two explicit places for cross-cutting knowledge within one layer and between layers are described by `standard_agent_docs.md` for durable memory and by this rule for code.
 
-## Nazwy stałych z zapytaniami
+## Names of query constants
 
-Stała trzymająca zapytanie do bazy ma nazwę w kształcie `<CZASOWNIK>_<CO>_SQL`. Kolejność jest odwrotna niż w prefiksie `SQL_`, bo wtedy nazwy sortują się po czasowniku i temacie, a nie po wspólnym przedrostku, który nie odróżnia niczego.
+A constant holding a database query has a name of the shape `<VERB>_<WHAT>_SQL`. The order is the reverse of an `SQL_` prefix, because this way names sort by verb and topic, not by a shared prefix that distinguishes nothing.
 
-## Nazwy w testach
+## Names in tests
 
-Plik testowy nazywa się od tego, co testuje, plus warstwa testu. Konwencja warstw testów jest w `standard_tests.md`, wraz z tym, jak podział warstwowy kodu przekłada się na katalogi testów.
+A test file is named after what it tests, plus the test layer. The test layer convention is in `standard_tests.md`, together with how the layered split of the code maps onto test directories.
 
-Fixture może nazywać się jak klasa, którą zwraca, łamiąc konwencję nazw funkcji - to jest jawnie dopuszczone i wyłączone z reguł lintera w `pyproject.toml`.
+A fixture may be named like the class it returns, breaking the function naming convention - this is explicitly allowed and excluded from the linter rules in `pyproject.toml`.
 
-## Checklista
+## Checklist
 
-- Czy żadna nowa nazwa pliku ani funkcji nie jest ogólna do stopnia, w którym nie mówi nic o zawartości?
-- Czy prefiks każdej nowej funkcji odpowiada jej faktycznej odpowiedzialności, a nie temu, jak wygodnie było ją nazwać?
-- Czy żadna nowa funkcja nie potrzebowałaby dwóch prefiksów naraz?
-- Czy nowy plik leży w katalogu warstwy, do której należy, a jego nazwa mówi o odpowiedzialności wewnątrz tej warstwy, nie powtarza jej nazwy?
-- Czy nowy plik z pomocnikami wspólnymi ma temat w nazwie i kształt prefiksowy, a nie sufiksowy?
-- Czy nowa stała z zapytaniem ma kształt `<CZASOWNIK>_<CO>_SQL`?
-- Czy nowe nazwy, których ten standard jeszcze nie przesądza, zostały dopisane do `naming_registry.md`, żeby następna osoba nie wymyślała ich od nowa?
+- Is no new file or function name so generic that it says nothing about the content?
+- Does the prefix of each new function match its actual responsibility, and not how convenient it was to name it?
+- Is there no new function that would need two prefixes at once?
+- Does the new file sit in the directory of the layer it belongs to, and does its name state the responsibility inside that layer instead of repeating the layer's name?
+- Does the new file with shared helpers have a topic in its name and a prefix shape, not a suffix shape?
+- Does the new query constant have the shape `<VERB>_<WHAT>_SQL`?
+- Were new names that this standard does not yet settle added to `naming_registry.md`, so that the next person does not invent them from scratch?

@@ -1,155 +1,155 @@
-# Standard konfiguracji i sekretów
+# Configuration and secrets standard
 
-Stan dokumentu: 2026-10-03
+Document state: 2026-10-03
 
-Status: gotowy - pełna treść.
+Status: ready - full content.
 
-## Po co ten dokument
+## Why this document exists
 
-Konfiguracja rozlana po repozytorium jest problemem, który ujawnia się dopiero przy rotacji sekretu albo audycie: na pytanie "skąd to jest czytane i kto tego jeszcze używa" trzeba wtedy odpowiedzieć przeszukaniem całego kodu, zamiast otwarciem jednego pliku. Drugi koszt jest cichszy: gdy każde miejsce czyta zmienną środowiskową po swojemu, część z nich robi to z wartością domyślną, część bez, a błąd konfiguracji zamiast wywalić się przy starcie, ujawnia się losowo, w produkcji, daleko od przyczyny.
+Configuration spread across the repository is a problem that surfaces only during a secret rotation or an audit: the question "where is this read from and who else uses it" then has to be answered by searching the whole code instead of opening one file. The second cost is quieter: when every place reads an environment variable its own way, some of them do it with a default value, some without, and a configuration error, instead of crashing at startup, surfaces randomly, in production, far from the cause.
 
-Ten standard ustala, gdzie wartość konfiguracyjna ma mieszkać i kto ma prawo ją przeczytać.
+This standard sets where a configuration value is to live and who has the right to read it.
 
-## Zakres i granice
+## Scope and boundaries
 
-Ten standard odpowiada za: podział konfiguracji na warstwy, regułę przypisania wartości do warstwy, walidację wartości pochodzących ze środowiska, miejsce przechowywania sekretów i zawartość pliku konfiguracyjnego.
+This standard is responsible for: splitting configuration into layers, the rule for assigning a value to a layer, validating values coming from the environment, the place where secrets are stored and the contents of the configuration file.
 
-Czego tu nie ma:
+What is not here:
 
-- wykrywanie sekretów zaszytych w kodzie i skan podatności zależności - to `standard_security.md`;
-- format, poziomy i treść wpisu logu, mimo że poziom logowania jest wartością konfiguracyjną - to `standard_logging.md`;
-- jedno miejsce prawdy dla mechanizmów współdzielonych jako reguła architektoniczna - to `standard_architecture.md`;
-- co konkretnie serwis potrzebuje mieć skonfigurowane w warstwach drugiej i trzeciej - to specyfikacja produktu wskazana w `CLAUDE.md`. Nazwy i znaczenie pozycji warstwy pierwszej są natomiast tutaj, w sekcji o pozycjach środowiska, bo żaden z trzech szablonów nie zawiera komentarzy i nie może ich nieść.
+- detecting secrets hardcoded in code and the dependency vulnerability scan - that is `standard_security.md`;
+- the format, levels and content of a log entry, even though the log level is a configuration value - that is `standard_logging.md`;
+- one source of truth for shared mechanisms as an architectural rule - that is `standard_architecture.md`;
+- what exactly the service needs to have configured in the second and third layers - that is the product specification pointed to in `CLAUDE.md`. The names and meaning of the first layer's entries, on the other hand, are here, in the section about environment entries, because none of the three templates contains comments and so cannot carry them.
 
-## Reguła odstępstwa
+## Deviation rule
 
-Standard opisuje stan docelowy i obowiązuje w pełni od pierwszego commita. Projekt założony z szablonu nie ma kodu zastanego, więc nie ma czego chronić okresem przejściowym - kod niezgodny ze standardem blokuje review niezależnie od tego, kto go pisał i kiedy.
+The standard describes the target state and applies in full from the first commit. A project created from the template has no legacy code, so there is nothing to protect with a transition period - code that does not comply with the standard blocks review regardless of who wrote it and when.
 
-Gdy repozytorium będzie mieć kod zastany, rozluźnienie tej reguły do wersji miękkiej ma być jawną decyzją zapisaną w `docs/standards/README.md` wraz z datą i powodem. Nie jest stanem, który wchodzi w życie sam.
+When the repository has legacy code, relaxing this rule to the soft version is to be an explicit decision recorded in `docs/standards/README.md` together with the date and the reason. It is not a state that comes into force on its own.
 
-## Trzy warstwy konfiguracji i cztery miejsca przechowywania
+## Three configuration layers and four storage places
 
-Warstwa pierwsza: zmienne środowiskowe. Wszystko, co jest sekretem, oraz każdy nie-sekret zależny od maszyny albo od środowiska. Nazwy i wartości mieszkają w trzech wersjonowanych szablonach, `.env.example`, `.env.local.example` i `.env.priv.example`, a znaczenie każdej pozycji jest opisane niżej w tym dokumencie - plik szablonu nie może go nieść, bo nie zawiera komentarzy.
+The first layer: environment variables. Everything that is a secret, and every non-secret that depends on the machine or on the environment. Names and values live in three versioned templates, `.env.example`, `.env.local.example` and `.env.priv.example`, and the meaning of each entry is described below in this document - the template file cannot carry it, because it contains no comments.
 
-Kontrakt środowiska wymaga, żeby każdy klucz szablonu stał także w odpowiadającym mu pliku lokalnym. Projekt pilnuje tej reguły testem architektury, który zakłada razem z pierwszym kodem tej warstwy; szablon go nie zawiera. Dalej w tym dokumencie ten test nazywa się testem kontraktu środowiska.
+The environment contract requires every template key to also be present in the corresponding local file. The project enforces this rule with an architecture test that it creates together with the first code of this layer; the template does not contain it. Further in this document this test is called the environment contract test.
 
-Podział na trzy szablony idzie po dwóch pytaniach zadawanych po kolei. Pierwsze: czy wartość jest sekretem. Sekret idzie do `.env.example`, chyba że jest poświadczeniem, pod którym każdy w zespole występuje we własnym imieniu w cudzym systemie - wtedy do `.env.priv.example`. Drugie pytanie dotyczy wyłącznie nie-sekretów: czy wartość różni się między maszynami albo środowiskami. Jeśli tak, idzie do `.env.local.example`; jeśli nie, nie jest pozycją środowiska wcale i stoi wpisana wprost w warstwie drugiej.
+The split into three templates follows two questions asked in order. The first: is the value a secret. A secret goes to `.env.example`, unless it is a credential under which each team member acts in their own name in someone else's system - then it goes to `.env.priv.example`. The second question concerns non-secrets only: does the value differ between machines or environments. If yes, it goes to `.env.local.example`; if not, it is not an environment entry at all and is written directly in the second layer.
 
-Rozdzielenie sekretów od reszty ma jeden konkretny zysk: na pytanie, co w tym repozytorium jest sekretem, odpowiada się otwarciem jednego pliku, w którym każda pozycja nim jest, zamiast rozstrzygania tego pozycja po pozycji. Wydzielenie poświadczeń osobistych ma dwa: wspólny szablon przestaje wymuszać wypełnienie wartości, której nikt nie może podać za kogoś innego, a poświadczenie osobiste stoi w pliku, którego nie otwiera się przy stawianiu środowiska.
+Separating secrets from the rest has one specific gain: the question of what in this repository is a secret is answered by opening one file in which every entry is one, instead of deciding it entry by entry. Separating personal credentials has two: the shared template stops forcing you to fill in a value that nobody can provide on someone else's behalf, and the personal credential sits in a file that is not opened when setting up the environment.
 
-Podział na trzy pliki jest faktem wyłącznie lokalnym. Środowisko docelowe dostaje jeden zestaw zmiennych i podziału na pliki nie zna, więc każda reguła oparta na tym, w którym pliku wartość stoi, opisuje maszynę developera, nie środowisko docelowe.
+The split into three files is a purely local fact. The target environment gets one set of variables and knows nothing about the split into files, so any rule based on which file a value sits in describes the developer's machine, not the target environment.
 
-Warstwa druga: konfiguracja globalna, czyli `config/config.py`. Jedyne miejsce w repozytorium, które czyta zmienne środowiskowe i pliki środowiska, i zarazem jedyne, z którego reszta repozytorium bierze konfigurację. Wystawia gotowe, otypowane wartości jako stałe modułu, więc moduł wołający nie wie i nie ma wiedzieć, czy dana wartość przyszła ze środowiska, czy stoi wpisana wprost. Walidację kontraktu wykonuje `config/settings.py`. Ani on, ani pozostałe moduły warstwy drugiej, na przykład odczyt formatu pliku środowiska, nie sięgają po środowisko same - wszystkie dostają wartości podane z fasady.
+The second layer: global configuration, that is `config/config.py`. The only place in the repository that reads environment variables and environment files, and at the same time the only place from which the rest of the repository takes configuration. It exposes ready, typed values as module constants, so the calling module does not know, and is not supposed to know, whether a given value came from the environment or is written directly. Contract validation is performed by `config/settings.py`. Neither it nor the other second-layer modules, for example reading the environment file format, reach for the environment themselves - they all get values passed in from the facade.
 
-Kolejność źródeł w fasadzie jest jedna i pierwszeństwo ma to, co trafi wcześniej: zmienne procesu, potem plik wartości lokalnych, potem plik sekretów. Uruchamiacz narzędzi działających poza pełnym środowiskiem aplikacji stosuje tę samą kolejność, więc wartość podana przed poleceniem wygrywa z plikiem w obu drogach. Pliku poświadczeń osobistych fasada nie czyta wcale.
+There is one order of sources in the facade, and whatever comes first takes precedence: process variables, then the local values file, then the secrets file. The launcher of tools running outside the full application environment uses the same order, so a value given before the command wins over the file in both paths. The facade does not read the personal credentials file at all.
 
-Warstwa trzecia: konfiguracja lokalna. Stałe należące do jednego fragmentu kodu i nieróżniące się między środowiskami: limity, progi, nazwy, wartości domyślne reguł domenowych. Mieszkają przy tym kodzie, którego dotyczą, nie w warstwie drugiej.
+The third layer: local configuration. Constants belonging to one piece of code and not differing between environments: limits, thresholds, names, default values of domain rules. They live next to the code they concern, not in the second layer.
 
-## Pozycje środowiska
+## Environment entries
 
-Każda pozycja trzech szablonów ma w tej sekcji wpis dopisywany razem z pozycją w szablonie. Wpis podaje nazwę pozycji, jej znaczenie, to, czy pozycja jest wymagana albo ma wartość domyślną, oraz zachowanie procesu przy jej braku. Szablon nie zawiera jeszcze żadnej pozycji.
+Every entry of the three templates has a record in this section, added together with the entry in the template. The record gives the entry's name, its meaning, whether the entry is required or has a default value, and how the process behaves when it is missing. The template does not contain any entry yet.
 
-Wartość podawana doraźnie przy wywołaniu, taka jak zgoda na nałożenie rewizji na bazę środowiska docelowego, nie ma pozycji w żadnym szablonie i mieć nie może. Nieobecność w szablonie jest tu regułą, nie przeoczeniem, i wynika wprost z kontraktu środowiska: każdy klucz szablonu ma stać także w pliku lokalnym, więc pozycja w szablonie kazałaby wpisać zgodę raz na zawsze - a zgoda wpisana do pliku przestaje być zgodą i bramka staje się fikcją. Z tego samego powodu dopisanie takiego klucza do własnego pliku środowiska jest obejściem reguły, nie wygodą: test kontraktu środowiska tego nie złapie, bo pilnuje kluczy szablonu, nie kluczy nadmiarowych.
+A value given ad hoc at call time, such as consent to apply a revision to the target environment's database, has no entry in any template and cannot have one. Absence from the template is a rule here, not an oversight, and follows directly from the environment contract: every template key has to also be present in the local file, so an entry in the template would make you write the consent down once and for all - and consent written into a file stops being consent, and the gate becomes a fiction. For the same reason, adding such a key to your own environment file is a workaround of the rule, not a convenience: the environment contract test will not catch it, because it checks the template keys, not extra keys.
 
-## Reguła przypisania wartości do warstwy
+## Rule for assigning a value to a layer
 
-O miejscu wartości rozstrzyga kolejno sekretność, a potem przewidywana zmienność:
+The place of a value is decided first by secrecy, then by expected variability:
 
-- wartość jest sekretem - warstwa pierwsza, plik sekretów, a przy poświadczeniu osobistym plik prywatny;
-- wartość nie jest sekretem, ale zależy od maszyny albo od środowiska - warstwa pierwsza, plik wartości lokalnych;
-- wartość nie jest sekretem i zakładamy, że się nie zmieni, a używa jej więcej niż jedno miejsce - warstwa druga, wpisana wprost;
-- wartość jest stała dla wszystkich środowisk i używana w jednym miejscu - warstwa trzecia.
+- the value is a secret - first layer, the secrets file, and for a personal credential the private file;
+- the value is not a secret but depends on the machine or on the environment - first layer, the local values file;
+- the value is not a secret, we assume it will not change, and more than one place uses it - second layer, written directly;
+- the value is constant across all environments and used in one place - third layer.
 
-Kryterium przewidywanej zmienności jest oceną, nie faktem, i pomyłka w jedną stronę oznacza, że zmiana wartości wymaga wdrożenia zamiast edycji pozycji. Dlatego wartość, którą ktoś kiedyś będzie chciał zmienić bez wdrożenia, zostaje pozycją środowiska nawet wtedy, gdy dziś jest jednakowa wszędzie.
+The expected variability criterion is a judgment, not a fact, and a mistake in one direction means that changing the value requires a deployment instead of editing an entry. That is why a value that someone will one day want to change without a deployment stays an environment entry even when it is the same everywhere today.
 
-Pozycją środowiska zostaje też wartość jednakowa wszędzie, którą czyta konsument spoza Pythona, na przykład interpolacja pliku compose albo skrypt powłoki: tylko kod w Pythonie umie zaimportować stałą z warstwy drugiej. Pozycja, której nie czyta żaden proces serwisu, nie ma odpowiednika ani w modelu ustawień, ani w fasadzie.
+A value that is the same everywhere also stays an environment entry when it is read by a consumer outside Python, for example compose file interpolation or a shell script: only Python code can import a constant from the second layer. An entry that no service process reads has no counterpart either in the settings model or in the facade.
 
-Nie każdy nie-sekret wolno wnieść do repozytorium i to jest reguła niezależna od powyższych. Żaden adres, host, login ani sekret środowiska docelowego nie wchodzi do repozytorium w jakiejkolwiek formie - ani do kodu, ani do dokumentacji, ani do szablonu środowiska. Ten sam zakaz obejmuje identyfikatory użytkowników obcego systemu. Nie-sekret objęty zakazem trafia do pliku wartości lokalnych niezależnie od tego, że się nie zmienia, a w warstwie drugiej stoi wyłącznie nazwa pozycji, nigdy jej treść. W szablonie na miejscu wartości stoi znacznik do uzupełnienia, a na środowisku docelowym wartość wpisuje człowiek w konfiguracji tego środowiska.
+Not every non-secret may be brought into the repository, and this rule is independent of the ones above. No address, host, login or secret of the target environment enters the repository in any form - not into the code, not into the documentation, not into the environment template. The same ban covers user identifiers of a third-party system. A non-secret covered by the ban goes to the local values file regardless of the fact that it does not change, and in the second layer only the entry name appears, never its content. In the template, a to-fill-in marker stands in place of the value, and in the target environment a human enters the value in that environment's configuration.
 
-Konsekwencja tych reguł jest jednoznaczna i zamierzona: odczyt zmiennej środowiskowej poza warstwą drugą jest naruszeniem standardu, niezależnie od tego, jak lokalna jest ta wartość i jak wygodnie było ją przeczytać na miejscu. Rozproszony odczyt środowiska to dokładnie ten stan, w którym nie da się odpowiedzieć na pytanie, co serwis potrzebuje mieć ustawione, bez przeszukania całego kodu.
+The consequence of these rules is unambiguous and intended: reading an environment variable outside the second layer is a violation of the standard, no matter how local the value is and how convenient it was to read it on the spot. Scattered environment reads are exactly the state in which you cannot answer the question of what the service needs to have set without searching the whole code.
 
-Jedyny dopuszczalny wyjątek: kod uruchamiany poza pełnym środowiskiem aplikacji. Należą do niego jednorazowe narzędzia uruchamiane z linii poleceń, `alembic/env.py` oraz te konftesty i testy, które czytają pozycje nieznane fasadzie, na przykład adres konta migracyjnego. Taki wyjątek jest opisany w docstringu w miejscu odczytu, wraz z powodem - nie jest cichy.
+The only allowed exception: code run outside the full application environment. This includes one-off tools run from the command line, `alembic/env.py`, and those conftests and tests that read entries unknown to the facade, for example the migration account address. Such an exception is described in a docstring at the place of the read, together with the reason - it is not silent.
 
-Adres połączenia kontem właściciela schematu, używany wyłącznie przy nakładaniu rewizji, czyta `alembic/env.py` wprost ze środowiska, a warstwa druga go nie zna i znać nie ma: konto zmieniające schemat nie ma prawa stać w warstwie, którą importuje każdy proces serwisu. Brak tego adresu zatrzymuje Alembika z nazwą właściwego klucza, bez fallbacku.
+The connection address for the schema owner account, used only when applying revisions, is read by `alembic/env.py` directly from the environment, and the second layer does not know it and is not supposed to: the account that changes the schema has no right to sit in a layer that every service process imports. A missing address stops Alembic with the name of the correct key, without a fallback.
 
-## Walidacja wartości ze środowiska
+## Validating values from the environment
 
-Wartość pochodząca ze środowiska jest walidowana przy starcie procesu, nie przy pierwszym użyciu. Brak wymaganej zmiennej albo wartość niepoprawnego typu zatrzymuje start z komunikatem mówiącym, której zmiennej brakuje i w którym pliku ta zmienna ma stać - nie przechodzi dalej z wartością domyślną i nie wywala się później, w losowym miejscu. Przypisanie pozycji do pliku stoi w `config/settings.py` jako jawna mapa i jest utrzymywane razem z szablonami: dopisanie pozycji do szablonu bez wpisu w tej mapie daje komunikat nazywający zmienną, ale milczący o pliku.
+A value coming from the environment is validated at process startup, not at first use. A missing required variable or a value of an incorrect type stops startup with a message saying which variable is missing and in which file that variable is supposed to be - it does not continue with a default value and does not crash later, in a random place. The assignment of entries to files sits in `config/settings.py` as an explicit map and is maintained together with the templates: adding an entry to a template without a record in this map gives a message that names the variable but is silent about the file.
 
-Komunikat naruszenia podaje nazwę zmiennej i nazwę złamanej reguły, nigdy wartość ani jej fragment.
+A violation message gives the variable name and the name of the broken rule, never the value or a fragment of it.
 
-Walidacja sprawdza kształt wartości, nie stan zasobu, na który wartość wskazuje. Istnienia katalogu albo pliku pod ścieżką z konfiguracji nie sprawdza - brak takiego zasobu ujawnia się na sondzie gotowości albo przy pierwszym użyciu.
+Validation checks the shape of the value, not the state of the resource the value points to. It does not check whether a directory or file exists at a path from the configuration - a missing resource of this kind surfaces on the readiness probe or at first use.
 
-Adres, pod który proces wysyła sekret albo token, oraz adres, z którego pobiera klucze publiczne do sprawdzania podpisu tokenów, musi używać HTTPS, bez wyjątku dla adresów lokalnych, bo pierwszym idzie poświadczenie, a podmieniony zbiór kluczy podpisałby dowolny token. Naruszenie zatrzymuje start.
+The address to which the process sends a secret or a token, and the address from which it fetches public keys for verifying token signatures, must use HTTPS, with no exception for local addresses, because the former carries a credential, and a substituted key set would validate any token. A violation stops startup.
 
-Wartość domyślna jest dopuszczalna wyłącznie tam, gdzie istnieje sensowna wartość bezpieczna, a jej użycie nie ukrywa błędu konfiguracji. Connection string nie ma wartości domyślnej. Poziom logowania ma - i jest nią `INFO`, nigdy `DEBUG`: domyślny poziom `DEBUG` w połączeniu z regułą o danych osobowych ze `standard_logging.md` zamienia każde niedopatrzenie w kodzie w ekspozycję danych.
+A default value is allowed only where a sensible safe value exists and using it does not hide a configuration error. A connection string has no default value. The log level does - and it is `INFO`, never `DEBUG`: a default `DEBUG` level combined with the personal data rule from `standard_logging.md` turns every oversight in the code into data exposure.
 
-Strefa biznesowa (`standard_time.md`) nie ma wartości domyślnej i mieć jej nie może: strefa maszyny wygląda na sensowny domyślnik, a jest wartością, która na innym serwerze cicho zmienia zapisane przesunięcie. Przełącznik wystawiający cokolwiek ponad kontrakt produktu, na przykład interaktywną przeglądarkę dokumentu interfejsu, ma wartość domyślną wyłączoną: wdrożenie, które o przełączniku nie wie, nie wystawia niczego ponad specyfikację.
+The business zone (`standard_time.md`) has no default value and cannot have one: the machine's zone looks like a sensible default, but it is a value that on a different server silently changes the stored offset. A switch exposing anything beyond the product contract, for example an interactive viewer of the interface document, defaults to off: a deployment that does not know about the switch exposes nothing beyond the specification.
 
-Przy pozycji wymaganej wartość pusta bywa legalną decyzją, na przykład pusta lista źródeł, z których przeglądarka może wołać serwis, znaczy, że żadna przeglądarka nie ma dostępu. Brak klucza i wartość pusta są wtedy dwiema różnymi rzeczami: pierwsze jest niewypełnioną konfiguracją i zatrzymuje start, drugie świadomą decyzją.
+For a required entry an empty value is sometimes a legitimate decision, for example an empty list of origins from which a browser may call the service means that no browser has access. A missing key and an empty value are then two different things: the first is unfilled configuration and stops startup, the second is a deliberate decision.
 
-Wyjątkiem od walidacji przy starcie jest pozycja, której nie czyta proces obsługujący żądania, tylko wyłącznie proces roboczy albo jedno zadanie okresowe. Taka pozycja może być opcjonalna i bez wartości domyślnej: jej brak nie zatrzymuje startu interfejsu programistycznego, a ujawnia się przy pierwszej próbie użycia jako nazwany wyjątek i kończy przebieg jako nieudany. Brak nie jest przy tym cichy: przebieg zapisuje w swoich szczegółach, że konfiguracji brakuje, zamiast udawać wykonanie. Wartość pusta znaczy przy takiej pozycji brak konfiguracji, jawnie i celowo, bo kontrakt środowiska wymaga obecności każdego klucza szablonu w pliku lokalnym, a maszyna, na której nikt tej funkcji nie konfiguruje, zostawia pozycję pustą.
+The exception to validation at startup is an entry that is not read by the process handling requests, but only by the worker process or by a single periodic task. Such an entry may be optional and have no default value: its absence does not stop the startup of the API, and it surfaces at the first attempt to use it as a named exception and ends the run as failed. The absence is not silent either: the run records in its details that configuration is missing, instead of pretending it did the work. For such an entry an empty value means missing configuration, explicitly and on purpose, because the environment contract requires every template key to be present in the local file, and a machine on which nobody configures this function leaves the entry empty.
 
-Serwis stoi na Pydantiku, więc kontrakt środowiska jest walidowanym modelem, nie zestawem luźnych sprawdzeń rozsypanych po kodzie. Model daje walidację typów, jawny komunikat o brakującej wartości i jedno miejsce, w którym widać cały kontrakt. Wartości wstrzykuje mu fasada jedną mapą - model nie czyta środowiska sam, więc test podaje mu własną mapę zamiast podmieniać zmienne procesu.
+The service is built on Pydantic, so the environment contract is a validated model, not a set of loose checks scattered across the code. The model gives type validation, an explicit message about a missing value and one place where the whole contract is visible. The facade injects values into it with one map - the model does not read the environment itself, so a test gives it its own map instead of replacing process variables.
 
-## Sekrety
+## Secrets
 
-Sekret nie trafia do repozytorium w żadnej formie - ani jako wartość domyślna w kodzie, ani jako przykład w dokumentacji, ani w pliku szablonu. `.env.example` zawiera wyłącznie jawne miejsca do wypełnienia, także dla wartości, które sekretem nie są: adresu serwera, nazwy bazy i nazwy konta. Powód dla tych trzech: razem z hasłem tworzą kompletny zestaw dostępu, a osobno są mapą infrastruktury, która nie ma powodu leżeć w publicznym repozytorium.
+A secret does not enter the repository in any form - not as a default value in code, not as an example in documentation, not in a template file. `.env.example` contains only explicit placeholders to fill in, also for values that are not secrets: the server address, the database name and the account name. The reason for these three: together with the password they form a complete access set, and separately they are a map of the infrastructure that has no reason to lie in a public repository.
 
-Sekret wydany przez system zewnętrzny przychodzi kanałem wskazanym przez jego wystawcę, nigdy przez repozytorium, zgłoszenie ani czat.
+A secret issued by an external system arrives through the channel indicated by its issuer, never through the repository, a ticket or a chat.
 
-Poświadczenie osobiste, które otwiera zapis do systemu poza tym repozytorium, ma granicę użycia ostrzejszą niż pozostałe pozycje. Nie wolno go czytać ani warstwie drugiej, ani żadnej z trzech warstw serwisu, nie wolno podawać go argumentem wiersza poleceń i nie wolno wypisywać jego wartości w żadnej postaci - ani w raporcie narzędzia, ani w treści wyjątku, ani w logu. Czyta go wyłącznie narzędzie, które go potrzebuje, i redaguje w jednym miejscu, zanim cokolwiek trafi na wyjście. Nazwa takiej pozycji stoi w szablonie prywatnym po to, żeby była jedna dla całego zespołu.
+A personal credential that grants write access to a system outside this repository has a stricter usage boundary than the other entries. Neither the second layer nor any of the three service layers may read it, it may not be passed as a command-line argument, and its value may not be printed in any form - not in a tool report, not in an exception message, not in a log. It is read only by the tool that needs it, and redacted in one place before anything reaches the output. The name of such an entry stands in the private template so that it is the same for the whole team.
 
-Wszystkie trzy pliki lokalne są w `.gitignore`, a dostęp do plików sekretów, czyli do `.env` i `.env.priv`, jest zablokowany po stronie narzędzi agentowych dwiema barierami, z których żadna nie zastępuje drugiej.
+All three local files are in `.gitignore`, and access to the secret files, that is `.env` and `.env.priv`, is blocked on the agent tool side by two barriers, neither of which replaces the other.
 
-Pierwsza to lista blokad w `.claude/settings.json`. Obejmuje odczyt oraz zapis narzędziami operującymi na plikach - zapis dlatego, że plik z sekretami należy do człowieka, a jego nadpisanie jest nieodwracalne inaczej niż wygenerowaniem wszystkiego od nowa po drugiej stronie. Lista wymienia każdy plik po nazwie i nie jest wzorcem, więc nowy plik sekretów trzeba do niej dopisać - inaczej powstaje przez samo swoje istnienie, poza zasięgiem reguły.
+The first is the block list in `.claude/settings.json`. It covers reading and writing with file-operating tools - writing because the secrets file belongs to the human, and overwriting it is irreversible other than by regenerating everything from scratch on the other side. The list names each file explicitly and is not a pattern, so a new secrets file has to be added to it - otherwise, simply by existing, it sits outside the reach of the rule.
 
-Druga to hook `block_dangerous_commands.py`, który zatrzymuje polecenia powłoki wypisujące zawartość takiego pliku oraz rekursywne przeszukiwanie korzenia drzewa bez jawnego wykluczenia plików sekretów, bo wzorzec przepuszczony przez całe drzewo trafia w plik sekretów tak samo jak w kod. Hook rozpoznaje polecenie po jego pierwszym słowie, więc nie widzi odczytu wewnątrz interpretera - i jest to świadome ustępstwo, bo program czytający sekret z pliku i podający go dalej jest sposobem zalecanym. Hook działa ponadto wyłącznie po stronie Claude Code, bez odpowiednika po stronie Codeksa.
+The second is the hook `block_dangerous_commands.py`, which stops shell commands that print the contents of such a file, as well as recursive searches of the tree root without an explicit exclusion of secret files, because a pattern run across the whole tree hits the secrets file just as it hits the code. The hook recognizes a command by its first word, so it does not see a read inside an interpreter - and this is a deliberate concession, because a program that reads a secret from a file and passes it on is the recommended way. Moreover, the hook works only on the Claude Code side, with no counterpart on the Codex side.
 
-Żadna z tych dwóch barier nie obejmuje `.env.local` i jest to decyzja, nie przeoczenie. W większości ekosystemów ta nazwa oznacza plik lokalnych sekretów; w tym repozytorium niesie wyłącznie nie-sekrety, więc jej zawartość wolno cytować w rozmowie i w raporcie. Cena jest realna i przyjęta świadomie: sekret wpisany tam z przyzwyczajenia nie zostanie złapany ani przez blokadę odczytu, ani przez kontrolę poleceń powłoki.
+Neither of these two barriers covers `.env.local`, and this is a decision, not an oversight. In most ecosystems this name means a file of local secrets; in this repository it carries only non-secrets, so its contents may be quoted in conversation and in a report. The price is real and accepted deliberately: a secret written there out of habit will be caught neither by the read block nor by the shell command check.
 
-Obie bariery chronią przed pomyłką, żadna przed intencją. Token albo hasło ujawnione gdziekolwiek, także w wyjściu polecenia, uznaje się za spalone i unieważnia po stronie systemu, który je wydał.
+Both barriers protect against a mistake, neither against intent. A token or password revealed anywhere, including in command output, is considered burned and is revoked on the side of the system that issued it.
 
-Reguła ignorowania plików lokalnych stoi na wzorcu `.env.*`, spod którego wersjonowane szablony są wyjęte negacjami `!.env.example` i `!.env.*.example`. Kolejność w `.gitignore` jest tu częścią reguły, bo negacja działa wyłącznie po wzorcu, który dany plik łapie. Jedna litera różnicy między nazwą szablonu a nazwą pliku lokalnego decyduje o tym, czy sekret zostaje na maszynie, więc oba warunki - obecność wzorca i brak negacji dla pliku lokalnego - są pilnowane testem kontraktu środowiska.
+The rule ignoring local files rests on the pattern `.env.*`, from which the versioned templates are excluded by the negations `!.env.example` and `!.env.*.example`. The order in `.gitignore` is part of the rule here, because a negation works only after a pattern that matches the given file. A one-letter difference between the template name and the local file name decides whether the secret stays on the machine, so both conditions - the presence of the pattern and the absence of a negation for the local file - are enforced by the environment contract test.
 
-Sekret nie trafia też do logu, do treści błędu zwracanej przez interfejs programistyczny ani do komunikatu wyjątku. W modelu ustawień sekret ma typ `SecretStr`, więc nie trafia do repr. Connection string w treści wyjątku jest najczęstszym sposobem, w jaki hasło ląduje w logu.
+A secret also does not go into a log, into the error body returned by the API, or into an exception message. In the settings model a secret has the type `SecretStr`, so it does not end up in repr. A connection string in an exception message is the most common way a password lands in a log.
 
-## Zawartość plików środowiska
+## Contents of environment files
 
-Pliki środowiska nie zawierają komentarzy. Zakaz obejmuje wszystkie sześć: wersjonowane szablony `.env.example`, `.env.local.example` i `.env.priv.example` oraz lokalne pliki `.env`, `.env.local` i `.env.priv`, i nie ma od niego wyjątku dla komentarza wyjaśniającego, nagłówka grupującego ani znacznika sekcji.
+Environment files contain no comments. The ban covers all six: the versioned templates `.env.example`, `.env.local.example` and `.env.priv.example` and the local files `.env`, `.env.local` and `.env.priv`, and there is no exception to it for an explanatory comment, a grouping header or a section marker.
 
-Powód jest dwuczęściowy. Szablon jest kopiowany i wypełniany, więc komentarz w nim rozjeżdża się z kontraktem przy pierwszej zmianie i od tego momentu opisuje stan, którego już nie ma - a czyta go wtedy ktoś, kto nie ma jak zauważyć, że opis jest nieaktualny. Druga część jest ważniejsza: opis znaczenia zmiennej ma jedno miejsce i jest nim ten standard, sekcja o pozycjach środowiska. Dwa miejsca opisujące to samo to dwa miejsca do zaktualizowania i jedno, o którym ktoś zapomni.
+The reason has two parts. A template is copied and filled in, so a comment in it drifts away from the contract at the first change and from that moment describes a state that no longer exists - and it is then read by someone who has no way of noticing that the description is outdated. The second part is more important: the description of a variable's meaning has one place, and that place is this standard, the section about environment entries. Two places describing the same thing are two places to update and one that someone will forget.
 
-Konsekwencja jest zamierzona: dopisanie zmiennej do szablonu bez opisania jej w tym dokumencie jest niepełną zmianą, tak samo jak dopisanie jej wyłącznie tutaj.
+The consequence is intended: adding a variable to a template without describing it in this document is an incomplete change, just like adding it only here.
 
-Reguła nie jest pilnowana testem. Test kontraktu środowiska czyta pliki środowiska z pominięciem komentarzy, bo jego zadaniem jest porównywanie kluczy, a nie kontrola formy - rozszerzenie go zmieniłoby jego zamiar. Egzekwowanie zostaje po stronie człowieka i przeglądu.
+The rule is not enforced by a test. The environment contract test reads the environment files skipping comments, because its job is to compare keys, not to check form - extending it would change its purpose. Enforcement stays with the human and with review.
 
-Znacznik do uzupełnienia w szablonie jest wartością, która nie przechodzi walidacji. Skopiowany i niewypełniony szablon ma zatrzymać start z nazwą zmiennej, a nie ustawić działającą konfigurację wskazującą nieistniejący zasób.
+The to-fill-in marker in a template is a value that does not pass validation. A copied and unfilled template is supposed to stop startup with the variable name, not set up a working configuration pointing to a non-existent resource.
 
-## Zawartość pliku konfiguracyjnego
+## Contents of the configuration file
 
-Plik konfiguracyjny zawiera wartości i ich walidację. Nie zawiera logiki domenowej, nie wykonuje zapytań, nie otwiera połączeń i nie ma efektów ubocznych poza odczytem środowiska.
+The configuration file contains values and their validation. It does not contain domain logic, does not execute queries, does not open connections and has no side effects other than reading the environment.
 
-Import fasady konfiguracji jest kosztowny i wymaga kompletnego środowiska, bo wartości powstają w momencie importu. Koszt płaci każdy, kto zaimportuje cokolwiek z `api/`, `service/` albo `data/`, w tym test, który sam żadnej wartości nie zamawia. Jest to cena za to, że reszta repozytorium ma jeden adres konfiguracji zamiast funkcji, którą trzeba zawołać i której wynik trzeba czyścić między testami. Objaw braku wartości jest przy tym natychmiastowy i nazwany, nie cichy.
+Importing the configuration facade is expensive and requires a complete environment, because the values are created at import time. The cost is paid by anyone who imports anything from `api/`, `service/` or `data/`, including a test that itself requests no value. This is the price for the rest of the repository having one configuration address instead of a function that has to be called and whose result has to be cleared between tests. The symptom of a missing value is immediate and named, not silent.
 
-Moduły warstwy drugiej stojące pod fasadą - walidacja kontraktu, odczyt formatu pliku środowiska i konfiguracja logowania - mają import tani i bezpieczny i taki ma zostać. To one są importowane przez narzędzia działające poza pełnym środowiskiem aplikacji.
+The second-layer modules standing under the facade - contract validation, reading the environment file format and logging configuration - have a cheap and safe import, and it is to stay that way. They are the ones imported by tools running outside the full application environment.
 
-Konfiguracja nie jest miejscem na obejście braku wartości. Jeśli wartość jest wymagana, a nie ma jej w środowisku, poprawną reakcją jest zatrzymanie startu, nie podstawienie czegokolwiek.
+Configuration is not a place to work around a missing value. If a value is required and is not present in the environment, the correct reaction is to stop startup, not to substitute anything.
 
-## Checklista
+## Checklist
 
-- Czy jakikolwiek nowy odczyt zmiennej środowiskowej pojawia się poza fasadą konfiguracji - a jeśli tak, czy jest to opisany w docstringu wyjątek dla kodu spoza pełnego środowiska aplikacji?
-- Czy nowa pozycja środowiska trafiła do właściwego z trzech plików: sekret do `.env`, poświadczenie osobiste do `.env.priv`, nie-sekret zależny od maszyny albo środowiska do `.env.local` - a nie-sekret niezmienny nie została pozycją środowiska wcale?
-- Czy nowa pozycja środowiska ma wpis w mapie przypisania pozycji do pliku w `config/settings.py`, żeby komunikat o jej braku nazywał także plik?
-- Czy każda nowa wymagana wartość ze środowiska zatrzymuje start procesu, gdy jej brakuje, zamiast przechodzić z wartością domyślną?
-- Czy nowa pozycja opcjonalna jest czytana wyłącznie przez proces roboczy albo zadanie okresowe, a jej brak kończy przebieg nazwanym wyjątkiem zamiast cichego pominięcia?
-- Czy komunikat naruszenia walidacji nazywa zmienną i regułę, bez wartości i jej fragmentu?
-- Czy nowa wartość domyślna jest bezpieczna i nie ukrywa błędu konfiguracji?
-- Czy nowa wartość konfiguracyjna trafiła do warstwy wynikającej z jej pochodzenia, a nie z zasięgu użycia?
-- Czy nowa zmienna środowiskowa została dopisana do właściwego szablonu jako znacznik do uzupełnienia, który nie przechodzi walidacji, bez rzeczywistej wartości, i czy jej znaczenie zostało opisane w sekcji o pozycjach środowiska?
-- Czy wybór szablonu wynika z jednego kryterium, czyli z tego, czy wartość jest u całego zespołu ta sama - a nie z tego, że pozycja jest sekretem? Szablon prywatny nie jest miejscem na każdy sekret, tylko na ten, w którym każdy występuje pod własnym kontem.
-- Czy żaden adres, host, login ani sekret środowiska docelowego nie trafił do kodu, dokumentacji ani szablonu?
-- Czy nowy plik sekretów, jeśli powstał, został objęty regułą w `.gitignore` i dopisany do blokady odczytu w `.claude/settings.json`?
-- Czy pliki środowiska pozostają wolne od komentarzy?
-- Czy sekret nie trafia do logu, treści błędu ani komunikatu wyjątku?
-- Czy plik konfiguracyjny pozostaje wolny od logiki i efektów ubocznych poza odczytem środowiska?
+- Does any new read of an environment variable appear outside the configuration facade - and if so, is it an exception described in a docstring for code outside the full application environment?
+- Did the new environment entry go to the correct one of the three files: a secret to `.env`, a personal credential to `.env.priv`, a non-secret depending on the machine or environment to `.env.local` - and did an unchanging non-secret not become an environment entry at all?
+- Does the new environment entry have a record in the entry-to-file assignment map in `config/settings.py`, so that the message about its absence also names the file?
+- Does every new required value from the environment stop process startup when it is missing, instead of continuing with a default value?
+- Is the new optional entry read only by the worker process or a periodic task, and does its absence end the run with a named exception instead of a silent skip?
+- Does the validation violation message name the variable and the rule, without the value or a fragment of it?
+- Is the new default value safe, and does it avoid hiding a configuration error?
+- Did the new configuration value go to the layer that follows from its origin, not from its scope of use?
+- Was the new environment variable added to the correct template as a to-fill-in marker that does not pass validation, without a real value, and was its meaning described in the section about environment entries?
+- Does the choice of template follow from one criterion, that is whether the value is the same for the whole team - and not from the fact that the entry is a secret? The private template is not the place for every secret, only for the one under which everyone acts with their own account.
+- Did no address, host, login or secret of the target environment end up in code, documentation or a template?
+- Was the new secrets file, if one was created, covered by a rule in `.gitignore` and added to the read block in `.claude/settings.json`?
+- Do the environment files remain free of comments?
+- Does the secret stay out of the log, the error body and the exception message?
+- Does the configuration file remain free of logic and of side effects other than reading the environment?

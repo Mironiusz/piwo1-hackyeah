@@ -1,122 +1,123 @@
 # CLAUDE.md
 
-## Cel pliku
+## Purpose of this file
 
-Ten plik opisuje stałe zasady pracy w tym repozytorium. Claude Code ma stosować je podczas analizy, pisania kodu, refaktoryzacji, dokumentowania i wyjaśniania zmian.
+This file describes the permanent rules for working in this repository. Claude Code is to apply them while analyzing, writing code, refactoring, documenting and explaining changes.
 
-## Co budujemy
+## What we are building
 
-<Nazwa produktu> to <jedno albo dwa zdania o tym, czym jest projekt, dla kogo jest i czego świadomie nie robi>.
+piwo1-hackyeah (the repository name - the product name is not chosen yet) is a community app about the accessibility of places in Kraków, built at HackYeah 2026 (3-4 October 2026) for two partner challenges at once: "Kraków bez barier" (City of Kraków) and "Imagine What's Next" (Huawei, HarmonyOS). It combines information from open sources (OpenStreetMap, open city data) with reports from people, including photos, about places with good and with limited accessibility, and plans routes matched to the needs of people with different disabilities. We build a web app first and port it to HarmonyOS if time allows.
 
-Źródłem prawdy o produkcie jest `<ścieżka do specyfikacji produktu>`: <co specyfikacja zawiera>. Przy rozbieżności między specyfikacją a czymkolwiek innym w repozytorium obowiązuje specyfikacja. Ten sam opis w dwóch zdaniach stoi w `agent_docs/session_context.md`, skąd hook SessionStart wstawia go na początek każdej sesji.
+Constraints that come from the challenge briefs, not from product decisions: the app does not rely on internal systems of the Kraków City Hall (UMK) or municipal units (MJO), never presents missing or unverified information as a confirmation of accessibility, and does not require users to disclose a disability when barrier and amenity preferences are enough to match results. What else the product deliberately does not do is decided by the specification.
 
-## Zespół
+The source of truth for the product is `docs/product/specification.md`: what the product does, for whom, the scope of the prototype and what stays out of it. The specification is still being written - until the file exists there is no product decision to rely on, and every question about product behavior goes to the user (`docs/standards/decision_registry.md`). In case of a discrepancy between the specification and anything else in the repository, the specification prevails. The challenge requirements and judging criteria are summarized in `docs/hackathon/challenge_requirements.md` - they are external constraints the specification has to satisfy, so a conflict between the specification and a challenge requirement is raised with the user, never resolved silently. The same description in two sentences is in `agent_docs/session_context.md`, from which the SessionStart hook inserts it at the beginning of every session.
 
-<Skład zespołu i zasady dotyczące osób, które dołączyły albo odeszły, jeśli wpływają na pracę agenta: czyje gałęzie, inicjatywy i decyzje przejmuje użytkownik, kogo nie pytać o zdanie. Sekcję usuń, jeśli nie ma nic do zapisania.>
+## Language and communication style
 
-## Język i styl komunikacji
+- Talk to the user in Polish, always with Polish diacritics.
+- Use a casual, conversational, student-like tone, but keep professional terminology.
+- Everything that goes into the repository is written in English: code, docstrings, documentation, standards, chain artifacts in `plans/` and `plans_finished/`, `agent_docs/`, and commit or Merge Request descriptions drafted by the agent. The reason is the Huawei challenge, which requires the whole project documentation in English (`docs/hackathon/challenge_requirements.md`). Polish proper names keep their spelling.
+- The only exception is material a challenge explicitly requires in Polish - the Kraków submission on HackTribe. Such material is marked as Polish where it is stored.
+- Talk to the user normally and explain your decisions.
+- When something is unclear, say so directly instead of guessing.
+- When you see a potential bug in the code, report it.
 
-- Pisz po polsku.
-- Używaj luźnego, potocznego i studenckiego języka, ale zachowuj profesjonalną terminologię.
-- Zawsze używaj polskich znaków w rozmowie i w dokumentacji.
-- Normalnie rozmawiaj z użytkownikiem i wyjaśniaj swoje decyzje.
-- Gdy coś nie jest jasne, powiedz o tym wprost zamiast zgadywać.
-- Gdy widzisz potencjalny błąd w kodzie, poinformuj o nim.
+## Rules for working with code
 
-## Zasady pracy z kodem
+- Follow DRY, SOLID and KISS.
+- Avoid fallbacks when you do not know the context. In that case it is better to create nothing and ask or search than to build a fallback for a potential contract that does not really exist.
+- Use only necessary fallbacks that come from good practices of writing safe code, not from lack of knowledge.
+- When the correctness of the data is not certain, ask whether it can be guaranteed.
+- Always explain the decisions you made.
+- Always say clearly what was changed.
 
-- Dbaj o zasady DRY, SOLID i KISS.
-- Unikaj fallbacków, gdy nie znasz kontekstu. W takim wypadku lepiej nie stworzyć nic i dopytać się lub poszukać, niż robić fallback na potencjalny kontrakt, który naprawdę nie istnieje.
-- Używaj tylko koniecznych fallbacków, wynikających z dobrych praktyk pisania bezpiecznego kodu, a nie z niewiedzy.
-- Gdy poprawność danych nie jest pewna, zapytaj, czy można ją zagwarantować.
-- Zawsze wyjaśniaj podjęte decyzje.
-- Zawsze jasno mów, co zostało zmienione.
+## Hierarchy for resolving rule conflicts
 
-## Hierarchia rozstrzygania konfliktów reguł
+When two rules from this file or from the standards in docs/standards collide, resolve them in this order:
 
-Gdy dwie zasady z tego pliku albo ze standardów w docs/standards się gryzą, rozstrzygaj w tej kolejności:
+1. Correctness and integrity of data.
+2. No guessing of contracts - better to ask than to add a fallback.
+3. Compliance with docs/standards.
+4. Readability.
+5. Performance.
+6. DRY and avoiding needless cleverness.
 
-1. Poprawność i integralność danych.
-2. Brak zgadywania kontraktu - lepiej zapytać niż dorobić fallback.
-3. Zgodność z docs/standards.
-4. Czytelność.
-5. Wydajność.
-6. DRY i unikanie zbędnej sprytności.
+This order follows directly from the rules above: the ban on fallbacks without context and asking instead of guessing are emphasized most strongly here, so they rank highest.
 
-Ta kolejność wynika wprost z zasad powyżej: zakaz fallbacków bez kontekstu i dopytywanie zamiast zgadywania są tu najmocniej akcentowane, więc stoją najwyżej.
+## Working with git
 
-## Praca z gitem
+- Do not create commits and do not push anything to the remote repository. `git commit` and `git push` are forbidden unconditionally, also on the user's explicit request - commits are created by a human.
+- Run `git add` and `git rebase` only on the user's explicit request, never on your own initiative.
+- Run the remaining operations without asking: reading, `git fetch`, `git pull`, `git stash`, switching and creating branches, local `git merge`, `git worktree`.
+- An operation outside these lists is decided by one criterion: does it touch history. If it creates, rewrites or publishes history, do not do it yourself.
+- Changes enter main and dev only through a Merge Request. In the other direction, onto a working branch, they come down with a regular merge.
+- Justifications, branch roles and edge cases are in docs/standards/standard_git.md.
 
-- Nie twórz commitów i nie wysyłaj niczego na zdalne repozytorium. `git commit` i `git push` są zakazane bezwarunkowo, także na wyraźną prośbę użytkownika - commit tworzy człowiek.
-- `git add` i `git rebase` wykonuj wyłącznie na wyraźną prośbę użytkownika, nigdy z własnej inicjatywy.
-- Pozostałe operacje wykonuj bez pytania: odczyt, `git fetch`, `git pull`, `git stash`, przełączanie i tworzenie gałęzi, `git merge` lokalny, `git worktree`.
-- O operacji spoza tych list rozstrzyga jedno kryterium: czy dotyka historii. Jeśli tworzy, przepisuje albo publikuje historię, nie rób jej sam.
-- Do main i dev zmiana wchodzi wyłącznie przez Merge Requesta. W drugą stronę, na gałąź roboczą, schodzi zwykłym mergem.
-- Uzasadnienia, role gałęzi i przypadki graniczne są w docs/standards/standard_git.md.
+## Target environment
 
-## Środowisko docelowe
+The target environment is not chosen yet (entry in `docs/standards/decision_registry.md`). Until it is chosen and the three permission levels below are filled in, the agent has no access to any target environment, and deployment, hosting and challenge submissions are done by a human:
 
-<Gdzie stoi środowisko docelowe i jakie uprawnienia ma wobec niego agent, w trzech poziomach:>
+- without asking: reading the repository and running local tools and tests,
+- only on the user's explicit request: defined together with the target environment,
+- forbidden unconditionally, even on explicit request: defined together with the target environment.
 
-- bez pytania: <na przykład odczyt stanu, tokenem tylko do odczytu>,
-- wyłącznie na wyraźną prośbę użytkownika: <na przykład zmiana zmiennej środowiskowej, wdrożenie, restart>,
-- zakazane bezwarunkowo, także na wyraźną prośbę: <na przykład kasowanie zasobów i kopii zapasowych, zmiana ustawień serwera, tworzenie i rotacja tokenów>.
+Regardless of the project: no address, host, login or secret of the target environment enters the repository in any form - not in code, not in documentation, not in initiative artifacts. The rule is described in docs/standards/standard_config.md.
 
-Niezależnie od projektu: żaden adres, host, login ani sekret środowiska docelowego nie wchodzi do repozytorium w jakiejkolwiek formie - ani do kodu, ani do dokumentacji, ani do artefaktów inicjatywy. Regułę opisuje docs/standards/standard_config.md.
+## Comments and code documentation
 
-## Komentarze i dokumentowanie kodu
+- Do not write line comments in code.
+- Use docstrings instead of line comments.
+- Docstrings describe in plain human language what a function does.
+- The ban on line comments does not mean no communication with the user.
+- In the conversation, explain decisions, risks and changes normally.
+- For more about documentation, see docs/standards/standard_documentation.md
 
-- Nie pisz w kodzie komentarzy linijkowych.
-- Zamiast komentarzy linijkowych stosuj docstringi.
-- Docstringi mają po ludzku opisywać, co robi dana funkcja.
-- Zakaz komentarzy linijkowych nie oznacza braku komunikacji z użytkownikiem.
-- W rozmowie normalnie wyjaśniaj decyzje, ryzyka i zmiany.
-- Po więcej informacji o dokumentacji, odwołaj się do docs/standards/standard_documentation.md
+## Code formatting
 
-## Formatowanie kodu
+- Pass parameters to functions separated by spaces until the line exceeds 200 characters.
+- After exceeding 200 characters, break the parameters into multiple lines.
+- Do not use these characters in code: —, –, −.
+- Use the plain character instead: -.
+- Do not use these characters in code: “, ”.
+- Use the plain character instead: ".
+- Do not use these characters in code: →, ←, ↔.
+- Use instead: ->, <-, <->.
+- Do not use emojis.
+- Do not overuse quotation marks.
+- Use quotation marks only when they are needed, for example for a literal quote, a field name or a code fragment in text.
 
-- Przekazuj parametry do funkcji rozdzielone spacjami, dopóki linijka nie przekroczy 200 znaków.
-- Po przekroczeniu 200 znaków rozbij parametry na wiele linii.
-- Nie używaj w kodzie znaków: —, –, −.
-- Zamiast nich używaj zwykłego znaku: -.
-- Nie używaj w kodzie znaków: “, ”.
-- Zamiast nich używaj zwykłego znaku: ".
-- Nie używaj w kodzie znaków: →, ←, ↔.
-- Zamiast nich używaj: ->, <-, <->.
-- Nie używaj emotek.
-- Nie nadużywaj cudzysłowów.
-- Używaj cudzysłowów tylko wtedy, gdy są potrzebne, na przykład dla dosłownego cytatu, nazwy pola albo fragmentu kodu w tekście.
+## Reply after finishing a task
 
-## Odpowiedź po wykonaniu zadania
+After every change describe:
 
-Po każdej zmianie opisz:
-
-- co zostało zmienione,
-- dlaczego zostało zmienione,
-- jakie decyzje zostały podjęte,
-- jakie potencjalne problemy zostały zauważone,
-- czego nie udało się ustalić, jeśli coś było niejasne.
+- what was changed,
+- why it was changed,
+- which decisions were made,
+- which potential problems were noticed,
+- what could not be determined, if something was unclear.
 
 ## Definition of Done
 
-Pełna checklista Definition of Done jest w `docs/standards/standard_review.md`.
+The full Definition of Done checklist is in `docs/standards/standard_review.md`.
 
-## Pełna zgodność ze standardami
+## Full compliance with the standards
 
-To repozytorium nie ma zastanego kodu, więc standardy obowiązują w wersji zaostrzonej: pełna zgodność od pierwszego commita, bez okresu przejściowego. Miękka reguła odstępstwa, dopuszczająca niezgodny kod dopóki nikt go nie modyfikuje, tutaj nie obowiązuje. Gdy repozytorium będzie mieć zastany kod, rozluźnienie tej reguły ma być jawną decyzją zapisaną w mapie standardów, nie stanem odziedziczonym.
+This repository has no legacy code, so the standards apply in the strict version: full compliance from the first commit, without a transition period. The soft deviation rule, which tolerates non-compliant code as long as nobody modifies it, does not apply here. When the repository has legacy code, relaxing this rule is to be an explicit decision recorded in the standards map, not an inherited state.
 
-## Schemat bazy danych
+## Database schema
 
-Jeśli projekt trzyma zrzut schematu bazy, jego miejsce jest wpisane w mapie standardów. Zrzut jest obrazem stanu faktycznego serwera, nie źródłem prawdy o schemacie - edycja pliku zrzutu nie zmienia bazy.
+If the project keeps a schema dump, its location is recorded in the standards map. The dump is a picture of the actual state of the server, not the source of truth about the schema - editing the dump file does not change the database.
 
-## Decyzje odroczone
+## Deferred decisions
 
-Część decyzji jest świadomie odłożona, z zapisanym powodem i warunkiem rozstrzygnięcia - lista jest w `docs/standards/decision_registry.md`. Zanim uznasz brak reguły za lukę, sprawdź, czy nie jest tam wpisany jako odroczenie. Nie rozstrzygaj takiego wpisu domysłem.
+Some decisions are deliberately postponed, with a recorded reason and a condition for resolving them - the list is in `docs/standards/decision_registry.md`. Before you treat a missing rule as a gap, check whether it is recorded there as a deferral. Do not resolve such an entry by guessing.
 
-## Cykl zadania i system agentowy
+## Task cycle and the agentic system
 
-Repozytorium ma warstwę agent_docs/ obok stałego docs/ oraz łańcuch plan-shape -> plan-prd -> plan-implement, który prowadzi zadanie od zgłoszenia przez pięć artefaktów w plans/<INICJATYWA>/ (SEED, SHAPE, PRD, PLAN, REVIEW) do zaimplementowanej zmiany i trwałej pamięci w agent_docs/memory/. Pełny opis całego systemu - artefakty zadania, kategorie ryzyka blokującego, kolizja nazw skilli personal/project, praca równoległa na jednym drzewie, granica między \_REVIEW.md a agent_docs/memory/, dualizm Claude Code i Codeksa - jest w docs/standards/standard_agentic_workflow.md. Inicjatywa jawnie zakończona albo anulowana przechodzi w całości do plans_finished/<INICJATYWA>/, a wznowiona wraca do plans/ - kryterium, ochrona historii i obsługa odwołań są w rozdz. 4.6 tego standardu; plans/ trzyma tylko pracę w toku.
+The repository has an agent_docs/ layer next to the permanent docs/ and the chain plan-shape -> plan-prd -> plan-implement, which takes a task from the report through five artifacts in plans/<INITIATIVE>/ (SEED, SHAPE, PRD, PLAN, REVIEW) to an implemented change and durable memory in agent_docs/memory/. The full description of the whole system - task artifacts, blocking risk categories, the personal/project skill name collision, parallel work on one tree, the boundary between \_REVIEW.md and agent_docs/memory/, the duality of Claude Code and Codex - is in docs/standards/standard_agentic_workflow.md. An initiative explicitly finished or cancelled moves as a whole to plans_finished/<INITIATIVE>/, and a resumed one returns to plans/ - the criterion, protection of history and handling of references are in ch. 4.6 of that standard; plans/ holds only work in progress.
 
-## Mapowanie: co otworzyć przed zadaniem
+How AI tools are used in this repository is documented for the Huawei jury in `AI_WORKFLOW.md`. A change to the workflow itself - a skill, a hook, an agent role, these rules - is recorded there as well.
 
-Pełna tabela mapowania typu zadania na dokumenty do otwarcia, w tym kiedy sięgać po agent_docs/ i po docs/, jest w docs/standards/README.md.
+## Mapping: what to open before a task
+
+The full table mapping a task type to the documents to open before the work, including when to reach for agent_docs/ and for docs/, is in docs/standards/README.md.

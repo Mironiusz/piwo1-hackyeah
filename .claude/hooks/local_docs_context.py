@@ -10,7 +10,7 @@ PERSONAL_SKILL_DIRS = (Path(".claude") / "skills", Path(".agents") / "skills", P
 
 
 def main() -> None:
-    """Dodaje agentowi krótki kontekst o projekcie, o źródle prawdy o produkcie i o lokalnych standardach."""
+    """Gives the agent a short context about the project, about the source of truth about the product and about the local standards."""
     payload = read_payload()
     cwd = Path(payload.get("cwd") or os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd())
     root = find_repo_root(cwd)
@@ -25,7 +25,7 @@ def main() -> None:
 
 
 def read_payload() -> dict:
-    """Czyta JSON przekazany przez Claude Code na stdin."""
+    """Reads the JSON passed by Claude Code on stdin."""
     raw_input = sys.stdin.read().strip()
 
     if not raw_input:
@@ -38,7 +38,7 @@ def read_payload() -> dict:
 
 
 def find_repo_root(cwd: Path) -> Path:
-    """Znajduje root repozytorium Git albo zwraca bieżący katalog."""
+    """Finds the root of the Git repository or returns the current directory."""
     project_dir = os.environ.get("CLAUDE_PROJECT_DIR")
 
     if project_dir:
@@ -57,13 +57,13 @@ def find_repo_root(cwd: Path) -> Path:
 
 def build_context(root: Path, standards_dir: Path) -> str:
     """
-    Buduje zwięzły opis źródeł zasad repozytorium: opis projektu z `agent_docs/session_context.md`,
-    ostrzeżenie o skillach osobistych przykrywających skille projektu i wskazania na mapę standardów
-    oraz `agent_docs/`.
+    Builds a concise description of the sources of the repository rules: the project description from
+    `agent_docs/session_context.md`, a warning about personal skills shadowing project skills and pointers
+    to the standards map and to `agent_docs/`.
     """
     candidates = [
-        ("mapa standardów", standards_dir / "README.md"),
-        ("decyzje świadomie odroczone", standards_dir / "decision_registry.md"),
+        ("standards map", standards_dir / "README.md"),
+        ("deliberately deferred decisions", standards_dir / "decision_registry.md"),
     ]
 
     lines = [read_session_context(root)]
@@ -71,9 +71,9 @@ def build_context(root: Path, standards_dir: Path) -> str:
 
     lines.extend(
         [
-            "Lokalne standardy są w docs/standards. Pełne pliki warto czytać dopiero, gdy bieżące zadanie dotyczy danego obszaru.",
+            "Local standards are in docs/standards. Read the full files only when the current task concerns a given area.",
             "",
-            "Zacznij od mapy:",
+            "Start with the map:",
         ]
     )
 
@@ -85,12 +85,12 @@ def build_context(root: Path, standards_dir: Path) -> str:
 
     if agent_docs_dir.is_dir():
         lines.append("")
-        lines.append("Repozytorium ma też agent_docs/ - workflow łańcucha zadania i trwałą pamięć decyzji per jednostka kodu.")
-        lines.append("Otwórz dopiero, gdy zadanie tego wymaga:")
+        lines.append("The repository also has agent_docs/ - the task chain workflow and the durable memory of decisions per code unit.")
+        lines.append("Open it only when the task requires it:")
 
         agent_docs_candidates = [
             ("workflow seed -> shape -> PRD -> plan", agent_docs_dir / "ai_workflows" / "shape_prd_workflow.md"),
-            ("konwencja memory", agent_docs_dir / "memory" / "README.md"),
+            ("memory convention", agent_docs_dir / "memory" / "README.md"),
         ]
 
         for label, path in agent_docs_candidates:
@@ -102,8 +102,8 @@ def build_context(root: Path, standards_dir: Path) -> str:
 
 def read_session_context(root: Path) -> str:
     """
-    Zwraca opis projektu z `agent_docs/session_context.md`. Plik wypełnia projekt przy zakładaniu
-    z szablonu; gdy go brakuje albo jest pusty, zwraca zdanie, które o tym mówi, zamiast zgadywać opis.
+    Returns the project description from `agent_docs/session_context.md`. The project fills the file in when
+    it is created from the template; when it is missing or empty, returns a sentence saying so instead of guessing a description.
     """
     path = root / SESSION_CONTEXT_PATH
 
@@ -113,11 +113,11 @@ def read_session_context(root: Path) -> str:
         if content:
             return content
 
-    return f"Brak opisu projektu w {SESSION_CONTEXT_PATH.as_posix()} - uzupełnij go według README.md szablonu."
+    return f"No project description in {SESSION_CONTEXT_PATH.as_posix()} - fill it in according to README.md."
 
 
 def discover_skill_names(skills_dir: Path) -> set[str]:
-    """Zwraca nazwy skilli, czyli podkatalogów z plikiem SKILL.md, w podanym katalogu."""
+    """Returns the names of the skills, that is subdirectories with a SKILL.md file, in the given directory."""
     if not skills_dir.is_dir():
         return set()
 
@@ -126,11 +126,11 @@ def discover_skill_names(skills_dir: Path) -> set[str]:
 
 def build_skill_collision_warning(root: Path, home: Path) -> list[str]:
     """
-    Zwraca linie ostrzeżenia, gdy w katalogu osobistym użytkownika leży skill o nazwie skilla projektu.
+    Returns the warning lines when the user's personal directory holds a skill with the name of a project skill.
 
-    Przy tej samej nazwie narzędzie agentowe ładuje kopię osobistą zamiast projektowej i nie mówi
-    o tym ani słowem, więc bez tego ostrzeżenia wywołanie skilla po nazwie uruchamia inną treść niż
-    ta, którą opisują standardy repozytorium. Pusta lista znaczy brak kolizji.
+    With the same name the agentic tool loads the personal copy instead of the project one and does not say
+    a word about it, so without this warning calling a skill by name runs different content than
+    the one described by the repository standards. An empty list means no collision.
     """
     project_skills: set[str] = set()
 
@@ -151,14 +151,14 @@ def build_skill_collision_warning(root: Path, home: Path) -> list[str]:
 
     return [
         "",
-        "UWAGA: skille osobiste przykrywają skille projektu o tej samej nazwie. Wywołanie po nazwie uruchomi kopię osobistą:",
+        "WARNING: personal skills shadow project skills with the same name. Calling one by name runs the personal copy:",
         *collisions,
-        "Usuń albo przemianuj kopie osobiste, a do tego czasu czytaj treść skilla wprost z .claude/skills/<nazwa>/SKILL.md.",
+        "Delete or rename the personal copies, and until then read the skill content directly from .claude/skills/<name>/SKILL.md.",
     ]
 
 
 def display_path(root: Path, path: Path) -> str:
-    """Zwraca ścieżkę względem root repo, jeśli to możliwe."""
+    """Returns the path relative to the repo root, if possible."""
     try:
         return path.relative_to(root).as_posix()
     except ValueError:
@@ -166,7 +166,7 @@ def display_path(root: Path, path: Path) -> str:
 
 
 def print_json(payload: dict) -> None:
-    """Wypisuje JSON zgodny z kontraktem hooków Claude Code."""
+    """Prints JSON compliant with the Claude Code hooks contract."""
     print(json.dumps(payload))
 
 

@@ -1,143 +1,143 @@
 ---
 name: plan-shape
-description: Zamienia surowe zgłoszenie (seed) w doprecyzowany luźny plan poprzez wywiad z użytkownikiem. Zapisuje seed dosłownie w osobnym, niemodyfikowalnym pliku, potem prowadzi wywiad zapisywany do pliku shape, z sekcjami o problemie, odbiorcy, zakresie, scenariuszach i podważeniu własnych założeń, oraz z otwartymi pytaniami oznaczonymi kategorią ryzyka blokującego. Pierwszy skill łańcucha plan-shape -> plan-prd -> plan-implement. Użyj na początku nowego zadania o nieustalonym kształcie.
+description: Turns a raw request (seed) into a refined loose plan through an interview with the user. Saves the seed verbatim in a separate, unmodifiable file, then conducts an interview recorded in the shape file, with sections on the problem, the recipient, the scope, the scenarios and challenging own assumptions, and with open questions marked with a blocking risk category. The first skill of the chain plan-shape -> plan-prd -> plan-implement. Use at the start of a new task whose shape is not yet settled.
 ---
 
-# Zamiana seeda w luźny plan (shape)
+# Turning a seed into a loose plan (shape)
 
-Cel: zbudować `<ZADANIE>_SHAPE.md` na bazie surowego zgłoszenia, prowadząc wywiad, który wyłapuje niejasności zanim powstanie PRD.
+Goal: build `<TASK>_SHAPE.md` from a raw request, conducting an interview that catches ambiguities before the PRD is created.
 
-## Ustalenie nazwy i wznowienie
+## Naming and resumption
 
-Ustal nazwę inicjatywy (katalog w `plans/<INICJATYWA>/`) i prefiks zadania. Jeśli user ich nie podał, zaproponuj oba na podstawie treści wejścia i poczekaj na potwierdzenie - nie twórz niczego na dysku przed potwierdzeniem, bo nazwa jest trwała i widoczna w repo.
+Establish the name of the initiative (the directory in `plans/<INITIATIVE>/`) and the task prefix. If the user did not give them, propose both based on the content of the input and wait for confirmation - do not create anything on disk before confirmation, because the name is permanent and visible in the repo.
 
-Jeśli `plans/<INICJATYWA>/<ZADANIE>_SHAPE.md` już istnieje, to wznowienie: wczytaj shape wraz z seedem i przejdź od razu do sekcji "Prowadź wywiad", pomijając tworzenie plików.
+If `plans/<INITIATIVE>/<TASK>_SHAPE.md` already exists, this is a resumption: read the shape together with the seed and go straight to the section "Conduct the interview", skipping file creation.
 
-## Archiwum
+## Archive
 
-Zanim założysz nowy katalog, sprawdź obie lokalizacje: `plans/` i archiwum `plans_finished/`. Nazwa obecna w `plans_finished/` oznacza inicjatywę jawnie zakończoną albo anulowaną - nie zakładaj dla niej drugiego seeda ani drugiego prefiksu zadania. Jeśli zgłoszenie jest tą samą pracą, to wznowienie: katalog wraca do `plans/` z wpisem o wznowieniu w review według `docs/standards/standard_agentic_workflow.md` rozdz. 4.6, a wywiad kontynuuje istniejący shape. Jeśli zgłoszenie jest nowym zakresem na ten sam temat, zaproponuj nową nazwę. O tym, która z tych dwóch sytuacji zachodzi, rozstrzyga użytkownik, nie podobieństwo nazw. Ta sama nazwa obecna w obu lokalizacjach naraz jest stanem do wyjaśnienia, nie do wyboru.
+Before you create a new directory, check both locations: `plans/` and the `plans_finished/` archive. A name present in `plans_finished/` means an initiative explicitly finished or cancelled - do not create a second seed or a second task prefix for it. If the request is the same work, this is a resumption: the directory goes back to `plans/` with a resumption entry in the review according to `docs/standards/standard_agentic_workflow.md` ch. 4.6, and the interview continues the existing shape. If the request is a new scope on the same topic, propose a new name. Which of these two situations applies is decided by the user, not by the similarity of names. The same name present in both locations at once is a state to be clarified, not to be chosen from.
 
 ## Seed
 
-Sprawdź, czy `<ZADANIE>_SEED.md` już istnieje - user mógł go stworzyć sam, wklejając gotową notatkę zamiast dyktować seed w rozmowie. Nigdy nie nadpisuj istniejącego seeda, tylko go wczytaj.
+Check whether `<TASK>_SEED.md` already exists - the user may have created it themselves, pasting a ready note instead of dictating the seed in the conversation. Never overwrite an existing seed, only read it.
 
-Wymóg jawnego `Źródło:` dotyczy tylko sytuacji, gdy to `plan-shape` sam tworzy plik na podstawie rozmowy - tam zawsze zapisujesz, skąd wzięło się zgłoszenie. Jeśli plik już istnieje, bo user stworzył go ręcznie, fakt, że to on go napisał, jest wystarczającym źródłem - nie dopytuj o brakującą linię `Źródło:` ani o dokładny nagłówek `## Treść dosłowna`, jeśli treść jest gdzieś w pliku pod inną nazwą sekcji. Jedyny realny wymóg dla ręcznie stworzonego pliku: musi zawierać jakąkolwiek treść. Jeśli plik jest pusty, dopytaj, co user miał na myśli - pustego seeda nie da się przetworzyć.
+The requirement of an explicit `Source:` applies only when `plan-shape` itself creates the file based on the conversation - there you always record where the request came from. If the file already exists because the user created it manually, the fact that they wrote it is a sufficient source - do not ask about a missing `Source:` line or about the exact heading `## Verbatim content`, if the content is somewhere in the file under a different section name. The only real requirement for a manually created file: it must contain some content. If the file is empty, ask what the user had in mind - an empty seed cannot be processed.
 
-Jeśli seed nie istnieje, zapisz go jako pierwszą czynność, przed pierwszym pytaniem:
+If the seed does not exist, save it as the first action, before the first question:
 
 ```text
-# Seed: <jednozdaniowy tytuł>
+# Seed: <one-sentence title>
 
-Źródło: <rozmowa z użytkownikiem | wklejony mail | notatka ze spotkania | opis z brancha | zgłoszenie od kogoś z zespołu>
-Data: YYYY-MM-DD
+Source: <conversation with the user | pasted email | meeting note | branch description | report from a team member>
+Date: YYYY-MM-DD
 
-## Treść dosłowna
+## Verbatim content
 
-<dokładnie to, co zostało powiedziane albo wklejone, bez redakcji i bez interpretacji>
+<exactly what was said or pasted, without editing and without interpretation>
 ```
 
-Plik nie ma innych sekcji i po zapisaniu jest niemodyfikowalny - zmiana zakresu zawsze idzie do `_SHAPE.md`, nigdy do seeda. Jeśli seed jest zbyt ubogi, żeby cokolwiek z niego wynikało, zapisz go i tak dosłownie, a braki adresuj pytaniami w fazie shape.
+The file has no other sections and once saved it cannot be modified - a change of scope always goes to `_SHAPE.md`, never to the seed. If the seed is too thin for anything to follow from it, save it verbatim anyway, and address the gaps with questions in the shape phase.
 
-## Regulator szczegółowości
+## Detail regulator
 
-Zgłoszenie może nieść parametr sterujący liczbą i głębokością pytań: liczbę od 0 do 100, zapisywaną wzorcowo jako `C:N`. Rozpoznaj każdą formę etykiety, pod jednym warunkiem - bezpośrednio po niej stoi liczba z tego zakresu. Warunek jest konieczny, bo seedy w tym repozytorium bywają pisane ze ścieżkami dyskowymi zaczynającymi się tym samym wzorcem.
+The request may carry a parameter controlling the number and depth of questions: a number from 0 to 100, canonically written as `C:N`. Recognize any form of the label, on one condition - it is immediately followed by a number from this range. The condition is necessary, because seeds in this repository are sometimes written with disk paths starting with the same pattern.
 
-Brak parametru w seedzie znaczy 40. Dwie różne wartości w jednym seedzie zatrzymują cię na jednym pytaniu o to, którą przyjąć, zadanym przed pierwszym pytaniem wywiadu - dopóki konflikt trwa, nie wiadomo nawet, jak dociekliwy ma być dalszy ciąg.
+No parameter in the seed means 40. Two different values in one seed stop you at a single question about which one to adopt, asked before the first interview question - as long as the conflict lasts, it is not even known how inquisitive the rest is supposed to be.
 
-Ustaloną wartość wpisz do nagłówka `<ZADANIE>_SHAPE.md` i od tego momentu czytaj ją stamtąd, nie z seeda. Użytkownik może ją zmienić w dowolnym momencie - wtedy zaktualizuj nagłówek i dopisz jedną linię o tym, od którego momentu obowiązuje nowa wartość. Gdy wartość w nagłówku różni się od tej w seedzie, obowiązuje nagłówek i nie jest to powód do pytania.
+Write the established value into the header of `<TASK>_SHAPE.md` and from that moment read it from there, not from the seed. The user may change it at any moment - then update the header and add one line saying from which point the new value applies. When the value in the header differs from the one in the seed, the header applies and this is not a reason to ask.
 
-Pięć progów, po jednym dla przedziału. Każdy zawiera wszystko, co niższe, i dokłada swoje:
+Five thresholds, one per range. Each includes everything below it and adds its own:
 
-- 0-19: wyłącznie pytania blokujące. Wszystko pozostałe rozstrzygasz sam. Zadanie nietykające żadnej kategorii ryzyka może przejść wywiad bez ani jednego pytania.
-- 20-39: dodatkowo wybory, których odwrócenie wymagałoby przepisania pracy już wykonanej.
-- 40-59: dodatkowo każdy wybór między wariantami o odmiennych konsekwencjach dla zakresu zadania albo dla zadań przyszłych. Rozstrzygasz sam to, co jest konsekwencją decyzji już podjętych. To jest poziom domyślny.
-- 60-79: dodatkowo rzeczy, które na progach niższych wyprowadziłbyś jako konsekwencję, oraz granice zakresu, których zgłoszenie nie nazywa wprost.
-- 80-100: pytasz o każdą decyzję mającą więcej niż jeden rozsądny wariant. Sam rozstrzygasz wyłącznie to, co ma wariant jeden albo stoi wprost w repozytorium.
+- 0-19: only blocking questions. You decide everything else yourself. A task that touches no risk category may pass the interview without a single question.
+- 20-39: additionally, choices whose reversal would require rewriting work already done.
+- 40-59: additionally, every choice between variants with different consequences for the scope of the task or for future tasks. You decide yourself what is a consequence of decisions already made. This is the default level.
+- 60-79: additionally, things that on lower thresholds you would derive as a consequence, and scope boundaries that the request does not name explicitly.
+- 80-100: you ask about every decision that has more than one reasonable variant. You decide yourself only what has a single variant or stands explicitly in the repository.
 
-Regulator nie sięga blokad na żadnym progu. Dziesięć kategorii ryzyka blokującego i zakaz zgadywania kontraktu obowiązują tak samo przy 0, jak przy 100 - wartość 0 daje wywiad złożony z samych pytań blokujących, nie wywiad pusty.
+The regulator does not reach the blocks at any threshold. The ten blocking risk categories and the ban on guessing a contract apply the same at 0 as at 100 - the value 0 gives an interview consisting only of blocking questions, not an empty interview.
 
-Regulator nie zmienia też tego, że shape jest nietechniczny. Wysoka wartość podnosi tu głębokość pytań o problem, zakres i reguły, nigdy o rozwiązanie - pytania techniczne należą do fazy B `plan-prd`.
+Nor does the regulator change the fact that the shape is non-technical. A high value raises here the depth of questions about the problem, the scope and the rules, never about the solution - technical questions belong to phase B of `plan-prd`.
 
-Pozycję, którą rozstrzygnąłeś sam zamiast zapytać, oznacz w dokumencie frazą "Decyzja agenta przy C:N, bez pytania". Bez tego nie widać, co potwierdził człowiek, a co przyjąłeś sam.
+Mark an item that you decided yourself instead of asking with the phrase "Agent decision at C:N, without asking" in the document. Without it you cannot see what a human confirmed and what you assumed yourself.
 
-Pełna definicja mechanizmu: `docs/standards/standard_agentic_workflow.md` rozdz. 3.5.
+Full definition of the mechanism: `docs/standards/standard_agentic_workflow.md` ch. 3.5.
 
-## Zanim zapytasz
+## Before you ask
 
-Przed każdym pytaniem sprawdź, czy odpowiedzi nie ma w repozytorium. Reguła obowiązuje na każdej pozycji regulatora, także przy 100 - regulator steruje wyłącznie tym, co zostaje po odjęciu pytań, na które odpowiedź już jest zapisana. Znalezioną odpowiedź zapisz w shapie wraz ze wskazaniem źródła, zamiast pytać o nią użytkownika.
+Before every question check whether the answer is not already in the repository. The rule applies at every regulator position, also at 100 - the regulator controls only what remains after subtracting the questions whose answer is already recorded. Record the answer you found in the shape together with an indication of the source, instead of asking the user about it.
 
-Znalezienie odpowiedzi nie zamyka tematu, gdy zachodzi jeden z czterech sygnałów. Wtedy pytanie pada mimo znalezienia i mówi wprost, który sygnał je wywołał:
+Finding an answer does not close the topic when one of four signals occurs. Then the question is asked despite the finding and states explicitly which signal triggered it:
 
-1. Dwa źródła mówią co innego o tej samej rzeczy, w tym różnica między stanem faktycznym a docelowym.
-2. Temat jest objęty otwartym wpisem w `docs/standards/decision_registry.md` albo opisany w standardzie o statusie częściowym - reguły tam świadomie nie ma.
-3. Odpowiedź stoi wyłącznie w artefakcie zamkniętego zadania w `plans/`, bez potwierdzenia w kodzie, standardzie albo specyfikacji produktu wskazanej w `CLAUDE.md`. Dziennik zadania opisuje stan z momentu pisania, nie stan obowiązujący.
-4. Dokument nie był aktualizowany po jawnie wskazanym zdarzeniu, które mogło go unieważnić. Sygnał wymaga konkretnego zdarzenia odniesienia i nie działa jako ogólny termin ważności dokumentu.
+1. Two sources say different things about the same thing, including a difference between the actual state and the target state.
+2. The topic is covered by an open entry in `docs/standards/decision_registry.md` or described in a standard with partial status - the rule is deliberately absent there.
+3. The answer stands only in an artifact of a closed task in `plans/`, without confirmation in the code, a standard or the product specification pointed to in `CLAUDE.md`. A task journal describes the state at the moment of writing, not the state in force.
+4. The document was not updated after an explicitly indicated event that could have invalidated it. The signal requires a concrete reference event and does not work as a general expiry date of the document.
 
-## Szkielet `_SHAPE.md`
+## `_SHAPE.md` skeleton
 
 ```text
-# Shape: <tytuł zadania>
+# Shape: <task title>
 
-Stan dokumentu: YYYY-MM-DD, wywiad w toku | wywiad zamknięty
+Document state: YYYY-MM-DD, interview in progress | interview closed
 Regulator: C:N
 
 ## Problem
 
-## Odbiorca i wyzwalacz
+## Recipient and trigger
 
-## Stan obecny
+## Current state
 
-## Najmniejszy sensowny zakres
+## Smallest meaningful scope
 
-## Poza zakresem
+## Out of scope
 
-## Wymagania funkcjonalne
+## Functional requirements
 
-## Scenariusze: wejście, przebieg, oczekiwany stan po runie
+## Scenarios: input, flow, expected state after the run
 
-## Podważenie własnych założeń
+## Challenging own assumptions
 
-## Reguły domenowe albo jawne TODO
+## Domain rules or explicit TODO
 
-## Uwagi o danych, wydajności i bezpieczeństwie
+## Notes on data, performance and security
 
-## Otwarte pytania
+## Open questions
 ```
 
-"Odbiorca i wyzwalacz" pyta, kto albo co odbiera efekt zmiany i co go uruchamia: osoba w konkretnej roli, żądanie konsumenta interfejsu programistycznego, zadanie okresowe, inny system czytający wynik. Gdy projekt nie ma interfejsu użytkownika, odbiorcą jest system, a pytanie o personę nie ma odpowiedzi. "Scenariusze" opisują wejście, przebieg i stan po zakończeniu, nie historyjki użytkownika.
+"Recipient and trigger" asks who or what receives the effect of the change and what triggers it: a person in a specific role, a request from a consumer of the programming interface, a periodic task, another system reading the result. When the project has no user interface, the recipient is a system, and the question about a persona has no answer. "Scenarios" describe the input, the flow and the state after completion, not user stories.
 
-Utwórz plik ze szkieletem, wypełniając na starcie tylko to, co wynika bezpośrednio z seeda. Nie wypełniaj sekcji domysłami.
+Create the file with the skeleton, filling in at the start only what follows directly from the seed. Do not fill sections with guesses.
 
-## Prowadź wywiad
+## Conduct the interview
 
-Jedno pytanie na raz - AskUserQuestion dla zamkniętych decyzji, zwykły tekst dla pytań otwartych. Ile pytań pada i jak głęboko sięgają, ustala regulator; sposób ich zadawania nie zależy od niego - jedno pytanie na raz obowiązuje na całej skali. Po każdej odpowiedzi dopisz minimalną notatkę do właściwej sekcji, usuń odpowiadający wpis z `## Otwarte pytania` i zapisz plik. Wywiad można przerwać w dowolnym momencie - stan żyje w pliku, nie w rozmowie.
+One question at a time - AskUserQuestion for closed decisions, plain text for open questions. How many questions are asked and how deep they reach is set by the regulator; the way they are asked does not depend on it - one question at a time applies across the whole scale. After each answer add a minimal note to the appropriate section, remove the corresponding entry from `## Open questions` and save the file. The interview can be interrupted at any moment - the state lives in the file, not in the conversation.
 
-Każde pytanie dotykające jednej z dziesięciu kategorii ryzyka blokującego oznacz `Block: yes` wraz z nazwą kategorii:
+Mark every question touching one of the ten blocking risk categories with `Block: yes` together with the name of the category:
 
 ```text
-1. <pytanie> `Block: yes` (kategoria: <nazwa>)
-2. <pytanie> `Block: no`
+1. <question> `Block: yes` (category: <name>)
+2. <question> `Block: no`
 ```
 
-Dziesięć kategorii, pełny opis i sposób weryfikacji każdej w `agent_docs/ai_workflows/shape_prd_workflow.md`: kontrakt tokenu dostępowego i zakresów uprawnień, stabilność kontraktu interfejsu programistycznego, schemat bazy, forma zmiany schematu, źródło prawdy dla danych, semantyka czasu i przesunięcia strefowego, idempotencja i deduplikacja, widoczność odczytu i uprawnienia, dane osobowe, wolumen i koszt zapytania. Pytania blokujące muszą zostać rozstrzygnięte przed przejściem do PRD.
+The ten categories, with the full description and the verification method of each in `agent_docs/ai_workflows/shape_prd_workflow.md`: access token and permission scope contract, stability of the programming interface (API) contract, database schema, form of a schema change, source of truth for data, time semantics and zone offset, idempotency and deduplication, read visibility and permissions, personal data, query volume and cost. Blocking questions must be resolved before moving to the PRD.
 
-Pytanie o zachowanie w czasie stawiaj na konkretnym przebiegu, nie na nazwach mechanizmów: trzy do sześciu punktów z godzinami i stanem po każdym kroku, a pytanie dopiero pod nimi. Skutek niepożądany podawaj liczbą, nie przymiotnikiem. Gdy pytanie odwołuje się do artefaktu repozytorium, najpierw przytocz jego fragment w rozmowie - sama ścieżka z nazwą sekcji nie wystarcza. Pytanie abstrakcyjne potrafi dostać odpowiedź na pytanie zrozumiane inaczej niż zadane, a ta trafia potem do shape'a jako decyzja, której nikt nie podjął.
+Ask a question about behavior over time on a concrete run, not on the names of mechanisms: three to six points with times and the state after each step, and the question only below them. Give an undesired effect as a number, not an adjective. When a question refers to a repository artifact, first quote its fragment in the conversation - the path with the section name alone is not enough. An abstract question can get an answer to a question understood differently than it was asked, and that answer then lands in the shape as a decision nobody made.
 
-Odpowiedź, którą da się sprawdzić odczytem kodu albo danych, sprawdź przed zapisem i pokaż wynik. Odpowiedź niejednoznaczną dopytaj wariantami zamiast wybierać wariant za użytkownika. Odpowiedź właściciela repozytorium na pytanie adresowane do innej roli zapisz z tym zastrzeżeniem - zdejmuje pytanie z listy, nie zastępuje orzeczenia tamtej roli.
+Check an answer that can be verified by reading code or data before recording it, and show the result. Follow up on an ambiguous answer with variants instead of choosing a variant for the user. Record an answer given by the repository owner to a question addressed to another role with this caveat - it removes the question from the list, it does not replace the ruling of that other role.
 
-Po każdej odpowiedzi, która wycina coś z zakresu, wróć do seeda i sprawdź, czy każda pozycja zamówienia ma jeszcze wykonawcę. Gdy żadna nie ma, przerwij wywiad i powiedz to wprost, zamiast dorabiać inicjatywie zastępczy cel - właściwym wynikiem bywa wtedy wpis do `docs/standards/decision_registry.md` z warunkiem powrotu. Pozycja wyjęta z zakresu znika z listy wymagań i lista zostaje przenumerowana; powód cięcia opisuje sekcja `## Poza zakresem`. Praca, która zmienia wykonawcę albo repozytorium, a nie wypada z zakresu, zostaje na liście.
+After every answer that cuts something out of the scope, go back to the seed and check whether each ordered item still has an executor. When none does, interrupt the interview and say so plainly, instead of inventing a substitute goal for the initiative - the right result is then sometimes an entry in `docs/standards/decision_registry.md` with a condition for coming back. An item taken out of the scope disappears from the requirements list and the list is renumbered; the reason for the cut is described in the `## Out of scope` section. Work that changes the executor or the repository, but does not fall out of the scope, stays on the list.
 
-Gdy w wywiadzie wyjdzie usterka tej samej klasy co zakres (ten sam ekran, ta sama reguła, ten sam przepływ), rekomenduj wciągnięcie jej do zakresu z nazwaniem kosztu. Osobny seed rekomenduj, gdy usterka leży w innym repozytorium albo poza kodem tego projektu.
+When the interview reveals a defect of the same class as the scope (the same screen, the same rule, the same flow), recommend pulling it into the scope while naming the cost. Recommend a separate seed when the defect lies in another repository or outside the code of this project.
 
-Wypełnij `## Podważenie własnych założeń` - zapis pytań, które zadałeś sam sobie o własne rozumienie problemu, wraz z tym, co z nich wyszło. Ta sekcja nie może zostać pusta.
+Fill in `## Challenging own assumptions` - a record of the questions you asked yourself about your own understanding of the problem, together with what came out of them. This section must not stay empty.
 
-## Zakończenie
+## Closing
 
-Zakończ, gdy wszystkie sekcje są wypełnione, a w `## Otwarte pytania` nie ma pozycji z `Block: yes`. Zmień stan dokumentu na "wywiad zamknięty" i powiedz userowi, że można wołać `plan-prd`. Nie wołaj go samodzielnie - każda granica faz jest punktem kontrolnym, w którym user ma zobaczyć wynik i móc zawrócić.
+Finish when all sections are filled in and `## Open questions` has no item with `Block: yes`. Change the document state to "interview closed" and tell the user that `plan-prd` can be called. Do not call it yourself - every phase boundary is a checkpoint at which the user is to see the result and be able to turn back.
 
-## Zasady
+## Rules
 
-- Zero zgadywania kontraktów, nazw, zakresów - to pytanie do usera, nie decyzja modelu.
-- Regulator zmienia liczbę i głębokość pytań, nigdy nietykalność blokad ani obowiązek sprawdzenia repozytorium przed pytaniem.
-- Nazwa inicjatywy i prefiks zadania wymagają potwierdzenia usera, zanim cokolwiek powstanie na dysku.
-- Dokument nie ma pogrubień w prozie ani pogrubionych etykiet otwierających akapit lub punkt listy - wyróżnia kolejność, nie krój pisma. Patrz `docs/standards/standard_formatting.md`, sekcja o wyróżnieniach w prozie.
+- Zero guessing of contracts, names, scopes - that is a question for the user, not a decision of the model.
+- The regulator changes the number and depth of questions, never the inviolability of the blocks or the obligation to check the repository before asking.
+- The initiative name and the task prefix require the user's confirmation before anything is created on disk.
+- The document has no bold in prose or bold labels opening a paragraph or a list item - order provides the emphasis, not the typeface. See `docs/standards/standard_formatting.md`, the section on emphasis in prose.

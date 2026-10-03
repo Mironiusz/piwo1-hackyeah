@@ -1,95 +1,95 @@
-# Standard workera i zadań okresowych
+# Worker and periodic tasks standard
 
-Stan dokumentu: 2026-10-03
+Document state: 2026-10-03
 
-Status: gotowy - pełna treść.
+Status: ready - full content.
 
-## Po co ten dokument
+## Why this document exists
 
-Worker działa bez nadzoru, więc jego błąd nie jest widoczny od razu - ujawnia się jako brak czegoś, co miało się stać. Zadanie, które przestało się uruchamiać, nie zgłasza się samo; zadanie, które uruchomiło się dwa razy równolegle, zgłasza się jako zdublowane dane w miejscu, w którym nikt nie szuka przyczyny w harmonogramie.
+The worker runs unattended, so its bug is not visible right away - it shows up as the absence of something that was supposed to happen. A task that stopped running does not report itself; a task that ran twice in parallel reports itself as duplicated data in a place where nobody looks for the cause in the schedule.
 
-Ten standard ustala kontrakt, który każde zadanie okresowe spełnia, żeby te dwa przypadki dały się wykryć i żeby nie zależały od pamięci osoby dopisującej kolejne zadanie.
+This standard defines the contract that every periodic task fulfills, so that these two cases can be detected and do not depend on the memory of the person adding the next task.
 
-## Zakres i granice
+## Scope and boundaries
 
-Ten standard odpowiada za: kontrakt zadania okresowego, mechanizm i konwencję blokad, limity czasu zadania, wynik przebiegu i sposób dopisywania nowego zadania.
+This standard is responsible for: the periodic task contract, the lock mechanism and convention, task timeouts, the run result and the way of adding a new task.
 
-Czego tu nie ma:
+What is not here:
 
-- co dokładnie robi każde zadanie - przesądza to specyfikacja produktu wskazana w `CLAUDE.md` i to ona jest tu źródłem prawdy, nie ten dokument;
-- reakcja na błąd w trakcie zadania i trwały licznik prób - to `standard_errors.md`;
-- czy powtórzony przebieg zdubluje efekt - to `standard_idempotency.md`;
-- znaczenie wartości czasu i strefa, w której liczone są wyrażenia harmonogramu - to `standard_time.md`;
-- format wpisu logu i identyfikator przebiegu - to `standard_logging.md`.
+- what exactly each task does - this is decided by the product specification pointed to in `CLAUDE.md`, and it is the source of truth here, not this document;
+- the reaction to an error during a task and the durable attempt counter - that is `standard_errors.md`;
+- whether a repeated run duplicates the effect - that is `standard_idempotency.md`;
+- the meaning of time values and the zone in which schedule expressions are computed - that is `standard_time.md`;
+- the log entry format and the run identifier - that is `standard_logging.md`.
 
-## Reguła odstępstwa
+## Deviation rule
 
-Standard opisuje stan docelowy i obowiązuje w pełni od pierwszego commita. Projekt założony z szablonu nie ma kodu zastanego, więc nie ma czego chronić okresem przejściowym - kod niezgodny ze standardem blokuje review niezależnie od tego, kto go pisał i kiedy.
+The standard describes the target state and applies in full from the first commit. A project created from the template has no legacy code, so there is nothing to protect with a transition period - code that does not comply with the standard blocks review regardless of who wrote it and when.
 
-Gdy repozytorium będzie mieć kod zastany, rozluźnienie tej reguły do wersji miękkiej ma być jawną decyzją zapisaną w `docs/standards/README.md` wraz z datą i powodem. Nie jest stanem, który wchodzi w życie sam.
+When the repository has legacy code, relaxing this rule to the soft version is to be an explicit decision recorded in `docs/standards/README.md` together with the date and the reason. It is not a state that comes into force on its own.
 
-## Jeden proces, jeden rejestr zadań
+## One process, one task registry
 
-Worker jest drugim punktem wejścia tego samego obrazu, nie osobnym serwisem i nie osobnym repozytorium. Dzieli z interfejsem programistycznym warstwę reguł i warstwę danych - zadanie okresowe woła te same reguły, co żądanie, i nie ma własnej, równoległej kopii logiki domenowej.
+The worker is a second entry point of the same image, not a separate service and not a separate repository. It shares the rules layer and the data layer with the programming interface - a periodic task calls the same rules as a request does, and has no separate, parallel copy of the domain logic.
 
-Rejestr zadań okresowych jest jeden i mieszka w warstwie reguł. Worker ma własną warstwę katalogową `worker/`, która odmierza czas i uruchamia zadania z tego rejestru. Warstwa nie ma ani jednej reguły domenowej i mieć nie ma: jedyna reguła, którą niesie, to okno godzinowe zadania, sprawdzane przy każdym jego starcie. Zależność biegnie tylko od warstwy `worker/` do warstwy reguł: warstwa nie zna ani obsługi żądania, ani warstwy danych, a żadna z pozostałych warstw nie zna jej, bo punkt wejścia procesu nie jest niczyją zależnością. Projekt pilnuje tej reguły testem architektury, który zakłada razem z pierwszym kodem tej warstwy; szablon go nie zawiera.
+There is one registry of periodic tasks and it lives in the rules layer. The worker has its own directory layer `worker/`, which keeps time and runs the tasks from this registry. The layer has not a single domain rule and is not to have one: the only rule it carries is the task's hour window, checked at every start of the task. The dependency runs only from the `worker/` layer to the rules layer: the layer knows neither request handling nor the data layer, and none of the other layers knows it, because the process entry point is nobody's dependency. The project guards this rule with an architecture test that it creates together with the first code of this layer; the template does not contain it.
 
-Konsekwencja: reguła wołana z zadania okresowego nie może zakładać, że istnieje wołający, jego token ani jego uprawnienia. Reguła, która tego wymaga, jest napisana pod obsługę żądania i wymaga poprawienia, a nie obejścia przez podstawienie sztucznego aktora w workerze.
+Consequence: a rule called from a periodic task cannot assume that a caller, its token or its permissions exist. A rule that requires this is written for request handling and needs to be fixed, not worked around by substituting an artificial actor in the worker.
 
-Poprawność zadania nie opiera się na założeniu, że worker działa w jednej instancji - patrz sekcja Blokady niżej. Ta sama blokada bazodanowa chroni przed zdublowanym wyzwoleniem przez harmonogram, na przykład po restarcie albo przy drugiej instancji wyzwalacza, i przed dwoma procesami prowadzącymi to samo zadanie: zderzą się o nią tak samo jak dwie instancje jednego procesu. Gdy zadania z rejestru prowadzi więcej niż jeden proces, podział idzie po kolejce albo po procesie, nie po drugim rejestrze i nie po drugim punkcie wejścia.
+The correctness of a task does not rest on the assumption that the worker runs in a single instance - see the section Locks below. The same database lock protects against a duplicated trigger by the schedule, for example after a restart or with a second trigger instance, and against two processes running the same task: they collide on it just like two instances of one process. When the tasks from the registry are run by more than one process, the split goes by queue or by process, not by a second registry and not by a second entry point.
 
-## Kontrakt zadania okresowego
+## Periodic task contract
 
-Każde zadanie okresowe ma wszystkie poniższe, jawnie, w kodzie:
+Every periodic task has all of the following, explicitly, in code:
 
-- nazwę, unikalną w całym repozytorium, używaną w logu i w blokadzie;
-- częstotliwość albo wyrażenie harmonogramu, liczone w strefie biznesowej projektu (`standard_time.md`);
-- jawny limit czasu przebiegu, nie odziedziczony i nie domyślny;
-- jawny limit czekania na blokadę, domyślnie zerowy - patrz niżej;
-- nazwę blokady, unikalną, powiązaną z nazwą zadania;
-- okno godzinowe, w którym zadanie wolno wystartować, albo jawny jego brak.
+- a name, unique across the whole repository, used in the log and in the lock;
+- a frequency or a schedule expression, computed in the project's business zone (`standard_time.md`);
+- an explicit run timeout, not inherited and not a default;
+- an explicit lock wait timeout, zero by default - see below;
+- a lock name, unique, tied to the task name;
+- an hour window in which the task is allowed to start, or an explicit absence of one.
 
-Brak którejkolwiek z tych wartości nie jest drobnym niedopatrzeniem: zadanie bez limitu czasu potrafi zablokować kolejny przebieg na godziny, a zadanie bez blokady potrafi wykonać swoją pracę dwa razy równolegle.
+Missing any of these values is not a minor oversight: a task without a timeout can block the next run for hours, and a task without a lock can do its work twice in parallel.
 
-Okno godzinowe jest opcjonalne, ale jego brak jest wartością, nie pominięciem: znaczy zadanie chodzące o każdej porze. Godziny liczą się w strefie biznesowej, bo zadanie nocne ma być nocne dla człowieka, a nie dla serwera - liczone w czasie uniwersalnym przesuwałoby się o godzinę dwa razy w roku bez żadnej zmiany w repozytorium. Okno obejmuje godzinę początkową i nie obejmuje końcowej, więc dwa okna stykające się końcem i początkiem nie mają godziny wspólnej. Okna zadań nocnych prowadzonych przez ten sam proces mają być rozłączne: zadania jednego procesu jednowątkowego wykonują się jedno po drugim, więc zadanie startujące o tej samej godzinie co inne z tego procesu przestaje mieć własną porę. Okno musi być dłuższe od limitu czasu przebiegu, inaczej zadanie bywa ucinane terminem mimo zapasu w samym limicie.
+The hour window is optional, but its absence is a value, not an omission: it means a task running at any time of day. The hours count in the business zone, because a nightly task is to be nightly for a human, not for the server - counted in universal time it would shift by an hour twice a year without any change in the repository. The window includes the start hour and excludes the end hour, so two windows where one ends and the other begins have no hour in common. The windows of nightly tasks run by the same process are to be disjoint: the tasks of one single-threaded process execute one after another, so a task starting at the same hour as another one from this process stops having its own time slot. The window must be longer than the run timeout, otherwise the task sometimes gets cut off by the deadline despite the margin in the timeout itself.
 
-## Blokady
+## Locks
 
-Zadanie okresowe bierze blokadę przed rozpoczęciem pracy i zwalnia ją po zakończeniu, niezależnie od tego, czy zakończyło się powodzeniem. Blokada żyje w bazie, nie w pamięci procesu - blokada w pamięci nie chroni przed drugą instancją procesu, a to jest dokładnie ten scenariusz, przed którym ma chronić.
+A periodic task takes a lock before starting work and releases it after finishing, regardless of whether it finished successfully. The lock lives in the database, not in the process memory - an in-memory lock does not protect against a second instance of the process, and that is exactly the scenario it is supposed to protect against.
 
-Limit czekania na blokadę jest domyślnie zerowy: gdy blokada jest zajęta, zadanie odpuszcza ten przebieg, zapisuje to i kończy się. Nie czeka w kolejce. Powód: zadanie okresowe uruchamiane co minutę, które czeka na blokadę, po godzinie awarii ma sześćdziesiąt oczekujących przebiegów, które wykonają się kaskadą jeden po drugim - zamiast jednego, który zrobi to samo raz.
+The lock wait timeout is zero by default: when the lock is taken, the task skips this run, records it and ends. It does not wait in a queue. Reason: a periodic task started every minute that waits for the lock has, after an hour of outage, sixty pending runs that will execute in a cascade one after another - instead of one that would do the same thing once.
 
-Odpuszczenie przebiegu z powodu zajętej blokady nie jest błędem i nie jest logowane jako błąd. Jest normalnym stanem, który ma być widoczny w logu jako informacja.
+Skipping a run because the lock is taken is not an error and is not logged as an error. It is a normal state that is to be visible in the log as information.
 
-## Wynik przebiegu
+## Run result
 
-Wynik przebiegu odpowiada na pytanie, czy próba się odbyła, a nie czy zakończyła się sukcesem. Rozróżnia dwa stany: przebieg wykonany oraz przebieg odpuszczony z powodu zajętej blokady. To jest świadomy kontrakt, nie brak precyzji - o powodzeniu samej pracy mówi jej własny wynik: ile elementów przetworzono, ile pominięto i dlaczego.
+The run result answers the question whether the attempt took place, not whether it succeeded. It distinguishes two states: a run that was executed and a run that was skipped because the lock was taken. This is a deliberate contract, not a lack of precision - the success of the work itself is told by its own result: how many items were processed, how many were skipped and why.
 
-Przebieg, który przetworzył część elementów i pominął resztę, jest przebiegiem wykonanym z zapisanymi pominięciami, nie przebiegiem nieudanym. Reguły tego zapisu są w `standard_errors.md`.
+A run that processed some items and skipped the rest is an executed run with recorded skips, not a failed run. The rules for this record are in `standard_errors.md`.
 
-## Dopisywanie nowego zadania
+## Adding a new task
 
-Nowe zadanie okresowe wymaga: nazwy i blokady niekolidujących z istniejącymi, jawnych obu limitów, wpisu w `standard_worker.md`, jeśli zmienia się kontrakt, oraz uzupełnienia testu spójności zadań.
+A new periodic task requires: a name and a lock that do not collide with existing ones, both timeouts set explicitly, an entry in `standard_worker.md` if the contract changes, and an update of the task consistency test.
 
-Test spójności sprawdza to, czego człowiek nie zauważy przy kolejnym zadaniu: unikalność nazw i blokad oraz obecność obu limitów. Projekt pilnuje tej reguły testem architektury, który zakłada razem z pierwszym kodem tej warstwy; szablon go nie zawiera. Dopisanie zadania bez uzupełnienia testu jest naruszeniem tego standardu, nawet jeśli samo zadanie działa poprawnie.
+The consistency test checks what a human will not notice when adding the next task: the uniqueness of names and locks and the presence of both timeouts. The project guards this rule with an architecture test that it creates together with the first code of this layer; the template does not contain it. Adding a task without updating the test is a violation of this standard, even if the task itself works correctly.
 
-Zadanie usuwające dane wymaga osobnej uwagi. Usunięcie danych przez zadanie okresowe jest regułą produktową, nie decyzją techniczną: zadanie usuwające cokolwiek, czego specyfikacja produktu jawnie nie dopuszcza, wymaga rozstrzygnięcia przez właściciela produktu.
+A task that deletes data requires separate attention. Deleting data by a periodic task is a product rule, not a technical decision: a task deleting anything that the product specification does not explicitly allow requires a decision by the product owner.
 
-## Zachowanie na produkcji
+## Behavior in production
 
-Zmiana częstotliwości, okna czasowego, blokady albo kolejności kroków istniejącego zadania jest zmianą zachowania systemu działającego bez nadzoru. Taka zmiana należy do kategorii ryzyka blokującego w fazie shape (`standard_agentic_workflow.md` rozdz. 3.3) i wymaga jawnego rozstrzygnięcia, nie decyzji przy pisaniu kodu.
+Changing the frequency, time window, lock or order of steps of an existing task is a change in the behavior of a system running unattended. Such a change belongs to a blocking risk category in the shape phase (`standard_agentic_workflow.md` ch. 3.3) and requires an explicit decision, not a decision made while writing the code.
 
-## Checklista
+## Checklist
 
-- Czy nowe zadanie ma unikalną nazwę i unikalną nazwę blokady?
-- Czy ma jawny limit czasu przebiegu i jawny limit czekania na blokadę?
-- Czy ma okno godzinowe albo jawny jego brak, a jeśli ma, to czy jest ono dłuższe od limitu czasu przebiegu i rozłączne z oknami pozostałych zadań nocnych tego samego procesu?
-- Czy limit czekania na blokadę jest zerowy, a jeśli nie, czy jest do tego zapisany powód?
-- Czy blokada żyje w bazie, a nie w pamięci procesu?
-- Czy odpuszczenie przebiegu z powodu zajętej blokady jest logowane jako informacja, nie jako błąd?
-- Czy wynik przebiegu rozróżnia przebieg wykonany od odpuszczonego, a o powodzeniu pracy mówi jej własny wynik?
-- Czy zadanie raportuje liczbę elementów przetworzonych i pominiętych?
-- Czy reguły wołane z zadania nie wymagają istnienia wołającego ani jego uprawnień?
-- Czy test spójności zadań został uzupełniony o nowe zadanie?
-- Czy zmiana częstotliwości, okna albo blokady istniejącego zadania przeszła przez rozstrzygnięcie w fazie shape?
-- Czy zadanie nie usuwa danych, których usunięcia specyfikacja produktu jawnie nie dopuszcza?
+- Does the new task have a unique name and a unique lock name?
+- Does it have an explicit run timeout and an explicit lock wait timeout?
+- Does it have an hour window or an explicit absence of one, and if it has one, is it longer than the run timeout and disjoint from the windows of the other nightly tasks of the same process?
+- Is the lock wait timeout zero, and if not, is the reason for it recorded?
+- Does the lock live in the database, not in the process memory?
+- Is skipping a run because the lock is taken logged as information, not as an error?
+- Does the run result distinguish an executed run from a skipped one, with the success of the work told by its own result?
+- Does the task report the number of processed and skipped items?
+- Do the rules called from the task avoid requiring a caller or its permissions to exist?
+- Has the task consistency test been updated with the new task?
+- Has a change to the frequency, window or lock of an existing task gone through a decision in the shape phase?
+- Does the task avoid deleting data whose deletion the product specification does not explicitly allow?
