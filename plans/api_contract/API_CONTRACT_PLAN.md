@@ -12,7 +12,7 @@ F-1. The PRD requires requests, responses and failure outcomes for all mandatory
 F-2. Endpoint implementation waits for the domain model, database schema, backend architecture and anonymous vote identifier to be settled in `plans/mvp/MVP_PLAN.md` Q-10. | doc:`plans/api_contract/API_CONTRACT_PRD.md` section Dependencies and impact on other modules, lines 76-81; doc:`plans/mvp/MVP_PLAN.md` section Open questions, lines 42-52 | 2026-10-03
 F-3. The backend stack is Python 3.13 with FastAPI and PostgreSQL with PostGIS, while backend module boundaries remain delegated to Q-10. | doc:`plans/mvp/MVP_PLAN.md` section Decisions, lines 23-29; section Open questions, lines 51-52 | 2026-10-03
 F-4. Address search is a backend operation; its input is sent in a POST request body and it distinguishes matches, no matches, unavailability and invalid caller input. The exact path and JSON request and response shape belong to this initiative. | doc:`plans/geocoding/GEOCODING_PLAN.md` D-3, D-4, D-7 and D-11, lines 40-56; doc:`plans/api_contract/API_CONTRACT_PRD.md` AC-6, line 59 | 2026-10-03
-F-5. Route composition and account actor resolution are not settled in this initiative's inputs yet. Their contract details must follow the respective initiatives and be agreed with the frontend consumer. | doc:`plans/api_contract/API_CONTRACT_PRD.md` section Dependencies and impact on other modules, lines 76-81; doc:`plans/account_sessions/ACCOUNT_SESSIONS_PRD.md` section Risks and notes, line 84 | 2026-10-03
+F-5. The user selected signed tokens for account sessions; account actor resolution, token renewal and moderator-role checks follow `plans/account_sessions/ACCOUNT_SESSIONS_PLAN.md` D-3. Route composition remains unsettled. This initiative owns the browser-facing token transport and request and response shapes, with frontend consultation. | doc:`plans/account_sessions/ACCOUNT_SESSIONS_PLAN.md` D-3; doc:`plans/api_contract/API_CONTRACT_PRD.md` section Dependencies and impact on other modules, lines 76-81 | 2026-10-03
 F-6. The repository has no backend or API implementation files; the matching files under `src/`, `app/` and `backend/` are absent. | cmd:`rg --files` filtered for `src/`, `app/`, `backend/`, `openapi` and `schema` -> no matching files; only architecture tests are present under `tests/` | 2026-10-03
 
 ## Decisions
@@ -22,6 +22,8 @@ D-1. Address search uses POST and keeps search text out of the URL. The response
 D-2. Stable client-facing codes are the default; clients translate them to Polish or English. Localized response text is included only where the PRD requires it. | `plans/api_contract/API_CONTRACT_PRD.md`, domain rules
 
 D-3. The plan remains in progress until the frontend consultation, dependent initiative decisions and Q-10 provide enough information to name concrete API and backend artifacts without guessing their contracts or architecture.
+
+D-4. Account requests use the signed-token credential selected in `plans/account_sessions/ACCOUNT_SESSIONS_PLAN.md` D-3. A valid token resolves to an account actor; the current moderator role is checked for each moderator request. Requests without an authenticated account resolve as anonymous contributions. Every authenticated request, including reads, renews the token, which expires after 24 hours without activity. Logout removes the token from the active browser, and a deleted account no longer resolves to an account actor. This initiative owns the browser-facing transport and exact request and response shapes, in consultation with the frontend consumer.
 
 ## Scope of changes
 
@@ -62,7 +64,6 @@ Human steps: the backend owner makes the technical decisions in this initiative 
 
 - Q-1. Which contract artifact format and path does the frontend owner agree to consume, and have they reviewed and approved the operation set and request, response and error shapes? `Block: yes` (category: stability of the programming interface (API) contract)
 - Q-2. What routing result fields and failure outcomes are committed by `plans/routing_engine/`? `Block: yes` (category: stability of the programming interface (API) contract)
-- Q-3. What request credential and actor-resolution behavior is committed by `plans/account_sessions/` and accepted by the frontend consumer? `Block: yes` (category: access token and permission scope contract)
 - Q-4. What concrete backend modules and function boundaries does `plans/mvp/MVP_PLAN.md` Q-10 establish for implementing this contract? `Block: no`
 - Q-5. What exact schema and error details are needed for fact reporting, voting, geozones and moderation after Q-10 establishes their domain model? `Block: yes` (category: stability of the programming interface (API) contract)
 

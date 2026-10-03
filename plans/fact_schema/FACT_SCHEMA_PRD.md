@@ -22,7 +22,7 @@ Reports, votes, statuses, geozones, OpenStreetMap facts, accounts and moderation
 ## Out of scope
 
 - The backend architecture with the worker, including the job that deletes expired votes on time: `plans/mvp/MVP_PLAN.md` Q-11.
-- The programming interface: `plans/api_contract/` (Q-9). The session storage of logged-in users: `plans/account_sessions/` (Q-6).
+- The programming interface: `plans/api_contract/` (Q-9). Account-session credentials and actor resolution: `plans/account_sessions/` (MVP plan D-7).
 - How the identifier of a vote without an account is computed from the IP address and the browser characteristics, and how a route is related to the stretches of way: the voting and route work packages of `plans/mvp/`, and `plans/routing_engine/`.
 - The thresholds and value lists of the tag mapping, constants of `plans/osm_barrier_mapping/OSM_BARRIER_MAPPING_PLAN.md` D-14, and the source of the OpenStreetMap copy, settled by `plans/mvp/MVP_PLAN.md` D-4.
 - The import itself, which writes OpenStreetMap facts by these rules: a work package of `plans/mvp/` after Q-11.
@@ -43,6 +43,8 @@ FR-5. For every way of the pedestrian network, what is known about each of stair
 FR-6. On a fresh OpenStreetMap copy: an OpenStreetMap fact missing from the copy becomes a user fact with its votes when its confirmations outweigh its denials, otherwise it becomes outdated with the reason that it was removed in OpenStreetMap; a fact that returns on the same element with the same type is the same OpenStreetMap fact again with all its votes; an OpenStreetMap fact and a user fact of the same type at the same place stay separate. The reconciliation follows `plans/osm_data_source/OSM_DATA_SOURCE_PLAN.md` D-10, and a fresh copy, its reconciliation and its date become visible in one commit or not at all (D-9 there).
 
 FR-7. A person is an account, or for a vote without an account the hashed identifier of `docs/product/specification.md` M9. A person confirms or denies a fact, with the weight 1 for an account and 0.5 without one. A person votes on the same fact again only once x days have passed since their previous vote on it; an earlier vote is refused. Of the votes of one person on a fact only the latest counts. A vote cannot be withdrawn without casting another.
+
+Compatibility constraint from `plans/account_sessions/ACCOUNT_SESSIONS_PLAN.md` D-2: one vote per account and fact remains unique independently of the 30-day cross-mode hash. This conflicts with the x-day repeat-vote rule above for account votes. The fact-schema owner is asked to reconcile FR-7 and the matching shape domain rule with `docs/product/specification.md` M4 before schema implementation; this compatibility note does not resolve the fact-schema decision.
 
 FR-8. The status of a fact is derived from the latest votes of the k persons who voted on it most recently, in this order: outdated when the denials reach at least 2 and outweigh the confirmations; otherwise disputed when there are both confirmations and denials; otherwise confirmed when the confirmations reach 2; otherwise unverified. An OpenStreetMap fact prevails until the denials in its window reach 2, and then becomes outdated. A confirmation updates the date of last confirmation of any fact.
 
