@@ -92,3 +92,16 @@ The verdict covers the whole initiative, so the directory qualifies for `plans_f
 - The files of this change are not committed yet, and steps 2 - 14 put the path `plans/frontend_stack/` into them in the wording the plan fixed.
 
 Decided by the user on 2026-10-03: the directory stays in `plans/` until the merge request of this branch is merged into `dev` and the branch `origin/js/frontend-shape` is settled. The move is then made on the user's instruction, with the checks of ch. 4.6. The verdict above is not changed by this: the work of the initiative is finished, and only its location waits.
+
+## Merge of dev into the branch on 2026-10-03
+
+`dev` at `49aa204` was merged into the branch at the user's request. R-3 expected a clean merge; `dev` moved further after that entry, and two files this initiative changed conflicted.
+
+- `plans/mvp/MVP_PLAN.md`, section Decisions: `dev` had taken D-4 for the source of the OpenStreetMap data and D-5 for the mapping of OpenStreetMap tags. The frontend decision that step 12 added as D-4 is D-6 after the merge, with its text unchanged, and the item of step 14 under Supplementary files names D-6. Agent decision at C:40, without asking: D-4 and D-5 of `dev` are referred to by `agent_docs/memory/_cross_cutting.md`, by `plans/fact_schema/FACT_SCHEMA_SHAPE.md` and `plans/fact_schema/FACT_SCHEMA_PRD.md`, and by the Risks and the items Q-10 and Q-11 of the plan itself, while the frontend decision was referred to by its number only in the artifacts of this initiative.
+- Wherever `plans/frontend_stack/FRONTEND_STACK_PLAN.md` (steps 12 and 14, Definition of Done) and the entry on steps 12 - 14 above say D-4 of `plans/mvp/MVP_PLAN.md`, the decision meant is D-6. The plan is a contract and was not edited.
+- `plans/mvp/MVP_PLAN.md`, section Open questions: neither Q-2, settled on `dev` as D-4, nor Q-3, settled by this initiative, is listed any more.
+- `plans/api_contract/API_CONTRACT_SHAPE.md`, section Current state: both new items are kept, the item of step 9 right after the item of `plans/geocoding/`, as the step asks, and the item of `plans/osm_data_source/` from `dev` after it.
+- `plans/frontend_stack/FRONTEND_STACK_SHAPE.md` and `docs/standards/decision_registry.md` were changed on both sides and merged without a conflict: `dev` added one item to Current state of the shape and changed the entry Technical directions of the MVP plan of the registry, which this initiative does not touch.
+- O-4 still holds: the Risks of `plans/mvp/MVP_PLAN.md`, in the wording of `dev`, name Q-3 among the open questions that depend on no other.
+- Checks after the merge: `python -m pytest tests/architecture/test_conflict_markers.py tests/architecture/test_plan_document_contract.py` -> 33 passed; `python -m pytest tests/architecture` -> 110 passed, 4 failed out of 114, the same four checks as in R-2, every reported path a file of the design skill; `npx --no-install prettier --check` on the four files named above -> all matched files use Prettier code style.
+- The agent ran no `git add` and no commit: marking the two files as resolved and concluding the merge is left to a human.

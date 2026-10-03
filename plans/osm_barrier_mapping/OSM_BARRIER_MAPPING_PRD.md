@@ -26,7 +26,7 @@ A threshold that is too lenient shows a barrier as passable to exactly the peopl
 - For each barrier, the attributes that have to be known for a segment to be in the state no barrier, and their names as the list of the route shows them.
 - The meaning of "OpenStreetMap contradicts a user report" for each barrier.
 - The number of steps and the date of the last OpenStreetMap edit carried by the facts the rule produces.
-- The entry of these rules into `docs/product/specification.md` version 3, together with the rules of `plans/osm_data_source/` as one change approved by the user (`plans/osm_data_source/OSM_DATA_SOURCE_SHAPE.md`, section Smallest meaningful scope), and of the thresholds into the version that follows their approval (`plans/osm_barrier_mapping/OSM_BARRIER_MAPPING_SHAPE.md`, section Smallest meaningful scope).
+- The entry of these rules, with their thresholds and value lists, into `docs/product/specification.md` version 3, together with the rules of `plans/osm_data_source/` as one change approved by the user (`plans/osm_data_source/OSM_DATA_SOURCE_SHAPE.md`, section Smallest meaningful scope). This initiative writes the whole of version 3, the rules of `plans/osm_data_source/` included. Decided by the user on 2026-10-03 in phase B, against keeping the thresholds out of version 3 until the import person confirms them and against version 3 waiting for phase B of `plans/osm_data_source/`.
 - The decision handed to `plans/mvp/MVP_PLAN.md` as the decision closing Q-8.
 
 ## Out of scope
@@ -61,7 +61,9 @@ FR-9. No data. A segment is in the state no data when none of the barriers of th
 
 FR-10. Way marked as not accessible. A way tagged `wheelchair=no` in OpenStreetMap is never in the state no barrier, for any profile: when no barrier of the profile is present on it, it is at most partial data, and the list of the route says that OpenStreetMap marks the way as not accessible for wheelchairs. The tag adds no barrier, so the route does not avoid the way because of it. Decided by the user on 2026-10-03 at the gate of this PRD, against ignoring the tag and against adding a barrier to the closed list.
 
-FR-11. Recorded in the specification. The rules of FR-1 - FR-10 and the contradiction rule enter `docs/product/specification.md` version 3, sections M2, M4 and M7 and Decision provenance, together with the rules of `plans/osm_data_source/`, approved by the user. The approved thresholds enter the specification in the version that follows their approval.
+FR-11. Recorded in the specification. The rules of FR-1 - FR-10 and FR-12 and the contradiction rule enter `docs/product/specification.md` version 3, sections M2, M4, M6, M7 and M8 and Decision provenance, together with the rules of `plans/osm_data_source/`, approved by the user. The thresholds and value lists of the section Domain rules enter the same version 3 as the values approved by the user on 2026-10-03; a value the import person changes before the demo is recorded enters a later version. Decided by the user on 2026-10-03 in phase B, replacing the earlier wording under which the thresholds entered only the version that follows their approval.
+
+FR-12. Ways for motor traffic. On a way for motor traffic the surface, the smoothness and the width of the way describe the carriageway, so they count for a person on foot only when the way has no sidewalk and the person walks on the carriageway. When the way carries its sidewalk as tags of the way, the surface, the smoothness and the width come from the tags of the sidewalk; without them, and when the way says nothing about a sidewalk or says that the sidewalk is mapped as a separate way, these attributes are unknown. The incline of the way counts in every case, and every other walking way is read by its own tags. Decided by the user on 2026-10-03 in phase B, against never reading the carriageway and against reading the tags of the way as they are, which would show a sidewalk as without barriers on the strength of the tags of the road (M10).
 
 ## Acceptance criteria
 
@@ -93,7 +95,9 @@ AC-13 (FR-9). A footway with none of `surface`, `smoothness`, `incline`, `width`
 
 AC-14 (FR-10). A footway tagged `wheelchair=no`, `surface=asphalt`, `incline=2%`, `width=2`, without a crossing, is partial data for each of the three presets, the list names the `wheelchair=no` marking, and the route does not avoid it when it is the shortest way.
 
-AC-15 (FR-11). `docs/product/specification.md` version 3 states the contradiction rule, the stairs default, the thresholds being common to all profiles, the rule of the state no data and the `wheelchair=no` marking in sections M2, M4 and M7, and its Decision provenance names this initiative.
+AC-15 (FR-11). `docs/product/specification.md` version 3 states the contradiction rule, the stairs default, the thresholds being common to all profiles, the rule of the state no data and the `wheelchair=no` marking in sections M2, M4 and M7, the tag rules with their thresholds and value lists and the rule of ways for motor traffic in section M6, the rules of `plans/osm_data_source/` in sections M4 and M6, and its Decision provenance names this initiative and `plans/osm_data_source/`.
+
+AC-16 (FR-12). A way tagged `highway=residential`, `sidewalk=both`, `surface=asphalt`, `width=7`, without any sidewalk surface or width tag, has the surface and the width unknown and is never in the state no barrier. The same way tagged `sidewalk=no` instead has no poor surface and no narrow passage. The same way tagged `sidewalk=both` and `sidewalk:both:surface=sett` has a poor surface.
 
 ## Domain rules
 
@@ -113,6 +117,7 @@ Barriers:
 - Good surface list: `asphalt`, `concrete`, `concrete:plates`, `paving_stones`, `compacted`, `fine_gravel`, `metal`, `wood`, `rubber`.
 - `smoothness` wins over `surface` when both are given, because it describes the passability of the actual stretch: the OpenStreetMap wiki defines `intermediate` as usable by a wheelchair and `bad` as not.
 - The kerb is an attribute only of a segment where the walking way meets a carriageway, that is at a crossing; on a stretch of pavement without a crossing there is no kerb to know.
+- Ways for motor traffic are those with `highway` of `trunk`, `primary`, `secondary`, `tertiary`, their `_link` ways, `unclassified`, `residential` and `service`. On them `surface`, `smoothness` and `width` count only when the way has no sidewalk on either side (`sidewalk=no`, `sidewalk=none` or `sidewalk:both=no`). With a sidewalk tagged on the way (`sidewalk` or `sidewalk:both` of `both`, `left`, `right` or `yes`) they are read from `sidewalk:surface`, `sidewalk:both:surface`, `sidewalk:smoothness`, `sidewalk:both:smoothness`, `sidewalk:width` and `sidewalk:both:width`. In every other case, `sidewalk=separate` and a missing sidewalk tag included, they are unknown. `incline` counts on every way (FR-12).
 
 Amenities:
 
@@ -131,14 +136,14 @@ The thresholds in short: steep incline above 6%, narrow passage below 0.9 m, hig
 
 - No product code exists, so nothing in the repository is changed indirectly. The decision closes `plans/mvp/MVP_PLAN.md` Q-8 and feeds Q-10 there, the domain model of facts, which depends on Q-8.
 - `plans/routing_engine/` reads the result: a profile, the user facts and the contradiction rule on top of a per-segment present, absent or unknown. The engine does not change the rule, and the rule does not depend on the engine (`plans/osm_barrier_mapping/OSM_BARRIER_MAPPING_SHAPE.md`, section Challenging own assumptions).
-- `plans/osm_data_source/` decides the copy the rule runs on and the fate of facts that disappear or return; its scenarios use this rule (`surface=sett` as poor surface, a way without steps as not contradicting stairs) and its rules enter the same version 3 of the specification.
+- `plans/osm_data_source/` decides the copy the rule runs on and the fate of facts that disappear or return; its scenarios use this rule (`surface=sett` as poor surface, a way without steps as not contradicting stairs) and its rules enter the same version 3 of the specification, written by this initiative (FR-11).
 - `plans/mvp/MVP_PRD.md` AC-10 and `plans/mvp/MVP_SHAPE.md` scenario 9 name only the incline and the kerbs as unknown for segment Y; with this rule a wheelchair profile also misses the width (AC-3 here), so AC-10 there gains the width. Scenario 9 also has to be read with segment Y meeting a carriageway, because the kerb is an attribute only at crossings.
 - `plans/mvp/MVP_PRD.md` FR-10 and its section Domain rules define the state no data as "nothing known"; FR-9 here makes the default "no stairs" not count, and FR-10 here adds the `wheelchair=no` marking. Both reach the MVP through version 3 of the specification.
 - `plans/api_contract/` and the list of the route show the attribute names of the section Domain rules.
 
 ## Risks and notes
 
-- Coverage: `incline` and `width` are rare on Kraków footways in the agent's experience of OpenStreetMap, not measured. With this rule the presets "I use a wheelchair" and "Walking is difficult for me" will see almost no green segment outside the sample data of the demo district. That is the honest result the shape accepted, but the demo has to explain it.
+- Coverage: `incline` and `width` are rare on Kraków footways. Measured on 2026-10-03 in phase B (`plans/osm_barrier_mapping/OSM_BARRIER_MAPPING_PLAN.md`, section Facts): of 5 505 `incline` tags on the foot ways of Kraków 5 415 are only `up` or `down`, 2 295 foot ways have a `width`, and 80 have a surface, an incline and a width together. With this rule the presets "I use a wheelchair" and "Walking is difficult for me" will see almost no green segment outside the sample data of the demo district. That is the honest result the shape accepted, but the demo has to explain it.
 - `wheelchair=no` is applied to every profile, also to the stroller and the walking-difficulty presets, for which a wheelchair marking may be stricter than needed. The user chose this at the gate as the safer reading of M10; the cost is fewer green segments.
 - `surface=sett` covers a large part of the Old Town; without a smoothness it is a poor surface, so routes in the centre will avoid much of it for every preset. That is consistent with `plans/osm_data_source/` scenario 2, but it shapes the demo.
 - `kerb=rolled` is left unknown rather than classified, because a rolled kerb may or may not be passable for a wheelchair depending on its height.

@@ -27,6 +27,7 @@ The MVP (`plans/mvp/`) is a phone-first web app whose whole main scenario has to
 - The Kraków submission closes at 11:00 on 4 October 2026 (`docs/hackathon/challenge_requirements.md`, Shared facts).
 - Before this interview, on 2026-10-03, the frontend person shaped the route result screen with the Impeccable skill. `PRODUCT.md` and `.impeccable/briefs/route-result.md`, with the approved mock in `.impeccable/briefs/route-result/`, record the design direction and name React, Vite and TypeScript as a working choice. The technology itself is decided in phase B of `plan-prd` of this initiative.
 - `plans/geocoding/` decided on 2026-10-03 (`plans/geocoding/GEOCODING_PRD.md` FR-1 - FR-5, `plans/geocoding/GEOCODING_PLAN.md` D-3) that the search runs only on submission, shows a list the user always picks from with a keyboard and a screen reader, has two distinct messages for nothing found and search unavailable, and never puts the search text into the address of the page. It also recorded a risk for this initiative: map tiles loaded by the browser straight from `tile.openstreetmap.org` reveal the IP address of the person and the area they look at to that service.
+- `plans/osm_data_source/` decided on 2026-10-03 (`plans/osm_data_source/OSM_DATA_SOURCE_PLAN.md` D-18) that the map shows the attribution `© OpenStreetMap contributors` as a link to `https://www.openstreetmap.org/copyright`, visible without any interaction on every view with the map, as the attribution guidelines of the OpenStreetMap Foundation require.
 
 ## Smallest meaningful scope
 
