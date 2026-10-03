@@ -18,7 +18,7 @@ Reports, votes, statuses, geozones, OpenStreetMap facts, accounts and moderation
 - The target schema written as the part of the product specification against which a schema change is reviewed, decided in the shape (question 2).
 - The proposal of the changes to the specification and to `plans/mvp/MVP_PRD.md` that these rules require, for the user to approve.
 - The stored data created in the local database, with tests that run the scenarios of the acceptance criteria below.
-- The initiative is delivered in two tasks, decided by the user on 2026-10-03 in phase B of the task `FACT_SCHEMA` (`plans/fact_schema/FACT_SCHEMA_REVISION_SEED.md`). The task `FACT_SCHEMA` writes the target schema that holds FR-1 - FR-13 and the proposed changes of FR-14, and meets AC-13. The task `FACT_SCHEMA_REVISION` creates the stored data of FR-15 and meets AC-1 - AC-12, once the local database and the backend skeleton named under Dependencies exist. The importer and the backend share the stored data, so the target schema is one schema for both.
+- The initiative is delivered in two tasks, decided by the user on 2026-10-03 in phase B of the task `FACT_SCHEMA` (`plans/fact_schema/FACT_SCHEMA_REVISION_SEED.md`). The task `FACT_SCHEMA` writes the target schema that holds FR-1 - FR-13 and the part of FR-14 that version 4 of the specification left to this initiative, and meets AC-13. The task `FACT_SCHEMA_REVISION` creates the stored data of FR-15 and meets AC-1 - AC-12, once the local database and the backend skeleton named under Dependencies exist. The importer and the backend share the stored data, so the target schema is one schema for both.
 
 ## Out of scope
 
@@ -103,7 +103,7 @@ The rules are those of `plans/fact_schema/FACT_SCHEMA_SHAPE.md`, section Domain 
 ## Dependencies and impact on other modules
 
 - `plans/api_contract/` (Q-9) waits for this PRD for the resources and statuses it exposes; it can start once this PRD is confirmed, before the stored data exists.
-- The stored data waits for the local database with PostGIS of `plans/local_database/` (Q-4) and for a backend skeleton that holds the schema changes, which no plan has built yet (`docs/standards/decision_registry.md`, Technical directions of the MVP plan). That wait belongs to the task `FACT_SCHEMA_REVISION` only; the task `FACT_SCHEMA` waits for neither.
+- The stored data waits for the local database with PostGIS of `plans/local_database/` (Q-4) and for a backend skeleton that holds the schema changes, which no plan has built yet (`docs/standards/decision_registry.md`, Technical directions of the MVP plan).
 - `docs/product/specification.md` changes in a later version, since version 3 was approved without these rules: M4 (vote limit and window, order of statuses), M9 (the identifier serves the vote limit of M4, and a vote keeps its weight after its identifier is deleted, the rule of `plans/osm_data_source/OSM_DATA_SOURCE_PLAN.md` D-21 that version 3 left out) and M11 (restoring hidden content). The specification gains the part with the target schema.
 - `plans/mvp/MVP_PRD.md` changes in AC-6: a second confirmation by the same account is refused within x days, not for ever.
 - `plans/osm_barrier_mapping/OSM_BARRIER_MAPPING_PLAN.md` D-6 decides what the import gives for every element, which FR-5 keeps, and D-15 the date of an OpenStreetMap fact.
