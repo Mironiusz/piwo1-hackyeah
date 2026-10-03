@@ -54,9 +54,9 @@ The contract has to carry these requirements of `plans/mvp/MVP_PRD.md` between t
 
 ## Challenging own assumptions
 
-- Can the contract be fixed before routing and sessions are decided? Only partly: the shape of a route response depends on `plans/routing_engine/`, and how a request identifies an actor depends on `plans/account_sessions/`. Fixing those parts first would be guessing a contract (question 3). For routing this was decided otherwise on 2026-10-03 (Current state, U-5 of `plans_finished/consistency_check/`): the route response follows the data of the product, and the engine adapts to it. How a request identifies an actor still waits for `plans/account_sessions/`.
+- Can the contract be fixed before routing and sessions are decided? Only partly: the shape of a route response depends on `plans/routing_engine/`, and how a request identifies an actor depends on `plans/account_sessions/`. Fixing those parts first would be guessing a contract (question 3). For routing this was decided otherwise on 2026-10-03 (Current state, U-5 of `plans_finished/consistency_check/`): the route response follows the data of the product, and the engine adapts to it. How a request identifies an actor still waits for `plans/account_sessions/`. Settled on 2026-10-03 (question 3): `plans/account_sessions/` is settled first and the contract after it, as `plans/mvp/MVP_PLAN.md`, section Risks, orders Q-6 before Q-9; the rules of the roles, the moderator role included, are decided there, and this contract maps them onto its requests and responses (question 5). Given by the user on 2026-10-03 in `plans/dependency_check/` (U-3 of its review), who has not stated being the backend person; the ruling of the backend person is still to be confirmed.
 - Does the API return texts in a language, or codes the client translates? FR-19 keeps the planned route across a language switch, and a second client would have to translate the same codes; this changes the contract, not only the frontend (question 4).
-- Is the frontend the only consumer? Today yes; a HarmonyOS client is possible but undecided, which changes how stable the contract has to be (question 2).
+- Is the frontend the only consumer? Today yes; a HarmonyOS client is possible but undecided, which changes how stable the contract has to be (question 2). Since 2026-10-03 `plans_finished/frontend_stack/` plans the interface for two clients from the start (Current state); whether the port is built stays an open entry of `docs/standards/decision_registry.md`, and how stable the contract has to be stays question 2, to be confirmed in this interview. Added on 2026-10-03 by `plans/dependency_check/`.
 
 ## Domain rules or explicit TODO
 
@@ -72,8 +72,10 @@ The contract has to carry these requirements of `plans/mvp/MVP_PRD.md` between t
 
 1. Does the initiative end with the agreed contract handed to `plans/mvp/MVP_PLAN.md` Q-9, or does it also build the endpoints? `Block: no`
 2. Who consumes the interface - the web frontend only, or also a HarmonyOS client - and how stable must it be? `Block: yes` (category: stability of the programming interface (API) contract)
-3. In which order are the contract and `plans/account_sessions/` settled, so that no part of the contract is guessed? The part about `plans/routing_engine/` is answered in Current state (U-5 of `plans_finished/consistency_check/`). `Block: no`
+
+Question 3 was answered on 2026-10-03 (section Challenging own assumptions); the numbering of the remaining questions follows the original list.
+
 4. Does the interface return texts in a language or codes that the client translates? `Block: no`
-5. What may each role - a person without an account, a logged-in person, a moderator - read and do through the interface, separately for lists and for single items? `Block: yes` (category: read visibility and permissions)
+5. What may each role - a person without an account, a logged-in person, a moderator - read and do through the interface, separately for lists and for single items? The rules of the roles come from `plans/account_sessions/` (its question 3) and from `docs/product/specification.md` M9 and M11; this question maps them onto the requests and responses of the contract and waits for `plans/account_sessions/` (U-3 of `plans/dependency_check/`). `Block: yes` (category: read visibility and permissions)
 6. Which parts of a request may be logged, given that the location and the preferences may not? `Block: yes` (category: personal data)
 7. By when must the contract be agreed, given the deadline at 11:00 on 4 October 2026? `Block: no`
