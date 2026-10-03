@@ -14,8 +14,7 @@ Wheelchair users, parents with baby strollers and people with walking difficulti
 
 ## Scope
 
-- The mandatory features M1-M11 of the specification, version 4, with the rules decided in `plans/mvp/MVP_SHAPE.md`.
-- The interface requirements of the specification: Polish and English, designed for a phone.
+The mandatory features M1-M11 of the specification, version 4, with the rules decided in `plans/mvp/MVP_SHAPE.md` and the subsequent initiatives recorded in the specification.- The interface requirements of the specification: Polish and English, designed for a phone.
 - Privacy information inside the app, required by the section Personal data of the specification.
 - Area: the whole of Kraków for routes; the demo in the district of the Tauron Arena, with sample data marked as such.
 
@@ -36,8 +35,7 @@ FR-4. No route without barriers (M2). When every way to the destination crosses 
 
 FR-5. Point report (M3). A user, with or without an account, reports a barrier or an amenity: a point on the map, a type from the closed list, an optional description, and for stairs an optional number of steps. Before saving, the app shows the existing facts of the same type within about 15 m, OpenStreetMap facts included, and asks whether it is the same; yes turns the report into a confirmation of that fact. Then the user approves a summary. A saved report cannot be edited by anyone.
 
-FR-6. Confirmations and denials (M4). A user, with or without an account, confirms that a fact is still there or reports that it is gone, for every fact including OpenStreetMap facts. A person votes on the same fact again only after a day, and only the latest vote of a person counts.
-
+FR-6. Confirmations and denials (M4). A user, with or without an account, confirms that a fact is still there or reports that it is gone, for every fact including OpenStreetMap facts. A person has one vote per fact per account, and while it exists, the same 30-day hash prevents a second vote across account and anonymous contributions. After the hash expires, a later anonymous vote with the same hash may be accepted.
 FR-7. Reliability statuses (M4). Every fact, OpenStreetMap facts included, has the status unverified, confirmed, disputed or outdated, derived from its votes by the rules of the section Domain rules. A status never changes with time alone.
 
 FR-8. Simple geozones (M5). A user marks an inaccessible area as a point, chosen on the map or by an address, with a radius from a list, and a barrier type from the closed list. The whole creation works with a keyboard alone. The user approves a summary before saving; a saved geozone cannot be edited. Geozones get votes and statuses like point reports.
@@ -48,12 +46,11 @@ FR-10. Route segment states (M7). Every segment of a planned route is in one of 
 
 FR-11. List for the route (M8). After planning, the app shows a text list in three groups: barriers from the profile, additional barriers outside the profile, and amenities from the profile near the route. Each item has its type, place, source, date and status. For a segment with partial data or no data, the list names the missing attributes.
 
-FR-12. Accounts (M9). A user creates an account with a pseudonym and a password, logs in and out, and can delete the account. Deleting it removes the account and the pseudonym; the person's reports and votes stay, detached, with their weight.
+FR-12. Accounts (M9). A user creates an account with a case-insensitive unique pseudonym and a password, logs in and out, and can delete the account. Passwords have a minimum length of 5 characters, accept printable ASCII characters, spaces and Unicode, allow a maximum length of at least 64 characters, and have no character-composition or periodic-change rules. Common or breached passwords are not rejected. There is no password recovery. After login, the session expires 24 hours after the last activity, including read-only requests, and survives closing and reopening the browser. Deleting the account removes it and the pseudonym; the person's reports and votes stay, detached, with their weight.
 
-FR-13. Contributions without an account (M9). Reports, confirmations and denials without an account have the lower weight of the section Domain rules. To tell one person without an account from another for the vote limit and the latest votes of five persons of the section Domain rules, such a vote keeps only an irreversible identifier derived from the IP address and browser characteristics, never the raw values, deleted after 30 days; the vote itself keeps its weight. Nothing about the author of any report, vote or geozone is shown to other users.
+FR-13. Vote identity across account states (M9). Contributions without an account have the lower weight of the section Domain rules. Every vote, including a vote made by an account, keeps the same irreversible identifier derived from the IP address and browser characteristics, never the raw values, for 30 days. While the identifier exists, a second vote on the same fact with it is rejected even when authentication state changes. After it expires, a later anonymous vote with the same identifier may be accepted; per-account uniqueness still applies. Nothing about the author of any report, vote or geozone is shown to other users.
 
-FR-14. Flagging and moderation (M11). Any user flags a report, a geozone or a fact converted from OpenStreetMap. A moderator, whose role the team assigns by hand, sees the flagged content in a moderator view and can hide it and restore it; hidden content disappears for everyone.
-
+FR-14. Flagging and moderation (M11). Any user flags a report, a geozone, a fact converted from OpenStreetMap, or a photo if optional feature O2 is implemented. A moderator, whose role the team assigns by hand, sees flagged content without information about its author and can hide it and restore it; hidden content disappears for everyone. Removing the moderator role revokes access on the account's next request, even when its session remains active.
 FR-15. Source, date and status (M10). Every fact shown anywhere carries its source - OpenStreetMap or user report - the calendar date it was obtained or last confirmed, and its status. A user fact shows nothing about its author or about the weights.
 
 FR-16. Accessibility of the main scenario (M10). Setting the profile, planning a route, reading the result, reporting a barrier and voting work with a keyboard alone and with a screen reader, with sufficient contrast, and every piece of information on the map is also available as text.
@@ -64,7 +61,7 @@ FR-18. Sample data (M10). The demo district has sample reports and geozones prep
 
 FR-19. Interface. The interface is in Polish and English, with the default taken from the browser and a switch in the app. It is designed for a phone screen and touch; on a desktop browser it stays usable without being tuned.
 
-FR-20. Privacy information. The app has a page that states which personal data it keeps (the pseudonym and password of an account, the 30-day identifier of a vote without an account), for what purpose and for how long, and which data it does not keep (the profile, the current location, an email address, any information about a disability).
+FR-20. Privacy information. The app has a page that states which personal data it keeps (the pseudonym and password of an account, the 30-day vote identifier for account and anonymous votes), for what purpose and for how long, and which data it does not keep (the profile, the current location, an email address, any information about a disability).
 
 ## Acceptance criteria
 
@@ -78,8 +75,7 @@ AC-4 (FR-4). When the only access to the destination leads up stairs and the pro
 
 AC-5 (FR-5). A report of a high kerb 8 m from an existing high kerb report shows the existing one and asks whether it is the same; answering yes adds a confirmation instead of a new report. A report of stairs 5 m from stairs in OpenStreetMap shows the OpenStreetMap fact in the same way. No report is saved without the approved summary. No user, the author included, can change a saved report.
 
-AC-6 (FR-6, FR-7). The run of shape scenario 3 gives, after each step: unverified, unverified, confirmed, disputed. The run of shape scenario 5 keeps the OpenStreetMap stairs after the second denial and marks them outdated after the third. A second confirmation of the same fact by the same account within a day is refused; after a day it is accepted, and only the later of the two counts.
-
+AC-6 (FR-6, FR-7). The run of shape scenario 3 gives, after each step: unverified, unverified, confirmed, disputed. The run of shape scenario 5 keeps the OpenStreetMap stairs after the second denial and marks them outdated after the third. A second confirmation of the same fact by the same account is refused. A vote already made on a fact with the same 30-day hash is also refused when the person switches between account and anonymous contributions while that hash exists. After it expires, a later anonymous vote with the same hash may be accepted.
 AC-7 (FR-8). A geozone can be created from the first focus to the saved state using only the keyboard. A saved geozone gets votes and statuses like a point report and cannot be edited.
 
 AC-8 (FR-9). The OpenStreetMap attribution is visible on the map. When fetching fresh OpenStreetMap data fails, the app keeps working and shows the date of the copy in use.
@@ -88,11 +84,11 @@ AC-9 (FR-10). The four segment states can be told apart in a grayscale screensho
 
 AC-10 (FR-11). For a planned route the list has the three groups; every item shows type, place, source, date and status. For the segment of shape scenario 9, read as meeting a carriageway, the list for the preset "I use a wheelchair" says that the incline, the kerbs and the width are unknown (`plans_finished/osm_barrier_mapping/OSM_BARRIER_MAPPING_PRD.md` AC-3).
 
-AC-11 (FR-12). An account is created with a pseudonym and a password, without an email address. After the account is deleted, its pseudonym cannot be found anywhere in the app, and the facts it confirmed keep their statuses.
+AC-11 (FR-12). An account is created with a case-insensitive unique pseudonym and a password of at least 5 characters, without an email address. Printable ASCII characters, spaces and Unicode are accepted; the maximum password length is at least 64 characters; and no character-composition, periodic-change, common-password or breached-password rules are applied. After login, read-only requests renew the session's 24-hour inactivity period, and the session survives closing and reopening the browser. After the account is deleted, its pseudonym cannot be found anywhere in the app, and the facts it confirmed keep their statuses.
 
-AC-12 (FR-13). Two votes without an account on the same fact from the same browser and network count once. No screen shows whether an author was logged in. The identifier of a vote without an account no longer exists 30 days after the vote.
+AC-12 (FR-13). Two votes on the same fact with the same hash of the IP address and browser characteristics count once, including when one vote is made by an account and the other anonymously, while the hash exists. No screen shows whether an author was logged in. The hash no longer exists 30 days after the vote; after expiry a later anonymous vote with the same hash may be accepted.
 
-AC-13 (FR-14). A flagged report appears in the moderator view; after the moderator hides it, no other user sees it. A user without the moderator role cannot open the moderator view.
+AC-13 (FR-14). A flagged report appears in the moderator view; after the moderator hides it, no other user sees it. A user without the moderator role cannot open the moderator view. After the team removes a moderator role, the next request to the view is denied even if the session remains active.
 
 AC-14 (FR-15). A fact confirmed at 00:30 Polish time on 4 October shows the date 4 October. An OpenStreetMap fact shows the date of its last OpenStreetMap edit.
 
@@ -108,13 +104,12 @@ AC-19 (FR-20). The privacy information page lists every kept item with its purpo
 
 ## Domain rules
 
-The rules are those of the specification, version 4, and the section Domain rules of `plans/mvp/MVP_SHAPE.md`. Where the two differ, the specification prevails: the shape stays the record of its interview and still carries rules that version 4 replaced, among them one vote per fact per person and an OpenStreetMap fact outdated by denials alone. In short, for reading the acceptance criteria:
+The rules are those of the specification, version 4, and the section Domain rules of `plans/mvp/MVP_SHAPE.md`. Where the shape differs, the specification prevails. In short, for reading the acceptance criteria:
 
 - Weights: a logged-in person counts 1, a person without an account 0.5, the author included.
-- A person votes on the same fact again only after a day, and only the latest vote of a person counts.
-- The status of every fact, OpenStreetMap facts included, is derived from the latest votes of the five persons who voted on it most recently: outdated when the denials reach at least 2 and outweigh the confirmations; otherwise disputed when it has both confirmations and denials; otherwise confirmed when its confirmations sum to 2; otherwise unverified.
-- An OpenStreetMap fact counts on the map and the route until it is outdated, and prevails over a contradicting report until that report sums to 2.
-- Segment states: barrier - a prevailing barrier from the profile, or an unverified or disputed one that OpenStreetMap does not contradict; no barrier - every attribute behind the barriers of the profile is known, none is a barrier, and OpenStreetMap does not mark the way `wheelchair=no`; partial data - the known attributes are not barriers, but some are missing or the way is marked `wheelchair=no`; no data - no attribute behind the barriers of the profile is known other than by the default of no stairs. The attributes, the default and the marking are those of the specification, version 3, M6 and M7.
+- Every vote carries the same 30-day hash of the IP address and browser characteristics, including account votes. While the hash exists, a matching hash may vote only once on a fact regardless of authentication state; after expiry, a later anonymous vote with the same hash may be accepted. Per-account uniqueness remains in force. Different hashes do not identify the same person across devices or networks. A matching hash is treated as the same vote identity even if different people share a browser and network.
+- A user fact is confirmed when its confirmations sum to 2; outdated when its denials reach at least 2 and outweigh the confirmations; disputed when it has both confirmations and denials and neither rule applies; unverified otherwise.
+- An OpenStreetMap fact has the same statuses and prevails over contradicting reports or denials until it is outdated.- Segment states: barrier - a prevailing barrier from the profile, or an unverified or disputed one that OpenStreetMap does not contradict; no barrier - every attribute behind the barriers of the profile is known, none is a barrier, and OpenStreetMap does not mark the way `wheelchair=no`; partial data - the known attributes are not barriers, but some are missing or the way is marked `wheelchair=no`; no data - no attribute behind the barriers of the profile is known other than by the default of no stairs. The attributes, the default and the marking are those of the specification, version 3, M6 and M7.
 - Dates are calendar days in the Europe/Warsaw zone.
 - Missing information is never shown as accessible, and nothing about a disability is asked or stored.
 - Amenities from the profile count as near the route within 50 m of it. Agent decision at C:60, without asking - the shape says only "near the route"; confirmed by the user at the gate of this PRD on 2026-10-03, and part of the specification since version 4, M8.
@@ -135,7 +130,7 @@ The rules are those of the specification, version 4, and the section Domain rule
 - Time: about 19 hours to the deadline for twenty requirements; the plan has to split the work into packages that several people build in parallel, and order them so that the main scenario works first.
 - Data coverage: if few Kraków segments have complete OpenStreetMap attributes, most of the route is partial data or no data. Honest, but the demo has to explain it; the sample data in the demo district softens it.
 - OpenStreetMap prevails over people until the threshold, so for a while a segment can follow OpenStreetMap although people reported a barrier there (shape scenario 4); the icon and the list are the chosen mitigation.
-- The identifier of votes without an account is pseudonymized personal data, not anonymous data in the sense of the GDPR; the privacy information must say so.
+- The 30-day hash on every vote, including account votes, is pseudonymized personal data, not anonymous data in the sense of the GDPR; the privacy information must say so.
 - The ODbL may impose share-alike terms on a database that combines OpenStreetMap data with ours; to be checked in phase B, and nothing here is legal advice.
 - Four segment states on a phone screen may be hard to read; AC-9 and AC-15 check it.
 - The district of the Tauron Arena is Czyżyny: OpenStreetMap gives the arena, at Stanisława Lema 7, the district Czyżyny (`plans_finished/geocoding/GEOCODING_PLAN.md` F-2), which settles the check this note asked for.
