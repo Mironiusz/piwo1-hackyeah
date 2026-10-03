@@ -106,3 +106,19 @@ Every transition between phases is manual, so a human sees each result and can t
 - Request, summarized from Polish: fix the failing tests caused by the Impeccable skill.
 - What was done: the parity and prose gates in `tests/architecture/` skip the third-party skill `impeccable` and its four agent roles, named one by one in `tests/architecture/common_vendored_content.py`; `tests/architecture/test_vendored_content.py` fails when an entry points to something no longer installed. `standard_agentic_workflow.md` ch. 6.1, 6.2 and 6.4, `standard_formatting.md`, `standard_tests.md` and the standards map describe the exemption.
 - Why: since the skill was installed, four architecture tests failed on about two thousand lines of its text, so a red `make test` no longer pointed at the change being checked. The installer generates the Claude Code and Codex variants differently on purpose, and an edit made by hand would be lost with its next update.
+
+### 2026-10-04 - Exception to a rule from the briefs for public transport
+
+- Tools: Claude Code with Claude Opus 5.5 in the main session, the skills `plan-prd`, `plan-implement` and `implementation-dod-review`, the `dod-reviewer` subagent for the review; a Valhalla spike run by the user with an agent outside the repository gave the measurements; other sessions worked on `plans/deployment/` and `plans/backend_architecture/` on the same tree at the same time.
+- Request, summarized from Polish: replace the own router with Valhalla run by the project and add routes with public transport of ZTP Kraków from its static GTFS, going ahead after the spike.
+- What was done: `CLAUDE.md` and `AGENTS.md`, section What we are building, now name one deliberate exception to the constraint that missing information is never presented as a confirmation of accessibility: a public transport segment of ZTP Kraków without accessibility data in its GTFS counts as accessible. Version 8 of `docs/product/specification.md` carries it as the optional feature O9 and next to M7 and M10, and `plans/valhalla_routing/VALHALLA_ROUTING_PLAN.md` records the technical decision that replaces D-9 of `plans/mvp/MVP_PLAN.md`.
+- Why: the user decided the exception in the seed and the shape interview of `plans/valhalla_routing/` on 2026-10-03, after the agent stated that it conflicts with the rule of the Kraków brief and that the feeds carry no accessibility information at all. A constraint of the repository core that the specification departs from has to say so, or the core and the specification disagree.
+- Note: the risk to the person and to the criterion "Data reliability, presentation and updates" stays and is recorded in the risks of `plans/valhalla_routing/VALHALLA_ROUTING_PRD.md`.
+
+### 2026-10-04 - Agent permissions on the new demo server
+
+- Tools: Claude Code with Claude Opus 5.5 in the main session, the `plan-shape`, `plan-prd` and `plan-implement` skills, no subagents; other Claude Code sessions worked on the same tree at the same time and were coordinated by messages between sessions.
+- Request, summarized from Polish: move the hosted demo to a server of the user in a data centre and write the instructions for deploying it.
+- What was done: `CLAUDE.md` and `AGENTS.md`, section Target environment, now describe a server of a member of the team in a data centre, served over plain HTTP, of which nothing but the demo is known. The three permission levels of the agent are unchanged. The decision registry and D-10 of `plans/mvp/MVP_PLAN.md` follow it.
+- Why: the user moved the demo off the virtual private server of the db person on 2026-10-03, so the rules described a machine the demo no longer runs on. The levels still fit, because they are narrow enough to be right whatever else runs on the server.
+- Note: supersedes the entry of 2026-10-03, Agent permissions in the hosted demo, which stays as a historical record.
