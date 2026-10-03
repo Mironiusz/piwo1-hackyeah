@@ -1,6 +1,6 @@
 # Target database schema
 
-Document state: 2026-10-03, part of `docs/product/specification.md` version 6
+Document state: 2026-10-04, part of `docs/product/specification.md` version 9
 
 ## Why this document exists
 
@@ -205,7 +205,7 @@ CREATE INDEX IX_vote_cast_at_with_voter_hash ON vote (cast_at) WHERE voter_hash 
 - An account is a pseudonym, unique without regard to letter case, a password hash and the moderator role assigned by hand (M9, M11). Deleting an account deletes its row and nothing else.
 - A vote confirms or denies a fact. Its person is the account or the hashed identifier of M9, never both; `is_cast_with_account` keeps the kind of voter, from which the code takes the weight of M4. The report of a user carries the confirmation of its author as its first vote.
 - `repeat_allowed_at` is the instant from which the same person may vote on the same fact again, written as `cast_at` plus the waiting time of M4. The two exclusion constraints refuse a vote of the same person on the same fact before that instant.
-- When the account is deleted or the hash is cleared 30 days after `cast_at`, the vote stays with its weight and has no person any more, so it counts as a person of its own (M4, M9). Votes are never deleted.
+- When the account is deleted, the vote stays with its weight and has no person any more, so it counts as a person of its own (M4, M9). The hash of a vote without an account is never cleared; it is deleted with the demo (M9). Votes are never deleted.
 
 ## Rights of the service account
 
@@ -232,5 +232,5 @@ The name of the service account is an entry of the local environment files, so t
 
 - The import writes `osm_copy`, `osm_way`, `osm_node`, `osm_way_node` and the facts with an OpenStreetMap identity: a fresh copy, the reconciliation of its facts and its row in `osm_copy` in one transaction, which upserts the ways, nodes and facts of the copy and deletes the ways and nodes it no longer holds.
 - The backend writes the facts without an OpenStreetMap identity - reports and geozones - the votes on every fact, the accounts, and `flagged_at` and `hidden_at`.
-- The periodic task of the worker clears `voter_hash` 30 days after `cast_at`.
+- No task clears `voter_hash`; it is deleted with every other piece of data when the demo is deleted (M9).
 - No one deletes a fact or a vote.
