@@ -1,6 +1,6 @@
 # Review: Choice of the frontend technology for the MVP and of the standards for frontend code
 
-Document state: 2026-10-03, implementation finished, the archive move postponed by the user
+Document state: 2026-10-03, implementation finished, moved to `plans_finished/` by the decision of the user recorded in the entry Archiving of 2026-10-03
 
 ## Implementation run of 2026-10-03
 
@@ -105,3 +105,7 @@ Decided by the user on 2026-10-03: the directory stays in `plans/` until the mer
 - O-4 still holds: the Risks of `plans/mvp/MVP_PLAN.md`, in the wording of `dev`, name Q-3 among the open questions that depend on no other.
 - Checks after the merge: `python -m pytest tests/architecture/test_conflict_markers.py tests/architecture/test_plan_document_contract.py` -> 33 passed; `python -m pytest tests/architecture` -> 110 passed, 4 failed out of 114, the same four checks as in R-2, every reported path a file of the design skill; `npx --no-install prettier --check` on the four files named above -> all matched files use Prettier code style.
 - The agent ran no `git add` and no commit: marking the two files as resolved and concluding the merge is left to a human.
+
+## Archiving of 2026-10-03
+
+The user decided on 2026-10-03 to move this initiative to `plans_finished/` before the branch `origin/js/frontend-shape` is settled (U-8 of `plans/consistency_check/CONSISTENCY_CHECK_REVIEW.md`), which changes the decision of the entry Archive above. That branch is one commit ahead, 699513d of 17:43, and changes only `plans/frontend_stack/FRONTEND_STACK_SHAPE.md`, whose current version already carries the merged result of both interviews (section Recipient and trigger there). The branch counts as absorbed and is for the user to delete; merged after the move, it would recreate the file at its old location. The session of `plans/consistency_check/` moved the initiative on the same day under `docs/standards/standard_agentic_workflow.md` ch. 4.6. O-4 is settled: `plans/mvp/MVP_PLAN.md`, section Risks, no longer names Q-3.

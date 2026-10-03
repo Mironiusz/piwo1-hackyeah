@@ -26,7 +26,7 @@ Where the demo runs was not decided in phase B of `plans/mvp/`; the user handed 
 
 ## Out of scope
 
-- The other technical decisions delegated in the same conversation, each with its own initiative: `plans/api_contract/`, `plans/routing_engine/`, `plans/osm_data_source/`, `plans/frontend_stack/`, `plans/osm_barrier_mapping/`, `plans/local_database/`, `plans/geocoding/`, `plans/account_sessions/`.
+- The other technical decisions delegated in the same conversation, each with its own initiative: `plans/api_contract/`, `plans/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/local_database/`, `plans_finished/geocoding/`, `plans/account_sessions/`.
 - The deployment configuration with written instructions, the secure connection of the public link, and making the routing service unreachable during the live demo. The user moved them on 2026-10-03, in phase B of this task, to the task `DEPLOYMENT` of this initiative (`DEPLOYMENT_SEED.md`). Reason: the configuration names how the service and the worker start, which `plans/mvp/MVP_PLAN.md` decides in Q-11 only after its Q-7 is closed by this task, so keeping them here made each wait for the other.
 - Standing the hosted environment up: creating the account with the hosting provider, the first deployment and checking the main scenario at the public link before the submission. The team took it out of this initiative on 2026-10-03; the db person does it, using what this initiative delivers.
 - Deleting the environment on 4 October 2026, and written instructions for it. The deletion is a step of the owner of the repository on that day. The agent proposed instructions for it in this PRD, and the user cut them at the gate on 2026-10-03.
@@ -36,7 +36,7 @@ Where the demo runs was not decided in phase B of `plans/mvp/`; the user handed 
 
 ## Functional requirements
 
-FR-1. Choice of the hosting. The demo runs on a hosted service reachable at a public link. The live demo, the link in the HackTribe submission and, where the team records it from the link, the video use that same service. The choice is recorded with its reason and its expected cost. It carries what `plans/routing_engine/` and `plans/frontend_stack/` decided, and it allows what the task `DEPLOYMENT` needs from it: a secure connection for the public link, and making the routing service unreachable for the app during the live demo.
+FR-1. Choice of the hosting. The demo runs on a hosted service reachable at a public link. The live demo, the link in the HackTribe submission and, where the team records it from the link, the video use that same service. The choice is recorded with its reason and its expected cost. It carries what `plans/routing_engine/` and `plans_finished/frontend_stack/` decided, and it allows what the task `DEPLOYMENT` needs from it: a secure connection for the public link, and making the routing service unreachable for the app during the live demo.
 
 FR-2. Permission levels of the agent. The rules of the repository for the agent, in the section Target environment, carry the three permission levels for the hosted demo environment as described in the section Domain rules, the same in every place where those rules are kept.
 
@@ -66,17 +66,17 @@ AC-4 (FR-4). FR-20 and AC-19 of `plans/mvp/MVP_PRD.md` require the statement abo
 
 ## Dependencies and impact on other modules
 
-- `plans/routing_engine/` and `plans/frontend_stack/` decide what the hosting has to carry: a routing engine on our own server or an external routing service, and a static frontend or one rendered on the server. Neither is decided on 2026-10-03, and the choice of FR-1 cannot rely on either before they are.
+- `plans/routing_engine/` and `plans_finished/frontend_stack/` decide what the hosting has to carry: a routing engine on our own server or an external routing service, and a static frontend or one rendered on the server. Neither is decided on 2026-10-03, and the choice of FR-1 cannot rely on either before they are.
 - The task `DEPLOYMENT` of this initiative waits for the choice of FR-1 and for the skeleton of the app in `plans/mvp/`.
-- `plans/local_database/` decides how the team gets PostgreSQL with PostGIS locally; the hosted database has to meet the same database standard as the local one.
+- `plans_finished/local_database/` decides how the team gets PostgreSQL with PostGIS locally; the hosted database has to meet the same database standard as the local one.
 - `plans/mvp/MVP_PRD.md` changes in FR-20 and AC-19 (FR-4), and `plans/mvp/MVP_PLAN.md` gets Q-7 closed (FR-3), which lets its phase B continue towards Q-11.
-- `docs/standards/decision_registry.md`: the entry Target environment for the demo is resolved by this task. The entry Technology stack and the Python profile of the standards is a blocker of it named in the registry; its backend part is decided in `plans/mvp/MVP_PLAN.md` D-1, its frontend part in `plans/frontend_stack/`.
+- `docs/standards/decision_registry.md`: the entry Target environment for the demo is resolved by this task. The entry Technology stack and the Python profile of the standards is a blocker of it named in the registry; its backend part is decided in `plans/mvp/MVP_PLAN.md` D-1, its frontend part in `plans_finished/frontend_stack/`.
 - The rules of the repository for the agent change in the section Target environment. Every later session of the agent works under the new levels.
 - The HarmonyOS port is an open entry of the registry. A public link does not prevent a second client from using the same service, but the demo is deleted after the results, so nothing after 4 October can rely on it.
 
 ## Risks and notes
 
-- The deadline of 22:00 holds only if `plans/routing_engine/` and `plans/frontend_stack/` are decided earlier that evening, or if the hosting is chosen in a form that carries every variant they still consider. Otherwise the deadline moves; choosing the hosting on the assumption of one of their variants would be guessing their contract.
+- The deadline of 22:00 holds only if `plans/routing_engine/` and `plans_finished/frontend_stack/` are decided earlier that evening, or if the hosting is chosen in a form that carries every variant they still consider. Otherwise the deadline moves; choosing the hosting on the assumption of one of their variants would be guessing their contract.
 - Logs of a hosting platform usually hold the IP addresses of visitors, jury members included. The agent reads them without asking, so that personal data reaches the context of the model without a request each time. The team kept this level knowingly on 2026-10-03.
 - Reading personal data from the demo database is allowed to the agent on an explicit request; the team did not put it among the forbidden actions.
 - Whether submissions on HackTribe are public is not known, so it is not known how many people outside the team and the jury will get the link.

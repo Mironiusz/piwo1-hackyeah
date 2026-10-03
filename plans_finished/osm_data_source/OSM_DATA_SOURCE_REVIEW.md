@@ -1,6 +1,6 @@
 # Review: Choice of the source of OpenStreetMap data for the MVP
 
-Document state: 2026-10-03, implementation finished, the directory stays in `plans/` until the user decides on the move
+Document state: 2026-10-03, implementation finished, moved to `plans_finished/` by the decision of the user recorded in the entry Archiving of 2026-10-03
 
 ## Implementation run of 2026-10-03
 
@@ -47,3 +47,7 @@ No blocker, two risks and one improvement.
 Final verdict: ready, for the whole initiative `plans/osm_data_source/`.
 
 The user decided on 2026-10-03 to leave the directory in `plans/` for now (R-2). It moves to `plans_finished/` once the session of `plans/osm_barrier_mapping/` has finished its review, by the user or at the user's instruction.
+
+## Archiving of 2026-10-03
+
+The condition of the user decision above is met: the review of `plans_finished/osm_barrier_mapping/` gave its final ready verdict for the whole initiative. The user decided on 2026-10-03 to move this initiative to `plans_finished/` (U-8 of `plans/consistency_check/CONSISTENCY_CHECK_REVIEW.md`), and the session of `plans/consistency_check/` moved it on the same day under `docs/standards/standard_agentic_workflow.md` ch. 4.6. I-1 above, the names of Q-2 left in `plans/mvp/MVP_PLAN.md`, was settled by the same session, which replaced them with "the former Q-2, now D-4".
