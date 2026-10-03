@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wynik trasy: zatwierdzona makieta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow+Semi+Condensed:wght@400;500;600;700&display=block" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:#D9D6CF;color:#161616;font-family:system-ui,sans-serif}
+.gallery{display:flex;gap:28px;padding:28px;align-items:flex-start;overflow-x:auto;min-height:100%}
+.slot{flex:0 0 390px}
+.slot>h1{font:600 16px/1.2 system-ui,sans-serif;margin-bottom:4px}
+.slot>p{font:400 12.5px/1.4 system-ui,sans-serif;color:#3d3b37;margin-bottom:12px;min-height:36px}
+.phone{width:390px;height:844px;overflow:auto;position:relative;background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:15.5px;line-height:1.35;-webkit-font-smoothing:antialiased;scrollbar-width:thin;scrollbar-color:var(--muted) transparent;
+  --shell:#12306B;--yellow:#FFD400;--top:#fff;--bg:#F4F5F2;--surface:#fff;--ink:#111418;--muted:#4B5058;--line:#D5D8DC;--action:#12306B;--action-fg:#fff;--cta:#FFD400;--cta-fg:#111;--r:3px;--r2:6px;
+  --ui:"Barlow Semi Condensed",sans-serif;--num:"Barlow Condensed",sans-serif;--clear:#1E7A46;--barrier:#C8321E;--partial:#E0A100;--nodata:#6F7480;--map-ground:#ECECE3;--map-blk:#DDDDD2;--map-park:#D3E1CB;--map-st:#fff}
+.gallery .phone{border-radius:22px;box-shadow:0 14px 34px rgba(30,25,10,.2)}
+.phone ::selection{background:var(--action);color:var(--action-fg)}
+body.single{background:#fff}
+body.single .gallery{padding:0;gap:0}
+body.single .slot>h1,body.single .slot>p{display:none}
+body.single .phone{border-radius:0;box-shadow:none}
+body.full .phone{height:auto;min-height:100vh;overflow:visible;display:flex;flex-direction:column}
+body.full .phone>*{flex:none}
+body.full .tabbar{margin-top:auto}
+.phone button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.phone button:focus-visible{outline:3px solid var(--action);outline-offset:2px}
+.phone ul{list-style:none}
+.ico{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* wspolne czesci naglowka */
+.hd{padding:14px 16px 12px}
+.route{display:flex;align-items:center;gap:8px;font-weight:600;font-size:16px}
+.route .pt{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.phone .edit{margin-left:auto;flex:none;font-size:13px;font-weight:600;padding:5px 9px;border-radius:var(--r);border:1px solid currentColor;min-height:32px}
+.phone .prof{display:flex;align-items:center;gap:8px;width:100%;text-align:left;font-weight:600;font-size:14px;min-height:44px;border-radius:var(--r)}
+.prof small{margin-left:auto;font-weight:500;font-size:12.5px;white-space:nowrap}
+.nums{display:grid;grid-template-columns:1fr 1.15fr .9fr}
+.nums b{display:block;font:700 30px/1 var(--num);font-variant-numeric:tabular-nums;white-space:nowrap}
+.nums span{font-size:12.5px}
+.summary{padding:12px 16px 4px;background:var(--top)}
+.summary span{color:var(--muted)}
+.strip{padding:8px 16px 12px;background:var(--top)}
+.strip .bar{position:relative;display:flex;height:10px;margin:22px 4px 26px}
+.strip .bar i{display:block;height:100%}
+.b-clear{background:var(--clear)}
+.b-barrier{background:repeating-linear-gradient(90deg,var(--barrier) 0 3px,#fff 3px 6px);outline:2px solid var(--barrier)}
+.b-partial{background:repeating-linear-gradient(90deg,var(--partial) 0 7px,var(--ink) 7px 10px)}
+.b-nodata{background:repeating-linear-gradient(90deg,var(--nodata) 0 3px,transparent 3px 9px)}
+.stop{position:absolute;top:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:#fff;border:3px solid var(--ink)}
+.stop em{position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;font:600 12px/1 var(--ui);font-style:normal;color:var(--ink)}
+.stop em.up{bottom:17px} .stop em.dn{top:17px}
+.ends{display:flex;justify-content:space-between;font:600 12px/1 var(--ui);color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* 1. Granat z liczbami */
+.h1{background:var(--shell);color:#fff;padding-bottom:14px}
+.phone .h1 .prof{margin:10px 0 12px;padding:8px 0;border-radius:0;border-top:1px solid rgba(255,255,255,.3);border-bottom:1px solid rgba(255,255,255,.3)}
+.h1 .prof>.ico:first-child{color:var(--yellow)}
+.h1 .nums span{color:rgba(255,255,255,.85)}
+.h1 .nums div:first-child b{color:var(--yellow)}
+
+/* 2. Jasny z punktami A i B */
+.h2{background:#fff;color:var(--shell);border-top:5px solid var(--shell);padding-bottom:6px}
+.h2 .ab{display:flex;align-items:flex-start;gap:10px}
+.h2 .pts{position:relative;display:grid;gap:9px;font-weight:600;font-size:16px;flex:1;min-width:0}
+.h2 .pts .p{display:flex;align-items:center;gap:10px;white-space:nowrap}
+.h2 .pts i{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid var(--shell);font:700 11px/18px var(--ui);text-align:center;font-style:normal;background:#fff;position:relative;z-index:1}
+.h2 .pts::before{content:"";position:absolute;left:10px;top:20px;bottom:20px;border-left:2px dotted var(--shell)}
+.phone .h2 .prof{margin:12px 0 10px;padding:9px 12px;background:#E8EDF6;color:var(--shell)}
+.h2 .nums b{color:var(--ink)} .h2 .nums span{color:var(--muted)}
+
+/* 3. Zolta tablica */
+.h3{background:var(--yellow);color:#111;padding-bottom:12px}
+.h3 .route{font:700 19px/1.1 var(--num);text-transform:uppercase;letter-spacing:.03em}
+.phone .h3 .prof{margin-top:10px;padding:9px 12px;background:#111;color:#fff}
+
+/* 4. Schemat w naglowku */
+.h4{background:var(--shell);color:#fff;padding-bottom:14px}
+.h4 .toprow{display:flex;align-items:center;gap:8px}
+.phone .h4 .prof{width:auto;display:inline-flex;gap:6px;padding:6px 10px;background:var(--yellow);color:#111;font-size:13.5px;min-height:36px}
+.h4 .diagram{background:#fff;color:var(--ink);border-radius:var(--r2);padding:8px 14px 12px;margin:12px 0 12px}
+.h4 .diagram .bar{margin:22px 4px 14px}
+.h4 .places{display:flex;justify-content:space-between;gap:12px;font:600 14px/1.15 var(--ui);color:var(--ink)}
+.h4 .places span:last-child{text-align:right}
+.h4 .inline{display:flex;gap:6px 16px;align-items:baseline;flex-wrap:wrap;font-size:13px;color:rgba(255,255,255,.88)}
+.h4 .inline b{font:700 23px/1 var(--num);color:#fff;margin-right:5px}
+.h4 .inline span:first-child b{color:var(--yellow)}
+
+/* 5. Liczby najpierw */
+.h5{background:#fff;color:var(--ink);padding-bottom:12px}
+.h5 .route{font-size:14px;font-weight:500;color:var(--muted)}
+.phone .h5 .edit{border:0;padding:4px 0;color:var(--shell);text-decoration:underline;text-underline-offset:3px}
+.h5 .big{display:grid;grid-template-columns:.75fr 1.2fr 1fr;gap:10px;margin:10px 0 12px}
+.h5 .big b{display:block;font:700 42px/.95 var(--num);color:var(--shell);white-space:nowrap;font-variant-numeric:tabular-nums}
+.h5 .big span{display:block;font-size:12.5px;color:var(--muted);margin-top:3px}
+.h5 .big svg{display:block;width:46px;height:12px;margin-top:6px}
+.phone .h5 .prof{padding:9px 12px;background:var(--yellow);color:#111}
+
+/* mapa */
+.map{position:relative;height:262px;background:var(--map-ground);overflow:hidden}
+.map svg{display:block;width:100%;height:100%}
+.map .g{fill:var(--map-ground)} .map .blk{fill:var(--map-blk)} .map .park{fill:var(--map-park)}
+.map .st{stroke:var(--map-st);stroke-width:9;fill:none;stroke-linecap:round}
+.map .lbl{font:500 10px var(--ui);fill:var(--muted)}
+.case{stroke:#fff;stroke-width:12;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.seg{fill:none;stroke-width:7;stroke-linecap:butt;stroke-linejoin:round}
+.s-clear{stroke:var(--clear)} .s-barrier{stroke:var(--barrier)} .s-partial{stroke:var(--partial)}
+.s-nodata{stroke:var(--nodata);stroke-width:4;stroke-dasharray:2 8;stroke-linecap:round}
+.o-barrier{stroke:#fff;stroke-width:7;stroke-dasharray:2.5 5;fill:none}
+.o-partial{stroke:var(--ink);stroke-width:2.5;stroke-dasharray:7 7;fill:none}
+.pin circle{fill:#fff;stroke:var(--ink);stroke-width:2}
+.pin text{font:700 11px var(--ui);fill:var(--ink);text-anchor:middle}
+.mk rect{fill:var(--barrier);stroke:#fff;stroke-width:2}
+.mk path{stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.mk.unv rect{fill:#fff;stroke:var(--barrier);stroke-dasharray:3 2.5}
+.mk.unv path{stroke:var(--barrier)}
+.mk.am rect{fill:#fff;stroke:var(--clear)}
+.mk.am path{stroke:var(--clear)}
+.sample{position:absolute;left:10px;top:10px;font-size:11.5px;font-weight:600;padding:4px 9px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:var(--r)}
+.attr{position:absolute;right:6px;bottom:18px;font-size:10px;color:#3a3a3a;background:rgba(255,255,255,.78);padding:1px 4px;border-radius:2px}
+
+/* dol: ustalony, z opcji 1 */
+.sheet{position:relative;margin-top:-14px;padding-top:16px;background:var(--surface);border-radius:16px 16px 0 0;box-shadow:0 -3px 10px rgba(20,20,30,.13)}
+.sheet::before{content:"";position:absolute;left:50%;top:7px;width:36px;height:4px;margin-left:-18px;border-radius:2px;background:var(--line)}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:7px 12px;padding:8px 16px 11px;border-bottom:1px solid var(--line);font-size:12.5px}
+.legend li{display:flex;align-items:center;gap:8px}
+.legend svg{width:36px;height:12px;flex:none}
+.list{padding:2px 16px 18px}
+.list h2{font:600 15px/1.2 var(--ui);margin:20px 0 4px;display:flex;align-items:baseline;gap:8px}
+.list h2 .n{font-weight:500;font-size:13px;color:var(--muted)}
+.row{display:grid;grid-template-columns:24px 1fr auto;column-gap:10px;padding:11px 0;border-top:1px solid var(--line)}
+.row .ico{margin-top:1px}
+.row .t{font-weight:600}
+.row .d{font-weight:700;font-size:14px;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.row .p{grid-column:2/4;font-size:13px;color:var(--muted)}
+.row .meta{grid-column:2/4;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:12.5px;margin-top:6px}
+.status{display:inline-flex;align-items:center;gap:5px;font-weight:600}
+.status .ico{width:16px;height:16px;margin:0}
+.status.ok{color:var(--clear)} .status.unv{color:var(--barrier)} .status.osm{color:var(--ink)}
+.src{color:var(--muted)}
+.alt{margin:2px 0 10px 34px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r2);font-size:13px;display:flex;gap:10px;align-items:center}
+.alt p{flex:1}
+.gap{margin-top:16px;padding:10px 12px;border:1.5px dashed var(--nodata);border-radius:var(--r2);font-size:13px}
+.phone .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 16px;border-radius:var(--r2);font-weight:700;font-size:14.5px;border:1.5px solid var(--action);color:var(--action);background:transparent}
+.phone .btn.primary{background:var(--action);color:var(--action-fg)}
+.phone .btn.small{min-height:36px;padding:0 12px;font-size:13px}
+.detail{margin:6px 12px 16px;padding:16px;border:1px solid var(--line);border-radius:var(--r2)}
+.detail h3{font:700 18px/1.2 var(--ui)}
+.detail .p{font-size:13px;color:var(--muted);margin-top:2px}
+.detail dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:14px 0;font-size:13.5px}
+.detail dt{color:var(--muted)} .detail dd{font-weight:600}
+.votes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tabbar{position:sticky;bottom:0;display:grid;grid-template-columns:1fr 1.3fr 1fr;align-items:center;gap:6px;padding:8px 10px;background:var(--surface);border-top:1px solid var(--line)}
+.phone .tab{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11.5px;font-weight:600;min-height:48px;justify-content:center;border-radius:var(--r2);color:var(--muted)}
+.phone .tab.on{color:var(--action)}
+.phone .tab.cta{flex-direction:row;gap:8px;font-size:14.5px;font-weight:700;background:var(--cta);color:var(--cta-fg)}
+
+/* runda 4: warianty wybranego naglowka */
+.stop.num{width:22px;height:22px;margin:-11px 0 0 -11px;background:var(--barrier);border:2px solid #fff;color:#fff;font:700 13px/18px var(--num);text-align:center;box-shadow:0 0 0 1.5px var(--barrier)}
+.badge{display:inline-block;min-width:20px;height:20px;border-radius:50%;background:var(--barrier);color:#fff;font:700 13px/20px var(--num);text-align:center;margin-right:8px;vertical-align:1px}
+.nb circle{fill:var(--barrier);stroke:#fff;stroke-width:2}
+.nb text{font:700 11px var(--num);fill:#fff;text-anchor:middle}
+.v2 .h4 .diagram{background:transparent;padding:2px 4px 0;margin:10px 0 12px}
+.v2 .h4 .diagram .bar{background:#fff;outline:3px solid #fff;margin:24px 6px 14px}
+.v2 .h4 .stop{background:var(--shell);border-color:#fff}
+.v2 .h4 .stop em{color:#fff}
+.v2 .h4 .places{color:#fff}
+.v3 .h4 .diagram .bar{margin-top:16px}
+.tiles{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:8px}
+.tile{padding:8px 10px;border-radius:var(--r2);border:1.5px solid rgba(255,255,255,.5)}
+.tile b{display:block;font:700 26px/1 var(--num);color:#fff;white-space:nowrap}
+.tile span{font-size:12px;color:rgba(255,255,255,.9)}
+.tile.bar{border-color:var(--yellow)}
+.tile.bar b{color:var(--yellow)}
+.tile.nod{border-style:dashed}
+.phone.v5 .h4 .prof{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.85)}
+.v5 .h4 .inline span:first-child b{color:#fff}
+</style>
+</head>
+<body>
+<main class="gallery" id="gallery"></main>
+<script>
+const I = {
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>', chev:'<path d="M9 6l6 6-6 6"/>',
+  stroller:'<circle cx="8" cy="19" r="2"/><circle cx="17" cy="19" r="2"/><path d="M4 5h2l3 9h9a6 6 0 0 0-6-6H7.5"/>',
+  kerb:'<path d="M3 18h9V10h9"/>', stairs:'<path d="M4 20h4v-4h4v-4h4V8h4"/>',
+  incline:'<path d="M3 19 21 8v11z"/>', lowkerb:'<path d="M3 17h7l4-4h7"/>', ramp:'<path d="M3 19h18M5 19 19 11v8"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>', unv:'<circle cx="12" cy="12" r="8" stroke-dasharray="3 3"/><path d="M12 8v5M12 16.5v.01"/>',
+  route:'<path d="M6 20V9a4 4 0 0 1 8 0v6a4 4 0 0 0 4 4"/><circle cx="6" cy="20" r="1.5"/>',
+  flag:'<path d="M6 21V4M6 5h11l-2 4 2 4H6"/>',
+  sliders:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>'
+};
+const ico = n => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${I[n]}</svg>`;
+const leg = k => ({
+  clear:'<line x1="2" y1="6" x2="34" y2="6" class="seg s-clear"/>',
+  barrier:'<line x1="2" y1="6" x2="34" y2="6" class="seg s-barrier"/><line x1="2" y1="6" x2="34" y2="6" class="o-barrier"/>',
+  partial:'<line x1="2" y1="6" x2="34" y2="6" class="seg s-partial"/><line x1="2" y1="6" x2="34" y2="6" class="o-partial"/>',
+  nodata:'<line x1="3" y1="6" x2="34" y2="6" class="seg s-nodata"/>'
+})[k];
+function status(kind, date) {
+  const word = {ok:'potwierdzone', unv:'niezweryfikowane', osm:'z OpenStreetMap'}[kind];
+  const src = kind === 'osm' ? `edycja w OSM ${date}` : `zgłoszenie użytkownika, ${date}`;
+  const ic = kind === 'ok' ? ico('check') : kind === 'unv' ? ico('unv') : '';
+  return `<span class="status ${kind}">${ic}${word}</span><span class="src">${src}</span>`;
+}
+const row = (icon, t, p, d, kind, date) =>
+  `<li class="row">${ico(icon)}<span class="t">${t}</span><span class="d">${d}</span><span class="p">${p}</span><span class="meta">${status(kind, date)}</span></li>`;
+
+const ROUTE = `<div class="route"><span class="pt">Tauron Arena</span>${ico('arrow')}<span class="pt">Ogród Doświadczeń</span><button class="edit">Zmień</button></div>`;
+const PROF = `<button class="prof">${ico('stroller')}Wózek dziecięcy<small>4 bariery, 3 udogodnienia</small>${ico('chev')}</button>`;
+const NUMS = `<div class="nums"><div><b>2</b><span>bariery z profilu</span></div><div><b>340 m</b><span>bez danych</span></div><div><b>1,3 km</b><span>cała trasa</span></div></div>`;
+const BAR = (ends, numbered) => `<div class="bar">
+    <i class="b-clear" style="width:30.8%"></i><i class="b-barrier" style="width:3.1%"></i><i class="b-clear" style="width:12.3%"></i><i class="b-partial" style="width:16.1%"></i><i class="b-nodata" style="width:26.2%"></i><i class="b-barrier" style="width:3.1%"></i><i class="b-clear" style="width:8.4%"></i>
+    <span class="stop" style="left:0"></span>
+    ${numbered ? '<span class="stop num" style="left:32.3%">1</span><span class="stop num" style="left:90%">2</span>' : '<span class="stop" style="left:32.3%"><em class="up">krawężnik</em></span><span class="stop" style="left:90%"><em class="up">schody</em></span>'}
+    <span class="stop" style="left:100%"></span>
+  </div>`;
+const H4 = (o = {}) => `<header class="hd h4">
+  <div class="toprow"><button class="prof">${ico('stroller')}Wózek dziecięcy${ico('chev')}</button><button class="edit">Zmień trasę</button></div>
+  <div class="diagram"><div class="strip" style="padding:0">${BAR(false, o.numbered)}</div><div class="places"><span>Tauron Arena</span><span>Ogród Doświadczeń</span></div></div>
+  ${o.tiles
+    ? '<div class="tiles"><div class="tile bar"><b>2</b><span>bariery z profilu</span></div><div class="tile nod"><b>340 m</b><span>bez danych</span></div><div class="tile"><b>1,3 km</b><span>cała trasa</span></div></div>'
+    : '<div class="inline"><span><b>2</b>bariery z profilu</span><span><b>340 m</b>bez danych</span><span><b>1,3 km</b>cała trasa</span></div>'}
+</header>`;
+const REST = `
+<section class="map">
+  <svg viewBox="0 0 390 250" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Mapa trasy z odcinkami w czterech stanach, dane przykładowe">
+    <rect class="g" width="390" height="250"/>
+    <path class="park" d="M228 0h170v118c-48 26-104 20-140-8s-46-70-30-110z"/>
+    <g class="blk"><rect x="18" y="16" width="86" height="58" rx="4"/><rect x="118" y="16" width="86" height="58" rx="4"/><rect x="18" y="88" width="86" height="52" rx="4"/><rect x="118" y="88" width="62" height="52" rx="4"/><rect x="210" y="170" width="74" height="62" rx="4"/><rect x="298" y="150" width="78" height="82" rx="4"/></g>
+    <path class="st" d="M0 190h200M150 250V150M150 190 L360 60M0 82h210"/>
+    <text class="lbl" x="14" y="181">ul. Stanisława Lema</text><text class="lbl" x="228" y="150" transform="rotate(-31 228 150)">al. Pokoju</text><text class="lbl" x="296" y="34">Park Lotników</text>
+    <path class="case" d="M30 215 95 190h55l40-25 60-37 62-24 18-20 26-40"/>
+    <path class="seg s-clear" d="M30 215 95 190h55"/>
+    <path class="seg s-barrier" d="M150 190l40-25"/><path class="o-barrier" d="M150 190l40-25"/>
+    <path class="seg s-partial" d="M190 165l60-37"/><path class="o-partial" d="M190 165l60-37"/>
+    <path class="seg s-nodata" d="M250 128l62-24"/>
+    <path class="seg s-barrier" d="M312 104l18-20"/><path class="o-barrier" d="M312 104l18-20"/>
+    <path class="seg s-clear" d="M330 84l26-40"/>
+    <g class="mk am" transform="translate(108 166)"><rect width="22" height="22" rx="5"/><path d="M4 14h5l4-4h5"/></g>
+    <g class="mk" transform="translate(160 150)"><rect width="22" height="22" rx="5"/><path d="M4 15h7V8h7"/></g>
+    <g class="mk unv" transform="translate(326 96)"><rect width="22" height="22" rx="5"/><path d="M4 17h4v-4h4V9h5"/></g>
+    <g class="pin" transform="translate(30 215)"><circle r="10"/><text y="4">A</text></g>
+    <g class="pin" transform="translate(356 44)"><circle r="10"/><text y="4">B</text></g>
+  </svg>
+  <span class="sample">Dane przykładowe</span><span class="attr">© OpenStreetMap</span>
+</section>
+<div class="sheet">
+  <ul class="legend" aria-label="Legenda odcinków">
+    <li><svg viewBox="0 0 36 12">${leg('barrier')}</svg>bariera z profilu</li>
+    <li><svg viewBox="0 0 36 12">${leg('clear')}</svg>bez barier, dane pełne</li>
+    <li><svg viewBox="0 0 36 12">${leg('partial')}</svg>dane niepełne</li>
+    <li><svg viewBox="0 0 36 12">${leg('nodata')}</svg>brak danych</li>
+  </ul>
+  <section class="list">
+    <h2>Z Twojego profilu <span class="n">2</span></h2>
+    <ul>
+      ${row('kerb','Wysoki krawężnik','ul. Lema, przejście przy al. Pokoju','0,4 km','ok','3.10.2026')}
+      ${row('stairs','Schody, 4 stopnie','przejście przy Parku Lotników','1,2 km','unv','2.10.2026')}
+    </ul>
+    <div class="alt"><p><strong>Trasa alternatywna</strong> omija te schody i jest o 180 m dłuższa. Powód: schody, status niezweryfikowane.</p><button class="btn small">Pokaż</button></div>
+    <h2>Dodatkowe bariery <span class="n">1</span></h2>
+    <ul>${row('incline','Strome nachylenie','al. Pokoju, zjazd do parku','0,5 km','osm','14.06.2025')}</ul>
+    <h2>Udogodnienia na trasie <span class="n">2</span></h2>
+    <ul>
+      ${row('lowkerb','Obniżony krawężnik','ul. Lema, przy przystanku','0,2 km','osm','12.05.2025')}
+      ${row('ramp','Rampa','wejście do Ogrodu Doświadczeń','1,3 km','ok','1.10.2026')}
+    </ul>
+    <p class="gap">Odcinek 0,6-0,8 km: nie znamy nachylenia ani krawężników. Odcinek 0,8-1,15 km: brak jakichkolwiek danych.</p>
+  </section>
+  <section class="detail" aria-label="Szczegóły faktu">
+    <h3>Wysoki krawężnik</h3>
+    <p class="p">ul. Lema, przejście przy al. Pokoju, 0,4 km od startu</p>
+    <dl><dt>Źródło</dt><dd>zgłoszenie użytkownika</dd><dt>Ostatnio potwierdzone</dt><dd>3.10.2026</dd><dt>Status</dt><dd>potwierdzone</dd></dl>
+    <div class="votes"><button class="btn primary">Nadal jest</button><button class="btn">Już nie ma</button></div>
+  </section>
+</div>
+<nav class="tabbar" aria-label="Główna nawigacja">
+  <button class="tab on">${ico('route')}Trasa</button>
+  <button class="tab cta">${ico('flag')}Zgłoś barierę</button>
+  <button class="tab">${ico('sliders')}Profil</button>
+</nav>`;
+const VARIANTS = [
+  ['v1', {}, 'Bazowy', 'Dokładnie wybrany nagłówek: schemat w białym polu, profil jako żółta pigułka, liczby w jednym wierszu.'],
+  ['v2', {}, 'Schemat na granacie', 'Schemat bez białego pola, wprost na granatowym tle; nagłówek niższy i bardziej jednolity.'],
+  ['v3', {numbered: true}, 'Numerowane bariery', 'Bariery mają numery zamiast podpisów: ten sam numer na schemacie, mapie i liście.'],
+  ['v4', {tiles: true}, 'Liczby w kafelkach', 'Trzy liczby w osobnych kafelkach: bariery w żółtej ramce, brak danych w przerywanej.'],
+  ['v5', {}, 'Mniej żółtego', 'Żółty zostaje tylko na przycisku Zgłoś barierę; profil i liczby w nagłówku są białe.']
+];
+const q = new URLSearchParams(location.search);
+const only = q.get('d') || 'v4';
+if (only) document.body.classList.add('single');
+if (q.get('full') === '1') document.body.classList.add('full');
+document.getElementById('gallery').innerHTML = VARIANTS.filter(x => !only || x[0] === only).map(([id, opts, name, note]) =>
+  `<section class="slot"><h1>${name}</h1><p>${note}</p><article class="phone ${id}">${H4(opts)}${REST}</article></section>`).join('');
+document.querySelectorAll('.phone.v3').forEach(phone => {
+  phone.querySelectorAll('.list ul:first-of-type .row .t').forEach((title, index) => title.insertAdjacentHTML('afterbegin', `<span class="badge">${index + 1}</span>`));
+  const svg = phone.querySelector('.map svg');
+  [[183, 149, 1], [349, 95, 2]].forEach(([x, y, n]) => svg.insertAdjacentHTML('beforeend', `<g class="nb" transform="translate(${x} ${y})"><circle r="8"></circle><text y="4">${n}</text></g>`));
+});
+</script>
+</body>
+</html>
