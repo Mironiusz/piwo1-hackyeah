@@ -14,7 +14,7 @@ Without a recorded decision three other pieces of work stand still: the MVP plan
 
 The standards of the repository cover only Python code, and they apply in the strict version, from the first commit (`CLAUDE.md`, section Full compliance with the standards). Frontend code written before a standard exists for it has nothing a review can pass or fail it against, so the first frontend merge request either stalls or goes in unchecked.
 
-A map is the one part of the interface that usually talks to a service outside the project. If the browser loads map tiles or fonts straight from an outside host, that host learns the IP address of the person and, for tiles, the area they look at. `plans/geocoding/` already keeps the typed search text away from outside services for the same reason; a map that gives the same information away would undo it. The live demo would also depend on a public tile service that limits heavy use by IP address, while the whole venue shares a few addresses.
+A map is the one part of the interface that usually talks to a service outside the project. If the browser loads map tiles or fonts straight from an outside host, that host learns the IP address of the person and, for tiles, the area they look at. `plans_finished/geocoding/` already keeps the typed search text away from outside services for the same reason; a map that gives the same information away would undo it. The live demo would also depend on a public tile service that limits heavy use by IP address, while the whole venue shares a few addresses.
 
 A frontend that keeps product rules or data outside the programming interface would have to be rewritten for the HarmonyOS port, which is a second client of that interface, against the dependency of `plans/mvp/MVP_PRD.md` that the solution must not prevent a second client from using the same data and rules.
 
@@ -36,7 +36,7 @@ A technology that cannot deliver keyboard and screen reader use, four segment st
 - The wording of the privacy information (`plans/mvp/MVP_PRD.md` FR-20), owned by `plans/mvp/`.
 - The visual design of the screens. The design direction of the route result screen, shaped by the frontend person on 2026-10-03 (`PRODUCT.md`, `.impeccable/briefs/route-result.md`), is an input the technology has to be able to build, not something this initiative decides.
 - A full frontend profile of standards mirroring the Python profile. Decided against by the frontend person in the shape interview.
-- The other technical decisions delegated in the same conversation, each with its own initiative: `plans/routing_engine/`, `plans/osm_data_source/`, `plans/demo_environment/`, `plans/osm_barrier_mapping/`, `plans/local_database/`, `plans/geocoding/`, `plans/account_sessions/`.
+- The other technical decisions delegated in the same conversation, each with its own initiative: `plans/routing_engine/`, `plans_finished/osm_data_source/`, `plans/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/local_database/`, `plans_finished/geocoding/`, `plans/account_sessions/`.
 
 ## Functional requirements
 
@@ -90,7 +90,7 @@ AC-10 (FR-11). The decision names the chosen technology, the map display, the so
 
 ## Domain rules
 
-The rules are those of the section Domain rules or explicit TODO of `plans/frontend_stack/FRONTEND_STACK_SHAPE.md`. In short, for reading the acceptance criteria:
+The rules are those of the section Domain rules or explicit TODO of `plans_finished/frontend_stack/FRONTEND_STACK_SHAPE.md`. In short, for reading the acceptance criteria:
 
 - Missing information is never shown as accessible, and color is never the only carrier of a segment state.
 - Nothing about the author of a report, vote or geozone is shown to other users.
@@ -104,8 +104,8 @@ The rules are those of the section Domain rules or explicit TODO of `plans/front
 - No product code exists, so nothing in the code is changed indirectly. The decision feeds `plans/mvp/`: it closes `plans/mvp/MVP_PLAN.md` Q-3, and the frontend becomes work packages of that plan, held to FR-1, FR-8, FR-9, FR-10, FR-16 and FR-19 of `plans/mvp/MVP_PRD.md`.
 - `plans/demo_environment/` waits for what the hosting has to carry (FR-9). Its plan keeps 22:00 on 3 October 2026 as the deadline for the choice of the hosting only if the frontend is decided earlier that evening, and its open question about the free disk space of the server now also covers the map tiles.
 - `plans/api_contract/` gets two inputs: the programming interface has two clients from the start, and the interface exists in two languages, which bears on its open question whether the interface returns texts or codes. The frontend person is consulted there as the first consumer.
-- `plans/geocoding/` decided the behavior of the address search that the frontend builds: a search on submission, a list the user always picks from, two distinct messages, and the search text never in the address of the page.
-- `plans/osm_data_source/` decides the copy of OpenStreetMap data behind the routes. The base map may come from a copy of another date; whether it needs a date of its own is settled in phase B.
+- `plans_finished/geocoding/` decided the behavior of the address search that the frontend builds: a search on submission, a list the user always picks from, two distinct messages, and the search text never in the address of the page.
+- `plans_finished/osm_data_source/` decides the copy of OpenStreetMap data behind the routes. The base map may come from a copy of another date; whether it needs a date of its own is settled in phase B.
 - `docs/standards/`: the standards map gets a row, `standard_documentation.md` gets the code unit of frontend code, and the registry entry Technology stack and the Python profile of the standards is updated. The Python profile is not touched.
 - The automatic check of forbidden characters covers only two kinds of files today. Extending it to frontend files changes a check that runs for the whole repository; it is done together with the first frontend code in `plans/mvp/`.
 - The design direction of the route result screen (`PRODUCT.md`, `.impeccable/briefs/route-result.md`) is an input: the chosen technology has to be able to build it, including typefaces served by the project.

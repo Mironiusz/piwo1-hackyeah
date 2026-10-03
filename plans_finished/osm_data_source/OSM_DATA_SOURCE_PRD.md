@@ -23,17 +23,17 @@ The brief also warns that data published online is not automatically free to fet
 - The choice of the source of OpenStreetMap data for Kraków and of the way the copy is fetched, made in phase B of this initiative and recorded so that it closes `plans/mvp/MVP_PLAN.md` Q-2.
 - The refresh in the MVP: one copy fetched before the demo, and a fresh copy triggered by hand by the team.
 - What happens to an OpenStreetMap fact, its votes and its status when a fresh copy no longer holds it, and when a later copy holds it again.
-- The contribution of these rules to version 3 of `docs/product/specification.md`, in sections M4 and M6 and in Decision provenance, written together with the rules of `plans/osm_barrier_mapping/` as one change approved by the user.
+- The contribution of these rules to version 3 of `docs/product/specification.md`, in sections M4 and M6 and in Decision provenance, written together with the rules of `plans_finished/osm_barrier_mapping/` as one change approved by the user.
 - The facts about this source that the description of the data sources in the submission needs: origin, terms of use, freshness, and how the copy is checked.
 
 ## Out of scope
 
 - Building the import and the refresh. The code is a work package of `plans/mvp/`, built together with the backend architecture of `plans/mvp/MVP_PLAN.md` Q-11. Decided by the user on 2026-10-03 (shape, question 1).
 - A refresh on a schedule. In the MVP nothing refreshes by itself; a regular refresh, for example once a day, is only described in the plan from prototype to service. Decided by the user on 2026-10-03 (shape, question 3).
-- Which OpenStreetMap tags count as which barrier or amenity, with their thresholds, and the rule of when OpenStreetMap contradicts a user fact. That is `plans/osm_barrier_mapping/`; this PRD only applies its contradiction rule.
+- Which OpenStreetMap tags count as which barrier or amenity, with their thresholds, and the rule of when OpenStreetMap contradicts a user fact. That is `plans_finished/osm_barrier_mapping/`; this PRD only applies its contradiction rule.
 - How facts and votes are stored, which is `plans/mvp/MVP_PLAN.md` Q-10.
 - The routing engine, which is `plans/routing_engine/`. The two initiatives meet at the pedestrian network, described under Dependencies.
-- The base map tiles shown under the routes, which are part of `plans/frontend_stack/`.
+- The base map tiles shown under the routes, which are part of `plans_finished/frontend_stack/`.
 - Writing anything back to OpenStreetMap. The app never edits OpenStreetMap data.
 - Data outside Kraków, because the MVP works only within Kraków.
 - A requirement that the chosen source serves another Polish city in the same way as Kraków. The brief asks the team to describe how another city is added, and that description belongs to the plan from prototype to service, not to the choice of the source for the MVP. Decided by the user at the gate of this PRD on 2026-10-03, against an agent proposal that would have narrowed the choice of phase B.
@@ -60,7 +60,7 @@ FR-9. Returning fact. When a later copy holds a fact of the same type on the sam
 
 FR-10. No merging by distance. An OpenStreetMap fact that appears in a fresh copy where a user fact of the same type already lies is a separate fact; the two are not merged (M3, "Nothing is merged automatically").
 
-FR-11. Contradiction after conversion. Whether a fresh copy contradicts a fact converted by FR-7 follows the contradiction rule of `plans/osm_barrier_mapping/`: a missing tag never contradicts it, an explicit tag value on the passable side does, and then the segment color follows OpenStreetMap until the votes reach the sum of 2.
+FR-11. Contradiction after conversion. Whether a fresh copy contradicts a fact converted by FR-7 follows the contradiction rule of `plans_finished/osm_barrier_mapping/`: a missing tag never contradicts it, an explicit tag value on the passable side does, and then the segment color follows OpenStreetMap until the votes reach the sum of 2.
 
 FR-12. Terms and attribution. The source is used within its published terms of use and the ODbL licence of OpenStreetMap, and the OpenStreetMap attribution is visible in the app (`plans/mvp/MVP_PRD.md` FR-9).
 
@@ -90,7 +90,7 @@ AC-11 (FR-12). The OpenStreetMap attribution is visible on the map. The descript
 
 ## Domain rules
 
-The rules are those of the section Domain rules of `plans/osm_data_source/OSM_DATA_SOURCE_SHAPE.md`. In short, for reading the acceptance criteria:
+The rules are those of the section Domain rules of `plans_finished/osm_data_source/OSM_DATA_SOURCE_SHAPE.md`. In short, for reading the acceptance criteria:
 
 - Dates are calendar days in the Europe/Warsaw zone; OpenStreetMap edit times given in UTC are converted to that day.
 - The app never pretends its data is current: the OpenStreetMap data is always shown with the date of the copy.
@@ -106,9 +106,9 @@ The rules are those of the section Domain rules of `plans/osm_data_source/OSM_DA
 - No product code exists, so nothing in the repository is changed indirectly. The decision feeds `plans/mvp/`: it closes `plans/mvp/MVP_PLAN.md` Q-2, and the import with the refresh by hand becomes a work package of that plan, built with Q-11.
 - `plans/mvp/MVP_PLAN.md` Q-10 waits for FR-7 to FR-9 of this PRD: the domain model has to keep the votes of a fact across its conversion and return, and keep the weight of an anonymous vote after its 30-day identifier is deleted (M9).
 - `plans/routing_engine/` and this initiative both decide where the pedestrian network comes from (`plans/mvp/MVP_PLAN.md`, Risks). Phase B of this initiative checks that the chosen copy can feed the routing engine, and records it as a condition for `plans/routing_engine/`.
-- `plans/osm_barrier_mapping/` gives the contradiction rule FR-11 applies, and its rules and these enter version 3 of `docs/product/specification.md` as one change. That change, these rules included, is written by `plans/osm_barrier_mapping/OSM_BARRIER_MAPPING_PLAN.md` (D-2 there, and D-20 of `plans/osm_data_source/OSM_DATA_SOURCE_PLAN.md`, decided by the user on 2026-10-03).
+- `plans_finished/osm_barrier_mapping/` gives the contradiction rule FR-11 applies, and its rules and these enter version 3 of `docs/product/specification.md` as one change. That change, these rules included, is written by `plans_finished/osm_barrier_mapping/OSM_BARRIER_MAPPING_PLAN.md` (D-2 there, and D-20 of `plans_finished/osm_data_source/OSM_DATA_SOURCE_PLAN.md`, decided by the user on 2026-10-03).
 - `plans/demo_environment/` decided a hosted service at a public link; where the first copy is fetched and where a refresh by hand runs depends on it.
-- `plans/geocoding/` depends on this initiative only if it searches an own index built from OpenStreetMap data.
+- `plans_finished/geocoding/` depends on this initiative only if it searches an own index built from OpenStreetMap data.
 - The HarmonyOS port, an open entry in `docs/standards/decision_registry.md`, uses the same copy through the server; nothing here depends on the client.
 
 ## Risks and notes

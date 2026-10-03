@@ -12,7 +12,7 @@ The set is divided into three groups:
 
 - Workflow core - six standards describing work with agents, documentation, formatting, review and git. They apply in every project created from the template.
 - Python profile - twelve standards for a Python service with a PostgreSQL database, Alembic migrations and a separate worker process. A project that is not such a service removes their files, their rows from this map and from the map in `standard_review.md`, and replaces references to them in the core with its own standards or removes them. In this project the decision is deferred until the technology stack is chosen - entry in `decision_registry.md`. Until then the profile stays in the repository unchanged.
-- Frontend profile - one standard for the web frontend in `frontend/`: its technology, its code unit, the rules it takes from the product and its automatic gates. Added on 2026-10-03 by `plans/frontend_stack/`. Frontend code is held to this standard and to the six of the workflow core; the Python profile does not apply to it.
+- Frontend profile - one standard for the web frontend in `frontend/`: its technology, its code unit, the rules it takes from the product and its automatic gates. Added on 2026-10-03 by `plans_finished/frontend_stack/`. Frontend code is held to this standard and to the six of the workflow core; the Python profile does not apply to it.
 
 Meaning of the statuses: ready - the document has the full content of its rules. partial - the document has content, but at least one of its rules is waiting for a decision or a measurement; the reason is in the standard itself. skeleton - the document has only the core sections with one-sentence descriptions of what is to be written there.
 
@@ -113,7 +113,7 @@ Decisions recorded on 2026-10-03, when the project was set up from the template:
 - The whole repository is written in English, including the standards, skills and architecture tests translated from the Polish template; the conversation with the user stays in Polish. Reason: the Huawei challenge requires English project documentation. The rule lives in `CLAUDE.md` and `AGENTS.md`, section Language and communication style. Its exceptions are the Kraków submission in Polish and the original of a request quoted in a seed next to its translation (`standard_agent_docs.md`, section SEED format), the latter added on the same day after the first seed of the project.
 - The ten blocking risk categories of the template (`standard_agentic_workflow.md` ch. 3.3) are kept unchanged, although they were chosen for a service with a database and an API. A decision of the user, not a gap.
 
-Decisions recorded on 2026-10-03 by `plans/frontend_stack/`:
+Decisions recorded on 2026-10-03 by `plans_finished/frontend_stack/`:
 
 - Frontend code is held to the workflow core and to `standard_frontend.md` only. A full frontend profile mirroring the Python one was decided against, so the frontend has no standard for the names of its files and for its split into directories. Condition for writing it: the split starts raising questions in review.
 - The four gates of `standard_frontend.md` do not run until `plans/mvp/` writes the first frontend code and sets them up. Until then the standard is checked by review alone.

@@ -1,12 +1,12 @@
 # Product specification
 
-Document state: 2026-10-03, version 3 - the OpenStreetMap tag rules with their thresholds and the contradiction between OpenStreetMap and a user report, decided in `plans/osm_barrier_mapping/`, and the fate of OpenStreetMap facts across fresh copies and the refresh of the copy, decided in `plans/osm_data_source/`
+Document state: 2026-10-03, version 4 - the rules of votes, statuses, flags and hiding, the status of OpenStreetMap facts, geozones on the route, the address search, the distance of amenities near the route, the rule that the browser talks only to the server of the project, and the route request, the pedestrian network and the stretch to it of `plans/routing_engine/`, brought in from the initiatives that decided them by `plans_finished/consistency_check/`
 
 ## Why this document exists
 
 This is the source of truth for the product, named in `CLAUDE.md`, section What we are building: what the product does, for whom, and what is in the prototype built at HackYeah 2026. In case of a discrepancy with anything else in the repository, this document prevails. It has to satisfy the external constraints summarized in `docs/hackathon/challenge_requirements.md`; a conflict with them is raised with the user, never resolved silently.
 
-Version 1 settled the target group and the scope of the MVP, split into mandatory and optional features. Version 2 adds the rules of these features, decided in the shape interview of the initiative `plans/mvp/`. Version 3 adds which OpenStreetMap tags count as which barrier or amenity, with their thresholds, and when OpenStreetMap contradicts a user report, decided in `plans/osm_barrier_mapping/`, and the fate of OpenStreetMap facts across fresh copies and the refresh of the copy, decided in `plans/osm_data_source/`. This document does not settle the technology stack or any technical solution - those are chosen in phase B of `plan-prd`. Product behavior that this document does not describe is still undecided, and every question about it goes to the user.
+Version 1 settled the target group and the scope of the MVP, split into mandatory and optional features. Version 2 adds the rules of these features, decided in the shape interview of the initiative `plans/mvp/`. Version 3 adds which OpenStreetMap tags count as which barrier or amenity, with their thresholds, and when OpenStreetMap contradicts a user report, decided in `plans_finished/osm_barrier_mapping/`, and the fate of OpenStreetMap facts across fresh copies and the refresh of the copy, decided in `plans_finished/osm_data_source/`. Version 4 brings in the product rules that were decided after version 3 outside this document - the votes, statuses, flags and hiding of `plans/fact_schema/`, the weight a vote keeps after its identifier is deleted of `plans_finished/osm_data_source/`, the address search of `plans_finished/geocoding/`, the distance of amenities near the route of `plans/mvp/` and the rule of `plans_finished/frontend_stack/` that the browser talks only to the server of the project - together with the status of OpenStreetMap facts and the geozones on the route, decided in `plans_finished/consistency_check/`, and what of a route request stays in the project, which ways form the pedestrian network and how the stretch between a chosen point and that network is shown, decided in `plans/routing_engine/`. This document does not settle the technology stack or any technical solution - those are chosen in phase B of `plan-prd`. Product behavior that this document does not describe is still undecided, and every question about it goes to the user.
 
 ## Target group
 
@@ -66,13 +66,29 @@ The profile works without logging in and is kept only on the device. It never en
 
 A walking route from A to B within Kraków. The start is the current location (after the browser asks for consent), an address or a point on the map. The current location travels only in the route request: it is not stored, not logged and not linked to the account.
 
-The route avoids the barriers from the profile known from OpenStreetMap, the confirmed barriers from the profile and the geozones (M5) whose type is in the profile. Rest places are shown along the route and in the list from M8, but they do not change its course.
+Nothing of a route request leaves the project: the current location, the start, the destination and the preferences of the profile, and anything derived from them such as a list of places to avoid, are used only by software of the project running on its own infrastructure, and are never sent to a routing service outside the project.
+
+A route leads only along ways that a pedestrian may use according to their OpenStreetMap tags. Ways forbidden to pedestrians, ways not built yet and private ways without a permission for pedestrians are not part of the pedestrian network; ways for motor traffic are, as the tag rules of M6 read their surface and width when they have no sidewalk.
+
+The stretch between a chosen start or destination - a point on the map, an address or the current location - and the point where the route joins the pedestrian network is a segment of the route in the state no data (M7), drawn as a straight line, and the list of M8 names its missing attributes as for any other segment with no data. This holds for every length, also a few metres at the start.
+
+The route avoids the barriers from the profile known from OpenStreetMap, the confirmed barriers from the profile and the geozones (M5) whose type is in the profile. A geozone is avoided when it is unverified, confirmed or disputed. A fact or a geozone that is outdated (M4) or hidden by a moderator (M11) does not change the route. Rest places are shown along the route and in the list from M8, but they do not change its course.
 
 An unverified or disputed barrier from the profile, not contradicted by OpenStreetMap, is not avoided: its segment is red, and the app proposes an alternative route that avoids it and says why, naming the barrier and its status.
 
 OpenStreetMap contradicts a user report in two cases only: an opposite fact of the closed list at the same place - a lowered kerb against a reported high kerb, or a high kerb against a reported lowered kerb - or a tag value on the same stretch of way that the tag rules of M6 classify as not the reported barrier, for example `surface=asphalt` against a report of poor surface. The absence of a tag never contradicts a report; in particular a way not tagged as steps never contradicts a report of stairs.
 
 When every way to the destination crosses a barrier from the profile or a matching geozone, the app shows the route with the fewest such barriers, says plainly that no route without barriers exists, and lists where the barriers are, so that the user decides.
+
+#### Address search
+
+An address or the name of a place, for example "Tauron Arena" or "Rynek Główny", can give the start and the destination of a route and the point of a geozone (M5).
+
+- The search runs only when the user submits the text, with the Enter key or a search button; nothing is suggested while the user types.
+- The search returns only places within Kraków.
+- The result is always a list the user picks from, also when it has a single item. Each item shows the full address, so places with the same name can be told apart. The app never takes a match on its own: the start, the destination or the point of a geozone is set only when the user picks an item.
+- The search field, the submission, the list and the picking work with a keyboard alone and with a screen reader, and the screen reader announces how many results there are.
+- When nothing is found in Kraków, the user gets a plain message saying so. When the search cannot be answered right now, the user gets a different plain message saying that the search is unavailable. In both cases no point is guessed, and choosing a point on the map stays available.
 
 ### M3. Point reports of barriers and amenities
 
@@ -91,22 +107,24 @@ Before a report is saved, the app shows the existing facts of the same type with
 
 Every barrier and amenity, facts from OpenStreetMap included, can be confirmed by users as still there or reported as gone.
 
-- Statuses of a user fact: unverified, confirmed, disputed, outdated. A new report is unverified.
-- Weights: a logged-in person counts 1 and a person without an account 0.5, the author of the report included.
-- A user fact becomes confirmed when the sum of its confirmations reaches 2. It becomes outdated when the denials reach at least 2 and outweigh the confirmations. It is disputed when it has both confirmations and denials and neither rule applies.
-- A fact from OpenStreetMap shows its source and the date of its last edit in OpenStreetMap. It prevails over a contradicting user report, or over denials, until they reach the sum of 2. Then the user fact replaces it in the view, or the OpenStreetMap fact becomes outdated. A confirmation of an OpenStreetMap fact updates its date of last confirmation.
+- Statuses of every fact, facts from OpenStreetMap included: unverified, confirmed, disputed, outdated. A new report is unverified, and so is a fact from OpenStreetMap that nobody has voted on.
+- The facts from OpenStreetMap are the barriers and amenities the tag rules of M6 make present. An item those rules make absent or unknown is not a fact and gets no votes.
+- Weights: a logged-in person counts 1 and a person without an account 0.5, the author of the report included. A report carries the vote of its author as a confirmation.
+- A person is an account, or for a vote without an account its hashed identifier (M9). A person votes on the same fact again only once a day has passed since their previous vote on it; an earlier vote is refused. Of the votes of one person on a fact only the latest counts, so a person can change their mind or refresh a confirmation, but never adds weight by voting again. A vote cannot be withdrawn without casting another one.
+- The status of a fact is derived from the latest votes of the five persons who voted on it most recently, in this order: outdated when the denials reach at least 2 and outweigh the confirmations; otherwise disputed when there are both confirmations and denials; otherwise confirmed when the confirmations reach 2; otherwise unverified. A single denial therefore turns a confirmed fact into disputed, until it falls out of the five latest persons or the denials make the fact outdated. Older votes stay in the history of the fact and only stop counting.
+- A vote keeps its weight for as long as the fact exists, also after the identifier of a vote without an account is deleted (M9) or the account that cast it is deleted. From then on it belongs to no person and counts as the vote of a person of its own.
+- A fact from OpenStreetMap shows its source and the date of its last edit in OpenStreetMap. Whatever its status, it counts on the map and the route until it is outdated, and it becomes outdated by the same rule as any other fact. It prevails over a contradicting user report until the confirmations of that report reach the sum of 2; then the user fact replaces it in the view. A confirmation of an OpenStreetMap fact updates its date of last confirmation.
 - Whether a user report contradicts an OpenStreetMap fact follows the rule of M2. The date of the last OpenStreetMap edit of a fact is the calendar day of the last edit of the OpenStreetMap element whose tags give the fact.
-- When a fresh copy of OpenStreetMap data (M6) no longer holds an OpenStreetMap fact and the sum of its confirmations is greater than the sum of its denials, the fact becomes a user fact: it keeps all its votes, confirmations and denials alike, shows the source user report with the date of its last confirmation, and from then on its status follows the rules of a user fact. Otherwise - no votes, only denials, or as many confirmations as denials by weight - it becomes outdated with the reason that it was removed in OpenStreetMap, disappears from the map and the routes, and its votes stay in its history.
+- When a fresh copy of OpenStreetMap data (M6) no longer holds an OpenStreetMap fact and the sum of its confirmations is greater than the sum of its denials, both counted over the same latest votes of five persons as the status, the fact becomes a user fact: it keeps all its votes, confirmations and denials alike, shows the source user report with the date of its last confirmation, and from then on its status follows the rules of a user fact. Otherwise - no votes, only denials, or as many confirmations as denials by weight - it becomes outdated with the reason that it was removed in OpenStreetMap, disappears from the map and the routes, and its votes stay in its history.
 - When a later copy holds a fact of the same type on the same OpenStreetMap element again, it is the same fact again: a converted user fact or an outdated OpenStreetMap fact becomes an OpenStreetMap fact once more, with the source OpenStreetMap, the date of its last OpenStreetMap edit and all its votes. The same element means the same OpenStreetMap identifier; this is a match by identity, never by distance.
 - An OpenStreetMap fact that appears in a fresh copy where a user fact of the same type already lies is a separate fact, and the two are not merged (M3). Whether a fresh copy contradicts a converted user fact follows the rule of M2.
-- One person has one vote per fact: per account for logged-in users, per hashed identifier for others (M9).
 - A status does not change with time alone. The date of the last confirmation is visible and the user judges it.
 
 Contradicting facts are also the case of contradictory data the Kraków demo has to show.
 
 ### M5. Simple geozones
 
-A user can mark an inaccessible area, for example a sidewalk closed for works or a stretch of cobblestones. A geozone is a point, chosen on the map or by searching an address, with a radius chosen from a list (for example 10, 25, 50 or 100 m), so that it can be created with a keyboard alone. It carries a barrier type from the same list as point reports and is matched against the profile like them. Before saving, the user approves a summary; after saving, it is not edited. Other users judge a geozone with the mechanism of M4. Routes avoid geozones whose type is in the profile (M2).
+A user can mark an inaccessible area, for example a sidewalk closed for works or a stretch of cobblestones. A geozone is a point, chosen on the map or by searching an address (M2, Address search), with a radius chosen from the list 10, 25, 50 and 100 m, so that it can be created with a keyboard alone. It carries a barrier type from the same list as point reports and is matched against the profile like them. Before saving, the user approves a summary; after saving, it is not edited. Other users judge a geozone with the mechanism of M4. Routes avoid geozones whose type is in the profile, unless they are outdated or hidden (M2).
 
 ### M6. Open data at start
 
@@ -162,17 +180,19 @@ The attribute behind each barrier is the one named in the tag rules of M6: the s
 
 ### M8. Barrier list for the route
 
-After a route is planned, the app shows a text list of the barriers on it, in two groups: those matching the profile, and "additional barriers" outside the profile, so the user can judge them on their own. A third group, amenities on the route, lists the amenities the profile needs that lie near the route; they also have icons on the map and do not change the course of the route. Each item has its type, place, source, date and reliability status. For a segment with partial data or no data, the list names the missing attributes by the names of the tag rules of M6 - kerbs, surface, incline, width - and for a way marked `wheelchair=no` it says that OpenStreetMap marks the way as not accessible for wheelchairs. The list is also the text alternative for the map that WCAG requires.
+After a route is planned, the app shows a text list of the barriers on it, in two groups: those matching the profile, and "additional barriers" outside the profile, so the user can judge them on their own. A third group, amenities on the route, lists the amenities the profile needs that lie within 50 m of the route; they also have icons on the map and do not change the course of the route. Each item has its type, place, source, date and reliability status. For a segment with partial data or no data, the list names the missing attributes by the names of the tag rules of M6 - kerbs, surface, incline, width - and for a way marked `wheelchair=no` it says that OpenStreetMap marks the way as not accessible for wheelchairs. The list is also the text alternative for the map that WCAG requires.
 
 ### M9. Accounts and anonymous reports
 
-A light account: a pseudonym and a password, without an email address and without any question about a disability. Reports, confirmations and denials can also be made without an account, with the lower weight of M4.
+A light account: a pseudonym and a password, without an email address and without any question about a disability. A pseudonym is unique without regard to letter case, and the pseudonym of a deleted account can be taken again. Reports, confirmations and denials can also be made without an account, with the lower weight of M4.
 
-A vote without an account stores a one-way hash of the IP address combined with browser characteristics, never the raw values. The hash serves only to allow one vote per fact, and it is deleted after 30 days. The combination is used instead of the IP address alone, because many people share one public address.
+A vote without an account stores a one-way hash of the IP address combined with browser characteristics, never the raw values. The hash serves only to tell one person without an account from another for the vote limit and the latest votes of five persons of M4, and it is deleted 30 days after the vote; the vote itself keeps its weight (M4). For a person without an account the vote limit therefore reaches back at most 30 days. The combination is used instead of the IP address alone, because many people share one public address.
+
+A vote without an account is never tied to an account, so one person who votes on a fact once without an account and once logged in counts as two persons, as does one person with two accounts. Both are accepted risks of accounts without an email address.
 
 Other users never see who made a report, a confirmation or a geozone - neither a pseudonym nor whether the author was logged in. The weights behind a status are known only to the system.
 
-Deleting an account removes the account, the pseudonym and the points. Reports and votes stay, detached from the person, and keep their weight.
+Deleting an account removes the account, the pseudonym and the points. Reports and votes stay, detached from the person, and keep their weight, each vote counting as the vote of a person of its own (M4).
 
 ### M10. Requirements of the Kraków brief
 
@@ -185,7 +205,7 @@ Deleting an account removes the account, the pseudonym and the points. Reports a
 
 ### M11. Flagging and moderation
 
-Anyone can flag a report, a geozone or a photo. A moderator - a member of the team whose role is assigned by hand - sees the flagged content in a simple view and can hide it; hidden content disappears for everyone.
+Anyone can flag a report, a geozone, a fact converted from OpenStreetMap, which shows as a user report (M4), or a photo; a fact from OpenStreetMap cannot be flagged. A flag keeps nothing about who flagged. A moderator - a member of the team whose role is assigned by hand - sees the flagged content in a simple view, without anything about its author, and can hide it and restore it. Hidden content disappears for everyone: it is not on the map or the list, does not change the route or a segment state, takes no part in the check for existing facts of M3 and cannot be voted on. Restored, it counts again with the votes it still has.
 
 ## Optional features
 
@@ -228,6 +248,8 @@ Voice output or voice reporting, for example reporting a barrier without using t
 - Kept: the pseudonym and the password of an account; the hash of a vote without an account, for 30 days; photos (O2), without their metadata.
 - Not kept: the preference profile (only on the device), the current location (only inside a route request), an email address, any information about a disability.
 - Not shown to other users: anything about the author of a report, a confirmation or a geozone.
+- Not revealed by the browser to anyone outside the project: the browser talks only to the server of the project, which serves the map tiles, the fonts, the scripts and every other file, so no service outside the project learns the IP address of the person or the area they look at.
+- Not sent by the project to anyone outside it: anything of a route request - the current location, the start, the destination and the preferences of the profile (M2). The text of an address search is a separate request: the project hands it to an address search service outside the project from its own server, without anything that identifies the person (M2, Address search).
 
 The privacy information of the app states each kept item with its purpose and retention.
 
@@ -248,7 +270,7 @@ Whether the project is submitted to the Huawei challenge, and in what form, is a
 
 ## Open questions
 
-None at version 3. Product behavior not described here goes to the user.
+None at version 4. Product behavior not described here goes to the user.
 
 ## Decision provenance
 
@@ -256,4 +278,5 @@ All decisions were made by the user on 2026-10-03, in a conversation with the ag
 
 - Version 1: the user decided the split into mandatory and optional features, the target group, the scope of geozones (simple geozones mandatory, corrections optional), light accounts with anonymous reports, and points with the ranking as an optional feature. The descriptions of the features, the initial list of barriers and amenities, the grey style for segments without data, the order of the optional features and the out-of-scope list were proposed by the agent and accepted by the user without separate discussion.
 - Version 2: every rule added in this version was decided by the user in the shape interview recorded in `plans/mvp/MVP_SHAPE.md`, which also records the scenarios each rule was decided on. The contents of the presets and the role of amenities in the profile were decided in phase A of the PRD of the same initiative.
-- Version 3: the rules of reading OpenStreetMap tags (M6, M7, M8) and of the contradiction between OpenStreetMap and a user report (M2, M4) were decided by the user in the shape interview, at the PRD gate and in phase B of `plans/osm_barrier_mapping/`, and the rules of OpenStreetMap copies and of OpenStreetMap facts across fresh copies (M4, M6) in the shape interview, at the PRD gate and in phase B of `plans/osm_data_source/`; those documents record the scenarios each rule was decided on. The tag values and thresholds of M6 were proposed by the agent from common OpenStreetMap tagging practice and the OpenStreetMap wiki and approved by the user on 2026-10-03 as the values the import runs on; the import person of the team confirms or changes them before the demo is recorded, and a change is a new version. The rules of OpenStreetMap facts across fresh copies were given by the user answering for the import person, whose ruling is still to be confirmed. The user approved this version on 2026-10-03.
+- Version 3: the rules of reading OpenStreetMap tags (M6, M7, M8) and of the contradiction between OpenStreetMap and a user report (M2, M4) were decided by the user in the shape interview, at the PRD gate and in phase B of `plans_finished/osm_barrier_mapping/`, and the rules of OpenStreetMap copies and of OpenStreetMap facts across fresh copies (M4, M6) in the shape interview, at the PRD gate and in phase B of `plans_finished/osm_data_source/`; those documents record the scenarios each rule was decided on. The tag values and thresholds of M6 were proposed by the agent from common OpenStreetMap tagging practice and the OpenStreetMap wiki and approved by the user on 2026-10-03 as the values the import runs on; the import person of the team confirms or changes them before the demo is recorded, and a change is a new version. The rules of OpenStreetMap facts across fresh copies were given by the user answering for the import person, whose ruling is still to be confirmed. The user approved this version on 2026-10-03.
+- Version 4: the rules of votes, statuses, flags, hiding, geozone radii and pseudonyms (M4, M5, M9, M11) were decided by the user in the shape interview and at the PRD gate of `plans/fact_schema/`, where the vote limit of one day and the five latest persons were approved in place of the db person, whose ruling is still to be confirmed; the weight a vote keeps after its identifier is deleted (M4, M9) was decided in phase B of `plans_finished/osm_data_source/` (D-21 there); the statuses of OpenStreetMap facts and their outdating (M4), the geozones on the route (M2, M5) and the person voting once without an account and once logged in (M9) were decided by the user in `plans_finished/consistency_check/` (U-1 - U-4 of its review); the address search (M2) was decided by the user with the external API person in the shape interview and at the PRD gate of `plans_finished/geocoding/`; the 50 m of amenities near the route (M8) at the PRD gate of `plans/mvp/`; and the rule that the browser talks only to the server of the project (Personal data) by the repository owner and the frontend person in the shape interview of `plans_finished/frontend_stack/`. That only present items are facts from OpenStreetMap (M4) was proposed by the agent from the wording of M4 - a fact is confirmed as still there or reported as gone - and from the scenarios of `plans_finished/osm_data_source/`. The user chose on 2026-10-03 in `plans_finished/consistency_check/` which rules decided outside this document enter this version (U-6 there). The user approved this version on 2026-10-03. After that approval three rules of M2 - nothing of a route request leaves the project, the pedestrian network, and the stretch between a chosen point and the network - were decided by the user in the shape interview of `plans/routing_engine/` (questions 2, 5 and 6 there) and added to this version at the user's decision (question 7 there), with the matching item of Personal data; at the same time the purpose of the hash in M9 was made precise after the review of `plans_finished/consistency_check/`. The user approved these additions on 2026-10-03, and on the same day, after the second pass of that review, the sentence of Personal data on the text of an address search, which states how the address search of `plans_finished/geocoding/` hands that text to a service outside the project (U-11 of `plans_finished/consistency_check/`).

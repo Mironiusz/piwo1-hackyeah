@@ -25,7 +25,7 @@ The MVP (`plans/mvp/`) lets a user give the start and the destination of a route
 - `plans/demo_environment/` decided on 2026-10-03 that the demo runs on a hosted service reachable at a public link, so the jury and anyone who gets the link can use the search, not only the team.
 - `plans/api_contract/`, Current state, waits for this initiative to know whether the address search goes through the backend.
 - `docs/standards/standard_architecture.md`, section Calls to external systems: a read from an external system on the request path is allowed only as an explicit exception with a timeout, without retries and with a cache that does not remember a failure.
-- The source of the OpenStreetMap data is undecided (`plans/osm_data_source/`); OpenStreetMap carries address tags. Since the search may go to an outside service through the server (Domain rules), this dependency matters only if phase B of `plan-prd` picks an own search instance built from the same data.
+- The source of the OpenStreetMap data is undecided (`plans_finished/osm_data_source/`); OpenStreetMap carries address tags. Since the search may go to an outside service through the server (Domain rules), this dependency matters only if phase B of `plan-prd` picks an own search instance built from the same data.
 - The Kraków submission closes at 11:00 on 4 October 2026 (`docs/hackathon/challenge_requirements.md`, Shared facts).
 
 ## Smallest meaningful scope
@@ -35,7 +35,7 @@ A decision on how the MVP searches addresses and places, taken by the right peop
 ## Out of scope
 
 - Building the search. The code is written as a work package of `plans/mvp/`, together with the rest of the backend, because the backend architecture is decided there (`plans/mvp/MVP_PLAN.md` Q-10) and building the search here first would mean guessing it. Decided by the user with the external API person on 2026-10-03.
-- The other technical decisions delegated in the same conversation have their own initiatives: `plans/api_contract/`, `plans/routing_engine/`, `plans/osm_data_source/`, `plans/frontend_stack/`, `plans/demo_environment/`, `plans/osm_barrier_mapping/`, `plans/local_database/`, `plans/account_sessions/`. The shape of the search request and response is part of `plans/api_contract/`; the map tiles are part of `plans/frontend_stack/`.
+- The other technical decisions delegated in the same conversation have their own initiatives: `plans/api_contract/`, `plans/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/local_database/`, `plans/account_sessions/`. The shape of the search request and response is part of `plans/api_contract/`; the map tiles are part of `plans_finished/frontend_stack/`.
 
 ## Functional requirements
 
@@ -58,7 +58,7 @@ The decision has to make these requirements of `plans/mvp/MVP_PRD.md` achievable
 ## Challenging own assumptions
 
 - Is an address a piece of personal data here? Yes, when it can be tied to a person: a destination such as a hospital can reveal information about health, and the specification keeps even the current location out of storage and logs (`docs/product/specification.md`, M2). Decided on 2026-10-03: the typed text may reach a service outside the project only from the server of the project, never together with the IP address of the person (Domain rules).
-- Does sending the search only from the server keep the person's IP address away from the OpenStreetMap Foundation altogether? Not by itself: if the browser loads map tiles straight from `tile.openstreetmap.org`, that service sees the IP address of the person and the area they look at. The tiles are a choice of `plans/frontend_stack/`, not of this initiative; the risk is recorded here so that it reaches that initiative.
+- Does sending the search only from the server keep the person's IP address away from the OpenStreetMap Foundation altogether? Not by itself: if the browser loads map tiles straight from `tile.openstreetmap.org`, that service sees the IP address of the person and the area they look at. The tiles are a choice of `plans_finished/frontend_stack/`, not of this initiative; the risk is recorded here so that it reaches that initiative.
 - Does the search have to cover places by name, for example "Tauron Arena", or only street addresses? Decided on 2026-10-03: names of places too, because the demo takes place at the Tauron Arena and a search through an outside service finds names at no extra cost (Domain rules).
 
 ## Domain rules or explicit TODO

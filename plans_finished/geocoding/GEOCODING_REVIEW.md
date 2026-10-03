@@ -1,6 +1,6 @@
 # Review: Choice of the address search for the MVP
 
-Document state: 2026-10-03, implementation in progress
+Document state: 2026-10-03, implementation finished, review ready for the whole initiative, moved to `plans_finished/`
 
 ## Implementation run of 2026-10-03
 
@@ -41,3 +41,9 @@ First verdict: ready after minor fixes, for the whole initiative, with no blocke
 After the fixes of I-1 and I-2, and the matching text of step 4 in the plan, `npx --no-install prettier --check` on the changed files and `pytest tests/architecture` passed again.
 
 Final verdict: ready, for the whole initiative `plans/geocoding/`. R-1 stays as a step left to the user.
+
+## Consistency check and archiving of 2026-10-03
+
+- The state line said "implementation in progress" under the final ready verdict above. The session of `plans/consistency_check/` corrected it to the verdict, which covers the whole initiative.
+- R-1 is settled: the constraints of step 6, D-15 and D-16 of the plan, were added on 2026-10-03 by `plans/consistency_check/` to `plans/demo_environment/DEMO_ENVIRONMENT_SHAPE.md` with the text of step 6, to item Q-1 of `plans/demo_environment/DEMO_ENVIRONMENT_PLAN.md`, and to `plans/demo_environment/DEPLOYMENT_SHAPE.md`, whose deployment configuration starts the service.
+- The user decided on 2026-10-03 to move the initiative to `plans_finished/` (U-8 of `plans/consistency_check/CONSISTENCY_CHECK_REVIEW.md`). The session of `plans/consistency_check/` moved it on the same day under `docs/standards/standard_agentic_workflow.md` ch. 4.6.
