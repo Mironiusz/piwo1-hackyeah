@@ -21,6 +21,8 @@ Creating this initiative does not authorize running an import against the hosted
 
 ## Current state
 
+The following list records the repository state at creation, rather than the state of later phases.
+
 - `docs/product/specification.md` version 5 is the source of truth for product behavior. M2 defines the pedestrian network, M3 the closed list of facts, M4 their identity and fate across refreshes, and M6 the tag mapping and the complete-copy rule.
 - `plans_finished/osm_data_source/` delivered the source and refresh decisions. Its PRD explicitly excludes building the importer and assigns that work to the MVP. Its PLAN supplies the download, validation, area, reconciliation, failure behavior and required tests.
 - `plans_finished/osm_barrier_mapping/` delivered the rules for deriving barriers, amenities and way attributes. Those rules are reflected in the product specification, rather than being new product choices for this initiative.
@@ -29,6 +31,8 @@ Creating this initiative does not authorize running an import against the hosted
 - `plans/fact_schema/FACT_SCHEMA_PLAN.md` is closed as a plan, but its target document `docs/product/schema.md` is not present in the tree read for this task. Its sibling task `SCHEMA_REVISION` still has an interview in progress. Neither the target schema nor an applied revision is assumed to exist.
 - There is no product backend or importer code in the tree read for this task. Runtime dependencies in `pyproject.toml` are empty. The preparation plans are evidence of decisions, not proof of implemented services.
 
+Refresh on 2026-10-03, before phase A of `plan-prd`: the product specification is now version 7, and the target schema `docs/product/schema.md` exists and is part of the specification since version 6. The model initiative is archived at `plans_finished/fact_schema/`; its first revision is a separate initiative at `plans/schema_revision/`. These documents supply the target contract, not evidence of an applied revision. The MVP plan still assigns import work to its work packages and leaves the backend architecture, import trigger and execution machine to a separate backend initiative. The scope below stays the same; phase B must verify the shared implementation and coordinate ownership before naming implementation steps.
+
 ### WARNING: IMPORT OWNERSHIP HANDOFF BEFORE IMPLEMENTATION
 
 The user assigns implementation of the importer to `osm_importer`. This instruction takes precedence over the earlier assignment to an MVP work package. No file under `plans/mvp/` is changed by this initiative's creation.
@@ -36,6 +40,8 @@ The user assigns implementation of the importer to `osm_importer`. This instruct
 Before the colleague finalizes or executes the MVP import work package, its owner needs to record that `osm_importer` supplies the importer and its tests, while the MVP consumes the resulting data and retains responsibility for its shared backend setup. D-4 and D-5 currently describe the earlier ownership; the data-source and product decisions themselves do not need to change.
 
 The concrete handoff for the user to relay is: reference `plans/osm_importer/` as the executor of the import work, avoid a second implementation of that work in MVP, and keep the shared backend and database prerequisites explicit. This is coordination for implementation, not a prerequisite for creating this shape. The agent reports the handoff to the user and does not edit the colleague's files or send a message to the colleague.
+
+On 2026-10-04 the user reported that Rafał, who owns the MVP work, confirmed he would handle this handoff. The user approved `OSM_IMPORTER_PRD.md` and requested the technical plan. This authorizes phase B; the backend integration contracts still need to be verified.
 
 ## Smallest meaningful scope
 
