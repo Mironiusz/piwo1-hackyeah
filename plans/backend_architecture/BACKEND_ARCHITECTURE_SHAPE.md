@@ -1,6 +1,6 @@
 # Shape: Backend architecture with the worker, Q-11 of the MVP plan
 
-Document state: 2026-10-03, interview in progress
+Document state: 2026-10-04, interview in progress
 Regulator: C:40
 
 ## Problem
@@ -51,6 +51,7 @@ The initiative delivers only these decisions, recorded in documents. Decided by 
 
 1. Every item of the section Smallest meaningful scope is decided and recorded in the plan of this initiative, so that Q-11 of `plans/mvp/MVP_PLAN.md` closes with a decision that names this initiative, as D-3 - D-12 there name theirs.
 2. The documents in force that hand the implementation of the operations to Q-11 - D-12 of `plans/mvp/MVP_PLAN.md`, which says "the implementation of the operations goes with Q-11" - hand it to the work packages of `plans/mvp/` instead. Agent decision at C:40, without asking: a consequence of the answer to question 1.
+3. D-10 of `plans/mvp/MVP_PLAN.md` names the server of the user in a data centre, with 16 GB of memory and 16 cores and the demo in Docker containers, in place of the virtual private server of the db person, and records that the user decided the move for the db person, who owns D-10. The archived `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` D-8 keeps its wording as history. Decided by the user on 2026-10-04, answering question 6, against leaving the update to the task `DEPLOYMENT` and against leaving it to the db person.
 
 ## Scenarios: input, flow, expected state after the run
 
@@ -70,6 +71,5 @@ The initiative delivers only these decisions, recorded in documents. Decided by 
 ## Open questions
 
 2. Which routing does Q-11 plan for: the graph in the memory of the backend process of D-9 of `plans/mvp/MVP_PLAN.md`, still in force, or Valhalla of `plans/valhalla_routing/`, whose interview is closed but which is not decided? Signal 1: the two sources say different things about the target state. On 2026-10-03 the user answered that items 3 and 4 of the section Smallest meaningful scope wait for the decision of `plans/valhalla_routing/`, and that the other items are decided now, against planning for D-9 with Valhalla taking item 3 over if adopted and against planning for Valhalla at once. The question stays open until that decision. `Block: no`
-6. Does this initiative also update D-10 of `plans/mvp/MVP_PLAN.md` to the server of the user in a data centre, as FR-2 updates D-12 there, or is that left to the owner of D-10, the db person, or to the task `DEPLOYMENT`? `Block: no`
 4. Does the import and refresh run execute on the server of the demo, or on a team machine writing to the database of the demo over the network, so that the database accepts connections from outside the server and an account able to write the OpenStreetMap tables is held outside it? `Block: yes` (category: read visibility and permissions)
 5. When exactly is the hash of a vote without an account cleared: so that none exists 30 days after the vote, as AC-4 reads, which means the task clears it a little before the 30 days pass; or at the first run of the task after the 30 days pass, so that it exists up to 30 days plus the interval of the task? `Block: yes` (category: personal data)
