@@ -53,7 +53,7 @@ The project adds its own directories next to `docs/standards/`, each with its pr
 
 - `docs/product/` - the product specification, `docs/product/specification.md`, written by the team, with the target database schema in `docs/product/schema.md`, part of the specification since version 6. It is the source of truth for the product, named in `CLAUDE.md`, section What we are building. Its first version, written on 2026-10-03, settles the target group and the MVP scope. Next to it, `docs/product/api_contract.md` is the contract of the programming interface between the clients and the service, decided in `plans_finished/api_contract/`; it is not part of the specification, which prevails over it.
 - `docs/hackathon/` - `challenge_requirements.md`, a working summary of the rules and task descriptions of the two HackYeah 2026 challenges the project is submitted to, written on 2026-10-03 from the organizers' PDFs. The PDFs remain the authority and are not stored in the repository.
-- `docs/deployment/` - `hosted_demo.md`, the written instructions for standing the hosted demo up on the server, written on 2026-10-04 by `plans/deployment/`, with the commands completed by the task `DEPLOYMENT_CONFIG` there.
+- `docs/deployment/` - `hosted_demo.md`, the written instructions for standing the hosted demo up on the server, written on 2026-10-04 by `plans_finished/deployment/`, with the commands completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`.
 - `AI_WORKFLOW.md` in the repository root - the description of how AI tools are used here, required by the Huawei challenge.
 
 ## Deviation rule

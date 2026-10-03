@@ -70,7 +70,7 @@ AC-4 (FR-3). No document in force names this task as the builder of the first re
 
 ## Dependencies and impact on other modules
 
-- `plans/mvp/MVP_PLAN.md`, a plan in progress, gets the entry of FR-2 and the changes of FR-3. Its sections Scope of changes, Rollout order and Definition of Done are empty, so the work package of FR-2 is defined when that plan writes them; it has to carry the entry before it closes. Other sessions edit that plan on 2026-10-03 for `plans/valhalla_routing/` and `plans/deployment/`.
+- `plans/mvp/MVP_PLAN.md`, a plan in progress, gets the entry of FR-2 and the changes of FR-3. Its sections Scope of changes, Rollout order and Definition of Done are empty, so the work package of FR-2 is defined when that plan writes them; it has to carry the entry before it closes. Other sessions edit that plan on 2026-10-03 for `plans/valhalla_routing/` and `plans_finished/deployment/`.
 - `docs/product/specification.md` and `docs/product/schema.md` get a new version (FR-1). The documents that name the version of the specification in force follow it, and `plans/valhalla_routing/` plans a new version of its own.
 - `docs/product/api_contract.md` does not change. The repetition of `create_fact` becomes implementable once FR-1 is approved.
 - `docs/standards/decision_registry.md` changes in the entry Technical directions of the MVP plan (FR-3).

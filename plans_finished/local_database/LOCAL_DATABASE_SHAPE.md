@@ -81,7 +81,7 @@ Derived by the agent from questions 1 to 5 and from the standards quoted in Curr
 
 - Real personal data in a local database is allowed, but nothing from it leaves the machine (`docs/standards/standard_security.md`, Real personal data in the local environment).
 - Database credentials are secrets and live only in the local environment files (`docs/standards/standard_config.md`).
-- The same chain of revisions runs on the hosted database of the demo, so there too the account that applies revisions has to be a superuser when the first revision creates PostGIS. The demo server also runs other services of the db person (`plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` D-3): if its PostgreSQL instance also holds their databases, that account can read and drop them. The demo database therefore needs a PostgreSQL instance of its own, or another answer of the task `DEPLOYMENT` of `plans/deployment/`; this initiative only hands the consequence over (question 3).
+- The same chain of revisions runs on the hosted database of the demo, so there too the account that applies revisions has to be a superuser when the first revision creates PostGIS. The demo server also runs other services of the db person (`plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` D-3): if its PostgreSQL instance also holds their databases, that account can read and drop them. The demo database therefore needs a PostgreSQL instance of its own, or another answer of the task `DEPLOYMENT` of `plans_finished/deployment/`; this initiative only hands the consequence over (question 3).
 
 ## Open questions
 

@@ -31,7 +31,7 @@ F-18. The routing data of Valhalla is built by the import run together with the 
 
 D-1. The instructions live in a new document, `docs/deployment/hosted_demo.md`. It gets an item in the list Project documents outside the standards and a row in the table What to open before a task of `docs/standards/README.md` (F-10). The task `DEPLOYMENT_CONFIG` edits the same document. Agent decision at C:40, without asking: the instructions are permanent documentation of the project, not an artifact of the initiative, and the map already provides for such documents.
 
-D-2. Every step whose exact command, file name, port or version depends on the files of the configuration ends with one sentence: "Completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment/`." The instructions guess no command, file name or port. Agent decision at C:40, without asking: it follows from FR-1 and AC-1 of the PRD and from the ban on guessing a contract.
+D-2. Every step whose exact command, file name, port or version depends on the files of the configuration ends with one sentence: "Completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`." The instructions guess no command, file name or port. Agent decision at C:40, without asking: it follows from FR-1 and AC-1 of the PRD and from the ban on guessing a contract.
 
 D-3. The instructions name no branch or commit. They speak of "the version of the repository the team chose to deploy". Decided by the user on 2026-10-04: the choice is not the agent's.
 
@@ -49,23 +49,23 @@ D-8. Other sessions edit `plans/mvp/MVP_PLAN.md`, `plans/backend_architecture/` 
 
 1. `CLAUDE.md` and `AGENTS.md`, section Target environment, first paragraph (F-2, F-3, D-7). The paragraph becomes, identical in both files:
 
-   "The target environment is the hosted demo of the MVP on a server of a member of the team in a data centre, decided in `plans/deployment/`, which supersedes `plans_finished/demo_environment/` D-8. The demo is served over plain HTTP at the address of the server. What else runs on that server is not known, so the hosted demo environment is only the services and the database of the demo on it, and their logs. The owner of the repository deletes the demo and all its data on 4 October 2026, after the results are announced. The permission levels of the agent:"
+   "The target environment is the hosted demo of the MVP on a server of a member of the team in a data centre, decided in `plans_finished/deployment/`, which supersedes `plans_finished/demo_environment/` D-8. The demo is served over plain HTTP at the address of the server. What else runs on that server is not known, so the hosted demo environment is only the services and the database of the demo on it, and their logs. The owner of the repository deletes the demo and all its data on 4 October 2026, after the results are announced. The permission levels of the agent:"
 
 2. `docs/standards/decision_registry.md`, section Target environment for the demo (F-4). The entry becomes:
 
-   "Resolved on 2026-10-03 by the user, answering for the db person, and changed on 2026-10-04 by the user in `plans/deployment/`. The demo runs on a server of the user in a data centre, reached at its IP address over plain HTTP, and is deleted with all its data on 4 October 2026. The virtual private server of the db person, chosen in `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` D-8, is superseded. The choice lives in `plans/deployment/DEPLOYMENT_PRD.md` FR-5 and `plans/mvp/MVP_PLAN.md` D-10, the permission levels of the agent in `CLAUDE.md` and `AGENTS.md`, section Target environment."
+   "Resolved on 2026-10-03 by the user, answering for the db person, and changed on 2026-10-04 by the user in `plans_finished/deployment/`. The demo runs on a server of the user in a data centre, reached at its IP address over plain HTTP, and is deleted with all its data on 4 October 2026. The virtual private server of the db person, chosen in `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` D-8, is superseded. The choice lives in `plans_finished/deployment/DEPLOYMENT_PRD.md` FR-5 and `plans/mvp/MVP_PLAN.md` D-10, the permission levels of the agent in `CLAUDE.md` and `AGENTS.md`, section Target environment."
 
 3. `plans/mvp/MVP_PLAN.md`, D-10 only (F-5, D-8). The item becomes:
 
-   "D-10. Where the demo runs, settling the former Q-7. The demo runs on a server of the user in a data centre, with 16 GB of memory and 16 cores, reached at its IP address over plain HTTP. Everything of the demo on the server runs in Docker containers orchestrated by Docker Compose and is started with one command and an environment file kept on the server (`plans/deployment/DEPLOYMENT_SHAPE.md`, sections Current state and Domain rules). It supersedes the virtual private server of `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` D-8.
+   "D-10. Where the demo runs, settling the former Q-7. The demo runs on a server of the user in a data centre, with 16 GB of memory and 16 cores, reached at its IP address over plain HTTP. Everything of the demo on the server runs in Docker containers orchestrated by Docker Compose and is started with one command and an environment file kept on the server (`plans_finished/deployment/DEPLOYMENT_SHAPE.md`, sections Current state and Domain rules). It supersedes the virtual private server of `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` D-8.
 
    Constraints for the rest of this plan:
    - Q-11 places on that server the backend process, the worker, PostgreSQL with PostGIS in an instance of its own, the static frontend and the Valhalla routing service of `plans/valhalla_routing/`, and decides whether the import runs there or on a team machine.
    - What else runs on the server is not known, so the demo uses only its own services, database and logs (`CLAUDE.md`, section Target environment).
-   - The demo has no secure connection, so the start from the current location of FR-2 of `plans/mvp/MVP_PRD.md` does not work on the hosted link. Nor does the hosted demo provide a way to take routing down (`plans/deployment/DEPLOYMENT_SHAPE.md`, section Out of scope).
-   - The deployment configuration is built by the task `DEPLOYMENT_CONFIG` of `plans/deployment/` once Q-11 and the backend skeleton exist. The written instructions are written by the task `DEPLOYMENT` there.
+   - The demo has no secure connection, so the start from the current location of FR-2 of `plans/mvp/MVP_PRD.md` does not work on the hosted link. Nor does the hosted demo provide a way to take routing down (`plans_finished/deployment/DEPLOYMENT_SHAPE.md`, section Out of scope).
+   - The deployment configuration is built by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/` once Q-11 and the backend skeleton exist. The written instructions are written by the task `DEPLOYMENT` of `plans_finished/deployment/`.
 
-   Decided by the user, answering for the db person, on 2026-10-03 in `plans_finished/demo_environment/`, and changed by the user on 2026-10-03 and 2026-10-04 in `plans/deployment/`."
+   Decided by the user, answering for the db person, on 2026-10-03 in `plans_finished/demo_environment/`, and changed by the user on 2026-10-03 and 2026-10-04 in `plans_finished/deployment/`."
 
 4. `AI_WORKFLOW.md`, a new entry at the end of `## Log` (F-8, D-6):
 
@@ -80,7 +80,6 @@ D-8. Other sessions edit `plans/mvp/MVP_PLAN.md`, `plans/backend_architecture/` 
    ```
 
 5. `docs/deployment/hosted_demo.md`, a new document (FR-1 - FR-4, D-1 - D-4). Its title is "# Hosted demo deployment", followed by a state line in the form `Document state: 2026-10-04`. The sections come in this order:
-
    1. `## What this document covers`. It says who runs the steps (the owner of the server) and that the demo and all its data are deleted on 4 October 2026, after the results, by the owner of the repository. It says that no address, host, login or secret of the server is written here or anywhere in the repository (F-13), and that the agent's permissions are in `CLAUDE.md`, section Target environment.
    2. `## Before the first start`. The server needs Docker Engine with the Compose plugin, and the port of the public link open to the internet, a setting of the host the owner makes. The minimum version and the port are completed by the configuration task (D-2).
    3. `## Getting the repository`. The version of the repository the team chose to deploy (D-3).
@@ -93,7 +92,7 @@ D-8. Other sessions edit `plans/mvp/MVP_PLAN.md`, `plans/backend_architecture/` 
    10. `## Check before the link goes into the submission`, the last section. It holds four points: the link opens on a phone, the map shows, a walking route is planned between two addresses, and one address search returns a list (F-14). When the search shows the search unavailable message instead, the public address search is refused from the server. Start and destination can still be picked on the map, and the team decides what to say in the submission before 10:00.
    11. `## Known limits of the hosted demo`, after the check as a reference list. The page is served over plain HTTP, so the browser marks it as not secure and gives it no current location, so the start is picked from an address or the map. Passwords and session tokens travel unencrypted. Routing is not taken down during the live demo.
 
-6. `docs/standards/README.md` (F-10, D-1). In the list Project documents outside the standards, a new item after `docs/hackathon/`: "`docs/deployment/` - `hosted_demo.md`, the written instructions for standing the hosted demo up on the server, written on 2026-10-04 by `plans/deployment/`, with the commands completed by the task `DEPLOYMENT_CONFIG` there." In the table What to open before a task, a new last row: task type "Deploying, restarting or checking the hosted demo", documents "`docs/deployment/hosted_demo.md` and `CLAUDE.md`, section Target environment". The table is realigned by prettier.
+6. `docs/standards/README.md` (F-10, D-1). In the list Project documents outside the standards, a new item after `docs/hackathon/`: "`docs/deployment/` - `hosted_demo.md`, the written instructions for standing the hosted demo up on the server, written on 2026-10-04 by `plans_finished/deployment/`, with the commands completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`." In the table What to open before a task, a new last row: task type "Deploying, restarting or checking the hosted demo", documents "`docs/deployment/hosted_demo.md` and `CLAUDE.md`, section Target environment". The table is realigned by prettier.
 
 7. `agent_docs/memory/_cross_cutting.md`, a new entry at the end, in the template of `docs/standards/standard_agent_docs.md`, section agent_docs/memory entry format. Title: "2026-10-04 - Hosted demo moved to a server of the user, plain HTTP (plans/deployment)". It names the entry of 2026-10-03, Hosted demo on a shared server without a domain, as superseded in its server, its secure connection and its open question of ports, and keeps that entry untouched (D-6).
 
