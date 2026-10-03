@@ -22,7 +22,7 @@ The MVP (`plans/mvp/`) lets a user give the start and the destination of a route
 - On 2026-10-03, from the machine of the agent's session, the public Nominatim instance answered a search for an address in Kraków with HTTP 200.
 - The usage policy of the public Nominatim instance, read on 2026-10-03 at `operations.osmfoundation.org/policies/nominatim/`: an absolute limit of 1 request per second, search as you type (autocomplete) forbidden also when built on the client side, the application identified by its own User-Agent or HTTP Referer, results cached by the client, attribution displayed.
 - The privacy policy of the OpenStreetMap Foundation, read on 2026-10-03 at `osmfoundation.org/wiki/Privacy_Policy`: its services collect the IP address and the pages accessed; it gives no retention period specific to Nominatim and says some legacy practices are not yet documented.
-- `plans/demo_environment/` decided on 2026-10-03 that the demo runs on a hosted service reachable at a public link, so the jury and anyone who gets the link can use the search, not only the team.
+- `plans_finished/demo_environment/` decided on 2026-10-03 that the demo runs on a hosted service reachable at a public link, so the jury and anyone who gets the link can use the search, not only the team.
 - `plans/api_contract/`, Current state, waits for this initiative to know whether the address search goes through the backend.
 - `docs/standards/standard_architecture.md`, section Calls to external systems: a read from an external system on the request path is allowed only as an explicit exception with a timeout, without retries and with a cache that does not remember a failure.
 - The source of the OpenStreetMap data is undecided (`plans_finished/osm_data_source/`); OpenStreetMap carries address tags. Since the search may go to an outside service through the server (Domain rules), this dependency matters only if phase B of `plan-prd` picks an own search instance built from the same data.
@@ -35,7 +35,7 @@ A decision on how the MVP searches addresses and places, taken by the right peop
 ## Out of scope
 
 - Building the search. The code is written as a work package of `plans/mvp/`, together with the rest of the backend, because the backend architecture is decided there (`plans/mvp/MVP_PLAN.md` Q-10) and building the search here first would mean guessing it. Decided by the user with the external API person on 2026-10-03.
-- The other technical decisions delegated in the same conversation have their own initiatives: `plans/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/local_database/`, `plans/account_sessions/`. The shape of the search request and response is part of `plans/api_contract/`; the map tiles are part of `plans_finished/frontend_stack/`.
+- The other technical decisions delegated in the same conversation have their own initiatives: `plans/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans_finished/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/local_database/`, `plans/account_sessions/`. The shape of the search request and response is part of `plans/api_contract/`; the map tiles are part of `plans_finished/frontend_stack/`.
 
 ## Functional requirements
 

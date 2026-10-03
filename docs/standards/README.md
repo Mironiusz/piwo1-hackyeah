@@ -51,7 +51,7 @@ Two files in this directory are not standards and have no core sections:
 
 The project adds its own directories next to `docs/standards/`, each with its provenance:
 
-- `docs/product/` - the product specification, `docs/product/specification.md`, written by the team. It is the source of truth for the product, named in `CLAUDE.md`, section What we are building. Its first version, written on 2026-10-03, settles the target group and the MVP scope.
+- `docs/product/` - the product specification, `docs/product/specification.md`, written by the team, with the target database schema in `docs/product/schema.md`, part of the specification since version 6. It is the source of truth for the product, named in `CLAUDE.md`, section What we are building. Its first version, written on 2026-10-03, settles the target group and the MVP scope. Next to it, `docs/product/api_contract.md` is the contract of the programming interface between the clients and the service, decided in `plans/api_contract/`; it is not part of the specification, which prevails over it.
 - `docs/hackathon/` - `challenge_requirements.md`, a working summary of the rules and task descriptions of the two HackYeah 2026 challenges the project is submitted to, written on 2026-10-03 from the organizers' PDFs. The PDFs remain the authority and are not stored in the repository.
 - `AI_WORKFLOW.md` in the repository root - the description of how AI tools are used here, required by the Huawei challenge.
 
@@ -67,32 +67,33 @@ Each standard repeats this rule in its `Deviation rule` section, possibly narrow
 
 ## What to open before a task
 
-| Task type                                                                  | Documents to open before the work                                                                      |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Anything about product behavior                                            | the product specification named in `CLAUDE.md` - it is the source of truth, not a reference point      |
-| Scope, deliverables, deadlines, judging or the rules of the challenges     | `docs/hackathon/challenge_requirements.md`                                                             |
-| A new task of undetermined shape                                           | `agent_docs/ai_workflows/shape_prd_workflow.md` and the `plan-shape` skill, before any code is written |
-| Closing, cancelling or resuming an initiative in `plans/`                  | `standard_agentic_workflow.md` ch. 4.6                                                                 |
-| Assessing whether a change is ready to merge                               | the `implementation-dod-review` skill and `standard_review.md` with the other standards from the map   |
-| Work on something that somebody has already changed before                 | `agent_docs/memory/`, if an entry exists                                                               |
-| Anything about git, branches or a Merge Request                            | `standard_git.md`                                                                                      |
-| Using AI tools in a new way, or changing a skill, hook, agent role or rule | `AI_WORKFLOW.md` - the Huawei challenge requires it to stay current                                    |
-| Writing or updating code documentation                                     | `standard_documentation.md`                                                                            |
-| Code and markdown formatting                                               | `standard_formatting.md`                                                                               |
-| A new code unit or a change to the structure of an existing one            | `standard_architecture.md` and `standard_naming.md`, section File names                                |
-| Code quality, comments, complexity, performance                            | `standard_code_quality.md`                                                                             |
-| Code security, static analysis, dependency vulnerabilities                 | `standard_security.md`                                                                                 |
-| Tests                                                                      | `standard_tests.md`                                                                                    |
-| Naming of files and functions                                              | `standard_naming.md` and `naming_registry.md`                                                          |
-| Configuration and secrets                                                  | `standard_config.md`                                                                                   |
-| Logging                                                                    | `standard_logging.md`                                                                                  |
-| Error handling, retries, timeouts                                          | `standard_errors.md`                                                                                   |
-| Idempotency, reconciliation, deduplication                                 | `standard_idempotency.md`                                                                              |
-| Time, time zones, time windows in data                                     | `standard_time.md`                                                                                     |
-| Anything that touches a table, column, view or schema                      | `standard_database.md`, the schema dump for the actual state, the product specification for the target |
-| A periodic worker task, a lock, a time window, a frequency                 | `standard_worker.md`                                                                                   |
-| Permissions, read visibility                                               | `standard_architecture.md`, section One place for cross-cutting rules                                  |
-| Frontend code, the map, interface texts                                    | `standard_frontend.md` and the product specification                                                   |
+| Task type                                                                   | Documents to open before the work                                                                                                    |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Anything about product behavior                                             | the product specification named in `CLAUDE.md` - it is the source of truth, not a reference point                                    |
+| Scope, deliverables, deadlines, judging or the rules of the challenges      | `docs/hackathon/challenge_requirements.md`                                                                                           |
+| A new task of undetermined shape                                            | `agent_docs/ai_workflows/shape_prd_workflow.md` and the `plan-shape` skill, before any code is written                               |
+| Closing, cancelling or resuming an initiative in `plans/`                   | `standard_agentic_workflow.md` ch. 4.6                                                                                               |
+| Assessing whether a change is ready to merge                                | the `implementation-dod-review` skill and `standard_review.md` with the other standards from the map                                 |
+| Work on something that somebody has already changed before                  | `agent_docs/memory/`, if an entry exists                                                                                             |
+| Anything about git, branches or a Merge Request                             | `standard_git.md`                                                                                                                    |
+| Using AI tools in a new way, or changing a skill, hook, agent role or rule  | `AI_WORKFLOW.md` - the Huawei challenge requires it to stay current                                                                  |
+| Writing or updating code documentation                                      | `standard_documentation.md`                                                                                                          |
+| Code and markdown formatting                                                | `standard_formatting.md`                                                                                                             |
+| A new code unit or a change to the structure of an existing one             | `standard_architecture.md` and `standard_naming.md`, section File names                                                              |
+| Code quality, comments, complexity, performance                             | `standard_code_quality.md`                                                                                                           |
+| Code security, static analysis, dependency vulnerabilities                  | `standard_security.md`                                                                                                               |
+| Tests                                                                       | `standard_tests.md`                                                                                                                  |
+| Naming of files and functions                                               | `standard_naming.md` and `naming_registry.md`                                                                                        |
+| Configuration and secrets                                                   | `standard_config.md`                                                                                                                 |
+| Logging                                                                     | `standard_logging.md`                                                                                                                |
+| Error handling, retries, timeouts                                           | `standard_errors.md`                                                                                                                 |
+| Idempotency, reconciliation, deduplication                                  | `standard_idempotency.md`                                                                                                            |
+| Time, time zones, time windows in data                                      | `standard_time.md`                                                                                                                   |
+| Anything that touches a table, column, view or schema                       | `standard_database.md`, the schema dump for the actual state, the product specification with `docs/product/schema.md` for the target |
+| A periodic worker task, a lock, a time window, a frequency                  | `standard_worker.md`                                                                                                                 |
+| Permissions, read visibility                                                | `standard_architecture.md`, section One place for cross-cutting rules                                                                |
+| Frontend code, the map, interface texts                                     | `standard_frontend.md` and the product specification                                                                                 |
+| A request, a response, a path or an error code of the programming interface | `docs/product/api_contract.md` and the product specification                                                                         |
 
 The project adds its own documents to this table, for example operational knowledge about the environment or a database schema dump, together with their provenance.
 

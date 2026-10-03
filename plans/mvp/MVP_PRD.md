@@ -14,7 +14,7 @@ Wheelchair users, parents with baby strollers and people with walking difficulti
 
 ## Scope
 
-- The mandatory features M1-M11 of the specification, version 5, with the rules decided in `plans/mvp/MVP_SHAPE.md`.
+- The mandatory features M1-M11 of the specification, version 7, with the rules decided in `plans/mvp/MVP_SHAPE.md`.
 - The interface requirements of the specification: Polish and English, designed for a phone.
 - Privacy information inside the app, required by the section Personal data of the specification.
 - Area: the whole of Kraków for routes; the demo in the district of the Tauron Arena, with sample data marked as such.
@@ -108,7 +108,7 @@ AC-19 (FR-20). The privacy information page lists every kept item with its purpo
 
 ## Domain rules
 
-The rules are those of the specification, version 5, and the section Domain rules of `plans/mvp/MVP_SHAPE.md`. Where the two differ, the specification prevails: the shape stays the record of its interview and still carries rules that version 4 replaced, among them one vote per fact per person and an OpenStreetMap fact outdated by denials alone. In short, for reading the acceptance criteria:
+The rules are those of the specification, version 7, and the section Domain rules of `plans/mvp/MVP_SHAPE.md`. Where the two differ, the specification prevails: the shape stays the record of its interview and still carries rules that version 4 replaced, among them one vote per fact per person and an OpenStreetMap fact outdated by denials alone. In short, for reading the acceptance criteria:
 
 - Weights: a logged-in person counts 1, a person without an account 0.5, the author included.
 - A person votes on the same fact again only after a day, and only the latest vote of a person counts.
@@ -118,15 +118,15 @@ The rules are those of the specification, version 5, and the section Domain rule
 - Dates are calendar days in the Europe/Warsaw zone.
 - Missing information is never shown as accessible, and nothing about a disability is asked or stored.
 - Amenities from the profile count as near the route within 50 m of it. Agent decision at C:60, without asking - the shape says only "near the route"; confirmed by the user at the gate of this PRD on 2026-10-03, and part of the specification since version 4, M8.
-- Changed after the gate on 2026-10-03, to follow version 4 of the specification approved by the user that day (`plans_finished/consistency_check/`): Scope, FR-2, FR-6, FR-7, FR-13, FR-14, AC-6 and the items of this section on the version, the votes, the statuses and the OpenStreetMap facts. The status order settles the contradiction between version 3 of the specification and AC-6, which expected disputed at the fourth step of shape scenario 3. Scope and the first sentence of this section name version 5 since 2026-10-03, which adds the rules of `plans_finished/routing_engine/` and changes none of this PRD.
+- Changed after the gate on 2026-10-03, to follow version 4 of the specification approved by the user that day (`plans_finished/consistency_check/`): Scope, FR-2, FR-6, FR-7, FR-13, FR-14, AC-6 and the items of this section on the version, the votes, the statuses and the OpenStreetMap facts. The status order settles the contradiction between version 3 of the specification and AC-6, which expected disputed at the fourth step of shape scenario 3. Scope and the first sentence of this section name version 5 since 2026-10-03, which adds the rules of `plans_finished/routing_engine/` and changes none of this PRD. Scope and the first sentence of this section name version 6 since 2026-10-03, which adds the target database schema of `plans_finished/fact_schema/` and changes none of this PRD. Scope and the first sentence of this section name version 7 since 2026-10-03, which adds the rules of `plans/api_contract/` on a route request and an address search without an account, outdated facts on the map, the pseudonym and an expired session; a route request and an address search carry no account, so they are not requests of the session of FR-12 and AC-11, and nothing else of this PRD changes.
 - Changed after the gate on 2026-10-03, when `plans/account_sessions/` was merged: FR-12, FR-14, AC-11 and AC-13 carry the account rules added to version 4 of the specification after its approval - the passwords without recovery, the 24-hour session and the end of moderator access on the next request after the role is removed. The rules of that initiative on vote deduplication were rejected by the user on 2026-10-03 and are not part of this PRD.
-- Changed after the gate on 2026-10-03, from `plans/demo_environment/` (FR-4 of `plans/demo_environment/DEMO_ENVIRONMENT_PRD.md`): FR-20 and AC-19 require, in the hosted demo, the statement that the demo and all its data are deleted on 4 October 2026, after the results are announced. Confirmed by the user on 2026-10-03 (`plans/demo_environment/DEMO_ENVIRONMENT_PLAN.md` D-6).
+- Changed after the gate on 2026-10-03, from `plans_finished/demo_environment/` (FR-4 of `plans_finished/demo_environment/DEMO_ENVIRONMENT_PRD.md`): FR-20 and AC-19 require, in the hosted demo, the statement that the demo and all its data are deleted on 4 October 2026, after the results are announced. Confirmed by the user on 2026-10-03 (`plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` D-6).
 
 ## Dependencies and impact on other modules
 
 - No product code exists, so nothing in the repository is changed indirectly. Every module is new.
 - The technology stack was an open entry in `docs/standards/decision_registry.md`, to be chosen in phase B of this PRD, and with it the decision whether the Python profile of the standards stays. It was chosen on 2026-10-03: the backend with the Python profile kept in `plans/mvp/MVP_PLAN.md` D-1, the frontend in D-6 there; the entry stays open until the backend decision lands in code.
-- The target environment for the demo is an open entry in the same registry, decided in `plans/demo_environment/` (`plans/mvp/MVP_PLAN.md` Q-7).
+- The target environment for the demo was an open entry in the same registry. It was decided on 2026-10-03 in `plans_finished/demo_environment/` (`plans/mvp/MVP_PLAN.md` D-10), and the entry is resolved.
 - The HarmonyOS port, an open entry in the same registry, is not part of this PRD; the solution must not prevent a second client from using the same data and rules.
 - External services: OpenStreetMap data under the ODbL, a routing service and map display; their terms, limits and costs are checked in phase B.
 - The optional features O1-O8 come later through their own pass of `plan-prd`; this PRD does not build them, and the solution must not block them.
