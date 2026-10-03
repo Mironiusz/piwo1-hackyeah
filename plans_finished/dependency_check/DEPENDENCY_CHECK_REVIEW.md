@@ -1,6 +1,6 @@
 # Review: Check of cyclic dependencies between the open questions of the MVP plan, and its fixes
 
-Document state: 2026-10-03, fixes applied, the change handed to the session of `plans/routing_engine/` applied there, review after fixes pending
+Document state: 2026-10-03, fixes applied, review after fixes ready for the whole initiative, moved to `plans_finished/`
 
 ## Check of 2026-10-03
 
@@ -75,3 +75,69 @@ Verdict: ready after minor fixes, for the whole initiative.
 ### Notes from the session of `plans/routing_engine/`
 
 When it applied U-2, the session of `plans/routing_engine/` reported a need beyond FR-5 of `plans/fact_schema/FACT_SCHEMA_PRD.md`, raised under U-2 itself: the graph of the chosen engine needs, for every way of the pedestrian network, the ordered list of its nodes with their coordinates (D-11 of its plan, being written). It reports that the user accepted it for the db person on 2026-10-03, and its plan hands it over as a Q-10 input of `plans/mvp/MVP_PLAN.md` and a sentence in the Dependencies of `FACT_SCHEMA_PRD.md` in its implementation step. That is U-2 working as decided, but the input reaches `plans/fact_schema/` only when `plans/routing_engine/` is implemented, so a target schema written by the task `FACT_SCHEMA` before then has to take it from `plans/routing_engine/ROUTING_ENGINE_PLAN.md` D-11 directly. The chosen engine is a graph in the memory of the backend, not pgRouting, so no revision creates pgRouting. The same plan inserts its decision entry into `plans/mvp/MVP_PLAN.md` as D-8, while FR-16 of `FACT_SCHEMA_PRD.md` adds a decision entry without a fixed number; whichever closes first takes the next free number.
+
+## Review after fixes of 2026-10-03
+
+### Scope
+
+The second pass of the `dod-reviewer` agent, run on the request of the user, covering the whole initiative on branch `rm/requirements-preparation` with a clean working tree: the seed and this review, the files named by the fixes of R-1, R-2, R-3, I-1 and I-2 of the first pass and by U-1 - U-3, and the open questions Q-7, Q-9, Q-10 and Q-11 of `plans/mvp/MVP_PLAN.md` read with decisions D-1 - D-9 as they stand now. The paths `plans/routing_engine/` and `plans/consistency_check/` in the seed and in the dated entries above are historical records (`docs/standards/standard_agentic_workflow.md` ch. 4.6, Protecting history) and are not assessed as findings.
+
+### Blockers
+
+None.
+
+### Risks
+
+- R-1. Open questions of `plans/api_contract/API_CONTRACT_SHAPE.md` says "The contract is settled before Q-10 in `plans/mvp/MVP_PLAN.md`", while Q-9 of that plan depends on Q-10 for the resources and statuses it exposes, its Risks keep the path Q-10 -> Q-9, and D-3 and Q-5 (`Block: yes`) of `plans/api_contract/API_CONTRACT_PLAN.md` keep the plan of the contract waiting for Q-10. The sentence comes from commit `4992bba`, not from the fixes of this initiative, and creates no cycle under either reading, because Q-10 does not wait for the contract: D-14 of `plans/fact_schema/FACT_SCHEMA_PLAN.md` leaves the input limits to the contract and its step 6.1 edits the contract shape, but neither waits for it. It still states the order this initiative settled the other way round. Handed to `plans/api_contract/`: the sentence should say that the shape and PRD of the contract are written before Q-10 closes, while its plan, and with it Q-9, closes after Q-10. It does not block the closure of this initiative.
+
+### Improvements
+
+- I-1. `plans/mvp/MVP_PLAN.md`, Risks, second item, still says "The critical paths are Q-10 -> Q-6 -> Q-9" and describes Q-6 as open; only its last sentence says Q-6 is settled as D-8 and the path Q-10 -> Q-9 remains. Read in order it is not a contradiction, since the later sentence settles the earlier one (ch. 4.6), but one current sentence would read better. For whoever next edits that item.
+- I-2. Q-10 of `plans/mvp/MVP_PLAN.md` says the plan of `plans/fact_schema/` is still to be written, while `plans/fact_schema/FACT_SCHEMA_PLAN.md` is in the state plan closed. This concerns the progress of Q-10, not its dependencies, and FR-16 of `plans/fact_schema/FACT_SCHEMA_PRD.md` replaces the entry when Q-10 closes. For `plans/fact_schema/`.
+
+### Confirmation of the fixes of the first pass
+
+- R-1 is present: section Recipient and trigger of `plans/fact_schema/SCHEMA_REVISION_SHAPE.md` makes the trigger the implemented task `FACT_SCHEMA` plus the local setup and the backend skeleton with the Alembic configuration, "that part of the work package, not the whole of it", and the critical tests of `plans_finished/local_database/LOCAL_DATABASE_PLAN.md` D-8 run after the task. Challenging own assumptions of that shape answers the mutual wait, and Risks of `plans/mvp/MVP_PLAN.md` and step 4 of Order of the open questions after the fixes say the same.
+- R-2 is present: the state line before this pass and the item C-2, U-2 of What was done say that the session of the routing engine applied the change and that it was verified, and `plans_finished/routing_engine/ROUTING_ENGINE_PRD.md` records FR-3 and its Dependencies item as changed after the gate on 2026-10-03 by U-2 of this initiative.
+- R-3 is present: in `plans/api_contract/API_CONTRACT_SHAPE.md`, Challenging own assumptions, the item on whether the frontend is the only consumer has the note on the two clients planned by `plans_finished/frontend_stack/`; whether the port is built stays in the registry, and the stability of the contract stays question 2 of that interview, since closed.
+- I-1 is present: Current state of `SCHEMA_REVISION_SHAPE.md` reads "the rules of FR-1 - FR-14, which the stored data has to hold".
+- I-2 is present: all twelve changed items of `plans/fact_schema/FACT_SCHEMA_PRD.md` carry the marker "after the gate on 2026-10-03" with the U-number - Business goal, Scope, Out of scope, FR-15, FR-16, the note before the acceptance criteria, AC-13, AC-14, two Dependencies items and two Risks items.
+- I-3 and I-4 are unchanged, as decided; the sentence of I-4 is still in Challenging own assumptions of `plans/fact_schema/FACT_SCHEMA_SHAPE.md`, followed by the note that settles it.
+
+### Confirmation of U-1 - U-3 and of the order of the open questions
+
+- U-1 is present: `plans/fact_schema/SCHEMA_REVISION_SEED.md` and `plans/fact_schema/SCHEMA_REVISION_SHAPE.md` exist; FR-15 is handed over with its number kept, FR-16 and AC-14 exist; functional requirement 11 of `plans/fact_schema/FACT_SCHEMA_SHAPE.md` points to the task `SCHEMA_REVISION`; the entry Technical directions of the MVP plan in `docs/standards/decision_registry.md` names the split; Q-10 of `plans/mvp/MVP_PLAN.md` closes with the task `FACT_SCHEMA`, which needs documents only.
+- U-2 is present: the Dependencies of `plans/fact_schema/FACT_SCHEMA_PRD.md` no longer wait for the routing engine, and Q-10 of the MVP plan says Q-1 depends on it, not the other way round. The need beyond FR-5 recorded in Notes from the session of `plans/routing_engine/` reached `plans/mvp/MVP_PLAN.md` D-9 as a constraint on the ordered nodes and coordinates of Q-10. `plans/fact_schema/FACT_SCHEMA_PLAN.md` D-6 stores the line of each way; whether that plan covers the need in full belongs to `plans/fact_schema/` and was not checked here. Decision numbers do not collide: D-8 went to Q-6, D-9 to Q-1, and FR-16 has no fixed number.
+- U-3 is present: `plans/api_contract/API_CONTRACT_SHAPE.md` answers question 3 in Challenging own assumptions and lists no open question, question 5 maps the rules of `plans/account_sessions/`, and Current state records that the user rejected parallel work because it contradicts U-3. Current state of `plans/account_sessions/ACCOUNT_SESSIONS_SHAPE.md` has the item on the clients from `plans_finished/frontend_stack/` and the note on M11, and D-8 of `plans/mvp/MVP_PLAN.md` records Q-6 settled first.
+- The unanswered question of who removes the moderator role is a hand-off to `plans/account_sessions/`, whose shape is now closed with the rule that removing the role revokes access on the next request, and D-8 checks the current role on every request. It belongs to another initiative and does not block this one.
+- There is no cycle among the remaining open questions. Q-10 depends only on D-4 and D-5, both settled, and states that it does not depend on Q-6 (now D-8), Q-7, Q-9 or Q-1 (now D-9). Q-9 depends on Q-10 and D-8. Q-7 depends on D-9 and not on Q-11, so the cut of C-5 holds. Q-11 depends on D-9, D-4 and Q-7. The only edges between open questions are Q-10 -> Q-9 and Q-7 -> Q-11, with no edge back. At the level of execution `SCHEMA_REVISION` and `DEPLOYMENT` wait for Q-11 and the skeleton of D-7, and nothing leads from them back to an open question.
+
+### Verification
+
+- `standard_agentic_workflow.md`: checked automatically; `test_agent_docs_parity.py`, `test_session_context_hook.py` and `test_dangerous_commands_hook.py` passed within `tests/architecture`. Ch. 4.6 and the hand-off to the routing session under ch. 4.7 checked manually.
+- `standard_agent_docs.md`: checked automatically; `test_plan_document_contract.py` passed. Checked manually: the initiative has a seed and a review only, as `plans_finished/consistency_check/`, the seed quotes each Polish message verbatim with an English translation, and the review has a state line.
+- `standard_review.md`: checked manually; this report follows its order and its states.
+- `standard_documentation.md`: checked manually; the artifacts are in English and refer to each other by path and section, no code documentation in scope.
+- `standard_formatting.md`: checked automatically; `npx --no-install prettier --check` on the two files of the initiative and the eight files the fixes touched, and on `"**/*.md"` -> `All matched files use Prettier code style!`; `test_prose_style.py` passed; a scan of the two initiative files found no forbidden character and no bold. `ruff format --check .` not run, no Python file in scope.
+- `standard_git.md`: checked automatically; `test_conflict_markers.py` passed, the working tree is clean.
+- `standard_architecture.md`: not applicable; no code in scope.
+- `standard_config.md`: not applicable; no environment entry. Checked manually that no host, address, login or secret appears in the seed or this review.
+- `standard_database.md`: not applicable; no code.
+- `standard_errors.md`: not applicable; no code.
+- `standard_idempotency.md`: not applicable; no code.
+- `standard_code_quality.md`: not applicable; no Python code.
+- `standard_logging.md`: not applicable; no Python code.
+- `standard_naming.md`: not applicable; no Python code.
+- `standard_security.md`: not applicable; no code and no new dependency.
+- `standard_tests.md`: not applicable to product tests, none exist. `venv\Scripts\python.exe -m pytest tests/architecture -o addopts="" -q` on Python 3.13.14 -> `120 passed`; the four failures on the impeccable skill reported in the first pass no longer occur, so no later run contradicts this scope.
+- `standard_time.md`: not applicable; no code.
+- `standard_worker.md`: not applicable; no periodic task.
+- `standard_frontend.md`: not applicable; no frontend code.
+
+### Verdict
+
+Verdict: ready, for the whole initiative `plans/dependency_check/`. R-1, I-1 and I-2 are hand-offs to `plans/api_contract/`, `plans/mvp/` and `plans/fact_schema/`; they change no fix of this initiative and no edge of the dependency order. This final `ready` covers the whole scope, so the initiative qualifies for `plans_finished/` under ch. 4.6, point 1, and nothing in its artifacts contradicts closure.
+
+## Archiving of 2026-10-03
+
+The final ready verdict of the review after fixes covers the whole initiative, so the session that recorded it moved `plans/dependency_check/` to `plans_finished/` the same day under `docs/standards/standard_agentic_workflow.md` ch. 4.6, on the instruction of the user, with the checksums of both files confirmed before and after the move. It rewrote the editable references to it in `plans/mvp/MVP_PLAN.md`, `docs/standards/decision_registry.md`, `plans/fact_schema/FACT_SCHEMA_PRD.md`, `FACT_SCHEMA_SHAPE.md`, `FACT_SCHEMA_PLAN.md` and `SCHEMA_REVISION_SHAPE.md`, `plans/api_contract/API_CONTRACT_SHAPE.md` and `API_CONTRACT_PRD.md`, `plans/account_sessions/ACCOUNT_SESSIONS_SHAPE.md`, and, only as to location, `plans_finished/routing_engine/ROUTING_ENGINE_PLAN.md` and `ROUTING_ENGINE_PRD.md`, as the earlier archiving of `plans_finished/consistency_check/` did for that PRD. The anchor of the step of `plans/fact_schema/FACT_SCHEMA_PLAN.md` that edits the item of this review among the Supplementary files of `plans/mvp/MVP_PLAN.md` was rewritten together with that item, so the step still finds it. `plans/fact_schema/SCHEMA_REVISION_SEED.md` and the dated entries of `plans/account_sessions/ACCOUNT_SESSIONS_REVIEW.md`, `plans/fact_schema/FACT_SCHEMA_REVIEW.md` and `plans_finished/routing_engine/ROUTING_ENGINE_REVIEW.md` keep the old path as historical records. The move was made while another session was implementing `plans/fact_schema/FACT_SCHEMA_PLAN.md` on the same tree; the user chose to move and rewrite the references during that work.

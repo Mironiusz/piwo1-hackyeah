@@ -25,7 +25,7 @@ A search that silently takes the first match would send a route to a wrong place
 ## Out of scope
 
 - Building the search. The code is written as a work package of `plans/mvp/`, together with the rest of the backend, because the backend architecture is decided there (`plans/mvp/MVP_PLAN.md` Q-11). Decided by the user with the external API person in the shape interview.
-- The shape of the search request and response between the frontend and the backend, which is part of `plans/api_contract/`.
+- The shape of the search request and response between the frontend and the backend, which is part of `plans_finished/api_contract/`.
 - The map tiles and what their source learns about the person, which is part of `plans_finished/frontend_stack/`.
 - The wording of the privacy information (`plans/mvp/MVP_PRD.md` FR-20), owned by `plans/mvp/`.
 - Suggestions while the user types. Decided against by the user with the external API person in the shape interview.
@@ -86,16 +86,16 @@ The rules are those of the section Domain rules of `plans_finished/geocoding/GEO
 ## Dependencies and impact on other modules
 
 - No product code exists, so nothing in the repository is changed indirectly. The decision feeds `plans/mvp/`: it closes `plans/mvp/MVP_PLAN.md` Q-5, and the search becomes a work package of that plan, used by `plans/mvp/MVP_PRD.md` FR-2 and FR-8 and held to FR-16 and FR-19.
-- `plans/api_contract/` waits for this initiative to know whether the search goes through the backend: it does, so the search is part of the contract between the frontend and the backend.
+- `plans_finished/api_contract/` waits for this initiative to know whether the search goes through the backend: it does, so the search is part of the contract between the frontend and the backend.
 - `plans_finished/frontend_stack/` builds the list and the messages; the risk of the map tiles revealing the IP address of the person is recorded for it.
-- `plans/demo_environment/` decided a hosted service at a public link; where the hosting sends outgoing requests from matters for the outside service.
+- `plans_finished/demo_environment/` decided a hosted service at a public link; where the hosting sends outgoing requests from matters for the outside service.
 - `plans_finished/osm_data_source/` matters only if phase B picks an own search instance built from OpenStreetMap data.
 - The HarmonyOS port, an open entry in `docs/standards/decision_registry.md`, would use the same search through the server; the rules of this PRD hold for any client.
 - A read from an external system while handling a request is allowed in this repository only as an explicit, limited exception (`docs/standards/standard_architecture.md`, Calls to external systems); the search is such a read, so phase B records it as that exception.
 
 ## Risks and notes
 
-- The outside service may refuse requests from the hosting: hosting services often send outgoing requests from an IP address shared with other customers, which a public service may already block. To be checked in phase B against the environment of `plans/demo_environment/`.
+- The outside service may refuse requests from the hosting: hosting services often send outgoing requests from an IP address shared with other customers, which a public service may already block. To be checked in phase B against the environment of `plans_finished/demo_environment/`.
 - The outside service is a single dependency of the live demo; when it fails, only the map remains for giving a place.
 - Query volume, an estimate by the agent from the shape: the team and the jury, at most a few dozen people, each making a few searches over several minutes, stay below 60 searches per minute, and the cache lowers the number further. A burst above the limit of the outside service ends in the search unavailable message, never in a wrong point.
 - People typing on a phone often leave out Polish diacritics or the prefix "ul.", for example "Rynek Glowny" or "Lipska 5". If the chosen service does not match such text, the search fails exactly where the demo uses it; phase B checks it.
