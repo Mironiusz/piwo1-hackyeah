@@ -30,6 +30,8 @@ The hosted demo of `plans/mvp/` needs a deployment configuration and written ins
 - At the review of this shape on 2026-10-03, after 22:00, the trigger is not met: Q-11 of `plans/mvp/MVP_PLAN.md` is open, no product code exists on `dev` or on any remote branch, and neither `frontend/` nor a backend directory exists (`git fetch` and `git branch -a` on 2026-10-03, `dev` at `33a9ce7`).
 - `docs/product/specification.md`, section on the demo, requires the demo to show what the user sees when a source is unavailable: "when the routing service does not answer, a plain message and no guessed route". FR-17 and AC-16 of `plans/mvp/MVP_PRD.md` use the same words. `plans_finished/routing_engine/` decided later that day that no routing service exists, so "the routing service does not answer" now means the cases of D-3 of that plan listed in the previous items; the specification and the MVP PRD were not reworded after it.
 
+- Later on 2026-10-03 the initiative `plans/valhalla_routing/` was opened, with its shape closed: it proposes replacing the own routing engine of `plans_finished/routing_engine/` with Valhalla, a routing service run by the project on the server of the demo, with optional public transport routes from the static GTFS of ZTP Kraków. It has no PRD or plan yet, and D-9 of `plans/mvp/MVP_PLAN.md` still names the own engine. If it is adopted, the deployment carries a second service with its tiles, and FR-3 again means making a routing service unreachable (question 6).
+
 ## Smallest meaningful scope
 
 Following from the seed: the three requirements moved out of `plans_finished/demo_environment/DEMO_ENVIRONMENT_PRD.md`.
@@ -71,3 +73,4 @@ Following from the seed: the three requirements moved out of `plans_finished/dem
 3. How long may routing stay down for everyone during the scene of FR-3, and must it be shown on the hosted link at all, given that the specification requires the demo to show it? `Block: no`
 4. Are ports 80 and 443 of the server free, or does a proxy of the owner already answer on them? Fact to be stated by the db person; it decides whether the secure connection of FR-2 is possible (`plans_finished/demo_environment/DEMO_ENVIRONMENT_REVIEW.md` R-5). `Block: no`
 5. Do updates deployed during the night keep the data already in the hosted database, and is filling the database with the OpenStreetMap copy and serving the tile archive part of the written instructions? `Block: no`
+6. Which routing does this task deploy: the own engine of `plans_finished/routing_engine/`, still in force as D-9 of `plans/mvp/MVP_PLAN.md`, or Valhalla of `plans/valhalla_routing/`, whose shape is closed but not yet decided? Signal 1: the two sources say different things about the target state. `Block: no`
