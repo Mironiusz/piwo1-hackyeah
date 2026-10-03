@@ -22,6 +22,7 @@ The MVP (`plans/mvp/`) is a phone-first web app whose whole main scenario has to
 - `tests/architecture/test_prose_style.py` checks forbidden characters and bold in `.md` and `.py` files only (`docs/standards/standard_formatting.md`, section Emphasis in prose).
 - The HarmonyOS port is an open entry in `docs/standards/decision_registry.md`; one of its variants is an ArkTS application embedding the web app.
 - The Kraków submission closes at 11:00 on 4 October 2026 (`docs/hackathon/challenge_requirements.md`, Shared facts).
+- `plans/geocoding/` decided on 2026-10-03 (`plans/geocoding/GEOCODING_PRD.md` FR-1 - FR-5, `plans/geocoding/GEOCODING_PLAN.md` D-3) that the search runs only on submission, shows a list the user always picks from with a keyboard and a screen reader, has two distinct messages for nothing found and search unavailable, and never puts the search text into the address of the page. It also recorded a risk for this initiative: map tiles loaded by the browser straight from `tile.openstreetmap.org` reveal the IP address of the person and the area they look at to that service.
 
 ## Smallest meaningful scope
 
