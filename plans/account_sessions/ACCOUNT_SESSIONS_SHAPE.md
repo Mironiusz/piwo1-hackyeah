@@ -21,6 +21,8 @@ The MVP (`plans/mvp/`) has light accounts with a pseudonym and a password, contr
 - `docs/standards/standard_tests.md`, Mandatory tests: permissions and visibility are tested with a matrix over all roles, separately for the list and the detail view, in both directions.
 - `docs/standards/standard_config.md`, Secrets: a secret never enters the repository, and a secret in the settings model has the type `SecretStr`.
 - The Kraków submission closes at 11:00 on 4 October 2026 (`docs/hackathon/challenge_requirements.md`, Shared facts).
+- `plans/demo_environment/`, open question 3, asks whether people outside the team create accounts or votes in the demo environment and who deletes that data after the hackathon; the answer decides whose pseudonyms and passwords the accounts of this initiative hold.
+- On 2026-10-03 the repository was checked for answers to the open questions of this shape - the specification, `plans/mvp/`, `docs/standards/` and the shapes of the sibling initiatives. None of them settles any of the questions.
 
 ## Smallest meaningful scope
 
@@ -45,6 +47,7 @@ The decision has to make these requirements of `plans/mvp/MVP_PRD.md` achievable
 
 - Without an email address there is no password recovery: a forgotten password means a lost account. Is that acceptable for the MVP? It follows from the specification, but nobody has said it out loud yet (question 4).
 - Is the moderator role only a technical flag? No: it decides who sees hidden and flagged content, which is a visibility rule tested in both directions (question 3).
+- Can one person vote twice on the same fact, once without an account and once logged in? By the letter of `docs/product/specification.md` M4 yes: "per account for logged-in users, per hashed identifier for others" makes them two separate voters, so the same person can add 0.5 and then 1. This is a rule of the specification and of `plans/mvp/MVP_PRD.md` FR-13, not of this initiative; it is recorded here to be raised with the user, not decided here.
 
 ## Domain rules or explicit TODO
 
@@ -55,6 +58,7 @@ The decision has to make these requirements of `plans/mvp/MVP_PRD.md` achievable
 
 - The password is kept only as a hash; the pseudonym is personal data stated in the privacy information (`plans/mvp/MVP_PRD.md` FR-20).
 - A session secret or signing key is a secret under `docs/standards/standard_config.md`.
+- The pseudonym points to a specific person, so it goes into a log only masked or replaced by an internal technical identifier (`docs/standards/standard_logging.md`, the rule on identifiers of a person in log entries); a password or a session value never goes into a log in any form (the same standard, the rule on secrets).
 
 ## Open questions
 

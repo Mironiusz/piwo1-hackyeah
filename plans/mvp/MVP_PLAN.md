@@ -26,6 +26,8 @@ D-1. The backend is Python 3.13 with FastAPI, on PostgreSQL with PostGIS. The Py
 
 D-2. Every remaining technical direction of this plan is decided in its own initiative by the team role responsible for it, not in this plan. Decided by the user on 2026-10-03 in phase B; the initiatives and their owners are listed under Open questions, and the conversation is recorded verbatim in their seeds. The assignment of initiatives to the five team roles named by the user - frontend, db, import, external API, backend - was made by the agent at the user's request.
 
+D-3. Address search, settling the former Q-5. The search is answered by the public Nominatim instance, called only by the server, with the rules, parameters and tests of `plans/geocoding/GEOCODING_PLAN.md` D-1 - D-16. Constraints for the rest of this plan: the search is the explicit exception of a read from an external system during request handling (D-2 there), its text travels only in the body of a POST request (D-3 there), the backend runs as exactly one process (D-15 there), and the work package of the search includes the tests of D-16 there. Decided by the user with the external API person on 2026-10-03 in `plans/geocoding/`.
+
 ## Scope of changes
 
 ## Rollout order
@@ -43,7 +45,6 @@ D-2. Every remaining technical direction of this plan is decided in its own init
 - Q-2. Source of the OpenStreetMap data and its refresh - `plans/osm_data_source/`, owner: import, consulted: db.
 - Q-3. Frontend technology and the standards for frontend code - `plans/frontend_stack/`, owner: frontend, consulted: external API.
 - Q-4. Local database environment with PostGIS - `plans/local_database/`, owner: db.
-- Q-5. Address search - `plans/geocoding/`, owner: external API, consulted: import.
 - Q-6. Account session mechanism - `plans/account_sessions/`, owner: backend.
 - Q-7. Where the demo runs, and the target environment entry of `docs/standards/decision_registry.md` - `plans/demo_environment/`, owner: db, consulted: backend.
 - Q-8. Mapping of OpenStreetMap tags to the closed list of barriers and amenities, with thresholds - `plans/osm_barrier_mapping/`, owner of the proposal: import, approved as a product rule by the owner of the specification.
@@ -54,3 +55,4 @@ D-2. Every remaining technical direction of this plan is decided in its own init
 
 - `plans/mvp/MVP_PRD.md`, the contract this plan implements.
 - `plans/mvp/MVP_SHAPE.md`, the domain rules and scenarios behind the PRD.
+- `plans/geocoding/GEOCODING_PLAN.md`, the decision behind D-3.

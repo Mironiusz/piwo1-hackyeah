@@ -1,0 +1,8 @@
+# Cross-cutting decisions
+
+## 2026-10-03 - Personal data in requests to outside services (plans/geocoding)
+
+- What changed: no code yet. `plans/geocoding/GEOCODING_PLAN.md` D-3 and D-12 set how the address search keeps the searched text out of every log, and `plans/mvp/MVP_PLAN.md` D-3 carries them into the MVP.
+- Why: the text a person searches for, like the current location, can reveal where they go and, for a hospital, information about health (`docs/product/specification.md`, M2); the shape of `plans/geocoding/` decided that it is never logged.
+- Reusable pattern: a value that is personal data - the search text, the current location in a route request - travels from the browser to the server only in the body of a POST request, never in a URL, because the access log of the HTTP server and of the hosting records the URL. On the outgoing call to an outside service, the request logging of the HTTP client is switched off or kept above INFO, because httpx logs every request with its URL at INFO and INFO is the default log level of the project. The integration uses no client helper that puts the URL into an exception message, such as `raise_for_status` of httpx, and its own exceptions carry only the cause and the status code. A unit test captures the log at the DEBUG level for every outcome of the call and asserts that the personal value appears in no record, formatted tracebacks included.
+- Risk / notes: the same trap applies to `plans/routing_engine/` if routing calls an outside service with the coordinates of the current location in a URL; that initiative has not decided it yet.
