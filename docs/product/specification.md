@@ -1,12 +1,12 @@
 # Product specification
 
-Document state: 2026-10-03, version 3 - the OpenStreetMap tag rules with their thresholds and the contradiction between OpenStreetMap and a user report, decided in `plans/osm_barrier_mapping/`, and the fate of OpenStreetMap facts across fresh copies and the refresh of the copy, decided in `plans/osm_data_source/`
+Document state: 2026-10-03, version 4 - account rules, session behavior and cross-mode vote deduplication added alongside the OpenStreetMap tag rules, contradiction handling and fresh-copy behavior
 
 ## Why this document exists
 
 This is the source of truth for the product, named in `CLAUDE.md`, section What we are building: what the product does, for whom, and what is in the prototype built at HackYeah 2026. In case of a discrepancy with anything else in the repository, this document prevails. It has to satisfy the external constraints summarized in `docs/hackathon/challenge_requirements.md`; a conflict with them is raised with the user, never resolved silently.
 
-Version 1 settled the target group and the scope of the MVP, split into mandatory and optional features. Version 2 adds the rules of these features, decided in the shape interview of the initiative `plans/mvp/`. Version 3 adds which OpenStreetMap tags count as which barrier or amenity, with their thresholds, and when OpenStreetMap contradicts a user report, decided in `plans/osm_barrier_mapping/`, and the fate of OpenStreetMap facts across fresh copies and the refresh of the copy, decided in `plans/osm_data_source/`. This document does not settle the technology stack or any technical solution - those are chosen in phase B of `plan-prd`. Product behavior that this document does not describe is still undecided, and every question about it goes to the user.
+Version 1 settled the target group and the scope of the MVP, split into mandatory and optional features. Version 2 adds the rules of these features, decided in the shape interview of the initiative `plans/mvp/`. Version 3 adds the OpenStreetMap tag rules, their thresholds, contradiction handling and fresh-copy behavior, decided in `plans/osm_barrier_mapping/` and `plans/osm_data_source/`. Version 4 adds account rules, session behavior and cross-mode vote deduplication, decided in the shape interview of `plans/account_sessions/`. This document does not settle the technology stack or any technical solution - those are chosen in phase B of `plan-prd`. Product behavior that this document does not describe is still undecided, and every question about it goes to the user.
 
 ## Target group
 
@@ -99,7 +99,7 @@ Every barrier and amenity, facts from OpenStreetMap included, can be confirmed b
 - When a fresh copy of OpenStreetMap data (M6) no longer holds an OpenStreetMap fact and the sum of its confirmations is greater than the sum of its denials, the fact becomes a user fact: it keeps all its votes, confirmations and denials alike, shows the source user report with the date of its last confirmation, and from then on its status follows the rules of a user fact. Otherwise - no votes, only denials, or as many confirmations as denials by weight - it becomes outdated with the reason that it was removed in OpenStreetMap, disappears from the map and the routes, and its votes stay in its history.
 - When a later copy holds a fact of the same type on the same OpenStreetMap element again, it is the same fact again: a converted user fact or an outdated OpenStreetMap fact becomes an OpenStreetMap fact once more, with the source OpenStreetMap, the date of its last OpenStreetMap edit and all its votes. The same element means the same OpenStreetMap identifier; this is a match by identity, never by distance.
 - An OpenStreetMap fact that appears in a fresh copy where a user fact of the same type already lies is a separate fact, and the two are not merged (M3). Whether a fresh copy contradicts a converted user fact follows the rule of M2.
-- One person has one vote per fact: per account for logged-in users, per hashed identifier for others (M9).
+- Every vote has the same 30-day hash of the IP address and browser characteristics, including account and anonymous votes. While the hash exists, a second vote with that hash on the same fact is rejected regardless of authentication state; per-account uniqueness also applies. After the hash expires, a later anonymous vote with the same hash may be accepted (M9).
 - A status does not change with time alone. The date of the last confirmation is visible and the user judges it.
 
 Contradicting facts are also the case of contradictory data the Kraków demo has to show.
@@ -166,9 +166,13 @@ After a route is planned, the app shows a text list of the barriers on it, in tw
 
 ### M9. Accounts and anonymous reports
 
-A light account: a pseudonym and a password, without an email address and without any question about a disability. Reports, confirmations and denials can also be made without an account, with the lower weight of M4.
+A light account: a pseudonym and a password, without an email address and without any question about a disability. Pseudonyms are unique without regard to letter case. Passwords have a minimum length of 5 characters, accept printable ASCII characters, spaces and Unicode, allow a maximum length of at least 64 characters, and have no character-composition or periodic-change rules. Common or breached passwords are not rejected. There is no password recovery; a forgotten password can make the account permanently inaccessible. These password rules are based on [NIST SP 800-63B-4](https://pages.nist.gov/800-63-4/sp800-63b.html), except for the user-chosen 5-character minimum and omission of the common or breached password blocklist.
 
-A vote without an account stores a one-way hash of the IP address combined with browser characteristics, never the raw values. The hash serves only to allow one vote per fact, and it is deleted after 30 days. The combination is used instead of the IP address alone, because many people share one public address.
+After login, a person remains logged in until 24 hours after their last activity. Every request in the active session, including a read-only request, renews this period. The session remains active when the browser is closed and reopened.
+
+Reports, confirmations and denials can also be made without an account, with the lower weight of M4.
+
+Every vote, including one made through an account, stores a one-way hash of the IP address combined with browser characteristics, never the raw values. While the hash exists, it rejects a second vote on the same fact across account and anonymous contributions. It is deleted after 30 days. After it expires, a later anonymous vote with the same hash may be accepted; per-account uniqueness still applies. Different hashes are treated as different identifiers, so this does not deduplicate one person across different devices or networks. Matching hashes are deduplicated even when they belong to different people who share a browser and network. The combination is used instead of the IP address alone, because many people share one public address.
 
 Other users never see who made a report, a confirmation or a geozone - neither a pseudonym nor whether the author was logged in. The weights behind a status are known only to the system.
 
@@ -185,7 +189,7 @@ Deleting an account removes the account, the pseudonym and the points. Reports a
 
 ### M11. Flagging and moderation
 
-Anyone can flag a report, a geozone or a photo. A moderator - a member of the team whose role is assigned by hand - sees the flagged content in a simple view and can hide it; hidden content disappears for everyone.
+Anyone can flag a report, a geozone or a photo. A moderator - a member of the team whose role is assigned by hand - sees the flagged content in a simple view and can hide it; hidden content disappears for everyone. Removing the moderator role revokes access on the account's next request, even if its session remains active.
 
 ## Optional features
 
@@ -225,7 +229,7 @@ Voice output or voice reporting, for example reporting a barrier without using t
 
 ## Personal data
 
-- Kept: the pseudonym and the password of an account; the hash of a vote without an account, for 30 days; photos (O2), without their metadata.
+- Kept: the pseudonym and the password of an account; the hash of every vote, including account votes, for 30 days; photos (O2), without their metadata.
 - Not kept: the preference profile (only on the device), the current location (only inside a route request), an email address, any information about a disability.
 - Not shown to other users: anything about the author of a report, a confirmation or a geozone.
 
@@ -248,7 +252,7 @@ Whether the project is submitted to the Huawei challenge, and in what form, is a
 
 ## Open questions
 
-None at version 3. Product behavior not described here goes to the user.
+None at version 4. Product behavior not described here goes to the user.
 
 ## Decision provenance
 
@@ -256,4 +260,5 @@ All decisions were made by the user on 2026-10-03, in a conversation with the ag
 
 - Version 1: the user decided the split into mandatory and optional features, the target group, the scope of geozones (simple geozones mandatory, corrections optional), light accounts with anonymous reports, and points with the ranking as an optional feature. The descriptions of the features, the initial list of barriers and amenities, the grey style for segments without data, the order of the optional features and the out-of-scope list were proposed by the agent and accepted by the user without separate discussion.
 - Version 2: every rule added in this version was decided by the user in the shape interview recorded in `plans/mvp/MVP_SHAPE.md`, which also records the scenarios each rule was decided on. The contents of the presets and the role of amenities in the profile were decided in phase A of the PRD of the same initiative.
-- Version 3: the rules of reading OpenStreetMap tags (M6, M7, M8) and of the contradiction between OpenStreetMap and a user report (M2, M4) were decided by the user in the shape interview, at the PRD gate and in phase B of `plans/osm_barrier_mapping/`, and the rules of OpenStreetMap copies and of OpenStreetMap facts across fresh copies (M4, M6) in the shape interview, at the PRD gate and in phase B of `plans/osm_data_source/`; those documents record the scenarios each rule was decided on. The tag values and thresholds of M6 were proposed by the agent from common OpenStreetMap tagging practice and the OpenStreetMap wiki and approved by the user on 2026-10-03 as the values the import runs on; the import person of the team confirms or changes them before the demo is recorded, and a change is a new version. The rules of OpenStreetMap facts across fresh copies were given by the user answering for the import person, whose ruling is still to be confirmed. The user approved this version on 2026-10-03.
+- Version 3: the rules of reading OpenStreetMap tags (M6, M7, M8), contradiction handling between OpenStreetMap and user reports (M2, M4), and OpenStreetMap copy behavior (M4, M6) were decided by the user in `plans/osm_barrier_mapping/` and `plans/osm_data_source/`; those documents record the scenarios each rule was decided on. The tag values and thresholds of M6 were proposed by the agent from common OpenStreetMap tagging practice and the OpenStreetMap wiki and approved by the user on 2026-10-03 as the values the import runs on; the import person of the team confirms or changes them before the demo is recorded, and a change is a new version. The rules of OpenStreetMap facts across fresh copies were given by the user answering for the import person, whose ruling is still to be confirmed. The user approved this version on 2026-10-03.
+- Version 4: the user decided account creation rules, the rolling 24-hour session, immediate moderator-role revocation and use of the same 30-day hash for account and anonymous vote deduplication in the shape interview recorded in `plans/account_sessions/ACCOUNT_SESSIONS_SHAPE.md`. During merge-conflict resolution on 2026-10-03, the user confirmed that this shared hash applies to logged-in and anonymous votes.
