@@ -23,7 +23,7 @@ The MVP (`plans/mvp/`) lets a user give the start and the destination of a route
 - The usage policy of the public Nominatim instance, read on 2026-10-03 at `operations.osmfoundation.org/policies/nominatim/`: an absolute limit of 1 request per second, search as you type (autocomplete) forbidden also when built on the client side, the application identified by its own User-Agent or HTTP Referer, results cached by the client, attribution displayed.
 - The privacy policy of the OpenStreetMap Foundation, read on 2026-10-03 at `osmfoundation.org/wiki/Privacy_Policy`: its services collect the IP address and the pages accessed; it gives no retention period specific to Nominatim and says some legacy practices are not yet documented.
 - `plans_finished/demo_environment/` decided on 2026-10-03 that the demo runs on a hosted service reachable at a public link, so the jury and anyone who gets the link can use the search, not only the team.
-- `plans/api_contract/`, Current state, waits for this initiative to know whether the address search goes through the backend.
+- `plans_finished/api_contract/`, Current state, waits for this initiative to know whether the address search goes through the backend.
 - `docs/standards/standard_architecture.md`, section Calls to external systems: a read from an external system on the request path is allowed only as an explicit exception with a timeout, without retries and with a cache that does not remember a failure.
 - The source of the OpenStreetMap data is undecided (`plans_finished/osm_data_source/`); OpenStreetMap carries address tags. Since the search may go to an outside service through the server (Domain rules), this dependency matters only if phase B of `plan-prd` picks an own search instance built from the same data.
 - The Kraków submission closes at 11:00 on 4 October 2026 (`docs/hackathon/challenge_requirements.md`, Shared facts).
@@ -35,7 +35,7 @@ A decision on how the MVP searches addresses and places, taken by the right peop
 ## Out of scope
 
 - Building the search. The code is written as a work package of `plans/mvp/`, together with the rest of the backend, because the backend architecture is decided there (`plans/mvp/MVP_PLAN.md` Q-10) and building the search here first would mean guessing it. Decided by the user with the external API person on 2026-10-03.
-- The other technical decisions delegated in the same conversation have their own initiatives: `plans/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans_finished/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/local_database/`, `plans/account_sessions/`. The shape of the search request and response is part of `plans/api_contract/`; the map tiles are part of `plans_finished/frontend_stack/`.
+- The other technical decisions delegated in the same conversation have their own initiatives: `plans_finished/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans_finished/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/local_database/`, `plans_finished/account_sessions/`. The shape of the search request and response is part of `plans_finished/api_contract/`; the map tiles are part of `plans_finished/frontend_stack/`.
 
 ## Functional requirements
 
@@ -80,7 +80,7 @@ The decision has to make these requirements of `plans/mvp/MVP_PRD.md` achievable
 - "Never written to a log" covers every log in the path of the request, not only the log entries of the application: an access log of the HTTP server or of the hosting records the client IP address and the full URL, so the text must not travel in a part of the request that such a log records. How this is achieved is a question for phase B of `plan-prd`.
 - Nothing about the search is kept that is tied to a person, so the privacy information (`plans/mvp/MVP_PRD.md` FR-20) gets no new kept item. Whether it also names the address search among the data that is not kept is left to `plans/mvp/`, which owns FR-20.
 - Because the search goes through the server, an outside service with a per-client limit, such as the public Nominatim instance with 1 request per second, sees all users of the public demo link as one client.
-- The search going through the server answers the dependency recorded in `plans/api_contract/`, Current state: the address search is part of the contract between the frontend and the backend.
+- The search going through the server answers the dependency recorded in `plans_finished/api_contract/`, Current state: the address search is part of the contract between the frontend and the backend.
 - Query volume, an estimate by the agent: the public link is used by the team and the jury, at most a few dozen people, each making a few searches over several minutes, which stays below the 60 searches per minute that a limit of 1 request per second allows, and cache hits lower it further. A burst above the limit ends in the plain message of scenario 5, never in a wrong point.
 - Two risks for phase B of `plan-prd`: a hosting service often sends outgoing requests from an IP address shared with other customers, which the public Nominatim instance may already block; and the public instance is a single outside dependency of the live demo.
 

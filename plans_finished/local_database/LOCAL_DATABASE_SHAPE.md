@@ -40,7 +40,7 @@ Every member of the team who runs critical tests has their own local database, n
 
 ## Out of scope
 
-- The other technical decisions delegated in the same conversation have their own initiatives: `plans/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans_finished/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/geocoding/`, `plans/account_sessions/`. The database of the demo environment is `plans_finished/demo_environment/`.
+- The other technical decisions delegated in the same conversation have their own initiatives: `plans_finished/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans_finished/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/geocoding/`, `plans_finished/account_sessions/`. The database of the demo environment is `plans_finished/demo_environment/`.
 - The setup instructions in the README, the script creating the database and the accounts, the entries of the environment templates and the Alembic configuration: a work package of `plans/mvp/`, cut by the user on 2026-10-03 (question 1).
 - A database shared by the team: ruled out by `docs/standards/standard_tests.md` (question 2).
 

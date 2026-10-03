@@ -76,7 +76,7 @@ Decided by the user on 2026-10-03 in the implementation phase. The choice betwee
 ## Risks
 
 - The deadline of 22:00 on 3 October 2026 for the choice holds only if the routing engine is decided earlier that evening, or the hosting is chosen in a form that carries every variant it still considers; the frontend is already decided (F-8). The routing engine was decided on 2026-10-03 in `plans_finished/routing_engine/` (`plans/mvp/MVP_PLAN.md` D-9).
-- This initiative and other sessions work on one tree at the same time: on 2026-10-03 the shapes of `plans/account_sessions/` and `plans_finished/geocoding/` were changed by other sessions. The files this plan changes outside `plans_finished/demo_environment/` - `CLAUDE.md`, `AGENTS.md`, `README.md`, `AI_WORKFLOW.md`, `docs/standards/decision_registry.md`, `plans/mvp/MVP_PLAN.md`, `plans/mvp/MVP_PRD.md` - are shared, so each is read again right before it is edited.
+- This initiative and other sessions work on one tree at the same time: on 2026-10-03 the shapes of `plans_finished/account_sessions/` and `plans_finished/geocoding/` were changed by other sessions. The files this plan changes outside `plans_finished/demo_environment/` - `CLAUDE.md`, `AGENTS.md`, `README.md`, `AI_WORKFLOW.md`, `docs/standards/decision_registry.md`, `plans/mvp/MVP_PLAN.md`, `plans/mvp/MVP_PRD.md` - are shared, so each is read again right before it is edited.
 
 ## Open questions
 
