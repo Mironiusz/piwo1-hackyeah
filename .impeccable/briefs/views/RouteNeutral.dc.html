@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Wynik trasy, potrzeby bez barier</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow+Semi+Condensed:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="ph" style="width: 390px; height: 1280px">
+<header class="top"><span class="name">[Nazwa produktu]</span><span class="sp"></span><button type="button" class="icon-btn" aria-label="Menu"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button></header>
+<section class="rh" aria-label="Podsumowanie trasy">
+<div class="toprow"><button type="button" class="pill"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"></path><circle cx="15" cy="7" r="2"></circle><circle cx="9" cy="17" r="2"></circle></svg>Potrzeby: brak barier<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button><button type="button" class="edit">Zmień trasę</button></div>
+<div class="diagram">
+<div class="bar" role="img" aria-label="Schemat trasy bez oceny odcinków">
+<i class="b-neutral" style="width: 100%"></i>
+<span class="stop" style="left: 0"></span>
+<span class="stop" style="left: 100%"></span>
+</div>
+<div class="places"><span>Tauron Arena</span><span>Ogród Doświadczeń</span></div>
+</div>
+<div class="tiles" style="grid-template-columns: 2.3fr 1fr">
+<div class="tile nod"><b>bez oceny</b><span>potrzeby nie mają żadnej bariery</span></div>
+<div class="tile"><b>1,3 km</b><span>cała trasa</span></div>
+</div>
+</section>
+<section class="map" style="height: 262px" aria-label="Mapa trasy">
+<svg class="base" viewBox="0 0 390 250" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Mapa trasy narysowanej bez oceny odcinków">
+<rect class="g" width="390" height="250"></rect>
+<path class="park" d="M228 0h170v118c-48 26-104 20-140-8s-46-70-30-110z"></path>
+<g class="blk"><rect x="18" y="16" width="86" height="58" rx="4"></rect><rect x="118" y="16" width="86" height="58" rx="4"></rect><rect x="18" y="88" width="86" height="52" rx="4"></rect><rect x="118" y="88" width="62" height="52" rx="4"></rect><rect x="210" y="170" width="74" height="62" rx="4"></rect><rect x="298" y="150" width="78" height="82" rx="4"></rect></g>
+<path class="st" d="M0 190h200M150 250V150M150 190 L360 60M0 82h210"></path>
+<text class="lbl" x="14" y="181">ul. Stanisława Lema</text><text class="lbl" x="236" y="168" transform="rotate(-31 236 168)">al. Pokoju</text><text class="lbl" x="296" y="34">Park Lotników</text>
+<path class="s-neutral" fill="none" stroke-linejoin="round" d="M34 224 50 207 95 190h55l40-25 60-37 62-24 18-20 22-34 6-14"></path>
+<path class="o-neutral" d="M34 224 50 207 95 190h55l40-25 60-37 62-24 18-20 22-34 6-14"></path>
+<g class="pin" transform="translate(34 224)"><circle r="10"></circle><text y="4">A</text></g>
+<g class="pin" transform="translate(358 34)"><circle r="10"></circle><text y="4">B</text></g>
+</svg>
+<span class="attr">© OpenStreetMap contributors</span>
+</section>
+<div class="sheet fill">
+<div class="panel">
+<p class="note strong"><b>Nie oceniamy odcinków tej trasy</b>, bo Twoje potrzeby nie zawierają żadnej bariery. To nie znaczy, że trasa jest wolna od barier: znane bariery są na liście niżej.</p>
+<div class="actions one" style="margin-top: 10px"><button type="button" class="btn primary">Ustaw potrzeby</button></div>
+</div>
+<ul class="legend" aria-label="Legenda" style="grid-template-columns: 1fr">
+<li><svg viewBox="0 0 36 12" aria-hidden="true"><line x1="4" y1="6" x2="32" y2="6" class="s-neutral"></line><line x1="4" y1="6" x2="32" y2="6" class="o-neutral"></line></svg>trasa bez oceny odcinków</li>
+</ul>
+<p class="osmdate">Dane mapy z dnia 2.10.2026. <a href="#o-danych">O danych</a></p>
+<section class="list">
+<h2>Bariery na trasie <span class="n">3</span></h2>
+<ul>
+<li class="row"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18h9V10h9"></path></svg><span class="t">Wysoki krawężnik</span><span class="d">0,4 km</span><span class="pl">ul. Stanisława Lema</span><span class="meta"><span class="status ok"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>potwierdzone</span><span class="src">zgłoszenie, 3.10.2026</span><span class="tag">dane przykładowe</span></span></li>
+<li class="row"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19 21 8v11z"></path></svg><span class="t">Strome nachylenie</span><span class="d">0,5 km</span><span class="pl">al. Pokoju</span><span class="meta"><span class="status unv"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"></circle><path d="M12 8v5M12 16.5v.01"></path></svg>niezweryfikowane</span><span class="src">dane mapy, 14.06.2025</span></span></li>
+<li class="row"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4v-4h4v-4h4V8h4"></path></svg><span class="t">Schody, 4 stopnie</span><span class="d">1,2 km</span><span class="pl">al. Pokoju</span><span class="meta"><span class="status unv"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"></circle><path d="M12 8v5M12 16.5v.01"></path></svg>niezweryfikowane</span><span class="src">zgłoszenie, 2.10.2026</span><span class="tag">dane przykładowe</span></span></li>
+</ul>
+<h2>Udogodnienia na trasie</h2>
+<p class="note">Twoje potrzeby nie zawierają żadnego udogodnienia, więc nie mamy czego tu pokazać.</p>
+</section>
+</div>
+<nav class="tabbar" aria-label="Główna nawigacja">
+<button type="button" class="tab on"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Mapa</button>
+<button type="button" class="tab cta"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4M6 5h11l-2 4 2 4H6"></path></svg>Zgłoś</button>
+<button type="button" class="tab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"></path><circle cx="15" cy="7" r="2"></circle><circle cx="9" cy="17" r="2"></circle></svg>Potrzeby</button>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1280}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

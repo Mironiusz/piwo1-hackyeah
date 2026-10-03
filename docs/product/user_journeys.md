@@ -79,7 +79,7 @@ For: anyone; it is the place where a contributor finds facts without planning a 
 
 Starts: every opening after the first, and the way back from any other place.
 
-1. The app shows the map of Kraków with the facts of the profile: its barriers to avoid, its amenities needed and the geozones of its barrier types. The OpenStreetMap attribution is visible. Hidden and outdated facts are not shown. The same facts are available as a list, which is the text form of the map.
+1. The app shows the map of Kraków with the facts of the profile: its barriers to avoid, its amenities needed and the geozones of its barrier types. The OpenStreetMap attribution is visible. Hidden facts are not shown. An outdated fact is shown with its status, unless it is outdated because it was removed in OpenStreetMap. The same facts are available as a list, which is the text form of the map.
 2. The person moves the map, with touch or with the keyboard.
 3. The person uses the switch to see every barrier and amenity, and back to the facts of the profile.
 4. The person opens a fact and gets the fact detail (J-8).
@@ -135,7 +135,7 @@ What the result carries:
 - The two straight stretches between the chosen points and the pedestrian network, at the start and at the end, always in the state no data.
 - Markers for the barriers of the profile and for the amenities of the profile within 50 m of the route.
 - The list in three groups - barriers from the profile, additional barriers, amenities on the route - where every item has its type, its place as the street name and the distance from the start, its source, its date and its status.
-- For a segment with partial data or no data, the missing attributes by name: kerbs, surface, incline, width, and on the two stretches at the ends the steps, for a profile that avoids stairs.
+- One plain note when some segments have partial data or no data: some stretches of the route have no data, so barriers on them are not known.
 - The sample data mark on every sample report and geozone, on the map and on the list.
 - The OpenStreetMap attribution and the date of the OpenStreetMap copy in use.
 - A summary before anything else: how many barriers of the profile are on the route, how much of the route has no data, and how long the route is.
@@ -169,7 +169,7 @@ Starts: the one entry to reporting, on the map of facts and on the route result.
 1. The person chooses what they report: a barrier, an amenity or an area. An area continues in J-7.
 2. The person sets the point on the map. At the person's request the app moves the map to the current location of the device; nothing is sent, and the point is only the one the person sets.
 3. The person chooses the type from the closed list: stairs, high kerb, poor surface, steep incline or narrow passage for a barrier; ramp, elevator, lowered kerb, accessible toilet, rest place or handrail at stairs for an amenity. A description is optional, and so is the number of steps for stairs.
-4. The app shows the existing facts of the same type within about 15 m, facts from OpenStreetMap included, and asks whether it is the same one. Hidden and outdated facts are not shown.
+4. The app shows the existing facts of the same type within about 15 m, facts from OpenStreetMap included, and asks whether it is the same one. Hidden facts are not shown; an outdated fact is shown with its status, and answering that it is the same one confirms it again.
 5. The person answers no, or there was nothing to show. The app shows a summary: what is reported, where, and the optional fields.
 6. The person approves the summary. The app saves the report: a user report, unverified, dated today, carrying the confirmation of its author. Nobody can edit it afterwards, the author included.
 
@@ -222,7 +222,7 @@ Branches:
 
 - The person voted on this fact less than a day ago. The controls are inactive from the start, with the same explanation. A vote that reaches the server earlier than a day after the previous one is refused, and the app says so; this is an ordinary answer, not an error.
 - A change of mind after a day. The new vote replaces the earlier one; only the latest vote of a person counts, and a vote cannot be withdrawn without casting another one.
-- The fact becomes outdated. It disappears from the maps and the lists.
+- The fact becomes outdated. It stays on the map of facts with that status, so that a person can confirm it again, and it no longer counts for a route or for its list. A fact outdated because it was removed in OpenStreetMap disappears.
 - The fact was hidden by a moderator in the meantime. The vote is refused, and the fact is gone from the screen.
 - A fact from OpenStreetMap. It is voted on in the same way and has the same statuses; a confirmation updates its date of last confirmation, and its shown date stays the date of its last OpenStreetMap edit.
 - A geozone. It is voted on in the same way.
@@ -335,7 +335,7 @@ For: a person who does not use a pointer or does not see the screen. This is not
 
 1. Setting the needs (J-1). The presets and every item are reached with the keyboard and announced with their name and whether they are set.
 2. Planning the route (J-4). The search field, its submission, the list of matches and the picking work with the keyboard; the number of matches is announced. A point on the map is never the only way to give a place.
-3. Reading the result (J-5). The summary and the list carry everything the map shows: the state of every segment in words, the missing attributes, every fact with its source, date and status. The map is one stop in the order of focus and can be left with the keyboard.
+3. Reading the result (J-5). The summary and the list carry everything the map shows: the state of every stretch in words, in the description of the summary line, and every fact with its source, date and status. The map is one stop in the order of focus and can be left with the keyboard.
 4. Reporting (J-6). The point is set by moving the map under a fixed mark with the arrow keys; the type, the optional fields, the existing facts and the summary are reached and announced in order.
 5. Voting (J-8). The two answers are reached with the keyboard, the status after the vote is announced, and inactive vote controls say why they are inactive.
 
@@ -351,7 +351,7 @@ The brief asks the demo to state the needs of the chosen group, check a route, s
 2. A route in the district of the Tauron Arena: J-4 and J-5, with the sample reports and geozones marked as sample data.
 3. Source, date and status of the facts on the route: J-5 and the fact detail of J-8.
 4. Contradictory data: the branch of J-5 where a report contradicts OpenStreetMap, then one more confirmation in J-8, after which the route is planned again and avoids the place.
-5. Incomplete data: the segments in the states partial data and no data, with their missing attributes.
+5. Incomplete data: the segments in the states partial data and no data, the distance without data in the summary and the note of the list that some stretches have no data.
 6. An unavailable source: the branch of J-4 where routing does not answer.
 7. The accessibility check: J-14.
 
@@ -365,13 +365,13 @@ Decided by the user, the frontend person of the team, on 2026-10-03, question by
 2. A profile without any barrier is allowed; its route has no segment states and is drawn in a neutral style (M1, M7, M8).
 3. A change of the profile plans a shown route again (M1, M2).
 4. A point or a location outside Kraków is refused with a plain message; a refused location leaves the address and the map (M2).
-5. The place of an item is the street name from OpenStreetMap and the distance from the start (M8).
-6. An outdated fact is shown nowhere (M4).
+5. The place of an item is the street name from OpenStreetMap and the distance from the start (M8). The programming interface has no field for the street name; on 2026-10-03 the user deferred that until the backend person tests the interface, and the sample data of the demo carries the name.
+6. An outdated fact stays on the map with its status and can be confirmed again; only a fact removed in OpenStreetMap disappears (M4). The user first chose that it is shown nowhere, and on 2026-10-03 took over the rule the team had decided in `plans_finished/api_contract/` on the branch `dev`.
 7. During reporting the location only moves the map, in the browser (M3).
 8. A report far from every way is saved and shown, and the summary does not mention it (M3).
 9. A geozone can carry an optional description; it has no check for existing geozones (M5).
-10. The app shows a person their own vote, and the vote controls are inactive for a day after it (M4).
-11. The app says nothing about the weight of an account; a pseudonym has 3 to 30 characters of letters, digits, the underscore and the hyphen; deleting an account takes one confirmation, without the password (M9).
+10. The app shows a person their own vote, and the vote controls are inactive for a day after it (M4). The vote is remembered on the device, decided on 2026-10-03, because the programming interface returns no vote of the person.
+11. The app says nothing about the weight of an account; a pseudonym has 3 to 30 characters of letters, digits, the underscore and the hyphen; deleting an account takes one confirmation, without the password (M9). On 2026-10-03 the user kept the rule of the characters against the wider one of `docs/product/api_contract.md` on the branch `dev`, and asks the owners of that contract to change it.
 12. A flag has no reason and takes one confirmation (M11).
 13. The map of facts has a switch between the facts of the profile and every fact (M4).
 14. The first opening shows the needs screen, which can be skipped (M1).
@@ -379,21 +379,21 @@ Decided by the user, the frontend person of the team, on 2026-10-03, question by
 16. The user approved these rules alone and had them written into the specification as version 6.
 17. The journeys are written directly into this file, without the chain `plan-shape`.
 18. A vote or a report of the person, saved while a route is shown, plans the route again (M2).
+19. The list names no missing attributes: one plain note says that some stretches of the route have no data (M8). Decided with the mocks of the views.
+20. The interface calls OpenStreetMap by a plain name, map data; the name itself stands only in the attribution on the map and on the page about the data (M10). Decided with the mocks of the views.
 
 Proposed by the agent and accepted with the journeys, not asked one by one:
 
 - With a profile without any item the map of facts shows every fact (M4).
-- Outdated facts are left out of the check for existing facts of a report (M3).
 - The facts of the map of facts are also available as a list (M4, from M10).
-- After an account is created the person is logged in, and a failed login does not say whether the pseudonym or the password was wrong. Neither is in the specification; both are for the contract of the programming interface to confirm.
+- After an account is created the person is logged in, and a failed login does not say whether the pseudonym or the password was wrong. Neither is in the specification; `docs/product/api_contract.md`, written on the branch `dev` on 2026-10-03, allows both: creating an account does not log in, so the app logs in right after it, and a failed login gives one answer for both causes.
 - The chosen language is remembered on the device, and a planned route is not kept after the app is closed. Neither is in the specification.
 
 ## What stays open
 
-Where the date of the OpenStreetMap copy stands and how a moderator reaches the moderator view were open when the journeys were written; both are settled in `docs/product/views.md`. Still open, and blocking neither document:
+Where the date of the OpenStreetMap copy stands and how a moderator reaches the moderator view were open when the journeys were written; both are settled in `docs/product/views.md`. The look of the views, open then as well, has mocks in `.impeccable/briefs/views/`. Still open, and blocking neither document:
 
-- the wording of the messages and of every label, in Polish and in English, and the Polish names of the terms of the specification,
-- the name of the product,
-- the look of every screen, the route result apart, whose direction is in `.impeccable/briefs/route-result.md`.
+- the wording of the messages and of every label, in Polish and in English, and the Polish names of the terms of the specification, proposed in `docs/product/interface_texts.md` and not approved yet,
+- the name of the product.
 
-Five rules of version 6 change work owned by other people and wait for their confirmation: the description of a geozone and the rules of a pseudonym (`plans/fact_schema/`), and the own vote, the street name of an item and outdated facts left out of every reading (`plans/api_contract/`).
+Two rules of version 6 still differ from `docs/product/api_contract.md`, written on the branch `dev` on 2026-10-03, and wait for its owners: the characters of a pseudonym, which the contract leaves open, and the street name of an item, for which the contract has no field and the stored data keeps no name of a way.

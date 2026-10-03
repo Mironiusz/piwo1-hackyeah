@@ -8,6 +8,8 @@ This document lists the views of the web frontend of the MVP: what each view is 
 
 It serves two readers. The work packages of `plans/mvp/` build the frontend from it, and the backend person reads its last sections as the input of the first consumer for the contract of the programming interface (`plans/api_contract/API_CONTRACT_PLAN.md`, Q-1).
 
+Where this document says OpenStreetMap, it names the source, not the text on the screen: the interface calls it map data, and the name itself stands only in the attribution on the map and on the page about the data.
+
 It does not describe the look of a view. The design direction is in `PRODUCT.md` and `.impeccable/briefs/`, and the look of a view is designed separately, in that direction. The names of the views and of their parts are working names in English; the texts of the interface, in Polish and in English, are not fixed here.
 
 ## Structure of the app
@@ -114,7 +116,7 @@ States:
 - The facts cannot be loaded. A plain message; the map stays.
 - The map cannot be drawn on the device. A plain message stands in place of the map, and the list carries the facts.
 
-Hidden and outdated facts are never shown.
+Hidden facts are never shown. An outdated fact is shown with its status and a muted marker, so that a person can confirm it again; a fact outdated because it was removed in OpenStreetMap is not shown.
 
 Needs: N-1, N-12.
 
@@ -151,7 +153,7 @@ Needs: N-2, N-3, N-4.
 
 For: J-5. The design direction of this view is in `.impeccable/briefs/route-result.md`.
 
-Shows above the map: a summary - the route as a line whose stretches carry the segment states, with the names of the start and the destination, and three numbers: the barriers of the profile on the route, the distance without data, and the length of the route. The entry to the needs and the action that changes the route stand next to it.
+Shows above the map: a summary - the route as a line whose stretches carry the segment states, with a text description of those stretches in order, which is the text form of the states, with the names of the start and the destination, and three numbers: the barriers of the profile on the route, the distance without data, and the length of the route. The entry to the needs and the action that changes the route stand next to it.
 
 Shows on the map:
 
@@ -165,7 +167,7 @@ Shows in the panel:
 - The statement of the route, when there is one: a proposed alternative with its reason, or that no route without barriers exists, or that the segments are not assessed.
 - The legend (V-9).
 - The list in three groups - barriers from the profile, additional barriers, amenities on the route. Every item has its type, its place as the street name and the distance from the start, its source, its date and its status.
-- For every segment with partial data or no data, its place on the route and its missing attributes by name: kerbs, surface, incline, width, and steps on the stretches at the two ends for a profile that avoids stairs.
+- One plain note when the route has a segment with partial data or no data: some stretches of the route have no data, so barriers on them are not known. The note names no missing attributes.
 - For a way OpenStreetMap marks as not accessible for wheelchairs, a sentence saying so.
 
 A person can: open an item or a marker (V-6); take the proposed alternative and go back to the first route; change the route (V-4, with the start and the destination kept); open the needs (V-2); start a report (V-7).
@@ -194,11 +196,11 @@ Shows:
 
 - The type; for stairs the number of steps when it is known; for a geozone its radius.
 - The place as the street name; opened from a route, also the distance from the start.
-- The source - OpenStreetMap or user report - and the date: for a fact from OpenStreetMap the day of its last edit there, for a user fact the day it was reported or last confirmed.
+- The source - map data or user report - and the date: for a fact from OpenStreetMap the day of its last edit there, for a user fact the day it was reported or last confirmed.
 - The status in a word and an icon: unverified, confirmed or disputed.
 - The sample data mark when it applies, and the description when there is one.
 - For a report that contradicts OpenStreetMap: that OpenStreetMap says otherwise here.
-- The person's own latest vote on this fact, when there is one.
+- The person's own latest vote on this fact, when there is one. The frontend remembers it on the device after the vote; the programming interface returns no vote of the person.
 - Two equal vote controls - still there, gone - and the flag action, which a fact from OpenStreetMap does not have.
 
 A person can: vote; flag; close the panel.
@@ -209,7 +211,8 @@ States:
 - The person voted less than a day ago. The controls are inactive and say that the next vote is possible after a day.
 - The vote is being saved; the vote is saved, and the detail shows the status after it and the person's vote.
 - The vote is refused because a day has not passed. A plain message, not an error.
-- The fact is not available any more - hidden or outdated in the meantime. A plain message, and the panel closes.
+- The fact is not available any more - hidden in the meantime. A plain message, and the panel closes.
+- The fact is outdated. The panel shows that status and keeps the two votes, so that the fact can be confirmed again.
 - Flagging: one confirmation, without a reason, then a message that the content was passed to moderation.
 - The vote or the flag cannot be saved. A plain message; nothing changed.
 
@@ -370,6 +373,7 @@ Every message is plain, has its text in both dictionaries, and where it comes fr
 
 - A route cannot be planned right now.
 - No route without barriers exists.
+- Some stretches of this route have no data.
 - An alternative route avoids a named barrier with a named status.
 - The segments are not assessed, because the profile names no barrier.
 - The location cannot be read.
@@ -391,7 +395,7 @@ These are the needs of the first consumer, in words. The paths, the shapes and t
 
 Needs of every operation:
 
-- Everything from a closed list arrives as a code: the types, the sources, the statuses, the segment states, the missing attributes, the kinds of messages. The frontend translates codes, so a change of language asks for nothing again.
+- Everything from a closed list arrives as a code: the types, the sources, the statuses, the segment states, the kinds of messages. The frontend translates codes, so a change of language asks for nothing again.
 - Every date arrives as a calendar day in the Europe/Warsaw zone. The frontend converts no time.
 - The frontend applies no product rule. The segment states, the groups of the list, the status of a fact and whether a fact can be flagged arrive as decided by the server.
 - Nothing about the author of a report, a vote or a geozone, and no weight, arrives.
@@ -399,11 +403,11 @@ Needs of every operation:
 
 Operations:
 
-- N-1. The facts of an area of the map: barriers, amenities and geozones, narrowed to a set of types or not, without hidden and outdated ones. For each: the type, the point, for a geozone the radius, the street name, the source, the date, the status, the sample data mark.
+- N-1. The facts of an area of the map: barriers, amenities and geozones, narrowed to a set of types or not, without hidden ones and without those outdated because they were removed in OpenStreetMap. For each: the type, the point, for a geozone the radius, the street name, the source, the date, the status, the sample data mark.
 - N-2. Whether a point lies in Kraków, at the moment the point is set, for a point on the map and for the current location.
-- N-3. A route for a start, a destination and the preferences of the profile. The answer carries: the segments with their geometry, their state, their missing attributes, the marking of a way not accessible for wheelchairs and the two straight stretches at the ends; the three groups with their items, each with the distance from the start and the street name; at most one alternative with its reason; whether no route without barriers exists; whether the segments are assessed at all; the length of the route. Separate outcomes: routing does not answer; a point is outside Kraków.
+- N-3. A route for a start, a destination and the preferences of the profile. The answer carries: the segments with their geometry, their state, the marking of a way not accessible for wheelchairs and the two straight stretches at the ends; the three groups with their items, each with the distance from the start and the street name; at most one alternative with its reason; whether no route without barriers exists; whether the segments are assessed at all; the length of the route. Separate outcomes: routing does not answer; a point is outside Kraków.
 - N-4. The address search: the text in the body of the request; the answer is a list of at most ten matches with a label and a point, an empty list, the search unavailable, or the text refused.
-- N-5. One fact with everything the fact detail shows, the person's own latest vote on it and whether the person can vote now, and whether it can be flagged.
+- N-5. One fact with everything the fact detail shows and whether it can be flagged. The person's own latest vote and the moment the next vote is possible are kept on the device (decision 14).
 - N-6. The existing facts of a type near a point, for the check before a report is saved.
 - N-7. Saving a point report: the kind, the type, the point, the optional description, the optional number of steps.
 - N-8. A vote on a fact: confirm or deny. Outcomes: saved, with the status after it; refused because a day has not passed; the fact is not available.
@@ -414,6 +418,28 @@ Operations:
 - N-13. Moderation: the flagged content that is not hidden, the hidden content, hiding, restoring. Outcome for an account without the role: denied.
 
 The form of the contract. The frontend person asks for the contract as an OpenAPI description, generated by FastAPI from the backend code and kept as a file in the repository. The frontend generates its TypeScript types from that file, so a difference between the contract and the code shows up in the type check. This answers the first half of Q-1 of `plans/api_contract/API_CONTRACT_PLAN.md`; the review of the set of operations and of their shapes follows when the backend person has a draft.
+
+## The views read against the contract of the team
+
+On 2026-10-03 the contract was written on the branch `dev` as `docs/product/api_contract.md`, without the list above, and approved in place of the frontend person. The agent read it against the views on the same day. It is a document in prose, not an OpenAPI description; the frontend writes its types from it by hand until the backend code exists and FastAPI can generate the description of decision 6.
+
+The contract covers the views, with these differences:
+
+- The street name of a fact has no field, and the stored data keeps no name of a way. Deferred by the user until the backend person tests the programming interface (decision 13).
+- The own vote of a person has no field. A vote repeated within a day is refused with the moment from which the next vote is accepted, and the frontend keeps the vote on the device (decision 14).
+- A point outside Kraków has no outcome of its own. Proposed by the agent: the frontend checks a point against the bounds of the map of Kraków before it asks for a route, and gives the same message when the request is refused for its start or its destination.
+- A pseudonym may hold every character that is not a control character. The user asks for the narrower rule (decision 12).
+- A segment carries its missing attributes. The frontend does not show them (decision 8).
+- The contradiction of a report with OpenStreetMap is one mark on a fact of a route. It does not say what OpenStreetMap shows there, so the note of the fact detail is a general sentence, and a fact opened from the map of facts has no such note.
+
+The contract adds what the views did not name, and the build covers it:
+
+- The facts of an area are at most 1000; when the area holds more, the map of facts asks the person to zoom in.
+- Saving a report or a geozone carries a key that the frontend generates once, when the person approves the summary, and repeats with every attempt of the same save.
+- The session is a token that the frontend keeps in the storage of the browser and replaces with the renewed one of every answer; a route request, an address search, creating an account and logging in carry no token.
+- A request refused because the session expired logs the person out, with a message, and lets them repeat the action.
+- The address search always shows a list to pick from, also for one match.
+- Creating an account does not log in; the frontend logs in right after it.
 
 ## Decisions behind the views
 
@@ -426,19 +452,29 @@ Decided by the user, the frontend person of the team, on 2026-10-03, question by
 5. Moderation is an entry of the menu that only an account with the moderator role sees.
 6. The contract of the programming interface is asked for as an OpenAPI description generated by FastAPI.
 7. This document is the list of views; the look of each view is designed separately.
+8. The list of the route names no missing attributes: one plain note says that some stretches have no data. Decided with the mocks, because the Kraków brief asks only that incomplete data is marked and never shown as accessible.
+9. The texts of the interface do not use the name OpenStreetMap. The source is called map data, in the working Polish copy "dane mapy"; the name stands only in the attribution on the map and on the page about the data.
+10. The states that have no mock are not drawn as mocks. The build covers them from this document.
+11. An outdated fact stays on the map with its status and can be confirmed again; only a fact removed in OpenStreetMap disappears. The user took over the rule the team had decided in `plans_finished/api_contract/` on the branch `dev`, in place of the earlier choice that an outdated fact is shown nowhere.
+12. A pseudonym keeps its narrower rule - 3 to 30 characters of letters, digits, the underscore and the hyphen - and the user asks the owners of `docs/product/api_contract.md` to bring it into the contract, which accepts every character that is not a control character.
+13. Whether a list row names the street is deferred until the backend person tests the programming interface, which has no field for it. The sample data of the demo carries the street, and a row without a street name shows no place line.
+14. The own vote of a person is remembered on the device. On another device the person learns of it from the refusal of a vote repeated within a day.
+15. No frontend code is written before Q-11 of `plans/mvp/MVP_PLAN.md` is decided; until then the frontend person prepares everything that does not depend on it.
+16. The demo runs only on the programming interface of the service. The frontend shows no route and no fact from sample data of its own when the service is not ready; decided on 2026-10-04 as the position of the frontend person, with the last word left to the team.
+17. The navigation between the views uses the library React Router, decided on 2026-10-04. The reason for the new run time dependency: the addresses of the views and the back button of the browser, without code of our own to test.
 
 Proposed by the agent and not asked one by one:
 
 - A preset is an action that sets the items, and no preset shows as chosen afterwards, because M1 says a preset is not stored.
 - With a profile without any item the switch of the map of facts is inactive and says why.
 - The page about the data explains the statuses in words and gives no weights and no numbers of votes, because M9 keeps them inside the system.
-- The segments with partial data or no data stand in the list of the route with their place and their missing attributes, next to the three groups.
 - Whether a point lies in Kraków has to be known when the point is set (N-2); how the frontend learns it is for the contract.
 
 ## What stays open
 
 - The name of the product, which the header shows.
-- The texts of every label and message in Polish and in English, and the Polish names of the terms.
-- The look of every view except the route result, and in the route result the neutral style of a route planned with a profile without barriers.
+- The texts of every label and message in Polish and in English, and the Polish names of the terms: in `docs/product/interface_texts.md`, with the rules of the wording decided on 2026-10-04 and the single texts working copy until the views are built.
 - The rule for the labels of the summary line when barriers are many or close together (`.impeccable/briefs/route-result.md`, Constraints and open decisions).
 - How the live demo makes routing unavailable (`plans/demo_environment/`, task `DEPLOYMENT`).
+- Whether a list row names the street (decision 13), and whether the contract takes the narrower rule of a pseudonym (decision 12).
+- The views of the optional public transport routes that the initiative `plans/valhalla_routing/` proposes on the branch `jmi/fixing-rafal-errors`: a switch in route planning, a public transport segment in the route result and the message that public transport was unavailable. No view and no mock covers them.
