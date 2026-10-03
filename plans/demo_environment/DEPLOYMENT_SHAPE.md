@@ -22,6 +22,7 @@ The hosted demo of `plans/mvp/` needs a deployment configuration and written ins
 - The seed refers to requirements by their numbers in `DEMO_ENVIRONMENT_PRD.md` at the moment of the question: FR-2 the deployment configuration and written instructions, FR-3 the secure connection, FR-4 the unavailable source in the live demo. After the split that PRD was renumbered, and these three no longer stand in it.
 - Decisions of the task `DEMO_ENVIRONMENT` this task inherits (`DEMO_ENVIRONMENT_SHAPE.md`): the demo runs on a hosted service at a public link given in the HackTribe submission, and the live demo runs from it; the db person stands the environment up; the owner of the repository deletes it on 4 October 2026, after the results, without keeping a copy of the data; no address, host, login or secret of the hosting enters the repository.
 - Written instructions for deleting the environment were proposed by the agent and cut by the user at the PRD gate of `DEMO_ENVIRONMENT` on 2026-10-03.
+- The deployment configuration has to serve the static frontend decided in `plans/frontend_stack/` on 2026-10-03, with its tile archive read in byte ranges, from the same host as the programming interface (`DEMO_ENVIRONMENT_SHAPE.md`, Current state, last item).
 
 ## Smallest meaningful scope
 

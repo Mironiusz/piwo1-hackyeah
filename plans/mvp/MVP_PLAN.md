@@ -32,6 +32,8 @@ D-4. Source of the OpenStreetMap data and its refresh, settling the former Q-2. 
 
 D-5. Mapping of OpenStreetMap tags to the closed list of barriers and amenities, settling the former Q-8. The tag rules, thresholds and value lists are those of `docs/product/specification.md` version 3, M6, with the segment rules of M7 and M8 and the contradiction of M2, applied as `plans/osm_barrier_mapping/OSM_BARRIER_MAPPING_PLAN.md` D-6 - D-17 decide. Constraints for the rest of this plan: the import applies the rule once per element, independently of the profile, and keeps for every barrier of a way one of the states present, absent, absent by default and unknown (D-6 there), so that the route can tell an explicit absence, which contradicts a report, from the default of no stairs, which does not; the thresholds and value lists are constants of the third configuration layer next to the code of the rule (D-14 there); the import and route work packages include the tests of D-17 there. Decided by the user on 2026-10-03 in `plans/osm_barrier_mapping/`; the import person confirms or changes the thresholds before the demo is recorded.
 
+D-6. Frontend, settling the former Q-3. The frontend is a single-page application in TypeScript with React, built by Vite into static files and kept in `frontend/` as one code unit. The map is drawn by MapLibre GL JS from one archive of vector tiles of Kraków served by the project, and the browser talks only to the server of the project. Frontend code is held to the workflow core and to `docs/standards/standard_frontend.md`, whose four gates are set up by the work package that writes the first frontend code. The decisions, the facts behind them and the rejected variants are in `plans/frontend_stack/FRONTEND_STACK_PLAN.md` D-1 - D-13. Constraints for the rest of this plan: the page, the programming interface and the tiles are served from one host (D-3 there); the work package of the map produces the tile archive and serves the map fonts and sprites from the project (D-5 and D-6 there); the first screen applying a display rule of the specification creates the pair of documents of the code unit (D-10 there). Decided by the frontend person on 2026-10-03 in `plans/frontend_stack/`, the tile source after consulting the external API person.
+
 ## Scope of changes
 
 ## Rollout order
@@ -46,7 +48,6 @@ D-5. Mapping of OpenStreetMap tags to the closed list of barriers and amenities,
 ## Open questions
 
 - Q-1. Routing engine - `plans/routing_engine/`, owner: backend, consulted: external API.
-- Q-3. Frontend technology and the standards for frontend code - `plans/frontend_stack/`, owner: frontend, consulted: external API.
 - Q-4. Local database environment with PostGIS - `plans/local_database/`, owner: db.
 - Q-6. Account session mechanism - `plans/account_sessions/`, owner: backend.
 - Q-7. Where the demo runs, and the target environment entry of `docs/standards/decision_registry.md` - `plans/demo_environment/`, owner: db, consulted: backend.
@@ -66,3 +67,4 @@ D-5. Mapping of OpenStreetMap tags to the closed list of barriers and amenities,
 - `plans/geocoding/GEOCODING_PLAN.md`, the decision behind D-3.
 - `plans/osm_data_source/OSM_DATA_SOURCE_PLAN.md`, the decision behind D-4.
 - `plans/osm_barrier_mapping/OSM_BARRIER_MAPPING_PLAN.md`, the decision behind D-5.
+- `plans/frontend_stack/FRONTEND_STACK_PLAN.md`, the decision behind D-6.
