@@ -31,11 +31,11 @@ Following from the seed: a decision on where the demo runs, taken by the right p
 
 ## Out of scope
 
-The other technical decisions delegated in the same conversation have their own initiatives: `plans/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/local_database/`, `plans_finished/geocoding/`, `plans/account_sessions/`. The hosting part of the business model in the Kraków presentation is a deliverable outside the app.
+The other technical decisions delegated in the same conversation have their own initiatives: `plans_finished/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/local_database/`, `plans_finished/geocoding/`, `plans_finished/account_sessions/`. The hosting part of the business model in the Kraków presentation is a deliverable outside the app.
 
 Standing the hosted environment up - creating the account with the hosting provider, the first deployment, and checking the main scenario at the public link before the submission - was taken out of this initiative by the team on 2026-10-03. The initiative delivers what that work needs; the db person does the work, outside this initiative, as decided by the team on 2026-10-03.
 
-The deployment configuration with the written instructions, the secure connection and showing an unavailable source in the live demo moved to the task `DEPLOYMENT` of this initiative (`DEPLOYMENT_SEED.md`), decided by the user on 2026-10-03 in phase B of `plan-prd`. Reason: the configuration names how the service and the worker start, which `plans/mvp/MVP_PLAN.md` decides in Q-11 only after its Q-7 is closed by this task, so keeping it here made each wait for the other. At the time of the split that question was Q-10, which was narrowed to the domain model later on 2026-10-03. Scenarios 1 and 3 below are served by that task.
+The deployment configuration with the written instructions, the secure connection and showing an unavailable source in the live demo moved to the task `DEPLOYMENT` of this initiative (`plans/deployment/DEPLOYMENT_SEED.md`), decided by the user on 2026-10-03 in phase B of `plan-prd`. Reason: the configuration names how the service and the worker start, which `plans/mvp/MVP_PLAN.md` decides in Q-11 only after its Q-7 is closed by this task, so keeping it here made each wait for the other. At the time of the split that question was Q-10, which was narrowed to the domain model later on 2026-10-03. Scenarios 1 and 3 below are served by that task.
 
 ## Functional requirements
 

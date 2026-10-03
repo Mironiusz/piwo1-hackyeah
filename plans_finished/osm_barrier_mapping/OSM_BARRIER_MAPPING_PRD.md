@@ -139,7 +139,7 @@ The thresholds in short: steep incline above 6%, narrow passage below 0.9 m, hig
 - `plans_finished/osm_data_source/` decides the copy the rule runs on and the fate of facts that disappear or return; its scenarios use this rule (`surface=sett` as poor surface, a way without steps as not contradicting stairs) and its rules enter the same version 3 of the specification, written by this initiative (FR-11).
 - `plans/mvp/MVP_PRD.md` AC-10 and `plans/mvp/MVP_SHAPE.md` scenario 9 name only the incline and the kerbs as unknown for segment Y; with this rule a wheelchair profile also misses the width (AC-3 here), so AC-10 there gains the width. Scenario 9 also has to be read with segment Y meeting a carriageway, because the kerb is an attribute only at crossings.
 - `plans/mvp/MVP_PRD.md` FR-10 and its section Domain rules define the state no data as "nothing known"; FR-9 here makes the default "no stairs" not count, and FR-10 here adds the `wheelchair=no` marking. Both reach the MVP through version 3 of the specification.
-- `plans/api_contract/` and the list of the route show the attribute names of the section Domain rules.
+- `plans_finished/api_contract/` and the list of the route show the attribute names of the section Domain rules.
 
 ## Risks and notes
 
