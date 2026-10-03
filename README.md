@@ -14,7 +14,7 @@ The repository was created on 2026-10-03 from a pre-existing project template, "
 
 - `.claude/`, `.agents/`, `.codex/` - the chain skills (`plan-shape`, `plan-prd`, `plan-implement`, `implementation-dod-review`, `load-context`), the subagents `repo-researcher` and `dod-reviewer` with their Codex variants, the `local_docs_context.py` hook with the session start context, the `block_dangerous_commands.py` hook blocking destructive commands as well as `git commit` and `git push`, and settings that block reading secret files.
 - `agent_docs/` - the project description for the hook, the methodology of the chain and the durable memory convention.
-- `docs/standards/` - the standards map, six standards of the workflow core, twelve standards of the Python profile and two registries.
+- `docs/standards/` - the standards map, six standards of the workflow core, twelve standards of the Python profile, one standard of the frontend profile and two registries.
 - `docs/hackathon/` - the summary of the challenge rules; `docs/product/` - the place for the product specification.
 - `tests/architecture/` - the core gates: Claude Code and Codex parity, hooks, prose style, plan document contract, conflict markers.
 - `plans/` and `plans_finished/` - the place for initiatives in progress and their archive.

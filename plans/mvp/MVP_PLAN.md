@@ -28,6 +28,8 @@ D-2. Every remaining technical direction of this plan is decided in its own init
 
 D-3. Address search, settling the former Q-5. The search is answered by the public Nominatim instance, called only by the server, with the rules, parameters and tests of `plans/geocoding/GEOCODING_PLAN.md` D-1 - D-16. Constraints for the rest of this plan: the search is the explicit exception of a read from an external system during request handling (D-2 there), its text travels only in the body of a POST request (D-3 there), the backend runs as exactly one process (D-15 there), and the work package of the search includes the tests of D-16 there. Decided by the user with the external API person on 2026-10-03 in `plans/geocoding/`.
 
+D-4. Frontend, settling the former Q-3. The frontend is a single-page application in TypeScript with React, built by Vite into static files and kept in `frontend/` as one code unit. The map is drawn by MapLibre GL JS from one archive of vector tiles of Kraków served by the project, and the browser talks only to the server of the project. Frontend code is held to the workflow core and to `docs/standards/standard_frontend.md`, whose four gates are set up by the work package that writes the first frontend code. The decisions, the facts behind them and the rejected variants are in `plans/frontend_stack/FRONTEND_STACK_PLAN.md` D-1 - D-13. Constraints for the rest of this plan: the page, the programming interface and the tiles are served from one host (D-3 there); the work package of the map produces the tile archive and serves the map fonts and sprites from the project (D-5 and D-6 there); the first screen applying a display rule of the specification creates the pair of documents of the code unit (D-10 there). Decided by the frontend person on 2026-10-03 in `plans/frontend_stack/`, the tile source after consulting the external API person.
+
 ## Scope of changes
 
 ## Rollout order
@@ -43,7 +45,6 @@ D-3. Address search, settling the former Q-5. The search is answered by the publ
 
 - Q-1. Routing engine - `plans/routing_engine/`, owner: backend, consulted: external API.
 - Q-2. Source of the OpenStreetMap data and its refresh - `plans/osm_data_source/`, owner: import, consulted: db.
-- Q-3. Frontend technology and the standards for frontend code - `plans/frontend_stack/`, owner: frontend, consulted: external API.
 - Q-4. Local database environment with PostGIS - `plans/local_database/`, owner: db.
 - Q-6. Account session mechanism - `plans/account_sessions/`, owner: backend.
 - Q-7. Where the demo runs, and the target environment entry of `docs/standards/decision_registry.md` - `plans/demo_environment/`, owner: db, consulted: backend.
@@ -62,3 +63,4 @@ D-3. Address search, settling the former Q-5. The search is answered by the publ
 - `plans/mvp/MVP_PRD.md`, the contract this plan implements.
 - `plans/mvp/MVP_SHAPE.md`, the domain rules and scenarios behind the PRD.
 - `plans/geocoding/GEOCODING_PLAN.md`, the decision behind D-3.
+- `plans/frontend_stack/FRONTEND_STACK_PLAN.md`, the decision behind D-4.

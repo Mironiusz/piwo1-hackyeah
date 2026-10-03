@@ -22,6 +22,7 @@ The MVP (`plans/mvp/`) is demonstrated live on 4 October 2026 and recorded on vi
 - The Kraków brief says the prototype does not have to stay online after the hackathon, and asks for a proposal of who hosts, updates, secures and pays for the service (`docs/hackathon/challenge_requirements.md`, Technical and organizational requirements).
 - The Kraków submission closes at 11:00 on 4 October 2026 (`docs/hackathon/challenge_requirements.md`, Shared facts).
 - What the hosting has to carry depends on two other initiatives: `plans/routing_engine/` decides whether a routing engine runs on our own server or an external service is used, and `plans/frontend_stack/` decides whether the frontend is static or rendered on the server. Neither is decided on 2026-10-03.
+- `plans/frontend_stack/` decided on 2026-10-03 (`plans/frontend_stack/FRONTEND_STACK_PLAN.md` D-3, D-5, D-6, D-13) that the frontend is static files and nothing is rendered on the server. The hosting stores about 50 MB for it: one archive of map tiles of 34.8 MB, map fonts and sprites of 11.2 MB, and the built page of a few megabytes. The server has to answer byte range requests for the tile archive, and the page, the programming interface and the tiles have to be served from one host.
 
 ## Smallest meaningful scope
 

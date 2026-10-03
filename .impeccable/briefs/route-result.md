@@ -32,7 +32,7 @@ Chosen in four rounds on 2026-10-03. The recorded choice of the last round is th
 
 - Target: the route result screen, shown after a route is planned.
 - In this pass: the route header with the entry to the profile, the map, the legend, the list in three groups, the fact detail with the two votes, the special states listed below, the sample data mark, and a user report that contradicts OpenStreetMap.
-- Fidelity: a production-ready screen on sample data taken from the scenarios in `plans/mvp/MVP_SHAPE.md`, without a backend. The technology is decided in `plans/frontend_stack/`; the working choice of the frontend person is React + Vite + TypeScript.
+- Fidelity: a production-ready screen on sample data taken from the scenarios in `plans/mvp/MVP_SHAPE.md`, without a backend. The technology is decided in `plans/frontend_stack/FRONTEND_STACK_PLAN.md`: React with TypeScript, built by Vite.
 - Not in this pass: choosing the start and the destination, editing the profile, the report flow, accounts and moderation. They inherit this visual world later.
 - The result is wrong, even if polished, when it reads as a clone of Google Maps, as a medical or charity app, or as an official form.
 
@@ -66,7 +66,8 @@ The ranges are assumptions of the agent, not measurements.
 - Open: the yellow accent is close to the amber of the partial data state. The line pattern stays the carrier of that state, and the result is checked in grayscale.
 - Decided by the user on 2026-10-03: the map shows OpenStreetMap data, with the attribution visible.
 - Decided in `plans/frontend_stack/` on 2026-10-03: the browser talks only to the server of the project, so the map tiles and the fonts are served by the project; the frontend is chosen for the browser, and the HarmonyOS port, if built, is a second client of the same programming interface, so this screen holds no product rule the port would need; this screen is built as a work package of `plans/mvp/`.
-- Open: the library that renders the map and the way the project serves its map tiles, both decided in phase B of `plan-prd` of `plans/frontend_stack/`. The earlier recommendation of Leaflet rested on the web view of a HarmonyOS client, which no longer constrains the choice. The routing engine is decided in `plans/routing_engine/`.
+- Decided in `plans/frontend_stack/FRONTEND_STACK_PLAN.md` on 2026-10-03: the map is drawn by MapLibre GL JS from one archive of vector tiles of Kraków served by the project (D-4, D-5 there). The base map takes its colors from this direction and its labels from the language of the interface (D-6 there). Markers are buttons on the map, and each segment state is a line layer with its own dash pattern (D-8 there). The routing engine is decided in `plans/routing_engine/`.
+- Constraint from the same plan: once the gate of forbidden characters covers frontend files, interface texts cannot contain an ellipsis, a middle dot, an arrow, a multiplication sign, a typographic dash or a curly quotation mark, so separators and icons are drawn as graphics. The approved mock already complies.
 - Build path: code-led, because no image generation is available. The decision page recorded the value `comp` only because that was the way to show the previews; nothing is recorded in `.impeccable/config.json`. The mock is the reference for composition and values, built by the agent as HTML, not a generated image.
 
 ## Decision trail
