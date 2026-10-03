@@ -55,6 +55,7 @@ The decision has to make these requirements of `plans/mvp/MVP_PRD.md` achievable
 - Weights: a logged-in person counts 1 and a person without an account 0.5 (`docs/product/specification.md`, M4); whether a request comes from an account therefore changes the status of a fact.
 - Nothing about the author of a report, vote or geozone is shown to other users (`docs/product/specification.md`, M9).
 - The user chose a rolling session that expires 24 hours after the last activity, survives closing and reopening the browser, and renews on every request in the active session, including read-only requests, on 2026-10-03.
+- Pseudonyms are unique without regard to letter case; the user chose this on 2026-10-03.
 
 ## Notes on data, performance and security
 
@@ -65,7 +66,6 @@ The decision has to make these requirements of `plans/mvp/MVP_PRD.md` achievable
 ## Open questions
 
 1. How is a request resolved to an actor - an account, a person without an account, a moderator - and what does the session carry? `Block: yes` (category: access token and permission scope contract)
-2. What happens when two accounts try to use the same pseudonym, including differences only in letter case? `Block: yes` (category: personal data)
-3. What validation rules apply to passwords? `Block: yes` (category: personal data)
-4. When the team removes a moderator role, when must the account lose access to the moderator view? `Block: yes` (category: read visibility and permissions)
-5. By when must the decision be made, given the deadline at 11:00 on 4 October 2026? `Block: no`
+2. What validation rules apply to passwords? `Block: yes` (category: personal data)
+3. When the team removes a moderator role, when must the account lose access to the moderator view? `Block: yes` (category: read visibility and permissions)
+4. By when must the decision be made, given the deadline at 11:00 on 4 October 2026? `Block: no`
