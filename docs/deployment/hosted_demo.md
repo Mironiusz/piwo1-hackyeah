@@ -12,7 +12,7 @@ The steps were written before the deployment configuration existed. Where a step
 
 ## Before the first start
 
-The server needs Docker Engine with the Compose plugin. The port of the public link has to be open to the internet. That is a setting of the host, made by its owner. Completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment/`: the minimum version of Docker Engine and the port.
+The server needs Docker Engine with the Compose plugin. The port of the public link has to be open to the internet. That is a setting of the host, made by its owner. Completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`: the minimum version of Docker Engine and the port.
 
 ## Getting the repository
 
@@ -20,15 +20,15 @@ Put on the server the version of the repository the team chose to deploy.
 
 ## Environment file
 
-The demo reads its settings and secrets from one environment file. The file lives only on the server and is never committed. It holds every entry of the templates `.env.example` and `.env.local.example`. The meaning of each entry is in `docs/standards/standard_config.md`, section Environment entries. Completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment/`: the name of the file and how the start command reads it.
+The demo reads its settings and secrets from one environment file. The file lives only on the server and is never committed. It holds every entry of the templates `.env.example` and `.env.local.example`. The meaning of each entry is in `docs/standards/standard_config.md`, section Environment entries. Completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`: the name of the file and how the start command reads it.
 
 ## Starting the demo
 
-One command starts every service of the demo. It never applies a schema revision, and it never loads, replaces or deletes data. Completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment/`.
+One command starts every service of the demo. It never applies a schema revision, and it never loads, replaces or deletes data. Completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`.
 
 ## Applying the schema revisions
 
-The schema revisions are applied by hand, as a step of their own, with the consent given at the call (`docs/standards/standard_config.md`, section Environment entries). Run this step after the first start and after every update that brings a new revision. Completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment/`.
+The schema revisions are applied by hand, as a step of their own, with the consent given at the call (`docs/standards/standard_config.md`, section Environment entries). Run this step after the first start and after every update that brings a new revision. Completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`.
 
 ## Loading the data
 
@@ -36,7 +36,7 @@ The separate loading program loads three things: the OpenStreetMap copy together
 
 After the program ends, restart the routing service on the routing data it built. Until then every route ends with the message that a route cannot be planned right now (`plans/valhalla_routing/VALHALLA_ROUTING_PLAN.md` D-3).
 
-The step is not repeated after a restart of the demo. Completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment/`: the command of the program and the command that restarts the routing service.
+The step is not repeated after a restart of the demo. Completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`: the command of the program and the command that restarts the routing service.
 
 ## Restarting after a fix
 
@@ -44,7 +44,7 @@ Run the same start command again. Every report, vote, account and loaded copy st
 
 ## Emptying the database
 
-Emptying the database is a separate step, run only on purpose. It destroys every report, vote and account, and the loaded copy. After it, run the schema revisions step and the loading step again. The start command never empties the database. Completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment/`.
+Emptying the database is a separate step, run only on purpose. It destroys every report, vote and account, and the loaded copy. After it, run the schema revisions step and the loading step again. The start command never empties the database. Completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`.
 
 ## Check before the link goes into the submission
 

@@ -95,7 +95,7 @@ AC-6 (FR-6). The open question about the server in `plans_finished/demo_environm
 - `plans_finished/osm_barrier_mapping/`: FR-2 defines the network its D-6 relies on. Its closed plan is not changed; the import work package of `plans/mvp/` applies D-6 to the network of FR-2.
 - `plans_finished/fact_schema/`: FR-3 answers what its PRD left to this initiative, within what its FR-5 stores; since U-2 of `plans_finished/dependency_check/` that PRD no longer waits for a check against this initiative.
 - `plans_finished/api_contract/`: the route response describes the data of the product, and the engine adapts to it (U-5). The stretch to the network is an ordinary segment in the state no data.
-- `plans_finished/demo_environment/` and the task `DEPLOYMENT` of `plans/deployment/` receive the needs of FR-6.
+- `plans_finished/demo_environment/` and the task `DEPLOYMENT` of `plans_finished/deployment/` receive the needs of FR-6.
 - `plans_finished/local_database/`: the local database already carries pgRouting without creating it, so choosing pgRouting needs no change of the local environment (`plans/mvp/MVP_PLAN.md` D-7); another choice leaves it unused.
 - `docs/product/specification.md`: version 4 states the three rules of `ROUTING_ENGINE_SHAPE.md`, questions 2, 5 and 6, in M2 and in the section Personal data; the tag values of FR-2 and the values of FR-4 go there after phase B.
 - `docs/standards/decision_registry.md`: the entry Technical directions of the MVP plan changes (FR-5).

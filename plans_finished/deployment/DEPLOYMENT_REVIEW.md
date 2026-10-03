@@ -1,6 +1,6 @@
 # Review: Deployment of the MVP demo to the chosen hosting
 
-Document state: 2026-10-04, task DEPLOYMENT reviewed
+Document state: 2026-10-04, initiative closed: the task `DEPLOYMENT` is ready, and the task `DEPLOYMENT_CONFIG` was moved to the initiative `plans/deployment_config/` by a decision of the user
 
 ## 2026-10-04 - Implementation of DEPLOYMENT_PLAN.md
 
@@ -43,3 +43,17 @@ Verification:
 - `standard_frontend.md`: not applicable - no frontend code.
 
 Verdict: ready after minor fixes, for the task `DEPLOYMENT` only. The minor fix is running `make check` (O-1). The initiative `plans/deployment/` also holds the task `DEPLOYMENT_CONFIG`, which has only a seed, so it stays in `plans/` and does not qualify for the archive.
+
+## 2026-10-04 - Initiative closed
+
+The user asked to move the task `DEPLOYMENT_CONFIG` into an initiative of its own and to archive this one. `DEPLOYMENT_CONFIG_SEED.md` moved to `plans/deployment_config/` with the same name and the checksum confirmed after the move, and its content is unchanged. That initiative has only its seed; its shape takes the requirements of O-2 from section Out of scope of `DEPLOYMENT_PRD.md` and from `plans/mvp/MVP_PLAN.md` D-10.
+
+O-1 was settled after the merge of `dev` into this branch, commit `50a50cd`. `make check` was run with the development dependencies of `venv`: ruff, mypy, vulture, deptry, bandit, pip-audit and pytest, 120 passed, pass. Prettier failed on two files. In `DEPLOYMENT_PLAN.md` one blank line between item 5 of Scope of changes and its nested list was removed by `prettier --write`, the only change of the plan, with no change of content. `docs/setup/EMULATOR_SETUP.md` came from `dev` with the emulator setup and is not part of this initiative, so it stays as it is. After the fix `npx --no-install prettier --check` passes on the files of this initiative and on every file it changed outside it: `docs/deployment/hosted_demo.md`, `docs/standards/README.md`, `CLAUDE.md`, `AGENTS.md`, `AI_WORKFLOW.md`, `plans/mvp/MVP_PLAN.md`, `docs/standards/decision_registry.md` and `agent_docs/memory/_cross_cutting.md`.
+
+Verdict: ready, for the task `DEPLOYMENT`. Without the task `DEPLOYMENT_CONFIG` it covers the whole initiative, so the directory moves to `plans_finished/deployment/` (`docs/standards/standard_agentic_workflow.md` ch. 4.6). O-2 goes with the task `DEPLOYMENT_CONFIG`, and O-3 stays with the separate task suggested to the user; neither blocks the closure, and the archive confirms neither.
+
+References. In the shape, the PRD and the plan of this initiative only the location of references changed: the task `DEPLOYMENT_CONFIG` named by `plans/deployment/` is named by `plans/deployment_config/`, its seed points there, and every other `plans/deployment/` points to `plans_finished/deployment/`. The same rules apply to `CLAUDE.md`, `AGENTS.md`, `docs/deployment/hosted_demo.md`, `docs/standards/README.md`, `docs/standards/decision_registry.md`, `docs/product/specification.md`, `plans/mvp/`, the shape of `plans/backend_architecture/`, the PRD of `plans/schema_revision/`, the PRD and the plan of `plans/valhalla_routing/`, and the shapes, PRDs and plans of `plans_finished/demo_environment/`, `plans_finished/frontend_stack/`, `plans_finished/local_database/` and `plans_finished/routing_engine/`. The sentences that say this initiative still holds the task `DEPLOYMENT_CONFIG` - the summary and D-1 of the plan and section Out of scope of the shape - stay as the record of their day. Seeds, review entries, memory entries and the log of `AI_WORKFLOW.md` keep the old path as a historical record.
+
+Agent decision at C:40, without asking: two sentences of `plans/valhalla_routing/` name `plans/deployment/` as the executor of work still to be done - building the deployment configuration in section Out of scope of `VALHALLA_ROUTING_PRD.md`, and running the service of D-1 in D-13 of `VALHALLA_ROUTING_PLAN.md`. They point to `plans/deployment_config/`, because the archive does no more work and that work is the task `DEPLOYMENT_CONFIG`.
+
+Agent decision at C:40, without asking: in `docs/standards/decision_registry.md` the state sentence of the entry that lists the initiatives of the MVP plan was rewritten to the state after the move, not only relocated, because a registry has to state the current state. `plans/deployment_config/` was added to its list of initiatives and owners with the owner of `plans/deployment/`, the initiative it was split from.
