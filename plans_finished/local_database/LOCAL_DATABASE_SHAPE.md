@@ -32,7 +32,7 @@ The backend of the MVP runs on PostgreSQL with PostGIS (`plans/mvp/MVP_PLAN.md` 
 
 ## Smallest meaningful scope
 
-A decision on how the team gets a local PostgreSQL with PostGIS, taken by the right people, recorded and handed to `plans/mvp/MVP_PLAN.md` Q-4. The initiative ends with the recorded decision; the setup itself is built by a work package of `plans/mvp/`, as with `plans/geocoding/` and `plans/osm_data_source/`. Decided by the user on 2026-10-03 (question 1), against also delivering the setup instructions and the script, and against delivering them together with the Alembic configuration.
+A decision on how the team gets a local PostgreSQL with PostGIS, taken by the right people, recorded and handed to `plans/mvp/MVP_PLAN.md` Q-4. The initiative ends with the recorded decision; the setup itself is built by a work package of `plans/mvp/`, as with `plans_finished/geocoding/` and `plans_finished/osm_data_source/`. Decided by the user on 2026-10-03 (question 1), against also delivering the setup instructions and the script, and against delivering them together with the Alembic configuration.
 
 The decision is recorded in the repository by 22:00 on 3 October 2026, the deadline the team set for the choice of the hosting in `plans/demo_environment/DEMO_ENVIRONMENT_SHAPE.md`, which has the same owner. Decided by the user on 2026-10-03 (question 4), against 20:30 and against no deadline of its own, knowing that an earlier decision speeds up nothing downstream while `plans/mvp/MVP_PLAN.md` still waits for the routing engine and the frontend.
 
@@ -40,7 +40,7 @@ Every member of the team who runs critical tests has their own local database, n
 
 ## Out of scope
 
-- The other technical decisions delegated in the same conversation have their own initiatives: `plans/api_contract/`, `plans/routing_engine/`, `plans/osm_data_source/`, `plans/frontend_stack/`, `plans/demo_environment/`, `plans/osm_barrier_mapping/`, `plans/geocoding/`, `plans/account_sessions/`. The database of the demo environment is `plans/demo_environment/`.
+- The other technical decisions delegated in the same conversation have their own initiatives: `plans/api_contract/`, `plans/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/geocoding/`, `plans/account_sessions/`. The database of the demo environment is `plans/demo_environment/`.
 - The setup instructions in the README, the script creating the database and the accounts, the entries of the environment templates and the Alembic configuration: a work package of `plans/mvp/`, cut by the user on 2026-10-03 (question 1).
 - A database shared by the team: ruled out by `docs/standards/standard_tests.md` (question 2).
 

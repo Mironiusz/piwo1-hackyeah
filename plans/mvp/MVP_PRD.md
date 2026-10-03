@@ -86,7 +86,7 @@ AC-8 (FR-9). The OpenStreetMap attribution is visible on the map. When fetching 
 
 AC-9 (FR-10). The four segment states can be told apart in a grayscale screenshot. The legend names all four. A barrier outside the profile does not appear on the map. In the run of shape scenario 4, at 11:00 the segment through X follows OpenStreetMap and an unverified report icon stands at X; after the next anonymous confirmation the segment is red and a new route avoids X.
 
-AC-10 (FR-11). For a planned route the list has the three groups; every item shows type, place, source, date and status. For the segment of shape scenario 9, read as meeting a carriageway, the list for the preset "I use a wheelchair" says that the incline, the kerbs and the width are unknown (`plans/osm_barrier_mapping/OSM_BARRIER_MAPPING_PRD.md` AC-3).
+AC-10 (FR-11). For a planned route the list has the three groups; every item shows type, place, source, date and status. For the segment of shape scenario 9, read as meeting a carriageway, the list for the preset "I use a wheelchair" says that the incline, the kerbs and the width are unknown (`plans_finished/osm_barrier_mapping/OSM_BARRIER_MAPPING_PRD.md` AC-3).
 
 AC-11 (FR-12). An account is created with a pseudonym and a password, without an email address. After the account is deleted, its pseudonym cannot be found anywhere in the app, and the facts it confirmed keep their statuses.
 

@@ -43,3 +43,7 @@ Verdict: ready, for the whole initiative `plans/osm_barrier_mapping/`. Steps lef
 ### Archiving
 
 The verdict qualifies the initiative for `plans_finished/`, but the directory stays in `plans/`. Moving it means rewriting the editable references to `plans/osm_barrier_mapping/` in 24 files outside it, among them `plans/osm_data_source/OSM_DATA_SOURCE_PLAN.md` and `OSM_DATA_SOURCE_PRD.md`, while the session implementing `plans/osm_data_source/` was still at work on the same tree, and during this review about sixty files of the impeccable skill under `.claude/` and `.agents/` were being changed by someone else. Decided by the user on 2026-10-03, against moving now: the move is left to an agent asked to clean up `plans/` once the parallel work is wrapped up.
+
+## Archiving of 2026-10-03
+
+The parallel work named above is wrapped up: `plans/osm_data_source/` has its final ready verdict. The user decided on 2026-10-03 to move this initiative to `plans_finished/` (U-8 of `plans/consistency_check/CONSISTENCY_CHECK_REVIEW.md`), and the session of `plans/consistency_check/`, asked to clean up `plans/`, moved it on the same day under `docs/standards/standard_agentic_workflow.md` ch. 4.6.

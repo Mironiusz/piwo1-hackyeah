@@ -44,7 +44,7 @@ The attribution control of the map is always open, never collapsed, and shows th
 
 The two typefaces of the design direction are installed as npm packages and built into the static files, never loaded from an outside host.
 
-The rejected variants, the facts behind each choice and the command that cuts the tile archive are in `plans/frontend_stack/FRONTEND_STACK_PLAN.md`, D-1 - D-7 and D-9. A new run time dependency is added only with its reason stated in the merge request.
+The rejected variants, the facts behind each choice and the command that cuts the tile archive are in `plans_finished/frontend_stack/FRONTEND_STACK_PLAN.md`, D-1 - D-7 and D-9. A new run time dependency is added only with its reason stated in the merge request.
 
 ## Code unit and documentation
 
