@@ -54,7 +54,7 @@ FR-7. Fit on the server. Everything the decision of item 4 places on the server 
 
 AC-1 (FR-1). For each of the six items of the section Scope the plan holds a decision with the names and the places a work package needs. A reading of the plan by the person of each work package of the backend - the import, the route, the voting, the accounts, the moderation and the address search - finds where its code goes and how it starts, without a question back to this initiative.
 
-AC-2 (FR-2). The section Open questions of `plans/mvp/MVP_PLAN.md` holds no question, and the decision that replaced Q-11 names `plans/backend_architecture/`.
+AC-2 (FR-2). The section Open questions of `plans/mvp/MVP_PLAN.md` holds no question, and the decision that replaced Q-11 names `plans_finished/backend_architecture/`.
 
 AC-3 (FR-3). No document in force says that the implementation of the operations goes with Q-11; D-12 of `plans/mvp/MVP_PLAN.md` names the work packages of that plan.
 
