@@ -26,12 +26,12 @@ How each member of the team gets a local PostgreSQL with PostGIS was not decided
 
 ## Out of scope
 
-- The other technical decisions delegated in the same conversation, each with its own initiative: `plans/api_contract/`, `plans/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/geocoding/`, `plans/account_sessions/`.
+- The other technical decisions delegated in the same conversation, each with its own initiative: `plans/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/geocoding/`, `plans/account_sessions/`.
 - The setup itself: the instructions in the README, the script creating the database and the accounts, the entries of the environment templates and the configuration that applies schema changes. A work package of `plans/mvp/` builds them, as with `plans_finished/geocoding/` and `plans_finished/osm_data_source/`. The user cut them from this initiative on 2026-10-03 (`LOCAL_DATABASE_SHAPE.md`, question 1).
 - A trial run of the chosen environment on a machine of the team. The first run is part of that work package. Agent reading of question 1 at C:40: the user chose the decision alone over delivering the setup.
 - A database shared by the team, ruled out by `docs/standards/standard_tests.md`, because a critical test seeds data durably and therefore always runs against the local database (`LOCAL_DATABASE_SHAPE.md`, question 2).
 - The hosted database of the demo, which is `plans/demo_environment/`. This task only hands over the consequence of FR-4.
-- Creating the pgRouting extension in the database, which waits for `plans/routing_engine/` to choose it.
+- Creating the pgRouting extension in the database, which waits for `plans_finished/routing_engine/` to choose it.
 - The content of the first schema change, which `plans/fact_schema/` writes.
 
 ## Functional requirements
@@ -41,7 +41,7 @@ FR-1. Choice of the local environment. The decision names how each member of the
 - lets every member who writes backend code run the critical tests against their own database,
 - allows a database with the locale that `docs/standards/standard_database.md` requires,
 - can be repeated from written instructions alone,
-- carries the pgRouting extension next to PostGIS without creating it, so that a choice of pgRouting by `plans/routing_engine/` needs at most a new schema change, not a rebuilt environment on every machine.
+- carries the pgRouting extension next to PostGIS without creating it, so that a choice of pgRouting by `plans_finished/routing_engine/` needs at most a new schema change, not a rebuilt environment on every machine.
 
 The decision is recorded with its reason and with the alternatives it was chosen against.
 
@@ -76,7 +76,7 @@ AC-4 (FR-4). The shape of the task `DEPLOYMENT` carries the consequence of FR-4 
 
 - `plans/mvp/MVP_PLAN.md` gets Q-4 closed (FR-3) and gains a work package that builds the local setup. The plan stays open while its other questions wait.
 - `plans/fact_schema/` writes the first schema change, which creates PostGIS and grants the service account its rights (FR-2). Its stored data still waits for the setup of the work package of `plans/mvp/`.
-- `plans/routing_engine/` still considers pgRouting. FR-1 keeps the decision independent of its result.
+- `plans_finished/routing_engine/` still considers pgRouting. FR-1 keeps the decision independent of its result.
 - `plans/demo_environment/`: the hosted database has to meet the same database standard as the local one (`DEMO_ENVIRONMENT_PRD.md`, Dependencies), and its task `DEPLOYMENT` receives the consequence of FR-4.
 - `docs/standards/decision_registry.md`: the entry Technical directions of the MVP plan changes (FR-3).
 - `docs/standards/standard_database.md`, `docs/standards/standard_config.md` and `docs/standards/standard_tests.md` do not change. The decision follows them as they stand.
@@ -88,4 +88,4 @@ AC-4 (FR-4). The shape of the task `DEPLOYMENT` carries the consequence of FR-4 
 - The chosen environment is not tried on a machine of the team within this task. A wrong claim about it, for example a missing extension or a version too old for the required locale, surfaces only in the work package of `plans/mvp/`. AC-1 lowers this risk by requiring a checked source for every such claim, not a run.
 - Only the machine of the agent's session is known: Windows 11, a PostgreSQL 18 installation without PostGIS that does not answer, and a Docker client whose engine was not running on 2026-10-03. The machines of the other members are not known, so the operating systems of FR-1 have to be stated by the team in phase B.
 - On the hosted demo the account that applies schema changes needs superuser rights. If the PostgreSQL instance of the demo server also holds the databases of the other services of its owner, that account can read and drop them. FR-4 hands this over, and it is not decided here.
-- An environment that carries pgRouting may carry a dependency the project never uses, if `plans/routing_engine/` chooses another engine.
+- An environment that carries pgRouting may carry a dependency the project never uses, if `plans_finished/routing_engine/` chooses another engine.

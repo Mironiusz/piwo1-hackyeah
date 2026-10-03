@@ -36,7 +36,7 @@ A technology that cannot deliver keyboard and screen reader use, four segment st
 - The wording of the privacy information (`plans/mvp/MVP_PRD.md` FR-20), owned by `plans/mvp/`.
 - The visual design of the screens. The design direction of the route result screen, shaped by the frontend person on 2026-10-03 (`PRODUCT.md`, `.impeccable/briefs/route-result.md`), is an input the technology has to be able to build, not something this initiative decides.
 - A full frontend profile of standards mirroring the Python profile. Decided against by the frontend person in the shape interview.
-- The other technical decisions delegated in the same conversation, each with its own initiative: `plans/routing_engine/`, `plans_finished/osm_data_source/`, `plans/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/local_database/`, `plans_finished/geocoding/`, `plans/account_sessions/`.
+- The other technical decisions delegated in the same conversation, each with its own initiative: `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/local_database/`, `plans_finished/geocoding/`, `plans/account_sessions/`.
 
 ## Functional requirements
 

@@ -36,7 +36,7 @@ A decision on the frontend technology and on how frontend code is held to the st
 ## Out of scope
 
 - Setting up the frontend project (scaffolding, the map with the attribution, the language switch, the gates running on code) and building the screens of the main scenario. All of it belongs to the implementation of `plans/mvp/`, which receives the decision through Q-3 and writes frontend code as its work packages after that plan is closed. Decided by the frontend person on 2026-10-03; the parallel interview recorded the same answer. The seed item, the decision taken by the right people, keeps its executor: the frontend person.
-- The other technical decisions delegated in the same conversation have their own initiatives: `plans/api_contract/`, `plans/routing_engine/`, `plans_finished/osm_data_source/`, `plans/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/local_database/`, `plans_finished/geocoding/`, `plans/account_sessions/`.
+- The other technical decisions delegated in the same conversation have their own initiatives: `plans/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/local_database/`, `plans_finished/geocoding/`, `plans/account_sessions/`.
 
 ## Functional requirements
 

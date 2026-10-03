@@ -55,11 +55,13 @@ This order follows directly from the rules above: the ban on fallbacks without c
 
 ## Target environment
 
-The target environment is not chosen yet (entry in `docs/standards/decision_registry.md`). Until it is chosen and the three permission levels below are filled in, the agent has no access to any target environment, and deployment, hosting and challenge submissions are done by a human:
+The target environment is the hosted demo of the MVP on a virtual private server of a member of the team, decided in `plans/demo_environment/`. The server also runs other services of its owner, so the hosted demo environment is only the services and the database of the demo on it, and their logs. The owner of the repository deletes the demo and all its data on 4 October 2026, after the results are announced. The permission levels of the agent:
 
-- without asking: reading the repository and running local tools and tests,
-- only on the user's explicit request: defined together with the target environment,
-- forbidden unconditionally, even on explicit request: defined together with the target environment.
+- without asking: reading the repository, running local tools and tests, and reading the logs of the services of the hosted demo,
+- only on the user's explicit request: anything else in the hosted demo environment, reading personal data from the demo database included,
+- forbidden unconditionally, even on explicit request: deleting the services of the hosted demo or its database, changing the secrets of the hosting, and touching anything on that server outside the hosted demo environment - every other service, file and log.
+
+Outside the hosted demo environment the agent has no access to any target environment, and challenge submissions are done by a human.
 
 Regardless of the project: no address, host, login or secret of the target environment enters the repository in any form - not in code, not in documentation, not in initiative artifacts. The rule is described in docs/standards/standard_config.md.
 

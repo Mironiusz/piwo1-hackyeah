@@ -117,3 +117,7 @@ Decisions recorded on 2026-10-03 by `plans_finished/frontend_stack/`:
 
 - Frontend code is held to the workflow core and to `standard_frontend.md` only. A full frontend profile mirroring the Python one was decided against, so the frontend has no standard for the names of its files and for its split into directories. Condition for writing it: the split starts raising questions in review.
 - The four gates of `standard_frontend.md` do not run until `plans/mvp/` writes the first frontend code and sets them up. Until then the standard is checked by review alone.
+
+Decision recorded on 2026-10-03, outside an initiative, on the request of the user to stop the gates failing on the `impeccable` skill:
+
+- A third-party skill installed by its own installer, today `impeccable` with its four agent roles, is exempt from the content parity of the Claude Code and Codex variants and from the prose gate. Reason: the installer generates each variant for its tool differently on purpose, and an edit made by hand would be lost with the next update of the skill. The other options were rewriting about two thousand lines of someone else's text in both copies, or removing a skill the team uses for the design direction. The list is in `tests/architecture/common_vendored_content.py`, the rule in `standard_agentic_workflow.md` ch. 6.1.
