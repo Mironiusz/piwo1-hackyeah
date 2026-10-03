@@ -14,7 +14,7 @@ Wheelchair users, parents with baby strollers and people with walking difficulti
 
 ## Scope
 
-- The mandatory features M1-M11 of the specification, version 8, with the rules decided in `plans/mvp/MVP_SHAPE.md`.
+- The mandatory features M1-M11 of the specification, version 9, with the rules decided in `plans/mvp/MVP_SHAPE.md`.
 - The interface requirements of the specification: Polish and English, designed for a phone.
 - Privacy information inside the app, required by the section Personal data of the specification.
 - Area: the whole of Kraków for routes; the demo in the district of the Tauron Arena, with sample data marked as such.
@@ -108,7 +108,7 @@ AC-19 (FR-20). The privacy information page lists every kept item with its purpo
 
 ## Domain rules
 
-The rules are those of the specification, version 8, and the section Domain rules of `plans/mvp/MVP_SHAPE.md`. Where the two differ, the specification prevails: the shape stays the record of its interview and still carries rules that version 4 replaced, among them one vote per fact per person and an OpenStreetMap fact outdated by denials alone. In short, for reading the acceptance criteria:
+The rules are those of the specification, version 9, and the section Domain rules of `plans/mvp/MVP_SHAPE.md`. Where the two differ, the specification prevails: the shape stays the record of its interview and still carries rules that version 4 replaced, among them one vote per fact per person and an OpenStreetMap fact outdated by denials alone. In short, for reading the acceptance criteria:
 
 - Weights: a logged-in person counts 1, a person without an account 0.5, the author included.
 - A person votes on the same fact again only after a day, and only the latest vote of a person counts.
@@ -122,7 +122,7 @@ The rules are those of the specification, version 8, and the section Domain rule
 - Changed after the gate on 2026-10-03, when `plans_finished/account_sessions/` was merged: FR-12, FR-14, AC-11 and AC-13 carry the account rules added to version 4 of the specification after its approval - the passwords without recovery, the 24-hour session and the end of moderator access on the next request after the role is removed. The rules of that initiative on vote deduplication were rejected by the user on 2026-10-03 and are not part of this PRD.
 - Changed after the gate on 2026-10-03, from `plans_finished/demo_environment/` (FR-4 of `plans_finished/demo_environment/DEMO_ENVIRONMENT_PRD.md`): FR-20 and AC-19 require, in the hosted demo, the statement that the demo and all its data are deleted on 4 October 2026, after the results are announced. Confirmed by the user on 2026-10-03 (`plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` D-6).
 - Changed after the gate on 2026-10-03, to align this PRD with the documents that followed it. FR-20 and AC-19 name the address search, which `plans_finished/geocoding/GEOCODING_SHAPE.md`, section Notes on data, performance and security, left to this PRD, and the pseudonymized identifier of a vote without an account, which section Risks and notes already asked of the privacy information; decided by the user on 2026-10-03. The items of Dependencies on external services and on the task `DEPLOYMENT` and the item of Risks and notes on the ODbL state what phase B of `plans/mvp/MVP_PLAN.md` and its initiatives settled, and change no requirement.
-- Changed after the gate on 2026-10-04, by the decisions of the user that day on the deployment of `plans/deployment/` (`plans/mvp/MVP_PLAN.md` D-10). Scope and the first sentence of this section name version 8, which drops from M10 the requirement that the demo shows routing that does not answer and keeps the rule behind FR-17 and AC-16. AC-15 names the start from the current location among what does not work on the hosted link, served over plain HTTP. The items of Dependencies on the target environment and on the task `DEPLOYMENT` no longer name a secure connection or a way to make routing unavailable during the live demo.
+- Changed after the gate on 2026-10-04, by the decisions of the user that day on the deployment of `plans/deployment/` (`plans/mvp/MVP_PLAN.md` D-10). Scope and the first sentence of this section name version 9, which drops from M10 the requirement that the demo shows routing that does not answer and keeps the rule behind FR-17 and AC-16; it was written as version 8 and numbered 9 at the merge of `dev`, which brought version 8 of `plans/valhalla_routing/`. AC-15 names the start from the current location among what does not work on the hosted link, served over plain HTTP. The items of Dependencies on the target environment and on the task `DEPLOYMENT` no longer name a secure connection or a way to make routing unavailable during the live demo.
 
 ## Dependencies and impact on other modules
 
@@ -131,7 +131,7 @@ The rules are those of the specification, version 8, and the section Domain rule
 - The target environment for the demo was an open entry in the same registry. It was decided on 2026-10-03 in `plans_finished/demo_environment/` and changed the same day in `plans/deployment/` (`plans/mvp/MVP_PLAN.md` D-10), and the entry is resolved.
 - The HarmonyOS port, an open entry in the same registry, is not part of this PRD; the solution must not prevent a second client from using the same data and rules.
 - External services: OpenStreetMap data under the ODbL, and an address search service outside the project, which gets only the typed text, from the server of the project (specification, M2 and Personal data). Routes are computed and the map is served inside the project, so no routing or map service outside it is used (same places). Phase B checked their terms, limits and costs in `plans/mvp/MVP_PLAN.md` D-3, D-4, D-6 and D-9.
-- The hosted demo comes from the task `DEPLOYMENT` of `plans/deployment/`. It is served over plain HTTP and does not make routing unavailable during the live demo, by the decisions of the user of 2026-10-04 (`plans/mvp/MVP_PLAN.md` D-10).
+- The hosted demo comes from `plans/deployment/`: its written instructions, `docs/deployment/hosted_demo.md`, from the task `DEPLOYMENT`, and its deployment configuration from the task `DEPLOYMENT_CONFIG`. It is served over plain HTTP and does not make routing unavailable during the live demo, by the decisions of the user of 2026-10-04 (`plans/mvp/MVP_PLAN.md` D-10).
 - The optional features O1-O8 come later through their own pass of `plan-prd`; this PRD does not build them, and the solution must not block them.
 - The Kraków deliverables outside the app - presentation, video, business model, description of data sources and architecture - are not part of this PRD but are built on its result.
 

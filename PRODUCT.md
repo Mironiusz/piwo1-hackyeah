@@ -42,7 +42,7 @@ The app presents facts and leaves the judgement to the person: no scores, no sta
 - Routes work in the whole of Kraków. The demo takes place in the district of the Tauron Arena, the venue of HackYeah, with sample reports and geozones marked as sample data.
 - The Kraków jury expects a live demo: state the needs of the chosen group, plan a route, show the concrete barriers and amenities with their source, date and status, and show a contradiction between OpenStreetMap and a user report as the case of contradictory, incomplete or unavailable data the brief asks for.
 - Whether and in what form a HarmonyOS client is built is an open entry in `docs/standards/decision_registry.md`. The MVP must not prevent a second client from using the same data and rules. If the port is built, it is a second client of the same programming interface, native or in React Native for OpenHarmony, not an application embedding the web app. The web frontend is chosen for the browser and keeps nothing the port would need outside that interface (`plans_finished/frontend_stack/FRONTEND_STACK_SHAPE.md`, Domain rules).
-- Authority: `docs/product/specification.md`, version 8, is the source of truth for the product and prevails over this file. The requirements and acceptance criteria of the MVP are in `plans/mvp/MVP_PRD.md`, the scenarios behind its rules in `plans/mvp/MVP_SHAPE.md`, and the constraints of both challenges in `docs/hackathon/challenge_requirements.md`. This file is the summary that interface work starts from.
+- Authority: `docs/product/specification.md`, version 9, is the source of truth for the product and prevails over this file. The requirements and acceptance criteria of the MVP are in `plans/mvp/MVP_PRD.md`, the scenarios behind its rules in `plans/mvp/MVP_SHAPE.md`, and the constraints of both challenges in `docs/hackathon/challenge_requirements.md`. This file is the summary that interface work starts from.
 
 ## Capabilities and Constraints
 
@@ -71,7 +71,7 @@ The specification gives these terms in English. Their Polish wording is not fixe
 Constraints:
 
 - The app never asks about a disability and never stores one. A preset only sets preferences.
-- Missing or unverified information is never presented as a confirmation of accessibility.
+- Missing or unverified information is never presented as a confirmation of accessibility, with the one deliberate exception of the public transport segment of the optional feature O9 below.
 - Nothing about the author of a report, a vote or a geozone is shown to other users - neither a pseudonym nor whether the author was logged in. The weights behind a status stay inside the system.
 - A status never changes with time alone. The date of the last confirmation is visible and the person judges it.
 - Dates are shown as a calendar day in the Europe/Warsaw zone, without the hour.
@@ -83,8 +83,9 @@ Constraints:
 
 Outside the MVP:
 
+- The optional feature O9 of the specification, routes with public transport of ZTP Kraków from its static GTFS, built first and in parallel with M1-M11, within a time box of 4.5 hours of work of the people of the team. Its public transport segment counts as accessible when the GTFS says nothing about it, a deliberate exception of the specification (M7, M10).
 - The optional features O1-O8 of the specification, built only after M1-M11 work: moving the profile with a QR code, photos in reports, points and a city ranking, open city data, geozone corrections, place cards, live alerts on the route, voice.
-- Out of scope altogether: turn-by-turn navigation, public transport routes, scores or stars for places, implemented rewards, routes that guarantee a rest place at a given distance, and a layout tuned for desktop.
+- Out of scope altogether: turn-by-turn navigation, real-time public transport data, scores or stars for places, implemented rewards, routes that guarantee a rest place at a given distance, and a layout tuned for desktop.
 
 Undecided:
 
@@ -97,7 +98,7 @@ Undecided:
 
 ## Evidence on Hand
 
-- `docs/product/specification.md`, version 8: the target group, the features and their rules, personal data and the out-of-scope list.
+- `docs/product/specification.md`, version 9: the target group, the features and their rules, personal data and the out-of-scope list.
 - `docs/product/api_contract.md`: every operation between the clients and the service, with its request, responses and errors.
 - `plans/mvp/MVP_PRD.md`: twenty functional requirements with their acceptance criteria.
 - `plans/mvp/MVP_SHAPE.md`: twelve scenarios with concrete inputs and expected states, usable as realistic content for screens and for the demo.
