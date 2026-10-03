@@ -26,7 +26,7 @@ How each member of the team gets a local PostgreSQL with PostGIS was not decided
 
 ## Out of scope
 
-- The other technical decisions delegated in the same conversation, each with its own initiative: `plans/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans_finished/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/geocoding/`, `plans/account_sessions/`.
+- The other technical decisions delegated in the same conversation, each with its own initiative: `plans_finished/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans_finished/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/geocoding/`, `plans_finished/account_sessions/`.
 - The setup itself: the instructions in the README, the script creating the database and the accounts, the entries of the environment templates and the configuration that applies schema changes. A work package of `plans/mvp/` builds them, as with `plans_finished/geocoding/` and `plans_finished/osm_data_source/`. The user cut them from this initiative on 2026-10-03 (`LOCAL_DATABASE_SHAPE.md`, question 1).
 - A trial run of the chosen environment on a machine of the team. The first run is part of that work package. Agent reading of question 1 at C:40: the user chose the decision alone over delivering the setup.
 - A database shared by the team, ruled out by `docs/standards/standard_tests.md`, because a critical test seeds data durably and therefore always runs against the local database (`LOCAL_DATABASE_SHAPE.md`, question 2).

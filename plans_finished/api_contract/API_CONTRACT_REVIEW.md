@@ -1,6 +1,6 @@
 # Review: Contract of the programming interface between the frontend and the backend of the MVP
 
-Document state: 2026-10-03, implementation of the whole plan carried out, review ready for the whole initiative
+Document state: 2026-10-03, implementation of the whole plan carried out, review ready for the whole initiative, archived in `plans_finished/api_contract/`
 
 ## Implementation run of 2026-10-03
 
@@ -69,3 +69,9 @@ Risks recorded for the user:
 Improvements: the two observations above, the rest of the item Q-11 and the two long table cells of the contract.
 
 Verdict: ready, for the whole initiative `plans/api_contract/`, whose one task is this plan. The steps left to a human - the confirmation of the frontend person, the initiative of Q-11, question 2 of the shape of `SCHEMA_REVISION` and the commit - are post-closure steps, so the initiative qualifies for `plans_finished/` under `docs/standards/standard_agentic_workflow.md` ch. 4.6.
+
+### Archiving
+
+- After the verdict a human committed the tree as `54dd6f6`, with every file of this run in it, so the evidence of the review was compared again: the files of the initiative and of the change equal `HEAD`, and `tests/architecture` reports `120 passed` on it.
+- Moved on 2026-10-03 from `plans/api_contract/` to `plans_finished/api_contract/` with a native move, under `docs/standards/standard_agentic_workflow.md` ch. 4.6: the target did not exist, the directory had no change after the verdict, it holds no link, and the SHA-256 sums of its five files are the same before and after the move. The session closing `plans/account_sessions/` held its edits of the shared files while the references were updated.
+- The editable references - `docs/product/api_contract.md`, `docs/product/specification.md`, `docs/standards/README.md`, `docs/standards/decision_registry.md`, `docs/standards/standard_frontend.md`, `plans/mvp/MVP_PLAN.md`, `plans/mvp/MVP_PRD.md`, `plans/schema_revision/SCHEMA_REVISION_SHAPE.md`, the shape, PRD and plan of `plans/account_sessions/`, the plan of this initiative and the shapes, PRDs and plans of the archived initiatives - name `plans_finished/api_contract/`. The seed, every review entry, this file included, and `agent_docs/memory/` keep `plans/api_contract/` as historical records. No code or tool reads the files of this initiative.

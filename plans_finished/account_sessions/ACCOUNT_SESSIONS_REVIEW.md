@@ -1,6 +1,6 @@
 # Review: MVP account sessions and actor resolution
 
-Document state: 2026-10-03, review not ready
+Document state: 2026-10-03, review ready for the whole initiative
 
 ## 2026-10-03 - Implementation run
 
@@ -134,3 +134,50 @@ The user asked to resolve the blockers of the review after the merge. The change
 Parallel work: during this run another session moved `plans/fact_schema/` to `plans_finished/fact_schema/` and changed the paths to it in the plan, the PRD and the shape of this initiative, and the session of `plans/api_contract/` implemented its plan in `docs/product/specification.md` and `plans/mvp/MVP_PLAN.md`. Their edits are taken as the current state, every file was read again right before its edit, and in the MVP plan only D-8 was changed, which no step of `plans/api_contract/` quotes. The paths in the earlier entries of this review stay as they were written.
 
 A new review of the whole initiative is needed before archiving.
+
+## 2026-10-03 - Definition of Done review after the fixes
+
+Scope: the whole initiative - the five artifacts and D-8 of `plans/mvp/MVP_PLAN.md` - as left by the entry above. The scope is documentation and hand-off only; no account or session code (`ACCOUNT_SESSIONS_PLAN.md` D-1). The review was run by the `dod-reviewer` agent on the request of the user; the agent of the session checked R-C in the specification before recording it.
+
+Runs: `venv\Scripts\python.exe -m pytest tests/architecture -o addopts="" -q` -> `120 passed`; `npx --no-install prettier --check plans/account_sessions/*.md plans/mvp/MVP_PLAN.md` -> all match; `plans_finished/account_sessions/` does not exist.
+
+### Blockers
+
+None. B-3 is fixed by the withdrawal marker in the Problem section of the PRD. B-2 is fixed by D-4 for the hash and by the pointer of D-4 to D-8 of `plans/api_contract/API_CONTRACT_PLAN.md` for the input, which `plans_finished/fact_schema/FACT_SCHEMA_PLAN.md` D-11 and D-14 leave to the place where the input is accepted; F-28 there stays as a record of the archive. No contradiction remains with D-4 - D-8 of the API contract, D-8 of the MVP plan, M9 and M11 of the specification, `docs/product/schema.md` or the fact-schema plan.
+
+### Risks
+
+- R-A. The agreement of the frontend person is not recorded in this initiative: the PRD, Dependencies, asks for it, and D-3 says only that the user selected the signed token. The user approved the contract in place of the frontend person, whose confirmation is still to be obtained (`plans/api_contract/API_CONTRACT_PLAN.md` D-10, `plans/mvp/MVP_PLAN.md` D-12). That is a human step tracked there, which does not block archiving under ch. 4.6.
+- R-B. FR-12 and AC-11 of `plans/mvp/MVP_PRD.md` do not carry the additions of version 7 to M9. Their alignment belongs to the implementation of `plans/api_contract/` (its step 2.10), not to this initiative.
+- R-C. Resolved before recording: `docs/product/specification.md` is version 7, approved by the user on 2026-10-03. Should the user later change D-5, D-6 or D-8 of the API contract, D-3, D-4, FR-1, FR-2, AC-1, Domain rules, the shape and D-8 of the MVP plan have to follow, by resuming this initiative.
+- R-D. The editable references to this initiative lie in files the session of `plans/api_contract/` is editing, so the move waits for that session to finish its own path changes.
+- Accepted and recorded: R-3, the memory of Argon2id on the shared server and the deviation from NIST SP 800-63B-4.
+
+### Improvements
+
+- I-A. F-8 of `plans/api_contract/API_CONTRACT_PLAN.md` cites D-3 of this plan at line 26, while it is at line 29 since F-9 - F-11 were inserted. To be corrected together with the path of that reference at the move.
+- I-B. Fixed after the report: the item of Risks of the plan on renewal now names what a signed-token renewal costs.
+- I-C. Fixed after the report: the change markers of FR-1, FR-2 and Domain rules of the PRD and of the rolling session of the shape name the session of a deleted account next to the expired one, as D-3, F-9 and M9 do.
+- I-D. Not applied: Human steps, Scope steps 2 and 3 and the Definition of Done of the plan describe the hand-off as it was done, under the names Q-6 and Q-3 of that time.
+- I-5 of the earlier review is left to step 3.2 of `plans/api_contract/API_CONTRACT_PLAN.md`.
+
+The fixes of I-B and I-C change only the wording of change markers and of one risk, no decision; after them prettier on the five artifacts and `tests/architecture` were run again by the agent of the session.
+
+Not checked, the call limit of the reviewer ran out: the citations of F-1, F-3, F-6, F-7 and F-8 of the plan.
+
+### Verification
+
+- `standard_agentic_workflow.md`: checked automatically; the parity and hook tests passed within the 120. The closure rules of ch. 4.6 checked manually: no collision, no unsettled contradiction, no ambiguous status.
+- `standard_agent_docs.md`: checked automatically; `test_plan_document_contract.py` passed. The facts F-2, F-4, F-5, F-9 and F-10 checked manually against the lines they cite, and the withdrawal and change markers against their dates.
+- `standard_review.md`: checked manually; report order, scope and verdict follow the standard.
+- `standard_documentation.md`: checked manually; no code-unit documentation.
+- `standard_formatting.md`: checked automatically; prettier on the scope files and `test_prose_style.py` passed.
+- `standard_git.md`: checked automatically; `test_conflict_markers.py` passed. No git operation was run.
+- `standard_architecture.md`, `standard_config.md`, `standard_errors.md`, `standard_idempotency.md`, `standard_code_quality.md`, `standard_logging.md`, `standard_naming.md`, `standard_tests.md`, `standard_worker.md`, `standard_frontend.md`: not applicable; no code. F-7 records the rule for the signing secret and F-8 the role matrix for the implementation.
+- `standard_database.md`: checked manually; D-4 matches `password_hash text` of the target schema.
+- `standard_security.md`: checked manually; the floor of D-4 matches the OWASP minimum of F-11, and the token risk and the deviation from NIST are recorded and accepted.
+- `standard_time.md`: checked manually; the 24 hours are elapsed time, and no stored timestamp form is decided here.
+
+### Verdict
+
+Ready, for the whole initiative `plans/account_sessions/`, a decision record and hand-off without code. It qualifies for `plans_finished/` under ch. 4.6 of `docs/standards/standard_agentic_workflow.md`; the move waits for the session of `plans/api_contract/` to finish its path changes (R-D).

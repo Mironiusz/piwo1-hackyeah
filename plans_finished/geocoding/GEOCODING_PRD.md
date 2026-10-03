@@ -25,7 +25,7 @@ A search that silently takes the first match would send a route to a wrong place
 ## Out of scope
 
 - Building the search. The code is written as a work package of `plans/mvp/`, together with the rest of the backend, because the backend architecture is decided there (`plans/mvp/MVP_PLAN.md` Q-11). Decided by the user with the external API person in the shape interview.
-- The shape of the search request and response between the frontend and the backend, which is part of `plans/api_contract/`.
+- The shape of the search request and response between the frontend and the backend, which is part of `plans_finished/api_contract/`.
 - The map tiles and what their source learns about the person, which is part of `plans_finished/frontend_stack/`.
 - The wording of the privacy information (`plans/mvp/MVP_PRD.md` FR-20), owned by `plans/mvp/`.
 - Suggestions while the user types. Decided against by the user with the external API person in the shape interview.
@@ -86,7 +86,7 @@ The rules are those of the section Domain rules of `plans_finished/geocoding/GEO
 ## Dependencies and impact on other modules
 
 - No product code exists, so nothing in the repository is changed indirectly. The decision feeds `plans/mvp/`: it closes `plans/mvp/MVP_PLAN.md` Q-5, and the search becomes a work package of that plan, used by `plans/mvp/MVP_PRD.md` FR-2 and FR-8 and held to FR-16 and FR-19.
-- `plans/api_contract/` waits for this initiative to know whether the search goes through the backend: it does, so the search is part of the contract between the frontend and the backend.
+- `plans_finished/api_contract/` waits for this initiative to know whether the search goes through the backend: it does, so the search is part of the contract between the frontend and the backend.
 - `plans_finished/frontend_stack/` builds the list and the messages; the risk of the map tiles revealing the IP address of the person is recorded for it.
 - `plans_finished/demo_environment/` decided a hosted service at a public link; where the hosting sends outgoing requests from matters for the outside service.
 - `plans_finished/osm_data_source/` matters only if phase B picks an own search instance built from OpenStreetMap data.

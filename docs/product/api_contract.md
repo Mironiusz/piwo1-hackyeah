@@ -6,7 +6,7 @@ Document state: 2026-10-03, approved by the user in place of the frontend person
 
 This is the contract of the programming interface between the clients of the app - the web frontend and a possible HarmonyOS client - and its service: every operation with its request, its responses and its errors. The clients and the service are built in parallel against it and change together, so it keeps no backward compatibility for a client released on its own. A change of an operation is a change of this document first, agreed by the backend person and the frontend person.
 
-The behavior behind the operations is that of `docs/product/specification.md`, with the target database schema `docs/product/schema.md`, and it prevails over this document; this document says how that behavior crosses the boundary between a client and the service. It was decided in `plans/api_contract/`.
+The behavior behind the operations is that of `docs/product/specification.md`, with the target database schema `docs/product/schema.md`, and it prevails over this document; this document says how that behavior crosses the boundary between a client and the service. It was decided in `plans_finished/api_contract/`.
 
 ## Conventions
 

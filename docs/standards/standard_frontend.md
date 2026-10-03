@@ -16,7 +16,7 @@ This standard is responsible for frontend code in `frontend/`: its technology, i
 
 What is not here:
 
-- The contract of the programming interface between the frontend and the backend - that is decided in `plans/api_contract/`. This standard only says that the frontend shows what the interface returns.
+- The contract of the programming interface between the frontend and the backend - that is decided in `plans_finished/api_contract/`. This standard only says that the frontend shows what the interface returns.
 - The visual design of the screens. The design direction is an input the technology has to be able to build, recorded in `PRODUCT.md` and `.impeccable/briefs/`.
 - The rules of the workflow core - the agentic chain, the task artifacts, review, documentation, formatting and git. They apply to frontend code unchanged and are not repeated here; where a section below names one of them, it says only what the rule means for a frontend file.
 
