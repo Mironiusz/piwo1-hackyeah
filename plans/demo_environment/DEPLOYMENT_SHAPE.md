@@ -7,13 +7,13 @@ The seed carries no regulator value, so the default C:40 applies.
 
 ## Problem
 
-The hosted demo of `plans/mvp/` needs a deployment configuration and written instructions in the repository, a secure connection, and a way to make the routing service unreachable during the live demo. All three need the skeleton of the app: the configuration names how the service and the worker start, which `plans/mvp/MVP_PLAN.md` decides in Q-10 only after its Q-7 - the choice of the demo environment - is closed. Kept inside the task `DEMO_ENVIRONMENT`, this work made that task wait for Q-10 while Q-10 waited for it. On 2026-10-03 the user split it out into this task to cut that loop.
+The hosted demo of `plans/mvp/` needs a deployment configuration and written instructions in the repository, a secure connection, and a way to make the routing service unreachable during the live demo. All three need the skeleton of the app: the configuration names how the service and the worker start, which `plans/mvp/MVP_PLAN.md` decides in Q-11 only after its Q-7 - the choice of the demo environment - is closed. Kept inside the task `DEMO_ENVIRONMENT`, this work made that task wait for Q-11 while Q-11 waited for it. The backend architecture with the worker was part of Q-10 of that plan when this task was split out, and moved to Q-11 when Q-10 was narrowed to the domain model on 2026-10-03. On 2026-10-03 the user split it out into this task to cut that loop.
 
 ## Recipient and trigger
 
 - The recipient is the db person of the team, who stands the hosted environment up using what this task delivers (`DEMO_ENVIRONMENT_SHAPE.md`, section Out of scope).
 - The owner of this task is the db person, as the owner of the whole initiative. Agent decision at C:40, without asking: the task was split out of a task the db person owns, and the user named no other owner.
-- Trigger: the skeleton of the app exists in `plans/mvp/` - Q-10 of `plans/mvp/MVP_PLAN.md` is decided and the first backend code is written - and the hosting is chosen in the task `DEMO_ENVIRONMENT`.
+- Trigger: the skeleton of the app exists in `plans/mvp/` - Q-11 of `plans/mvp/MVP_PLAN.md` is decided and the first backend code is written - and the hosting is chosen in the task `DEMO_ENVIRONMENT`.
 
 ## Current state
 
@@ -43,7 +43,7 @@ Following from the seed: the three requirements moved out of `DEMO_ENVIRONMENT_P
 
 ## Challenging own assumptions
 
-- Can the configuration be written before the app exists? No: it names how the service and the worker start, which `plans/mvp/` decides in Q-10. That is the reason this task exists separately.
+- Can the configuration be written before the app exists? No: it names how the service and the worker start, which `plans/mvp/` decides in Q-11. That is the reason this task exists separately.
 - Does the deadline of 22:00 on 3 October 2026 from `DEMO_ENVIRONMENT_SHAPE.md` bind this task? It was set while the configuration was part of that task, before it was known to wait for the skeleton of the app; whether it still holds is open (question 1).
 
 ## Domain rules or explicit TODO
