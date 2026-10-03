@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "deny": [
+      "Read(/.env)",
+      "Read(/**/.env)",
+      "Read(/.env.priv)",
+      "Read(/**/.env.priv)",
+      "Read(/.env.production)",
+      "Read(/**/.env.production)",
+      "Read(/.env.development)",
+      "Read(/**/.env.development)",
+      "Read(/secrets/**)",
+      "Read(/**/*.pem)",
+      "Read(/**/*.key)",
+      "Read(/**/*.p12)",
+      "Read(/**/*.pfx)",
+      "Read(/**/id_rsa)",
+      "Read(/**/id_dsa)",
+      "Read(/**/id_ecdsa)",
+      "Read(/**/id_ed25519)",
+      "Write(/.env)",
+      "Write(/**/.env)",
+      "Write(/.env.priv)",
+      "Write(/**/.env.priv)",
+      "Edit(/.env)",
+      "Edit(/**/.env)",
+      "Edit(/.env.priv)",
+      "Edit(/**/.env.priv)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python",
+            "args": [
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/local_docs_context.py"
+            ],
+            "timeout": 10,
+            "statusMessage": "Ładowanie krótkiego kontekstu repo"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python",
+            "args": [
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/block_dangerous_commands.py"
+            ],
+            "timeout": 5,
+            "statusMessage": "Sprawdzanie komendy przed uruchomieniem"
+          }
+        ]
+      }
+    ]
+  }
+}

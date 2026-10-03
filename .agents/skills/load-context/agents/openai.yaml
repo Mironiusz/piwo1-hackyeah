@@ -1,0 +1,3 @@
+interface:
+  display_name: "Load Context"
+  short_description: "Dump a folder into one context file."

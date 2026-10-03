@@ -1,0 +1,21 @@
+{
+  "files.eol": "\n",
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "explicit",
+      "source.organizeImports.ruff": "explicit"
+    }
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "ruff.nativeServer": "on",
+  "ruff.lint.enable": true,
+  "ruff.configurationPreference": "filesystemFirst",
+
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false
+}

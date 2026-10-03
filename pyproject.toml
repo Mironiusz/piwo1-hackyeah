@@ -1,0 +1,139 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+# Ta sekcja istnieje wyłącznie po to, żeby lista zależności miała jedno miejsce czytelne dla wszystkich
+# narzędzi kontrolnych - projekt nie jest pakietem do dystrybucji. Wersja jest stała i nic nie znaczy.
+# Nazwę i zależności serwisu wpisuje projekt. Zależność, której kod nie importuje wprost (sterownik ładowany
+# po nazwie dialektu, punkt wejścia, wsparcie runtime), dostaje wpis w DEP002 niżej razem z powodem.
+[project]
+name = "nazwa-projektu"
+version = "0.0.0"
+requires-python = ">=3.13"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "bandit[toml]==1.9.4",
+    "deptry==0.25.1",
+    "mypy==2.3.0",
+    "pip-audit==2.10.1",
+    "pytest==9.1.1",
+    "pytest-cov==7.1.0",
+    "ruff==0.16.2",
+    "vulture==2.16",
+]
+
+# Kod nie jest pakowany: do kontenera trafia przez COPY, a nie przez instalację, i jest wykonywany
+# z PYTHONPATH. Pusta lista modułów wyłącza automatyczne wykrywanie pakietów, przez co instalacja
+# zakłada same metadane z zależnościami - bez drugiej kopii kodu w katalogu pakietów.
+[tool.setuptools]
+py-modules = []
+
+# Katalog z metadanymi pakietu i katalog roboczy budowy, jedno i drugie tworzone przy każdej instalacji,
+# lądują w .cache zamiast w korzeniu repozytorium. Setuptools nie tworzy katalogu wskazanego w egg-base,
+# więc .cache/.gitkeep jest wersjonowany - bez niego instalacja na świeżym klonie pada przy budowaniu
+# metadanych.
+[tool.distutils.egg_info]
+egg-base = ".cache"
+
+[tool.distutils.build]
+build-base = ".cache/build"
+
+[tool.ruff]
+target-version = "py313"
+line-length = 200
+src = ["."]
+# Katalogi robocze narzędzi zbierają się w .cache, żeby korzeń repozytorium pokazywał wyłącznie to,
+# co ktoś napisał. Każde narzędzie ma na to własny klucz i każdy z nich stoi w tym pliku.
+cache-dir = ".cache/ruff"
+exclude = [
+    ".venv",
+    "venv",
+    ".git",
+    ".cache",
+    "__pycache__",
+    "build",
+    "dist",
+    "node_modules",
+]
+# Pliki markdown wychodzą z zasięgu: ruff od 0.16 formatuje bloki kodu w dokumentacji, a przy włączonym
+# docstring-code-format oznaczało to, że "make format" przepisuje przykłady w docs/ razem z kodem.
+# Formatowanie przykładów w docstringach samego kodu zostaje włączone i działa dalej.
+extend-exclude = ["*.md"]
+force-exclude = true
+
+[tool.ruff.lint]
+select = [
+    "E4",
+    "E7",
+    "E9",
+    "F",
+    "I",
+    "B",
+    "UP",
+    "SIM",
+    "C4",
+    "C90",
+    "A",
+    "N",
+    "RUF",
+    "G",
+]
+fixable = ["ALL"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 15
+
+# N803 wyłączone w tests/: fixture'y celowo nazywane jak klasa, którą zwracają, nie literówka.
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["N803"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+skip-magic-trailing-comma = false
+docstring-code-format = true
+
+# Lista katalogów obejmuje dziś wyłącznie hooki, bo szablon nie ma kodu serwisu. Projekt dopisuje tu
+# katalogi warstw razem z pierwszym kodem. Projekt korzystający z modeli Pydantica dopisuje też wtyczkę
+# pydantic.mypy: bez niej mypy zgłasza brak argumentów przy tworzeniu modelu ustawień, bo nie wie, że
+# wartości pochodzą ze środowiska.
+[tool.mypy]
+files = [".claude/hooks"]
+cache_dir = ".cache/mypy"
+
+[tool.vulture]
+# Skanowane są także testy: użycie w teście jest użyciem.
+paths = [".claude/hooks", "tests"]
+# Próg pewności podniesiony z domyślnych sześćdziesięciu, bo pola modeli Pydantica i kolumny ORM składa
+# biblioteka po nazwie, a vulture tego nie widzi i zgłasza je jako martwe. Co bramka przy tym progu
+# przestaje widzieć: nieużywaną funkcję, klasę, metodę, atrybut i zmienną - vulture przypisuje im
+# sześćdziesiąt procent pewności. Nieużywane importy i zmienne lokalne łapie dalej ruff rodziną reguł F,
+# a nieużywane parametry funkcji i kod nieosiągalny zostają widoczne tutaj, bo mają sto procent.
+min_confidence = 61
+
+[tool.deptry]
+# Grupa dev to narzędzia uruchamiane z linii poleceń, a nie importowane przez kod. Bez tego wpisu deptry
+# zgłasza każde z nich jako zadeklarowane i nieużywane, bo szuka ich w importach - a tam ich nigdy nie będzie.
+optional_dependencies_dev_groups = ["dev"]
+# Bandit nie ma tu sekcji konfiguracji i jest to decyzja, nie przeoczenie. Wyciszenie ma obowiązywać
+# tylko w tym miejscu, w którym stoi jego powód, a bandit potrafi wyciszać wyłącznie globalnie - jedna
+# lista w tym pliku uciszałaby też kod, który jeszcze nie powstał. Zasięg stoi więc przy wywołaniach
+# w makefile, razem z powodem każdego wyciszenia. Pozycja bandit[toml] zostaje na liście zależności
+# jako zabezpieczenie: gdyby ktoś tu kiedyś dopisał [tool.bandit], bandit bez tego dodatku zignorowałby
+# sekcję po cichu, bez żadnego błędu.
+
+[tool.coverage.run]
+data_file = ".cache/coverage"
+
+[tool.pytest.ini_options]
+addopts = "-ra -q"
+testpaths = ["tests"]
+pythonpath = ["."]
+cache_dir = ".cache/pytest"
+markers = [
+    "integration: testy integracyjne (sklejają kilka warstw; bez realnej sieci i bez prawdziwej bazy)",
+    "critical: testy krytyczne (realne zależności: np. DB; mają szybko wywalić środowisko gdy coś nie działa)",
+]
