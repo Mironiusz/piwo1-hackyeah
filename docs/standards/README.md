@@ -55,6 +55,7 @@ The project adds its own directories next to `docs/standards/`, each with its pr
 - `docs/hackathon/` - `challenge_requirements.md`, a working summary of the rules and task descriptions of the two HackYeah 2026 challenges the project is submitted to, written on 2026-10-03 from the organizers' PDFs. The PDFs remain the authority and are not stored in the repository.
 - `docs/deployment/` - `hosted_demo.md`, the written instructions for standing the hosted demo up on the server, written on 2026-10-04 by `plans_finished/deployment/`, with the commands completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`.
 - `AI_WORKFLOW.md` in the repository root - the description of how AI tools are used here, required by the Huawei challenge.
+- `TEAM.md` in the repository root - the members of the team and the role each one holds, set by Rafał on 2026-10-04, so that documents name people instead of roles (`CLAUDE.md`, section Language and communication style).
 
 ## Deviation rule
 

@@ -42,7 +42,7 @@ The app presents facts and leaves the judgement to the person: no scores, no sta
 - Routes work in the whole of Kraków. The demo takes place in the district of the Tauron Arena, the venue of HackYeah, with sample reports and geozones marked as sample data.
 - The Kraków jury expects a live demo: state the needs of the chosen group, plan a route, show the concrete barriers and amenities with their source, date and status, and show a contradiction between OpenStreetMap and a user report as the case of contradictory, incomplete or unavailable data the brief asks for.
 - Whether and in what form a HarmonyOS client is built is an open entry in `docs/standards/decision_registry.md`. The MVP must not prevent a second client from using the same data and rules. If the port is built, it is a second client of the same programming interface, native or in React Native for OpenHarmony, not an application embedding the web app. The web frontend is chosen for the browser and keeps nothing the port would need outside that interface (`plans_finished/frontend_stack/FRONTEND_STACK_SHAPE.md`, Domain rules).
-- Authority: `docs/product/specification.md`, version 9, is the source of truth for the product and prevails over this file. The requirements and acceptance criteria of the MVP are in `plans/mvp/MVP_PRD.md`, the scenarios behind its rules in `plans/mvp/MVP_SHAPE.md`, and the constraints of both challenges in `docs/hackathon/challenge_requirements.md`. This file is the summary that interface work starts from.
+- Authority: `docs/product/specification.md`, version 10, is the source of truth for the product and prevails over this file. The requirements and acceptance criteria of the MVP are in `plans/mvp/MVP_PRD.md`, the scenarios behind its rules in `plans/mvp/MVP_SHAPE.md`, and the constraints of both challenges in `docs/hackathon/challenge_requirements.md`. This file is the summary that interface work starts from.
 
 ## Capabilities and Constraints
 
@@ -98,7 +98,7 @@ Undecided:
 
 ## Evidence on Hand
 
-- `docs/product/specification.md`, version 9: the target group, the features and their rules, personal data and the out-of-scope list.
+- `docs/product/specification.md`, version 10: the target group, the features and their rules, personal data and the out-of-scope list.
 - `docs/product/api_contract.md`: every operation between the clients and the service, with its request, responses and errors.
 - `plans/mvp/MVP_PRD.md`: twenty functional requirements with their acceptance criteria.
 - `plans/mvp/MVP_SHAPE.md`: twelve scenarios with concrete inputs and expected states, usable as realistic content for screens and for the demo.

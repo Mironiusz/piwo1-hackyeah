@@ -21,6 +21,7 @@ The source of truth for the product is `docs/product/specification.md`: what the
 - Talk to the user normally and explain your decisions.
 - When something is unclear, say so directly instead of guessing.
 - When you see a potential bug in the code, report it.
+- Name a member of the team by first name, never by role: Kuba, not the db person. Who holds which role is in `TEAM.md` in the repository root.
 
 ## Rules for working with code
 
