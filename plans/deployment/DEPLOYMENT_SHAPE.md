@@ -27,6 +27,9 @@ The hosted demo of `plans/mvp/` needs a deployment configuration and written ins
 - `plans_finished/geocoding/` decided on 2026-10-03 (`plans_finished/geocoding/GEOCODING_PLAN.md` D-15, D-16) that the backend which answers the address search runs as exactly one process, because its cache and its gate of one request per 1.1 seconds to the public Nominatim instance live in the memory of that process, and that after the first deployment one search from the hosted service is checked to return a list, because a hosting address shared with other customers may be blocked by that instance. The deployment configuration starts the service with one process and does not scale it automatically. Added on 2026-10-03 by `plans_finished/consistency_check/`.
 - `plans_finished/routing_engine/` decided on 2026-10-03 (`plans_finished/routing_engine/ROUTING_ENGINE_PLAN.md` D-1, D-3, D-13) that routes are computed by a graph in the memory of the backend process, with no routing service of its own and none outside the project. Routing stops answering only when the graph cannot be built - no copy in the database, or a failed build - or when a read of the stored network or facts fails or times out; the app then shows the plain message of FR-17 of `plans/mvp/MVP_PRD.md`. How the live demo provokes that and undoes it, for functional requirement 3 of this shape, is for this task; `plans_finished/routing_engine/` decides no switch for it.
 
+- At the review of this shape on 2026-10-03, after 22:00, the trigger is not met: Q-11 of `plans/mvp/MVP_PLAN.md` is open, no product code exists on `dev` or on any remote branch, and neither `frontend/` nor a backend directory exists (`git fetch` and `git branch -a` on 2026-10-03, `dev` at `33a9ce7`).
+- `docs/product/specification.md`, section on the demo, requires the demo to show what the user sees when a source is unavailable: "when the routing service does not answer, a plain message and no guessed route". FR-17 and AC-16 of `plans/mvp/MVP_PRD.md` use the same words. `plans_finished/routing_engine/` decided later that day that no routing service exists, so "the routing service does not answer" now means the cases of D-3 of that plan listed in the previous items; the specification and the MVP PRD were not reworded after it.
+
 ## Smallest meaningful scope
 
 Following from the seed: the three requirements moved out of `plans_finished/demo_environment/DEMO_ENVIRONMENT_PRD.md`.
@@ -41,13 +44,16 @@ Following from the seed: the three requirements moved out of `plans_finished/dem
 
 1. The repository holds the deployment configuration and written instructions with which a member of the team deploys the app of `plans/mvp/` to the chosen hosting and opens it at the public link on a phone, without help from the person who wrote them. No address, host, login or secret of the hosting is in the repository.
 2. The public link is served over a secure connection: the Kraków brief asks for secure connections, and browsers give a page the current location, which FR-2 of `plans/mvp/MVP_PRD.md` uses as a start, only over a secure connection.
-3. The chosen environment lets the team make the routing service unreachable for the app during the live demo, so the case of FR-17 of `plans/mvp/MVP_PRD.md` can be shown, and bring it back afterwards.
+3. The chosen environment lets the team make routing stop answering during the live demo, so the case of FR-17 of `plans/mvp/MVP_PRD.md` can be shown, and bring it back afterwards. Reworded at the review on 2026-10-03: it said "make the routing service unreachable", and no routing service exists (`plans_finished/routing_engine/ROUTING_ENGINE_PLAN.md` D-1).
 
 ## Scenarios: input, flow, expected state after the run
 
 ## Challenging own assumptions
 
 - Can the configuration be written before the app exists? No: it names how the service and the worker start, which `plans/mvp/` decides in Q-11. That is the reason this task exists separately.
+- Does the trigger come in time? At the review, after 22:00 on 3 October 2026, Q-11 is open and no code exists, so the configuration cannot be written yet and the night before 11:00 on 4 October 2026 is the whole window for the skeleton, the configuration, standing the environment up and checking the link (question 1).
+- Is the hosted database automatically separate from the other services of the server? No: `plans_finished/local_database/` hands over that the account applying the revisions is a superuser, and if the demo shares a PostgreSQL instance with databases of the owner, that account can read and drop them, which `CLAUDE.md`, section Target environment, forbids the agent to touch unconditionally (question 2).
+- Is the scene of FR-3 harmless for the jury? Routing lives in the one backend process (`plans_finished/routing_engine/ROUTING_ENGINE_PLAN.md` D-1, `plans_finished/geocoding/GEOCODING_PLAN.md` D-15), so while the team shows it, routing stops answering for everyone who has the public link open, the jury included (question 3).
 - Does the deadline of 22:00 on 3 October 2026 from `plans_finished/demo_environment/DEMO_ENVIRONMENT_SHAPE.md` bind this task? It was set while the configuration was part of that task, before it was known to wait for the skeleton of the app; whether it still holds is open (question 1).
 
 ## Domain rules or explicit TODO
@@ -60,4 +66,8 @@ Following from the seed: the three requirements moved out of `plans_finished/dem
 
 ## Open questions
 
-1. By when must the deployment configuration and instructions be ready, given that they wait for the skeleton of the app and that the Kraków submission closes at 11:00 on 4 October 2026? `Block: no`
+1. By when must the deployment configuration and instructions be ready, given that they wait for the skeleton of the app and that the Kraków submission closes at 11:00 on 4 October 2026, and what happens if the skeleton is not there by then? `Block: no`
+2. Does the hosted database of the demo run in a PostgreSQL instance of its own, or in an instance that also holds databases of the owner of the server? `Block: yes` (category: read visibility and permissions)
+3. How long may routing stay down for everyone during the scene of FR-3, and must it be shown on the hosted link at all, given that the specification requires the demo to show it? `Block: no`
+4. Are ports 80 and 443 of the server free, or does a proxy of the owner already answer on them? Fact to be stated by the db person; it decides whether the secure connection of FR-2 is possible (`plans_finished/demo_environment/DEMO_ENVIRONMENT_REVIEW.md` R-5). `Block: no`
+5. Do updates deployed during the night keep the data already in the hosted database, and is filling the database with the OpenStreetMap copy and serving the tile archive part of the written instructions? `Block: no`
