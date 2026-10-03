@@ -52,8 +52,8 @@ FR-4. Check after the first start. The instructions end with a check the team ru
 
 FR-5. Records of the hosting. The records that name the server of the demo describe the server of the user in a data centre, served over plain HTTP:
 
-- D-8 of `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` gets a note that it is superseded.
-- D-10 of `plans/mvp/MVP_PLAN.md`, the section Target environment of `CLAUDE.md` and `AGENTS.md`, and the resolved entry of `docs/standards/decision_registry.md` describe the new server and point to this task.
+- D-10 of `plans/mvp/MVP_PLAN.md`, the section Target environment of `CLAUDE.md` and `AGENTS.md`, and the resolved entry of `docs/standards/decision_registry.md` describe the new server, say that D-8 of `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` is superseded, and point to this task.
+- The archived `plans_finished/demo_environment/` is not changed: its D-8 stays as a historical record (`docs/standards/standard_agentic_workflow.md` ch. 4.6, section Protecting history). Decided by the user on 2026-10-04 in phase B, against a superseding note written into the archived plan.
 - The change of a workflow rule is recorded in `AI_WORKFLOW.md`.
 
 None of them names an address, a host or a login. The permission levels of the agent do not change.
@@ -70,8 +70,8 @@ AC-4 (FR-4). The check is the last section of the instructions. It covers the fo
 
 AC-5 (FR-5):
 
-- D-8 of `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` carries the superseding note.
-- D-10 of `plans/mvp/MVP_PLAN.md`, the section Target environment of `CLAUDE.md` and `AGENTS.md`, and the resolved entry of `docs/standards/decision_registry.md` describe the server of the user over plain HTTP and point to this task.
+- D-10 of `plans/mvp/MVP_PLAN.md`, the section Target environment of `CLAUDE.md` and `AGENTS.md`, and the resolved entry of `docs/standards/decision_registry.md` describe the server of the user over plain HTTP, name D-8 of `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` as superseded and point to this task.
+- `git diff` shows no change under `plans_finished/demo_environment/`.
 - `AI_WORKFLOW.md` records the change.
 - The three permission levels in `CLAUDE.md` and `AGENTS.md` read the same as before, and the two files stay identical except for the tool name.
 - None of these files contains an address, a host or a login.
@@ -90,7 +90,7 @@ AC-5 (FR-5):
 - The work packages of `plans/mvp/MVP_PLAN.md` for the import (D-4), the tile archive (D-6) and the sample data (FR-18 of `plans/mvp/MVP_PRD.md`) together make the loading program of FR-2.
 - `plans_finished/geocoding/` D-16: the check of an address search after the first deployment.
 - `docs/product/specification.md` M10 and AC-15 of `plans/mvp/MVP_PRD.md` have to follow the cuts of this task. That work is outside this task.
-- FR-5 changes `CLAUDE.md`, `AGENTS.md`, `AI_WORKFLOW.md`, `docs/standards/decision_registry.md`, `plans_finished/demo_environment/` and `plans/mvp/MVP_PLAN.md`. The change to the archived initiative is a superseding note only, not its resumption.
+- FR-5 changes `CLAUDE.md`, `AGENTS.md`, `AI_WORKFLOW.md`, `docs/standards/decision_registry.md` and `plans/mvp/MVP_PLAN.md`. It does not change the archived `plans_finished/demo_environment/`.
 - `plans/backend_architecture/BACKEND_ARCHITECTURE_SHAPE.md`, item 3 of its scope, also planned to rewrite D-10 of `plans/mvp/MVP_PLAN.md`. On 2026-10-04 the user decided that this task rewrites D-10 under FR-5, so that initiative only refers to it.
 
 ## Risks and notes
