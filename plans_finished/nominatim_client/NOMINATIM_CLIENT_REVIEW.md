@@ -1,6 +1,6 @@
 # Review: Check of the public Nominatim instance against the decisions of the address search
 
-Document state: 2026-10-04, implementation of the whole plan carried out, the contradiction R-7 ruled, review ready for the whole initiative, waiting for the decision of the user on the bandit finding B310
+Document state: 2026-10-04, implementation of the whole plan carried out, the contradiction R-7 ruled, review ready for the whole initiative, the bandit finding B310 accepted by the user, archived in `plans_finished/nominatim_client/`
 
 ## Implementation run of 2026-10-04
 
@@ -82,6 +82,11 @@ Verdict: ready, for the whole initiative. It qualifies the initiative for `plans
 
 - The user decided on 2026-10-04 to accept the bandit finding B310 as a risk: the script and the configuration of the tools stay unchanged, against rewriting the request on `http.client` and against a pass of bandit for the attachment in the `makefile`.
 - With the verdict ready for the whole initiative and no decision left open, the initiative is finished. The ruling of the external API person on R-7 and on the answers of the shape interview, and the commit and the Merge Request, are steps for a human after the closure.
+- Archived on 2026-10-04 by a native move of `plans/nominatim_client/` to `plans_finished/nominatim_client/`, following `docs/standards/standard_agentic_workflow.md` ch. 4.6: the target did not exist, the directory had no link, and the SHA-256 of all 8 files was the same before and after the move.
+- Editable references now point to `plans_finished/nominatim_client/`: the last sentence of D-3 and the item of step 8 in `plans/mvp/MVP_PLAN.md`, the locations in `NOMINATIM_CLIENT_PLAN.md` and `NOMINATIM_CLIENT_PRD.md`, and the run instruction in the docstring of `attachments/nominatim_check.py`. Reverting only those locations gives back the SHA-256 of the files before the move, and the tokens of the script outside its module docstring are unchanged.
+- Left as historical records: the seed, the entries of this review above, the dated report `attachments/nominatim_check_2026-10-04.md`, the recording, and the evidence of F-19 in the plan, a command that was run.
+- The script still works from the archive: `venv/Scripts/python.exe plans_finished/nominatim_client/attachments/nominatim_check.py` without an argument refuses to start with the exit code 2 and sends nothing. Its run instruction now writes a new recording next to the archived one, which the user may prefer to point elsewhere, as D-7 allows with the argument.
+- While the closure was being written, the commit `c95d935` of a human took the archived directory and the changed `plans/mvp/MVP_PLAN.md` with the updated references; `git grep "plans/nominatim_client"` finds no reference outside the archive in it. The same commit changed `docs/hackathon/challenge_requirements.md`, and the deadline behind F-22 still stands at line 24.
 
 ### Observations for the user
 
