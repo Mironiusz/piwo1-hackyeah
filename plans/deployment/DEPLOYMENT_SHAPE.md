@@ -87,7 +87,7 @@ Following from the seed: the three requirements moved out of `plans_finished/dem
 - The environment file with the secrets of the demo, such as the database passwords and the key that signs the session tokens, lives only on the server; the repository holds only the templates with their names (`docs/standards/standard_config.md`).
 - Over plain HTTP the passwords and session tokens of the accounts travel unencrypted between the browser and the server. Accepted by the user with the cut of the secure connection (section Out of scope); the accounts of the demo hold no email address and are deleted with the demo on 4 October 2026.
 - The backend runs as exactly one process and is not scaled (`plans_finished/geocoding/GEOCODING_PLAN.md` D-15).
-- The resources of the server are judged sufficient by its owner and were not stated in figures. `plans/valhalla_routing/` sized Valhalla, which the demo now carries, against the 4 GB of D-8 of `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md`, which no longer applies.
+- The server has 16 GB of memory and 16 cores, confirmed by the user on 2026-10-04 against the 32 GB and 44 processors recorded in `plans/valhalla_routing/VALHALLA_ROUTING_PRD.md`; its free disk was not stated, and its owner judges it sufficient. `plans/valhalla_routing/` sized Valhalla, which the demo now carries, against the 4 GB of D-8 of `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md`, which no longer applies.
 
 ## Open questions
 

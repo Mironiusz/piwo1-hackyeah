@@ -84,11 +84,12 @@ AC-7 (FR-7). D-8 of `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` c
 - `plans_finished/geocoding/` D-15 and D-16: one backend process, and the check of an address search after the first deployment.
 - `docs/product/specification.md` M10 and AC-15 of `plans/mvp/MVP_PRD.md` have to follow the cuts of this task. That work is outside this task.
 - `CLAUDE.md`, `AI_WORKFLOW.md`, `plans_finished/demo_environment/` and `plans/mvp/MVP_PLAN.md` are changed by FR-7. The change to the archived initiative is a superseding note only, not its resumption.
+- `plans/backend_architecture/BACKEND_ARCHITECTURE_SHAPE.md`, item 3 of its scope, also planned to rewrite D-10 of `plans/mvp/MVP_PLAN.md`. On 2026-10-04 the user decided that this task rewrites D-10 under FR-7, so that initiative only refers to it.
 
 ## Risks and notes
 
 - No product code existed at the review of the shape, after 22:00 on 3 October 2026, and Q-11 was open. The deadline of 10:00 holds only if the skeleton of the app and the routing service are ready early enough in the night. The user did not state what happens if they are not.
-- The resources of the server were not stated in figures. Its owner judges them sufficient. `plans/valhalla_routing/` sized the routing service against the 4 GB of the old server, which no longer apply.
+- The server has 16 GB of memory and 16 cores, confirmed by the user on 2026-10-04; its free disk was not stated, and its owner judges it sufficient. `plans/valhalla_routing/` sized the routing service against the 4 GB of the old server, which no longer apply, and its PRD records 32 GB and 44 processors, which the user did not confirm.
 - The public Nominatim instance may block or limit the address of the server. The check of FR-6 finds it before the submission, and the app then shows the search unavailable message (`plans_finished/geocoding/GEOCODING_PRD.md` FR-5).
 - Until the specification is changed, M10 requires the demo to show an unavailable routing, and this PRD does not show it. The specification prevails until then.
 - The Kraków brief lists secure connections among the basic data protection and security rules (`docs/hackathon/challenge_requirements.md`). The demo does not meet that point, by a decision of the user.
