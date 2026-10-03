@@ -55,7 +55,7 @@ This order follows directly from the rules above: the ban on fallbacks without c
 
 ## Target environment
 
-The target environment is the hosted demo of the MVP on a virtual private server of a member of the team, decided in `plans/demo_environment/`. The server also runs other services of its owner, so the hosted demo environment is only the services and the database of the demo on it, and their logs. The owner of the repository deletes the demo and all its data on 4 October 2026, after the results are announced. The permission levels of the agent:
+The target environment is the hosted demo of the MVP on a virtual private server of a member of the team, decided in `plans_finished/demo_environment/`. The server also runs other services of its owner, so the hosted demo environment is only the services and the database of the demo on it, and their logs. The owner of the repository deletes the demo and all its data on 4 October 2026, after the results are announced. The permission levels of the agent:
 
 - without asking: reading the repository, running local tools and tests, and reading the logs of the services of the hosted demo,
 - only on the user's explicit request: anything else in the hosted demo environment, reading personal data from the demo database included,

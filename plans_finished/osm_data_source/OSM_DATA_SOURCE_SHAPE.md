@@ -29,7 +29,7 @@ The rules of questions 2, 5 and 6 - an OpenStreetMap fact that disappears or ret
 
 ## Out of scope
 
-The other technical decisions delegated in the same conversation have their own initiatives: `plans/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/frontend_stack/`, `plans/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/local_database/`, `plans_finished/geocoding/`, `plans/account_sessions/`. Which OpenStreetMap tags count as which barrier is `plans_finished/osm_barrier_mapping/`, not this initiative.
+The other technical decisions delegated in the same conversation have their own initiatives: `plans/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/frontend_stack/`, `plans_finished/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/local_database/`, `plans_finished/geocoding/`, `plans/account_sessions/`. Which OpenStreetMap tags count as which barrier is `plans_finished/osm_barrier_mapping/`, not this initiative.
 
 ## Functional requirements
 
