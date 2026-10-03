@@ -1,6 +1,6 @@
 # Shape: Choice of the frontend technology for the MVP and of the standards for frontend code
 
-Document state: 2026-10-03, interview in progress
+Document state: 2026-10-03, interview closed
 Regulator: C:40
 
 The seed quotes agent questions whose text contains C:20 (an option the user did not pick) and C:40 (the value the user confirmed in answer 3). Neither is a parameter of the request itself; the value in force is C:40.
@@ -25,11 +25,12 @@ The MVP (`plans/mvp/`) is a phone-first web app whose whole main scenario has to
 
 ## Smallest meaningful scope
 
-Following from the seed: a decision on the frontend technology and on how frontend code is held to the standards, taken by the right people. Whether this initiative also sets up the frontend is open (question 1).
+Following from the seed: a decision on the frontend technology and on how frontend code is held to the standards, taken by the right people. The initiative ends with the recorded decision: the answer handed to `plans/mvp/MVP_PLAN.md` Q-3 and the entry for frontend code in the standards (answer of the user to question 1, 2026-10-03). It does not set up the frontend project.
 
 ## Out of scope
 
-The other technical decisions delegated in the same conversation have their own initiatives: `plans/api_contract/`, `plans/routing_engine/`, `plans/osm_data_source/`, `plans/demo_environment/`, `plans/osm_barrier_mapping/`, `plans/local_database/`, `plans/geocoding/`, `plans/account_sessions/`.
+- Setting up the frontend project (scaffolding, the map with the attribution, the language switch, the gates running on code) and the screens of the main scenario. The user answered question 1 on 2026-10-03 that the initiative ends with the decision; setting up the frontend belongs to the implementation of `plans/mvp/`, which receives the decision through Q-3. The seed item, the decision taken by the right people, keeps its executor: the frontend person.
+- The other technical decisions delegated in the same conversation have their own initiatives: `plans/api_contract/`, `plans/routing_engine/`, `plans/osm_data_source/`, `plans/demo_environment/`, `plans/osm_barrier_mapping/`, `plans/local_database/`, `plans/geocoding/`, `plans/account_sessions/`.
 
 ## Functional requirements
 
@@ -44,15 +45,22 @@ The decision has to make these requirements of `plans/mvp/MVP_PRD.md` achievable
 
 ## Scenarios: input, flow, expected state after the run
 
+1. Input: the six requirements listed in Functional requirements, the two-client rule of the programming interface from Domain rules, the backend fixed in `plans/mvp/MVP_PLAN.md` D-1, and the terms and limits of the candidate map tile services. Flow: the frontend person compares the candidate technologies against these inputs, consults the external API person on the tile service, and chooses. Expected state: the chosen technology, the map library, the tile service and the rejected variants with the reason for each are recorded in this initiative; `plans/mvp/MVP_PLAN.md` Q-3 points to that record and is no longer open.
+2. Input: the chosen technology and the standards of the repository, which cover only Python code. Flow: the frontend person names the frontend code unit, the formatter and linter, the test runner and the gates that check frontend code. Expected state: frontend code has a recorded code unit in `docs/standards/standard_documentation.md`, as that standard asks of a project outside the Python profile, and the standards map names which standards and gates apply to frontend code; no frontend file exists yet.
+
 ## Challenging own assumptions
 
 - Is the frontend only a technology choice? No: the repository has no standards for non-Python code, so the choice also decides which gates check it, and that changes the standards map (question 2).
-- Does the HarmonyOS port constrain the choice? Possibly, if the port embeds the web app; the port itself is undecided (question 3).
+- Does the HarmonyOS port constrain the choice? Yes, but not through the frontend code: the user answered on 2026-10-03 that the port is a second client of the same programming interface (a native ArkTS/ArkUI client or React Native for OpenHarmony), not an ArkTS application embedding the web app. The web frontend therefore does not have to run inside a HarmonyOS WebView; what it shares with the port is the programming interface, which has to be planned for two clients from the start.
 
 ## Domain rules or explicit TODO
 
+- The programming interface between the frontend and the backend has two clients from the start: the web frontend and the HarmonyOS port (a native ArkTS/ArkUI client or React Native for OpenHarmony). Nothing the web frontend needs may be available only through a channel the port cannot use, such as server-rendered HTML fragments or state kept only in the web page. Answer of the user, 2026-10-03, to question 3 (category: stability of the programming interface (API) contract). The user is the repository owner; the decision owner named in Recipient and trigger is the frontend person, so this answer removes the question from the list without replacing that person's ruling. The contract itself is settled in `plans/api_contract/`, which receives this as an input.
+- Whether the Huawei submission happens at all stays an open entry of `docs/standards/decision_registry.md` (HarmonyOS port and the Huawei submission); the answer above fixes only that, if it happens, it is a second client and not an embedding of the web app.
 - Missing information is never shown as accessible, and color is never the only carrier of a segment state (`docs/product/specification.md`, M7 and M10).
 - Nothing about the author of a report, vote or geozone is shown to other users (`docs/product/specification.md`, M9).
+- Agent decision at C:40, without asking: the standards map is extended in the same change as the decision, not in a later one (former question 2). `docs/standards/standard_documentation.md` already asks a project outside the Python profile to record its own code unit there, so recording the decision without that entry would leave frontend code outside every standard at the moment the first frontend file is written. Which standards and gates are named is part of the decision itself and stays with the frontend person.
+- Agent decision at C:40, without asking: the decision is due before the first frontend file of `plans/mvp/` is written (former question 4). Q-3 blocks the frontend part of the MVP, and the Kraków submission closes at 11:00 on 4 October 2026 (`docs/hackathon/challenge_requirements.md`, Shared facts), so any later point would mean rewriting frontend code already written. A clock time is not set here, because it depends on the team's split of work, which the repository does not record.
 
 ## Notes on data, performance and security
 
@@ -61,7 +69,4 @@ The decision has to make these requirements of `plans/mvp/MVP_PRD.md` achievable
 
 ## Open questions
 
-1. Does the initiative end with the recorded decision handed to `plans/mvp/MVP_PLAN.md` Q-3, or does it also set up the frontend? `Block: no`
-2. Which standards and gates apply to frontend code, and is the standards map extended in the same change? `Block: no`
-3. Does the frontend have to be reusable by the HarmonyOS port, and does a second client of the same programming interface have to be planned from the start? `Block: yes` (category: stability of the programming interface (API) contract)
-4. By when must the decision be made, given the deadline at 11:00 on 4 October 2026? `Block: no`
+None. Questions 1 and 3 were answered by the user; questions 2 and 4 were settled as agent decisions recorded in Domain rules or explicit TODO.
