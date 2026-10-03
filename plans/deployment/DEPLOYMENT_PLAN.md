@@ -8,7 +8,7 @@ Deliver `DEPLOYMENT_PRD.md` in two parts. FR-1 - FR-4 become written instruction
 
 ## Facts
 
-F-1. No product code and no deployment file exist: the tree of `origin/dev` holds no `api/`, `service/`, `data/`, `worker/`, `frontend/` or Compose file. | cmd:`git ls-tree -d --name-only origin/dev` -> `.agents .cache .claude .codex .impeccable .vscode agent_docs docs plans plans_finished tests` | 2026-10-04
+F-1. No product code and no deployment file exist: the tree holds no `api/`, `service/`, `data/`, `worker/`, `frontend/` or Compose file; the only new directory is `valhalla/`, with the image definition of the routing service and its two patches. | cmd:`git ls-tree -d --name-only HEAD` -> `.agents .cache .claude .codex .impeccable .vscode agent_docs docs plans plans_finished tests valhalla`; cmd:`ls valhalla` -> `Dockerfile multimodal-exclusions.patch README.md stop-accessibility.patch` | 2026-10-04
 F-2. `CLAUDE.md`, section Target environment, describes "a virtual private server of a member of the team, decided in `plans_finished/demo_environment/`", which "also runs other services of its owner". | doc:`CLAUDE.md` line 58 | 2026-10-04
 F-3. `AGENTS.md` carries the same paragraph, and the parity test requires both files to be identical except for the tool name. | doc:`AGENTS.md` line 58; code:`tests/architecture/test_agent_docs_parity.py:165` | 2026-10-04
 F-4. The resolved entry Target environment for the demo of the decision registry says the demo is "reached at its IP address over a secure connection" and points to D-8 and D-10. | doc:`docs/standards/decision_registry.md` line 78 | 2026-10-04
@@ -24,7 +24,8 @@ F-13. No address, host, login or secret of the target environment enters the rep
 F-14. After the first deployment one address search from the hosted service is checked to return a list. When the outside service does not answer, the app shows a search unavailable message that differs from the nothing found message. | doc:`plans_finished/geocoding/GEOCODING_PLAN.md` D-16; doc:`plans_finished/geocoding/GEOCODING_PRD.md` line 45 | 2026-10-04
 F-15. The prose check forbids typographic dashes, quotation marks, arrows and bold in prose in every `.md` file, `plans_finished/` included. Prettier checks markdown outside `plans_finished/`. | code:`tests/architecture/test_prose_style.py:38`; doc:`.prettierignore` line 1; doc:`makefile` target `lint-docs` | 2026-10-04
 F-16. Neither pytest nor the local prettier is installed on the machine of this session, so the checks of F-15 and F-3 cannot run here. | cmd:`python3 -m pytest` -> `No module named pytest`; cmd:`ls node_modules/.bin/prettier` -> `No such file or directory` | 2026-10-04
-F-17. `plans/backend_architecture/BACKEND_ARCHITECTURE_SHAPE.md` and `plans/valhalla_routing/` still describe the old server and are being edited by other sessions; this task leaves them to their owners. | doc:`plans/backend_architecture/BACKEND_ARCHITECTURE_SHAPE.md` lines 25, 54; doc:`plans/valhalla_routing/VALHALLA_ROUTING_PRD.md` line 130 | 2026-10-04
+F-17. `plans/backend_architecture/BACKEND_ARCHITECTURE_SHAPE.md` and `plans/valhalla_routing/` already describe the server of the user with 16 GB and 16 cores, and the former leaves the rewrite of D-10 to this task; both are edited by other sessions, and this task does not touch them. | doc:`plans/backend_architecture/BACKEND_ARCHITECTURE_SHAPE.md` lines 25, 50; doc:`plans/valhalla_routing/VALHALLA_ROUTING_PRD.md` line 139 | 2026-10-04
+F-18. The routing data of Valhalla is built by the import run together with the copy, and a fresh copy is served only after the routing service has been restarted on its routing data; until then every route request ends with `routing_unavailable`. How the service is pointed at new data is for item 3 of `plans/backend_architecture/`, and this task runs the service with its data. | doc:`plans/valhalla_routing/VALHALLA_ROUTING_PLAN.md` D-2, D-3, D-13, D-14 | 2026-10-04
 
 ## Decisions
 
@@ -113,7 +114,6 @@ Steps for a human:
 
 - Run `make check` on a machine with the development dependencies installed (F-16): the parity test, the prose test and prettier.
 - Commit, push and the Merge Request.
-- Pass the corrected server figures to the session working on `plans/valhalla_routing/`, and the D-10 ownership to the one working on `plans/backend_architecture/` (F-17).
 
 ## Definition of Done
 

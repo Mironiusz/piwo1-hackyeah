@@ -71,7 +71,7 @@ The specification gives these terms in English. Their Polish wording is not fixe
 Constraints:
 
 - The app never asks about a disability and never stores one. A preset only sets preferences.
-- Missing or unverified information is never presented as a confirmation of accessibility.
+- Missing or unverified information is never presented as a confirmation of accessibility, with the one deliberate exception of the public transport segment of the optional feature O9 below.
 - Nothing about the author of a report, a vote or a geozone is shown to other users - neither a pseudonym nor whether the author was logged in. The weights behind a status stay inside the system.
 - A status never changes with time alone. The date of the last confirmation is visible and the person judges it.
 - Dates are shown as a calendar day in the Europe/Warsaw zone, without the hour.
@@ -83,8 +83,9 @@ Constraints:
 
 Outside the MVP:
 
+- The optional feature O9 of the specification, routes with public transport of ZTP Kraków from its static GTFS, built first and in parallel with M1-M11, within a time box of 4.5 hours of work of the people of the team. Its public transport segment counts as accessible when the GTFS says nothing about it, a deliberate exception of the specification (M7, M10).
 - The optional features O1-O8 of the specification, built only after M1-M11 work: moving the profile with a QR code, photos in reports, points and a city ranking, open city data, geozone corrections, place cards, live alerts on the route, voice.
-- Out of scope altogether: turn-by-turn navigation, public transport routes, scores or stars for places, implemented rewards, routes that guarantee a rest place at a given distance, and a layout tuned for desktop.
+- Out of scope altogether: turn-by-turn navigation, real-time public transport data, scores or stars for places, implemented rewards, routes that guarantee a rest place at a given distance, and a layout tuned for desktop.
 
 Undecided:
 
