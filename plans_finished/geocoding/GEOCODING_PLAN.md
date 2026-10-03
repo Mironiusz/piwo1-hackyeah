@@ -4,7 +4,7 @@ Document state: 2026-10-03, plan closed
 
 ## Goal
 
-Decide how the MVP answers the search of addresses and places defined by `plans/geocoding/GEOCODING_PRD.md` (FR-1 - FR-9, AC-1 - AC-9), and hand the decision to `plans/mvp/` so that it settles `plans/mvp/MVP_PLAN.md` Q-5, together with the constraints it puts on `plans/api_contract/`, `plans/frontend_stack/` and `plans/demo_environment/`. No product code is written here: the search is built as a work package of `plans/mvp/` (PRD, Out of scope).
+Decide how the MVP answers the search of addresses and places defined by `plans_finished/geocoding/GEOCODING_PRD.md` (FR-1 - FR-9, AC-1 - AC-9), and hand the decision to `plans/mvp/` so that it settles `plans/mvp/MVP_PLAN.md` Q-5, together with the constraints it puts on `plans/api_contract/`, `plans_finished/frontend_stack/` and `plans/demo_environment/`. No product code is written here: the search is built as a work package of `plans/mvp/` (PRD, Out of scope).
 
 ## Facts
 
@@ -67,12 +67,12 @@ D-16. The MVP work package adds these tests under `docs/standards/standard_tests
 
 ## Scope of changes
 
-1. `plans/mvp/MVP_PLAN.md`, section Decisions: after D-2 add the item "D-3. Address search, settling the former Q-5. The search is answered by the public Nominatim instance, called only by the server, with the rules, parameters and tests of `plans/geocoding/GEOCODING_PLAN.md` D-1 - D-16. Constraints for the rest of this plan: the search is the explicit exception of a read from an external system during request handling (D-2 there), its text travels only in the body of a POST request (D-3 there), the backend runs as exactly one process (D-15 there), and the work package of the search includes the tests of D-16 there. Decided by the user with the external API person on 2026-10-03 in `plans/geocoding/`."
-2. `plans/mvp/MVP_PLAN.md`, section Open questions: remove the item "Q-5. Address search - `plans/geocoding/`, owner: external API, consulted: import." The other identifiers stay unchanged, because the shapes of the sibling initiatives refer to them.
-3. `plans/mvp/MVP_PLAN.md`, section Supplementary files: add the item "`plans/geocoding/GEOCODING_PLAN.md`, the decision behind D-3."
-4. `plans/api_contract/API_CONTRACT_SHAPE.md`, section Current state: after the item that ends with "`plans/geocoding/` (whether address search goes through the backend)." add the item "`plans/geocoding/` decided on 2026-10-03 (`plans/geocoding/GEOCODING_PLAN.md` D-3, D-4, D-7, D-11) that the address search goes through the backend. The search text travels only in the body of a POST request, never in a URL. The answer is a list of matches with a label, a latitude and a longitude, an empty list when nothing is found, a response distinct from both when the search is unavailable, and a caller error for a text longer than 200 characters as received or empty after normalization."
-5. `plans/frontend_stack/FRONTEND_STACK_SHAPE.md`, section Current state: add as the last item "`plans/geocoding/` decided on 2026-10-03 (`plans/geocoding/GEOCODING_PRD.md` FR-1 - FR-5, `plans/geocoding/GEOCODING_PLAN.md` D-3) that the search runs only on submission, shows a list the user always picks from with a keyboard and a screen reader, has two distinct messages for nothing found and search unavailable, and never puts the search text into the address of the page. It also recorded a risk for this initiative: map tiles loaded by the browser straight from `tile.openstreetmap.org` reveal the IP address of the person and the area they look at to that service."
-6. `plans/demo_environment/DEMO_ENVIRONMENT_SHAPE.md`, section Current state: add as the last item "`plans/geocoding/` decided on 2026-10-03 (`plans/geocoding/GEOCODING_PLAN.md` D-1, D-15, D-16) that the backend calls the public Nominatim instance from the hosted service and runs as exactly one process, and that after the first deployment one search from the hosted service is checked to return a list, because a hosting address shared with other customers may be blocked by that instance."
+1. `plans/mvp/MVP_PLAN.md`, section Decisions: after D-2 add the item "D-3. Address search, settling the former Q-5. The search is answered by the public Nominatim instance, called only by the server, with the rules, parameters and tests of `plans_finished/geocoding/GEOCODING_PLAN.md` D-1 - D-16. Constraints for the rest of this plan: the search is the explicit exception of a read from an external system during request handling (D-2 there), its text travels only in the body of a POST request (D-3 there), the backend runs as exactly one process (D-15 there), and the work package of the search includes the tests of D-16 there. Decided by the user with the external API person on 2026-10-03 in `plans_finished/geocoding/`."
+2. `plans/mvp/MVP_PLAN.md`, section Open questions: remove the item "Q-5. Address search - `plans_finished/geocoding/`, owner: external API, consulted: import." The other identifiers stay unchanged, because the shapes of the sibling initiatives refer to them.
+3. `plans/mvp/MVP_PLAN.md`, section Supplementary files: add the item "`plans_finished/geocoding/GEOCODING_PLAN.md`, the decision behind D-3."
+4. `plans/api_contract/API_CONTRACT_SHAPE.md`, section Current state: after the item that ends with "`plans_finished/geocoding/` (whether address search goes through the backend)." add the item "`plans_finished/geocoding/` decided on 2026-10-03 (`plans_finished/geocoding/GEOCODING_PLAN.md` D-3, D-4, D-7, D-11) that the address search goes through the backend. The search text travels only in the body of a POST request, never in a URL. The answer is a list of matches with a label, a latitude and a longitude, an empty list when nothing is found, a response distinct from both when the search is unavailable, and a caller error for a text longer than 200 characters as received or empty after normalization."
+5. `plans_finished/frontend_stack/FRONTEND_STACK_SHAPE.md`, section Current state: add as the last item "`plans_finished/geocoding/` decided on 2026-10-03 (`plans_finished/geocoding/GEOCODING_PRD.md` FR-1 - FR-5, `plans_finished/geocoding/GEOCODING_PLAN.md` D-3) that the search runs only on submission, shows a list the user always picks from with a keyboard and a screen reader, has two distinct messages for nothing found and search unavailable, and never puts the search text into the address of the page. It also recorded a risk for this initiative: map tiles loaded by the browser straight from `tile.openstreetmap.org` reveal the IP address of the person and the area they look at to that service."
+6. `plans/demo_environment/DEMO_ENVIRONMENT_SHAPE.md`, section Current state: add as the last item "`plans_finished/geocoding/` decided on 2026-10-03 (`plans_finished/geocoding/GEOCODING_PLAN.md` D-1, D-15, D-16) that the backend calls the public Nominatim instance from the hosted service and runs as exactly one process, and that after the first deployment one search from the hosted service is checked to return a list, because a hosting address shared with other customers may be blocked by that instance."
 
 ## Rollout order
 
@@ -86,7 +86,7 @@ Steps for a human: the commit and the Merge Request of the changed files.
 
 - `plans/mvp/MVP_PLAN.md` has D-3 as in step 1, no item Q-5 under Open questions, and the item of step 3 under Supplementary files.
 - The three sibling shapes carry the items of steps 4 - 6, and nothing else in them is changed.
-- `npx prettier --check` passes on `plans/mvp/MVP_PLAN.md`, the three sibling shapes and the four files of `plans/geocoding/`.
+- `npx prettier --check` passes on `plans/mvp/MVP_PLAN.md`, the three sibling shapes and the four files of `plans_finished/geocoding/`.
 - The changed files contain none of the characters forbidden by `docs/standards/standard_formatting.md` and no bold in prose.
 - `venv\Scripts\python.exe -m pytest tests/architecture` passes, the check of this closed plan by `tests/architecture/test_plan_document_contract.py` included.
 - The review of `plan-implement` finds no blocking issue.
@@ -108,6 +108,6 @@ None.
 
 ## Supplementary files
 
-- `plans/geocoding/GEOCODING_PRD.md`, the contract this plan decides.
-- `plans/geocoding/GEOCODING_SHAPE.md`, the product rules and scenarios behind the PRD.
-- `plans/geocoding/GEOCODING_SEED.md`, the verbatim request.
+- `plans_finished/geocoding/GEOCODING_PRD.md`, the contract this plan decides.
+- `plans_finished/geocoding/GEOCODING_SHAPE.md`, the product rules and scenarios behind the PRD.
+- `plans_finished/geocoding/GEOCODING_SEED.md`, the verbatim request.
