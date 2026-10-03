@@ -24,8 +24,8 @@ A deferral needs a reason. "We did not want to think about it" is not a reason; 
 
 - Affects: whether the twelve Python profile standards stay in force (`docs/standards/README.md`), the tools in `pyproject.toml` and `makefile`, the gates that check code, and the shape of every plan.
 - Variants: a backend in Python with PostgreSQL (possibly with PostGIS), which keeps the profile as it is; another backend, which removes the profile following the steps in `README.md`; no own backend, which also removes the profile.
-- Blocks: the stack follows from what the product has to do; the MVP scope it has to serve is in `docs/product/specification.md` since 2026-10-03, and no initiative has reached phase B yet.
-- Condition: phase B of `plan-prd` for the first product initiative chooses the stack. The profile is kept or removed in the same change, never left in force by inertia.
+- Blocks: the stack follows from what the product has to do; the MVP scope it has to serve is in `docs/product/specification.md` since 2026-10-03. On 2026-10-03, in phase B of `plans/mvp/`, the user chose the backend - Python 3.13 with FastAPI, on PostgreSQL with PostGIS - and with it kept the Python profile (`plans/mvp/MVP_PLAN.md` D-1). That decision lives only in a plan in progress so far, and the frontend technology, together with the standards for frontend code, is delegated to `plans/frontend_stack/`.
+- Condition: the backend decision lands in the first backend code and in the standards map, and `plans/frontend_stack/` records how frontend code is held to the standards. The profile is kept or removed in the same change, never left in force by inertia.
 
 ### HarmonyOS port and the Huawei submission
 
@@ -41,6 +41,13 @@ A deferral needs a reason. "We did not want to think about it" is not a reason; 
 - Blocks: the specification describes them only in sketches, and the team decided on 2026-10-03 to plan and build the mandatory core M1-M11 first.
 - Condition: M1-M11 meet the acceptance criteria of `plans/mvp/MVP_PRD.md`. Then the optional features get their own pass of `plan-prd`, starting with O1.
 
+### Technical directions of the MVP plan
+
+- Affects: `plans/mvp/MVP_PLAN.md`, which cannot be closed, and therefore cannot be implemented, until these directions are decided.
+- Variants: the variants the agent offered for each direction are quoted in the seed of its initiative.
+- Blocks: on 2026-10-03 the user decided that every technical direction of the MVP plan is decided by the team role responsible for it, in its own initiative, not in phase B of `plans/mvp/`. The initiatives and their owners: `plans/routing_engine/` (backend), `plans/osm_data_source/` (import), `plans/frontend_stack/` (frontend), `plans/demo_environment/` (db), `plans/osm_barrier_mapping/` (import, approved as a product rule by the owner of the specification), `plans/local_database/` (db), `plans/geocoding/` (external API), `plans/account_sessions/` (backend), `plans/api_contract/` (backend).
+- Condition: each initiative records its decision; the matching open question of `plans/mvp/MVP_PLAN.md` is then closed, and phase B of `plans/mvp/` resumes with the domain model, the backend architecture and the identifier of a vote without an account.
+
 ### Intellectual property between the two challenges and the repository licence
 
 - Affects: whether both prizes can be accepted, and which licence, if any, the public repository carries.
@@ -52,8 +59,8 @@ A deferral needs a reason. "We did not want to think about it" is not a reason; 
 
 - Affects: `CLAUDE.md` and `AGENTS.md`, section Target environment - the three levels of agent permissions; the hosting part of the Kraków "prototype to service" plan; configuration and secrets.
 - Variants: not known before the stack is chosen.
-- Blocks: the technology stack decision above.
-- Condition: the stack is chosen and the team picks where the demo runs; the three permission levels are filled in together with it.
+- Blocks: the technology stack decision above. On 2026-10-03 the choice of where the demo runs was delegated to `plans/demo_environment/`, owned by the db person of the team.
+- Condition: the stack is chosen and `plans/demo_environment/` records where the demo runs; the three permission levels are filled in together with it.
 
 ## Resolved decisions
 

@@ -1,0 +1,56 @@
+# Plan: MVP of the accessibility app
+
+Document state: 2026-10-03, plan in progress
+
+## Goal
+
+Implement the mandatory core M1-M11 of `docs/product/specification.md`, version 2, as defined by `plans/mvp/MVP_PRD.md` (FR-1 - FR-20, AC-1 - AC-19): a phone-first web app for Kraków with a Python backend, split into work packages that can be built in parallel, ordered so that the main scenario works first.
+
+## Facts
+
+F-1. The user confirmed the PRD at its gate on 2026-10-03, including the 50 m radius for amenities near the route. | doc:`plans/mvp/MVP_PRD.md` section Domain rules, line 119 | 2026-10-03
+F-2. The project virtual environment runs Python 3.13.14 with the dev tools of `pyproject.toml` installed. | cmd:`venv\Scripts\python.exe --version` -> `Python 3.13.14`; cmd:`venv\Scripts\python.exe -m pip list` -> bandit 1.9.4, deptry 0.25.1, mypy 2.3.0, pytest 9.1.1 | 2026-10-03
+F-3. No product code exists: mypy is configured only for the agent hooks, and `tests/` holds only architecture tests. | code:`pyproject.toml:104`; cmd:`Get-ChildItem -Recurse tests` -> only `tests/architecture/` with six test files | 2026-10-03
+F-4. Node.js and npm are available, and `package.json` pins only prettier, used for markdown. | cmd:`node --version` -> `v24.18.0`; cmd:`npm --version` -> `11.16.0`; code:`package.json:5` | 2026-10-03
+F-5. A local PostgreSQL 18 installation exists on the machine of the agent's session, but it does not answer and has no PostGIS or pgRouting extension files. | cmd:`pg_isready` -> `:5432 - no response`; cmd:`Get-ChildItem <PostgreSQL 18>\share\extension` filtered by `postgis` or `pgrouting` -> 0 files | 2026-10-03
+F-6. The Docker client is installed, but the Docker Desktop engine is not running. | cmd:`docker --version` -> `Docker version 29.6.1`; cmd:`docker version` -> failed to connect to the docker API at `npipe:////./pipe/dockerDesktopLinuxEngine` | 2026-10-03
+F-7. Two public Overpass API instances do not answer. | cmd:`Invoke-WebRequest` of a one-node bounding box query to `overpass-api.de` and to `overpass.private.coffee` with `-TimeoutSec 40` -> timeout on both | 2026-10-03
+F-8. The Geofabrik extract of Małopolska is reachable and has 202 232 967 bytes. | cmd:`Invoke-WebRequest -Method Head https://download.geofabrik.de/europe/poland/malopolskie-latest.osm.pbf` -> 200, `Content-Length: 202232967` | 2026-10-03
+F-9. pyosmium has a ready wheel for Python 3.13 on Windows. | cmd:`pip download osmium --no-deps --only-binary=:all:` -> `osmium-4.3.1-cp313-cp313-win_amd64.whl` | 2026-10-03
+F-10. The public Valhalla, OSRM demo, Nominatim and OpenStreetMap tile services answer. | cmd:`Invoke-WebRequest -Method Post https://valhalla1.openstreetmap.de/route` with a pedestrian route in Kraków -> 200; cmd:`Invoke-WebRequest -Method Head` to `router.project-osrm.org` foot route, `nominatim.openstreetmap.org` search and `tile.openstreetmap.org/0/0/0.png` -> 200 each | 2026-10-03
+F-11. The Python profile of the standards stays in the repository until the technology stack is chosen. | doc:`docs/standards/README.md` section Standards, line 14; doc:`docs/standards/decision_registry.md` section Technology stack and the Python profile of the standards | 2026-10-03
+
+## Decisions
+
+D-1. The backend is Python 3.13 with FastAPI, on PostgreSQL with PostGIS. The Python profile of the standards stays in force in full. Decided by the user on 2026-10-03 in phase B, against three alternatives: Python with plain PostgreSQL, TypeScript full-stack, no own backend.
+
+D-2. Every remaining technical direction of this plan is decided in its own initiative by the team role responsible for it, not in this plan. Decided by the user on 2026-10-03 in phase B; the initiatives and their owners are listed under Open questions, and the conversation is recorded verbatim in their seeds. The assignment of initiatives to the five team roles named by the user - frontend, db, import, external API, backend - was made by the agent at the user's request.
+
+## Scope of changes
+
+## Rollout order
+
+## Definition of Done
+
+## Risks
+
+- The plan cannot be closed, and `plan-implement` cannot start, until the initiatives under Open questions are decided. Every hour they stay open is taken from the time left before the Kraków deadline at 11:00 on 4 October 2026.
+- The initiatives depend on each other: the contract in `plans/api_contract/` depends on `plans/routing_engine/` and `plans/account_sessions/`, routing depends on the data source in `plans/osm_data_source/`, and the segment states depend on `plans/osm_barrier_mapping/`. Deciding them in the wrong order means guessing a contract.
+
+## Open questions
+
+- Q-1. Routing engine - `plans/routing_engine/`, owner: backend, consulted: external API.
+- Q-2. Source of the OpenStreetMap data and its refresh - `plans/osm_data_source/`, owner: import, consulted: db.
+- Q-3. Frontend technology and the standards for frontend code - `plans/frontend_stack/`, owner: frontend, consulted: external API.
+- Q-4. Local database environment with PostGIS - `plans/local_database/`, owner: db.
+- Q-5. Address search - `plans/geocoding/`, owner: external API, consulted: import.
+- Q-6. Account session mechanism - `plans/account_sessions/`, owner: backend.
+- Q-7. Where the demo runs, and the target environment entry of `docs/standards/decision_registry.md` - `plans/demo_environment/`, owner: db, consulted: backend.
+- Q-8. Mapping of OpenStreetMap tags to the closed list of barriers and amenities, with thresholds - `plans/osm_barrier_mapping/`, owner of the proposal: import, approved as a product rule by the owner of the specification.
+- Q-9. Contract of the programming interface between the frontend and the backend - `plans/api_contract/`, owner: backend, consulted: frontend.
+- Q-10. The domain model and database schema, the backend architecture with the worker, and the identifier of a vote without an account were not delegated to an initiative; they are decided in this plan once Q-1 - Q-9 are settled.
+
+## Supplementary files
+
+- `plans/mvp/MVP_PRD.md`, the contract this plan implements.
+- `plans/mvp/MVP_SHAPE.md`, the domain rules and scenarios behind the PRD.

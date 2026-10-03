@@ -116,7 +116,7 @@ The rules are those of the specification, version 2, and the section Domain rule
 - Segment states: barrier - a prevailing barrier from the profile, or an unverified or disputed one that OpenStreetMap does not contradict; no barrier - every attribute behind the barriers of the profile is known and none is a barrier; partial data - the known attributes are not barriers, but some are missing; no data - nothing known.
 - Dates are calendar days in the Europe/Warsaw zone.
 - Missing information is never shown as accessible, and nothing about a disability is asked or stored.
-- Amenities from the profile count as near the route within 50 m of it. Agent decision at C:60, without asking - the shape says only "near the route"; to be confirmed at the gate of this PRD.
+- Amenities from the profile count as near the route within 50 m of it. Agent decision at C:60, without asking - the shape says only "near the route"; confirmed by the user at the gate of this PRD on 2026-10-03.
 
 ## Dependencies and impact on other modules
 
