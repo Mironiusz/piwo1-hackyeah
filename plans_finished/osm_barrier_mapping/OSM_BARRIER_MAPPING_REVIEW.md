@@ -1,6 +1,6 @@
 # Review: Mapping of OpenStreetMap tags to the closed list of barriers and amenities
 
-Document state: 2026-10-03, implementation finished, review ready for the whole initiative
+Document state: 2026-10-03, implementation finished, review ready for the whole initiative, moved to `plans_finished/` by the decision of the user recorded in the entry Archiving of 2026-10-03
 
 ## Implementation run of 2026-10-03
 

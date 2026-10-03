@@ -50,7 +50,7 @@ FR-11. List for the route (M8). After planning, the app shows a text list in thr
 
 FR-12. Accounts (M9). A user creates an account with a pseudonym and a password, logs in and out, and can delete the account. Deleting it removes the account and the pseudonym; the person's reports and votes stay, detached, with their weight.
 
-FR-13. Contributions without an account (M9). Reports, confirmations and denials without an account have the lower weight of the section Domain rules. To allow one vote per fact, such a vote keeps only an irreversible identifier derived from the IP address and browser characteristics, never the raw values, deleted after 30 days. Nothing about the author of any report, vote or geozone is shown to other users.
+FR-13. Contributions without an account (M9). Reports, confirmations and denials without an account have the lower weight of the section Domain rules. To tell one person without an account from another for the vote limit and the latest votes of five persons of the section Domain rules, such a vote keeps only an irreversible identifier derived from the IP address and browser characteristics, never the raw values, deleted after 30 days; the vote itself keeps its weight. Nothing about the author of any report, vote or geozone is shown to other users.
 
 FR-14. Flagging and moderation (M11). Any user flags a report, a geozone or a fact converted from OpenStreetMap. A moderator, whose role the team assigns by hand, sees the flagged content in a moderator view and can hide it and restore it; hidden content disappears for everyone.
 
@@ -108,7 +108,7 @@ AC-19 (FR-20). The privacy information page lists every kept item with its purpo
 
 ## Domain rules
 
-The rules are those of the specification, version 4, and the section Domain rules of `plans/mvp/MVP_SHAPE.md`. In short, for reading the acceptance criteria:
+The rules are those of the specification, version 4, and the section Domain rules of `plans/mvp/MVP_SHAPE.md`. Where the two differ, the specification prevails: the shape stays the record of its interview and still carries rules that version 4 replaced, among them one vote per fact per person and an OpenStreetMap fact outdated by denials alone. In short, for reading the acceptance criteria:
 
 - Weights: a logged-in person counts 1, a person without an account 0.5, the author included.
 - A person votes on the same fact again only after a day, and only the latest vote of a person counts.
@@ -118,7 +118,7 @@ The rules are those of the specification, version 4, and the section Domain rule
 - Dates are calendar days in the Europe/Warsaw zone.
 - Missing information is never shown as accessible, and nothing about a disability is asked or stored.
 - Amenities from the profile count as near the route within 50 m of it. Agent decision at C:60, without asking - the shape says only "near the route"; confirmed by the user at the gate of this PRD on 2026-10-03, and part of the specification since version 4, M8.
-- Changed after the gate on 2026-10-03, to follow version 4 of the specification approved by the user that day (`plans/consistency_check/`): Scope, FR-2, FR-6, FR-7, FR-14, AC-6 and the items of this section on the version, the votes, the statuses and the OpenStreetMap facts. The status order settles the contradiction between version 3 of the specification and AC-6, which expected disputed at the fourth step of shape scenario 3.
+- Changed after the gate on 2026-10-03, to follow version 4 of the specification approved by the user that day (`plans_finished/consistency_check/`): Scope, FR-2, FR-6, FR-7, FR-13, FR-14, AC-6 and the items of this section on the version, the votes, the statuses and the OpenStreetMap facts. The status order settles the contradiction between version 3 of the specification and AC-6, which expected disputed at the fourth step of shape scenario 3.
 
 ## Dependencies and impact on other modules
 

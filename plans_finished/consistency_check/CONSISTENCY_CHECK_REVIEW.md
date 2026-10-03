@@ -1,6 +1,6 @@
 # Review: Consistency check of all initiatives and of the MVP plan, and its fixes
 
-Document state: 2026-10-03, fixes in progress
+Document state: 2026-10-03, fixes finished, review ready for the whole initiative, moved to `plans_finished/`
 
 ## Check of 2026-10-03
 
@@ -9,6 +9,8 @@ Document state: 2026-10-03, fixes in progress
 The agent read `docs/product/specification.md` version 3, `docs/standards/decision_registry.md`, `agent_docs/memory/`, and the artifacts of every initiative in `plans/`: `mvp`, `geocoding`, `osm_data_source`, `osm_barrier_mapping`, `frontend_stack`, `fact_schema`, `local_database`, `demo_environment` with its task `DEPLOYMENT`, `api_contract`, `account_sessions` and `routing_engine`. Seeds were read only for `mvp` and `fact_schema`, because a seed is a verbatim record and decides nothing; the PRDs of the closed initiatives were checked through their plans and reviews. The initiative has no shape, PRD or plan: the request was a check and its fixes, and this file records both.
 
 ### Findings
+
+The findings name the paths as they were at the time of the check. `geocoding`, `osm_data_source`, `osm_barrier_mapping`, `frontend_stack` and `local_database` moved to `plans_finished/` later the same day (U-8, section What was done).
 
 C-1. The disputed status. `docs/product/specification.md` version 3, M4, gives confirmed at the fourth step of scenario 3 of `plans/mvp/MVP_SHAPE.md` (confirmations 2.0, one denial), while `plans/mvp/MVP_PRD.md` AC-6 expects disputed, and the Domain rules of the same PRD restate the wording of the specification. The user settled it for `plans/fact_schema/` in question 8 of its shape, but the specification, which prevails, still says confirmed.
 
@@ -60,6 +62,12 @@ U-7 (C-11). AC-3 of `plans/fact_schema/FACT_SCHEMA_PRD.md` stays as it is; the w
 
 U-8 (C-14). All four initiatives move to `plans_finished/`, `frontend_stack` included; the branch `origin/js/frontend-shape`, whose single commit is an older version of `FRONTEND_STACK_SHAPE.md` already merged into the current one, counts as absorbed and is for the user to delete. Not the recommended option, which kept `frontend_stack` in `plans/` until that branch is settled.
 
+U-9 (C-12). Only the barriers and amenities the tag rules make present are facts from OpenStreetMap that get votes; an absent or unknown item is an attribute of the way. Proposed by the agent in the draft of version 4 and accepted by the user when approving it, against the offered option of approving version 4 without this rule and leaving it to the plan of `plans/fact_schema/`.
+
+U-10. Three rules decided by the user in the shape interview of `plans/routing_engine/` (questions 2, 5 and 6 there) enter version 4 by the decision of question 7 there, relayed by the session of that initiative: nothing of a route request leaves the project, the pedestrian network takes only the ways a pedestrian may use, and the stretch between a chosen point and the network is a segment in the state no data. Together with them, the purpose of the hash in M9 names both uses it has under version 4, after improvement 5 of the review below. Approved by the user on 2026-10-03 after the first approval of version 4.
+
+U-11. The item of Personal data that keeps every part of a route request inside the project also says that the text of an address search is a separate request, which the project hands to an address search service outside it from its own server, without anything that identifies the person. Decided by the user on 2026-10-03 after risk 1 of the second pass of the review below, against only narrowing the wording and against leaving it, so that the privacy information built from version 4 does not promise more than the address search of `plans_finished/geocoding/` keeps. This brings into version 4 the part of the privacy rules of the address search that U-6 had left out.
+
 ## Fixes of 2026-10-03
 
 ### Parallel work on the same files
@@ -84,3 +92,35 @@ At 19:33, after the questions, `git status` showed a session implementing `plans
 ### Movement of `HEAD`
 
 At 19:42 the user committed `feee392`, which took in the work of this session up to the rewrite of the references. The fixes after it are uncommitted. The state of the tree was read again after the commit, and nothing of the commit had to be redone.
+
+### Review of 2026-10-03
+
+The review by the `dod-reviewer` agent covered the whole initiative: version 4 against the decisions it cites, the PRDs that follow it, the scenario runs quoted in acceptance criteria, the archive moves under ch. 4.6, the dependencies in `plans/mvp/MVP_PLAN.md`, formatting and the repository rules. `npx --no-install prettier --check` passed on 18 changed files; `pytest tests/architecture` gave 110 passed and 4 failed, the four failures on the files of the impeccable skill that existed before this initiative, and the prose scan found no violation in a file this initiative changed. The scenario runs of `plans/mvp/MVP_SHAPE.md` 3, 4 and 5, of `plans/fact_schema/FACT_SCHEMA_SHAPE.md` 1 - 3 and of `plans_finished/osm_data_source/OSM_DATA_SOURCE_SHAPE.md` 1 - 3 keep their stated results under version 4.
+
+First verdict: not ready, for the whole initiative.
+
+- B-1. `plans/mvp/MVP_PRD.md` FR-13 still gave the identifier of a vote without an account the purpose "to allow one vote per fact". Fixed: it now tells one person without an account from another for the vote limit and the latest votes of five persons, the vote keeping its weight, and FR-13 is among the requirements marked as changed after the gate.
+- R-1. `plans/mvp/MVP_PRD.md`, section Domain rules, named the rules of `plans/mvp/MVP_SHAPE.md` next to version 4, while that shape keeps rules version 4 replaced. Fixed: the section says the specification prevails where the two differ.
+- R-2. No decision recorded the acceptance of C-12. Fixed: U-9.
+- R-3. `plans/mvp/MVP_PLAN.md`, section Risks, said Q-6 depends on no other open question, while it takes the accounts from Q-10. Fixed: Q-6 takes the rules of accounts from the confirmed PRD of Q-10 and their stored form from its plan.
+- I-1. M9 of the specification named only the vote limit as the purpose of the hash, while M4 also uses it to tell the latest votes of five persons apart. Fixed in version 4 with the approval of U-10.
+- I-2. The findings above use the paths from before the move. Fixed: a note at the head of section Findings.
+- I-3. The state line of `plans_finished/osm_barrier_mapping/OSM_BARRIER_MAPPING_REVIEW.md` did not mention the move. Fixed.
+
+While these fixes were made, the session of `plans/routing_engine/` relayed the decision of question 7 of its interview, U-10, and version 4 took its three rules after the user approved them. At 19:51 the user committed `fff8e88`, which took in the work up to the first approval of version 4 and its follow-up changes; the fixes of this review and U-10 are uncommitted.
+
+Second pass of the same review, after the fixes above and U-10: no blocker, every earlier finding fixed, the three rules of U-10 stated as decided in `plans/routing_engine/`, and the items of this initiative in the shapes and in `plans/demo_environment/DEMO_ENVIRONMENT_PLAN.md`, which the first pass could not read in full, consistent. Verdict: ready after minor fixes, for the whole initiative.
+
+- R-4. Personal data in version 4 promised that nothing of a route request leaves the project, the start and the destination included, while the address search hands the typed text to an outside service. Fixed by U-11.
+- R-5. `plans/demo_environment/DEMO_ENVIRONMENT_PLAN.md`, F-8 and Q-1, still counted an external Valhalla instance among the variants and the routing engine as being in its interview. Fixed in place, without moving a line: F-8 states the closed interview and the exclusion of an engine outside the project by version 4, M2, and Q-1 no longer lists the external instance.
+- R-6. An item this initiative wrote in `plans/routing_engine/ROUTING_ENGINE_SHAPE.md` says an OpenStreetMap fact stops counting on the route "only" when it is outdated, leaving out the contradicting report that replaces it at the sum of 2. That shape is being edited by the session of `plans/routing_engine/`, so the fix with its wording was handed to that session on 2026-10-03, under ch. 4.7. That session applied it the same day, with a pointer to M4 of version 4.
+- I-4. A missing comma in the state line of the specification. Fixed.
+- I-5. M7 defines no data apart from the default of no stairs, which belongs to a way, and the stretch between a chosen point and the network is not a way, so version 4 does not say whether stairs count as unknown on it. This is product behavior for the user; it was handed to the session of `plans/routing_engine/`, which owns the rule and puts the question to the user in phase B of its plan, not decided here.
+
+After these fixes `npx --no-install prettier --check` passed on the changed files under `docs/` and `plans/`, and `pytest tests/architecture` gave 110 passed and 4 failed, the same four failures on the files of the impeccable skill.
+
+Final verdict: ready, for the whole initiative `plans/consistency_check/`. I-5 stays with the session of `plans/routing_engine/`, and the commit of the uncommitted changes stays with a human.
+
+## Archiving of 2026-10-03
+
+The final ready verdict covers the whole initiative, so the session that ran it moved `plans/consistency_check/` to `plans_finished/` the same day under `docs/standards/standard_agentic_workflow.md` ch. 4.6 and rewrote the editable references to it. The references in `plans/routing_engine/ROUTING_ENGINE_SHAPE.md`, `ROUTING_ENGINE_PRD.md` and the plan that session is writing were left to the session of `plans/routing_engine/`, which edits those files through phase B and agreed to rewrite them itself.
