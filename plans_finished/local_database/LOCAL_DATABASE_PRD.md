@@ -22,7 +22,7 @@ How each member of the team gets a local PostgreSQL with PostGIS was not decided
 - The choice of how each member of the team gets their own local PostgreSQL with PostGIS, with the pgRouting extension available, recorded with its reason.
 - The database accounts of the local environment and the rights of each.
 - Recording the decision where people look for it: the MVP plan and the deferred decisions registry.
-- Handing over to the task `DEPLOYMENT` of `plans/deployment/` the consequence this decision has for the hosted database of the demo.
+- Handing over to the task `DEPLOYMENT` of `plans_finished/deployment/` the consequence this decision has for the hosted database of the demo.
 
 ## Out of scope
 
@@ -49,7 +49,7 @@ FR-2. Database accounts. The decision names the accounts of the local database b
 
 FR-3. The decision recorded. The open question Q-4 of `plans/mvp/MVP_PLAN.md` is closed by a decision entry that points to this initiative and states the constraints for the rest of that plan: a work package of that plan builds the local setup, the accounts and their rights follow FR-2, the first schema change in the chain creates PostGIS, and the environment carries pgRouting. The entry Technical directions of the MVP plan of `docs/standards/decision_registry.md` records that this initiative is decided and who builds the setup and the configuration that applies schema changes. The entry stays open as long as other initiatives listed in it are undecided.
 
-FR-4. Consequence for the demo handed over. The task `DEPLOYMENT` of `plans/deployment/` gets the consequence this decision has for the hosted database as an input of its interview, without deciding it there. The consequence: the same chain of schema changes runs on the hosted database, so the account that applies them is a superuser there too, and the server of the demo also runs other services of its owner.
+FR-4. Consequence for the demo handed over. The task `DEPLOYMENT` of `plans_finished/deployment/` gets the consequence this decision has for the hosted database as an input of its interview, without deciding it there. The consequence: the same chain of schema changes runs on the hosted database, so the account that applies them is a superuser there too, and the server of the demo also runs other services of its owner.
 
 ## Acceptance criteria
 
@@ -77,7 +77,7 @@ AC-4 (FR-4). The shape of the task `DEPLOYMENT` carries the consequence of FR-4 
 - `plans/mvp/MVP_PLAN.md` gets Q-4 closed (FR-3) and gains a work package that builds the local setup. The plan stays open while its other questions wait.
 - `plans/schema_revision/` writes the first schema change, which creates PostGIS and grants the service account its rights (FR-2). Its stored data still waits for the setup of the work package of `plans/mvp/`.
 - `plans_finished/routing_engine/` still considers pgRouting. FR-1 keeps the decision independent of its result.
-- `plans_finished/demo_environment/`: the hosted database has to meet the same database standard as the local one (`DEMO_ENVIRONMENT_PRD.md`, Dependencies), and the task `DEPLOYMENT` of `plans/deployment/` receives the consequence of FR-4.
+- `plans_finished/demo_environment/`: the hosted database has to meet the same database standard as the local one (`DEMO_ENVIRONMENT_PRD.md`, Dependencies), and the task `DEPLOYMENT` of `plans_finished/deployment/` receives the consequence of FR-4.
 - `docs/standards/decision_registry.md`: the entry Technical directions of the MVP plan changes (FR-3).
 - `docs/standards/standard_database.md`, `docs/standards/standard_config.md` and `docs/standards/standard_tests.md` do not change. The decision follows them as they stand.
 

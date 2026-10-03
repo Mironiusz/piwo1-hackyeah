@@ -4,11 +4,11 @@ Document state: 2026-10-04
 
 ## Business goal
 
-Close Q-11, the last open question of `plans/mvp/MVP_PLAN.md`, so that the MVP plan can be closed and its work packages can start building the app before the Kraków submission closes at 11:00 on 4 October 2026. Every work package of the backend then knows where its code goes and how it is started, and the task `DEPLOYMENT_CONFIG` of `plans/deployment/` knows which parts of the demo run on the server.
+Close Q-11, the last open question of `plans/mvp/MVP_PLAN.md`, so that the MVP plan can be closed and its work packages can start building the app before the Kraków submission closes at 11:00 on 4 October 2026. Every work package of the backend then knows where its code goes and how it is started, and the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/` knows which parts of the demo run on the server.
 
 ## Problem and its consequences
 
-- While Q-11 is open, the MVP plan has no work packages, so nobody builds the backend skeleton, the first schema revision cannot be applied in it, and the deployment configuration cannot be written (`plans/mvp/MVP_PLAN.md`, section Risks; `plans/deployment/DEPLOYMENT_PLAN.md`, the new text of D-10). Every hour Q-11 stays open is taken from the time left before the deadline.
+- While Q-11 is open, the MVP plan has no work packages, so nobody builds the backend skeleton, the first schema revision cannot be applied in it, and the deployment configuration cannot be written (`plans/mvp/MVP_PLAN.md`, section Risks; `plans_finished/deployment/DEPLOYMENT_PLAN.md`, the new text of D-10). Every hour Q-11 stays open is taken from the time left before the deadline.
 - The finished initiatives left to Q-11 what they could not decide without guessing the backend architecture: how the one backend process starts, the form and the place of the import and refresh run, how the backend follows the copy the routing service serves, where each part of the demo runs on the server, the names of the modules of the address search and of the tag rule, and the structure that implements the operations of `docs/product/api_contract.md` (shape, section Smallest meaningful scope).
 - The specification requires the hash of a vote without an account to be deleted 30 days after the vote, which needs a periodic task, while the demo and all its data are deleted on 4 October 2026, one day after the first vote can be cast. Building that task costs time before the deadline for an effect the demo never shows (shape, section Challenging own assumptions).
 
@@ -29,10 +29,10 @@ Close Q-11, the last open question of `plans/mvp/MVP_PLAN.md`, so that the MVP p
 - Any code, the backend skeleton included. The work packages of `plans/mvp/` build it, the skeleton with the local setup in the work package of D-7 there. Decided by the user on 2026-10-03 in the shape, question 1.
 - The implementation of the operations of `docs/product/api_contract.md`. It goes to the work packages of `plans/mvp/`, not to Q-11 as `plans_finished/api_contract/API_CONTRACT_PLAN.md` D-1 said. Decided by the user on 2026-10-03 in the shape, question 1.
 - A periodic task that clears the hash of a vote without an account. Decided by the user on 2026-10-04 in the shape, question 5.
-- Rewriting D-10 of `plans/mvp/MVP_PLAN.md` to the server of the user. The task `DEPLOYMENT` of `plans/deployment/` does it, and this initiative only refers to it. Decided by the user on 2026-10-04 in the shape, after a conflict with question 6.
+- Rewriting D-10 of `plans/mvp/MVP_PLAN.md` to the server of the user. The task `DEPLOYMENT` of `plans_finished/deployment/` does it, and this initiative only refers to it. Decided by the user on 2026-10-04 in the shape, after a conflict with question 6.
 - Whatever the stored data holds only to find the hashes to clear. `plans/schema_revision/` builds the first schema revision and decides it once this initiative tells it of the change (FR-6).
 - The choice of the routing engine and the content of a route request, decided in `plans/valhalla_routing/`.
-- The deployment configuration itself and the written instructions for the server, which belong to `plans/deployment/`.
+- The deployment configuration itself and the written instructions for the server, which belong to `plans_finished/deployment/`.
 
 ## Functional requirements
 
@@ -44,7 +44,7 @@ FR-3. Implementation of the operations. D-12 of `plans/mvp/MVP_PLAN.md`, which s
 
 FR-4. One copy per route during a refresh. The decision of item 3 keeps every route on one copy: from the moment a fresh copy becomes the copy in use until the routing service serves the routing data of that copy, every route request ends with the error routing unavailable, and afterwards every route comes from the fresh copy, with the graph of the route with the fewest barriers rebuilt from it. No route combines the ways of one copy with the facts of another (`plans/valhalla_routing/VALHALLA_ROUTING_PLAN.md` D-3). The plan states how long that gap lasts in one refresh.
 
-FR-5. Start before the data. The backend process starts and keeps running when no schema revision has been applied and no copy has been loaded, because on the server the start comes first and the revisions and the loading follow it by hand (`plans/deployment/DEPLOYMENT_PLAN.md` D-4). Until a copy is loaded and the routing service serves its routing data, a route request ends with the error routing unavailable.
+FR-5. Start before the data. The backend process starts and keeps running when no schema revision has been applied and no copy has been loaded, because on the server the start comes first and the revisions and the loading follow it by hand (`plans_finished/deployment/DEPLOYMENT_PLAN.md` D-4). Until a copy is loaded and the routing service serves its routing data, a route request ends with the error routing unavailable.
 
 FR-6. Hash kept until the demo is deleted. A new version of `docs/product/specification.md`, after version 8, says that the hash of a vote without an account is kept until the demo and all its data are deleted on 4 October 2026, in M9 and in the section Personal data, and drops the statement that the vote limit of a person without an account reaches back at most 30 days. `docs/product/schema.md`, AC-12 of `plans/mvp/MVP_PRD.md` and Q-11 of `plans/mvp/MVP_PLAN.md` follow it, so that no document in force requires the deletion after 30 days. `plans/schema_revision/` is told of the change and changes its own documents.
 
@@ -76,9 +76,9 @@ AC-7 (FR-7). The plan sums the memory of every part the decision of item 4 place
 
 ## Dependencies and impact on other modules
 
-- `plans/mvp/MVP_PLAN.md`: Q-11 closes, D-12 changes; D-10 is rewritten by `plans/deployment/`, not here. The work package of D-7 there and the work packages of the import, the route, the voting, the accounts, the moderation and the address search build in the structure of FR-1.
+- `plans/mvp/MVP_PLAN.md`: Q-11 closes, D-12 changes; D-10 is rewritten by `plans_finished/deployment/`, not here. The work package of D-7 there and the work packages of the import, the route, the voting, the accounts, the moderation and the address search build in the structure of FR-1.
 - `plans/valhalla_routing/`: its D-3, D-7 and D-14 are the needs of items 3 and 4; its implementation runs in parallel and edits the MVP plan and the specification at the same time.
-- `plans/deployment/`: the task `DEPLOYMENT_CONFIG` waits for Q-11 and the skeleton, and takes the placement of item 4 and the start of item 1 into its configuration.
+- `plans/deployment_config/`: the task `DEPLOYMENT_CONFIG` waits for Q-11 and the skeleton, and takes the placement of item 4 and the start of item 1 into its configuration.
 - `plans/schema_revision/`: its PRD names the periodic task three times, and the first revision builds what the stored data holds only for the clearing; it changes both after FR-6.
 - `docs/product/specification.md`, `docs/product/schema.md` and `plans/mvp/MVP_PRD.md`: changed by FR-6.
 - `plans_finished/geocoding/`, `plans_finished/osm_barrier_mapping/` and `plans_finished/osm_data_source/`: their open names and the form of the import trigger are decided here; the archived documents are not changed.
