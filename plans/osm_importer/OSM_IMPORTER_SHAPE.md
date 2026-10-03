@@ -43,6 +43,8 @@ The concrete handoff for the user to relay is: reference `plans/osm_importer/` a
 
 On 2026-10-04 the user reported that Rafał, who owns the MVP work, confirmed he would handle this handoff. The user approved `OSM_IMPORTER_PRD.md` and requested the technical plan. This authorizes phase B; the backend integration contracts still need to be verified.
 
+Later on 2026-10-04, in phase B, the user chose to settle the importer integration contract together with the agent in this initiative. Shared backend and schema implementation stay outside this scope; the contract decisions are recorded in `OSM_IMPORTER_PLAN.md` for their owners to consume.
+
 ## Smallest meaningful scope
 
 Deliver the complete importer that obtains the selected source, checks it, limits it to Kraków, derives the agreed pedestrian network and accessibility information, and makes a complete copy available in the shared project database.
