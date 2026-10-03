@@ -13,11 +13,13 @@ The MVP (`plans/mvp/`) is split into work packages that several people build in 
 
 - The owner of the contract is the backend person of the team; the frontend person is consulted as its first consumer. The ownership was given by the user in the seed (agent question 2 and user answer 2).
 - `plans/mvp/MVP_PLAN.md`, open question Q-9, which waits for this contract. Trigger: the user's request of 2026-10-03 in phase B of `plans/mvp/`.
+- The user decided in this interview that the API contract and endpoint work may proceed in parallel with `plans/routing_engine/` and `plans/account_sessions/`; details depending on those decisions are to be coordinated with their owners.
 
 ## Current state
 
 - No product code and no programming interface exist. The backend is decided in `plans/mvp/MVP_PLAN.md` D-1: Python 3.13 with FastAPI, on PostgreSQL with PostGIS.
-- `CLAUDE.md`, section What we are building: a web app first, ported to HarmonyOS if time allows; `plans/mvp/MVP_PRD.md`, Dependencies: the solution must not prevent a second client from using the same data and rules.
+- `CLAUDE.md`, section What we are building: a web app first, ported to HarmonyOS if time allows; `plans/mvp/MVP_PRD.md`, Dependencies: the solution must not prevent a second client from using the same data and rules. In this interview, the user decided that the system and its API must be ready for both Web and HarmonyOS from the start. This does not decide whether a native HarmonyOS app is built or submitted.
+- The user decided in this interview that the API does not need backward compatibility for independently updated clients; the backend and both clients may evolve through coordinated changes.
 - Several decisions the contract depends on are delegated to their own initiatives: `plans/routing_engine/` (what a route is made of), `plans/account_sessions/` (how a request is resolved to an actor), `plans/frontend_stack/` (the first consumer), `plans/geocoding/` (whether address search goes through the backend).
 - `plans/geocoding/` decided on 2026-10-03 (`plans/geocoding/GEOCODING_PLAN.md` D-3, D-4, D-7, D-11) that the address search goes through the backend. The search text travels only in the body of a POST request, never in a URL. The answer is a list of matches with a label, a latitude and a longitude, an empty list when nothing is found, a response distinct from both when the search is unavailable, and a caller error for a text longer than 200 characters as received or empty after normalization.
 - `plans/osm_data_source/` decided on 2026-10-03 (`plans/osm_data_source/OSM_DATA_SOURCE_PLAN.md` D-4, D-8) that the date of the OpenStreetMap copy in use is the calendar day in Europe/Warsaw of the state of OpenStreetMap the copy reflects, never the day it was downloaded, and that the date of an OpenStreetMap fact is the calendar day in Europe/Warsaw of the last OpenStreetMap edit of its element.
@@ -26,7 +28,7 @@ The MVP (`plans/mvp/`) is split into work packages that several people build in 
 
 ## Smallest meaningful scope
 
-Following from the seed: the contract of the programming interface between the frontend and the backend of the MVP, owned by the backend person. Whether this initiative also builds the endpoints, or only fixes the contract that the MVP packages then build, is open (question 1).
+Following from the seed, with the user's answer in this interview: define the contract of the programming interface between the frontend and the backend of the MVP, and implement its endpoints. The backend person owns the work; the frontend person is consulted.
 
 ## Out of scope
 
@@ -53,24 +55,22 @@ The contract has to carry these requirements of `plans/mvp/MVP_PRD.md` between t
 
 - Can the contract be fixed before routing and sessions are decided? Only partly: the shape of a route response depends on `plans/routing_engine/`, and how a request identifies an actor depends on `plans/account_sessions/`. Fixing those parts first would be guessing a contract (question 3).
 - Does the API return texts in a language, or codes the client translates? FR-19 keeps the planned route across a language switch, and a second client would have to translate the same codes; this changes the contract, not only the frontend (question 4).
-- Is the frontend the only consumer? Today yes; a HarmonyOS client is possible but undecided, which changes how stable the contract has to be (question 2).
+- Is the frontend the only consumer? The user decided in this interview that the system must be ready for both Web and HarmonyOS. The separate decision whether to build or submit a native HarmonyOS app remains open in `docs/standards/decision_registry.md`.
 
 ## Domain rules or explicit TODO
 
 - Nothing about the author of a report, vote or geozone - neither a pseudonym nor whether the author was logged in - reaches other users (`docs/product/specification.md`, M9); the responses must not carry it.
 - The current location travels only in the route request: it is not stored, not logged and not linked to the account (`docs/product/specification.md`, M2).
+- The user confirmed in this interview that anonymous and logged-in people have the same read access to visible content in lists and details; both can report and vote. Only logged-in people can flag. A moderator additionally sees flagged content in the moderation view and can hide it; hidden content is absent from ordinary lists and details.
 
 ## Notes on data, performance and security
 
 - The route request carries the preferences of the profile, which practically reveal health information (`docs/product/specification.md`, M1).
+- The user decided in this interview that API request logs contain only the operation name, outcome/status, duration and request identifier. They contain no request or response body, headers, pseudonym, account identifier, location, preferences, IP address or browser characteristics.
+- If an API request fails, a separate diagnostic log may include the full traceback required by `docs/standards/standard_logging.md`; the user approved this in the interview. This does not change the four-field limit for API request logs.
 - A response body never contains an exception, a query fragment, a database object name or a connection string (`docs/standards/standard_errors.md`, Reaction while handling a request).
 
 ## Open questions
 
-1. Does the initiative end with the agreed contract handed to `plans/mvp/MVP_PLAN.md` Q-9, or does it also build the endpoints? `Block: no`
-2. Who consumes the interface - the web frontend only, or also a HarmonyOS client - and how stable must it be? `Block: yes` (category: stability of the programming interface (API) contract)
-3. In which order are the contract, `plans/routing_engine/` and `plans/account_sessions/` settled, so that no part of the contract is guessed? `Block: no`
-4. Does the interface return texts in a language or codes that the client translates? `Block: no`
-5. What may each role - a person without an account, a logged-in person, a moderator - read and do through the interface, separately for lists and for single items? `Block: yes` (category: read visibility and permissions)
-6. Which parts of a request may be logged, given that the location and the preferences may not? `Block: yes` (category: personal data)
-7. By when must the contract be agreed, given the deadline at 11:00 on 4 October 2026? `Block: no`
+1. Does the interface return texts in a language or codes that the client translates? `Block: no`
+2. By when must the contract be agreed, given the deadline at 11:00 on 4 October 2026? `Block: no`

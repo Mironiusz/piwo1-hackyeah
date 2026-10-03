@@ -18,6 +18,7 @@ The MVP (`plans/mvp/`) has light accounts with a pseudonym and a password, contr
 
 - No product code exists. The backend is decided in `plans/mvp/MVP_PLAN.md` D-1: Python 3.13 with FastAPI, on PostgreSQL with PostGIS.
 - `docs/product/specification.md`, M9: an account is a pseudonym and a password, without an email address and without any question about a disability; deleting an account removes the account and the pseudonym, while reports and votes stay detached with their weight. M11: a moderator is a member of the team whose role is assigned by hand.
+- `plans/mvp/MVP_PRD.md`, FR-14 and AC-13: in the mandatory MVP, moderators see flagged reports and geozones and can hide them; users without the role cannot open the moderator view. The PRD makes photo requirements conditional on optional feature O2, so photo moderation is not part of the mandatory scope.
 - `docs/standards/standard_tests.md`, Mandatory tests: permissions and visibility are tested with a matrix over all roles, separately for the list and the detail view, in both directions.
 - `docs/standards/standard_config.md`, Secrets: a secret never enters the repository, and a secret in the settings model has the type `SecretStr`.
 - The Kraków submission closes at 11:00 on 4 October 2026 (`docs/hackathon/challenge_requirements.md`, Shared facts).
@@ -26,7 +27,7 @@ The MVP (`plans/mvp/`) has light accounts with a pseudonym and a password, contr
 
 ## Smallest meaningful scope
 
-Following from the seed: a decision on the session mechanism of accounts and on how a request is resolved to an actor and a role, taken by the right people. Whether this initiative also builds the accounts is open (question 1).
+Following from the seed: a decision on the session mechanism of accounts and on how a request is resolved to an actor and a role, taken by the right people. The initiative records the decision and hands it to `plans/mvp/MVP_PLAN.md` Q-6; it does not build the accounts. The user chose this scope on 2026-10-03.
 
 ## Out of scope
 
@@ -37,7 +38,7 @@ The other technical decisions delegated in the same conversation have their own 
 The decision has to make these requirements of `plans/mvp/MVP_PRD.md` achievable:
 
 1. FR-12 and AC-11 - create an account with a pseudonym and a password, log in, log out, delete the account; after deletion the pseudonym cannot be found anywhere in the app.
-2. FR-14 and AC-13 - a moderator sees flagged content in a moderator view and hides it; a user without the role cannot open the view.
+2. FR-14 and AC-13 - a moderator sees flagged reports and geozones in a moderator view and hides them; a user without the role cannot open the view. Photo moderation applies if optional feature O2 is implemented.
 3. FR-6 and AC-6 - one vote per fact per account, so a request has to be resolved to the account reliably.
 4. FR-1 - the preference profile never reaches the account.
 
@@ -45,7 +46,7 @@ The decision has to make these requirements of `plans/mvp/MVP_PRD.md` achievable
 
 ## Challenging own assumptions
 
-- Without an email address there is no password recovery: a forgotten password means a lost account. Is that acceptable for the MVP? It follows from the specification, but nobody has said it out loud yet (question 4).
+- Without an email address there is no password recovery. The user confirmed on 2026-10-03 that a forgotten password may result in a lost account and that the MVP will not implement password recovery.
 - Is the moderator role only a technical flag? No: it decides who sees hidden and flagged content, which is a visibility rule tested in both directions (question 3).
 - Can one person vote twice on the same fact, once without an account and once logged in? By the letter of `docs/product/specification.md` M4 yes: "per account for logged-in users, per hashed identifier for others" makes them two separate voters, so the same person can add 0.5 and then 1. This is a rule of the specification and of `plans/mvp/MVP_PRD.md` FR-13, not of this initiative; it is recorded here to be raised with the user, not decided here.
 
@@ -53,6 +54,7 @@ The decision has to make these requirements of `plans/mvp/MVP_PRD.md` achievable
 
 - Weights: a logged-in person counts 1 and a person without an account 0.5 (`docs/product/specification.md`, M4); whether a request comes from an account therefore changes the status of a fact.
 - Nothing about the author of a report, vote or geozone is shown to other users (`docs/product/specification.md`, M9).
+- The user chose a rolling session that expires 24 hours after the last activity, survives closing and reopening the browser, and renews on every request in the active session, including read-only requests, on 2026-10-03.
 
 ## Notes on data, performance and security
 
@@ -62,8 +64,8 @@ The decision has to make these requirements of `plans/mvp/MVP_PRD.md` achievable
 
 ## Open questions
 
-1. Does the initiative end with the recorded decision handed to `plans/mvp/MVP_PLAN.md` Q-6, or does it also build the accounts? `Block: no`
-2. How is a request resolved to an actor - an account, a person without an account, a moderator - and what does the session carry and how long does it live? `Block: yes` (category: access token and permission scope contract)
-3. What exactly may a moderator see and do that other users may not, and who assigns and removes the role? `Block: yes` (category: read visibility and permissions)
-4. Is the absence of password recovery acceptable, and what are the rules for a pseudonym and a password? `Block: yes` (category: personal data)
+1. How is a request resolved to an actor - an account, a person without an account, a moderator - and what does the session carry? `Block: yes` (category: access token and permission scope contract)
+2. What happens when two accounts try to use the same pseudonym, including differences only in letter case? `Block: yes` (category: personal data)
+3. What validation rules apply to passwords? `Block: yes` (category: personal data)
+4. When the team removes a moderator role, when must the account lose access to the moderator view? `Block: yes` (category: read visibility and permissions)
 5. By when must the decision be made, given the deadline at 11:00 on 4 October 2026? `Block: no`
