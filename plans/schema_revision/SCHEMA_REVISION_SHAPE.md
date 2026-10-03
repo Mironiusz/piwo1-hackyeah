@@ -59,6 +59,9 @@ The documents the implementation of the first schema revision needs, and nothing
    - exactly the rights of `docs/product/schema.md`, section Rights of the service account, granted with the name of the account supplied when the revision is applied and never written in the repository (`plans_finished/fact_schema/FACT_SCHEMA_PLAN.md` D-17; `docs/standards/standard_config.md`, section Secrets);
    - the names of the objects it creates entered in `docs/standards/naming_registry.md` (`plans_finished/fact_schema/FACT_SCHEMA_PLAN.md` D-15);
    - the order: after the local setup, the Alembic configuration and the backend skeleton, and before the critical tests of `plans_finished/local_database/LOCAL_DATABASE_PLAN.md` D-8 that check the first revision.
+
+   Changed on 2026-10-04 by the user in `plans/mvp/` (`plans/mvp/MVP_PLAN.md` D-13): `plans/mvp/` builds no code, and every work package of `plans/mvp/` named in this document is the initiative `MVP.md` names for it: `schema_first_revision` builds the first schema revision; FR-2 of `plans/schema_revision/SCHEMA_REVISION_PRD.md` is met by D-11 of `plans/mvp/MVP_PLAN.md` with that builder, and AC-3 there by D-11 together with `MVP.md`, which names it.
+
 3. The documents in force that name this task as the builder of the revision - D-11, the Risks, Q-11 and the Supplementary files of `plans/mvp/MVP_PLAN.md`, the last of which lists this task among those that wait for Q-11, and the entry Technical directions of the MVP plan in `docs/standards/decision_registry.md` - name the work package of requirement 2 instead. The archived artifacts of `plans_finished/` keep their wording as history (`docs/standards/standard_agentic_workflow.md` ch. 4.6, Protecting history).
 
 ## Scenarios: input, flow, expected state after the run
