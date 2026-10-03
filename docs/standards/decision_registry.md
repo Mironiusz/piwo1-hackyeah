@@ -20,18 +20,11 @@ A deferral needs a reason. "We did not want to think about it" is not a reason; 
 
 ## Open decisions
 
-### Product specification and the scope of the prototype
-
-- Affects: everything about product behavior - the target user group, which barriers and amenities are shown, how routes are matched to needs, the reliability statuses of data, what users can report and how. `CLAUDE.md` names `docs/product/specification.md` as the source of truth for the product.
-- Variants: the Kraków brief asks to narrow the prototype to a chosen group (its example: wheelchair users and parents with baby strollers), and Huawei prefers a working narrow solution; the team's idea mentions routes for people with different disabilities. Route profiles can be named after needs and built from barrier preferences, or named after disabilities - the brief advises against requiring a disability to be disclosed (`docs/hackathon/challenge_requirements.md`, Conflicts and open points 6 and 7).
-- Blocks: the team is still writing the specification.
-- Condition: `docs/product/specification.md` exists and names the target group. Until then no product behavior is decided by an agent - every such question goes to the user.
-
 ### Technology stack and the Python profile of the standards
 
 - Affects: whether the twelve Python profile standards stay in force (`docs/standards/README.md`), the tools in `pyproject.toml` and `makefile`, the gates that check code, and the shape of every plan.
 - Variants: a backend in Python with PostgreSQL (possibly with PostGIS), which keeps the profile as it is; another backend, which removes the profile following the steps in `README.md`; no own backend, which also removes the profile.
-- Blocks: the specification is not written yet, and the stack follows from what the product has to do.
+- Blocks: the stack follows from what the product has to do; the MVP scope it has to serve is in `docs/product/specification.md` since 2026-10-03, and no initiative has reached phase B yet.
 - Condition: phase B of `plan-prd` for the first product initiative chooses the stack. The profile is kept or removed in the same change, never left in force by inertia.
 
 ### HarmonyOS port and the Huawei submission
@@ -40,6 +33,13 @@ A deferral needs a reason. "We did not want to think about it" is not a reason; 
 - Variants: a native ArkTS/ArkUI client using the same backend as the web app; a React Native for OpenHarmony client; an ArkTS application that embeds the web app and adds native platform capabilities, which is fast but likely scores lower on the use of platform capabilities; no Huawei submission. A web build alone is explicitly not a valid Huawei submission.
 - Blocks: the progress of the web app, which comes first.
 - Condition: the team sets a go/no-go time for the port. A `.hap` package, its build instructions, a recorded demo and `AI_WORKFLOW.md` need several hours before the deadline, so the decision has to come early enough to leave them.
+
+### Optional features of the MVP
+
+- Affects: the optional queue O1-O8 of `docs/product/specification.md` - QR transfer of the profile, photos, points and ranking, open city data, geozone corrections, place cards, live alerts, voice. Three of them come straight from the seed of `plans/mvp/`: points with the ranking, geozone corrections and voice.
+- Variants: a pass of `plan-prd` for O1-O3 only, which the team can still reach before the deadline; a pass for the whole queue; leaving them as ideas for the presentation.
+- Blocks: the specification describes them only in sketches, and the team decided on 2026-10-03 to plan and build the mandatory core M1-M11 first.
+- Condition: M1-M11 meet the acceptance criteria of `plans/mvp/MVP_PRD.md`. Then the optional features get their own pass of `plan-prd`, starting with O1.
 
 ### Intellectual property between the two challenges and the repository licence
 
@@ -63,7 +63,11 @@ Resolved on 2026-10-03 by the user: everything in the repository is written in E
 
 ### Location of the product specification
 
-Resolved on 2026-10-03 by the user: the specification lives in the repository, in `docs/product/`. It lives in `CLAUDE.md`, section What we are building. The content of the specification is still open - see the open entry above.
+Resolved on 2026-10-03 by the user: the specification lives in the repository, in `docs/product/`. It lives in `CLAUDE.md`, section What we are building.
+
+### Product specification and the scope of the prototype
+
+Resolved on 2026-10-03 by the user: the prototype is narrowed to wheelchair users, parents with baby strollers and people with walking difficulties, matched through barrier and amenity preferences rather than a disability, and the MVP is split into mandatory and optional features. It lives in `docs/product/specification.md`; product behavior not described there still goes to the user.
 
 ### Blocking risk categories
 

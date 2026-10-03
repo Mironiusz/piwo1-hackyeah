@@ -36,7 +36,7 @@ Resuming the same work means returning the directory from `plans_finished/` to `
 
 Always record the verbatim content of the request and the explicit source: conversation with the user, pasted email, meeting note, branch description, report from a team member. The user may create the seed file themselves instead of dictating it in the conversation - `plan-shape` never overwrites an existing seed, it only loads it.
 
-If the seed is too thin for anything to follow from it, record it verbatim anyway, and address the gaps with questions in the shape phase. The seed is not a place for the agent's guesses - it is a record of what was actually said, nothing more.
+If the seed is too thin for anything to follow from it, record it verbatim anyway, and address the gaps with questions in the shape phase. The seed is not a place for the agent's guesses - it is a record of what was actually said, nothing more. For the same reason a request in another language is quoted in that language, with an English translation next to it (`docs/standards/standard_agent_docs.md`, section SEED format).
 
 ## Blocking risk categories
 

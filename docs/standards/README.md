@@ -49,7 +49,7 @@ Two files in this directory are not standards and have no core sections:
 
 The project adds its own directories next to `docs/standards/`, each with its provenance:
 
-- `docs/product/` - the product specification, `docs/product/specification.md`, written by the team. It is the source of truth for the product, named in `CLAUDE.md`, section What we are building. On 2026-10-03 it is still being written and the file does not exist yet - entry in `decision_registry.md`.
+- `docs/product/` - the product specification, `docs/product/specification.md`, written by the team. It is the source of truth for the product, named in `CLAUDE.md`, section What we are building. Its first version, written on 2026-10-03, settles the target group and the MVP scope.
 - `docs/hackathon/` - `challenge_requirements.md`, a working summary of the rules and task descriptions of the two HackYeah 2026 challenges the project is submitted to, written on 2026-10-03 from the organizers' PDFs. The PDFs remain the authority and are not stored in the repository.
 - `AI_WORKFLOW.md` in the repository root - the description of how AI tools are used here, required by the Huawei challenge.
 
@@ -107,5 +107,5 @@ Debts the template starts with:
 
 Decisions recorded on 2026-10-03, when the project was set up from the template:
 
-- The whole repository is written in English, including the standards, skills and architecture tests translated from the Polish template; the conversation with the user stays in Polish. Reason: the Huawei challenge requires English project documentation. The rule lives in `CLAUDE.md` and `AGENTS.md`, section Language and communication style.
+- The whole repository is written in English, including the standards, skills and architecture tests translated from the Polish template; the conversation with the user stays in Polish. Reason: the Huawei challenge requires English project documentation. The rule lives in `CLAUDE.md` and `AGENTS.md`, section Language and communication style. Its exceptions are the Kraków submission in Polish and the original of a request quoted in a seed next to its translation (`standard_agent_docs.md`, section SEED format), the latter added on the same day after the first seed of the project.
 - The ten blocking risk categories of the template (`standard_agentic_workflow.md` ch. 3.3) are kept unchanged, although they were chosen for a service with a database and an API. A decision of the user, not a gap.
