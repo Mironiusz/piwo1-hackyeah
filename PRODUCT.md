@@ -92,7 +92,6 @@ Undecided:
 - The product name.
 - The Polish wording of the interface terms.
 - The neutral style of a route planned with a profile without barriers. The four segment states have a direction in `.impeccable/briefs/route-result.md`; the neutral style has none yet.
-- The list of views of the frontend, which follows from `docs/product/user_journeys.md`.
 - The contract of the programming interface (`plans/api_contract/`).
 - The form of the HarmonyOS client, and the licence of the repository.
 - Two ideas the user raised on 2026-10-03 that the specification does not contain: a venue card through which owners and event organizers describe their own place, also as the business model, and measuring slope and surface with the phone's sensors. The specification has only place cards, as the optional feature O6. Neither idea is designed until the specification includes it.
@@ -101,6 +100,7 @@ Undecided:
 
 - `docs/product/specification.md`, version 6: the target group, the features and their rules, personal data and the out-of-scope list.
 - `docs/product/user_journeys.md`: fourteen journeys through the mandatory features, with their branches, and the path of the demo for the Kraków jury.
+- `docs/product/views.md`: the fourteen views of the web frontend - one map with modes, panels over it and pages - with their content, their states and what each needs from the programming interface.
 - `plans/mvp/MVP_PRD.md`: twenty functional requirements with their acceptance criteria.
 - `plans/mvp/MVP_SHAPE.md`: twelve scenarios with concrete inputs and expected states, usable as realistic content for screens and for the demo.
 - The organizers' briefs, summarized in `docs/hackathon/challenge_requirements.md`.

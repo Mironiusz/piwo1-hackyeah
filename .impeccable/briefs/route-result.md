@@ -1,8 +1,8 @@
 # Design brief: route result
 
-Document state: 2026-10-03, direction chosen by the user and the team, brief waiting for the user's confirmation
+Document state: 2026-10-03, direction chosen by the user and the team, brought in line with version 6 of the specification and with the list of views
 
-Product truth is in `PRODUCT.md` and `docs/product/specification.md`, and this brief does not repeat it. The approved look is in `.impeccable/briefs/route-result/`: `approved.png` (first viewport), `approved-full.png` (the whole screen) and `mock.html` (the same screen as HTML and CSS, with the exact values).
+Product truth is in `PRODUCT.md` and `docs/product/specification.md`, and this brief does not repeat it. What the view shows and which states it has is in `docs/product/views.md`, V-5 for the route result, V-6 for the fact detail and V-9 for the legend. The approved look is in `.impeccable/briefs/route-result/`: `approved.png` (first viewport), `approved-full.png` (the whole screen) and `mock.html` (the same screen as HTML and CSS, with the exact values).
 
 ## Job and audience
 
@@ -41,20 +41,24 @@ Chosen in four rounds on 2026-10-03. The recorded choice of the last round is th
 The ranges are assumptions of the agent, not measurements.
 
 - Route length from 0.3 to 5 km. Barriers from the profile from 0 to 8, usually 1 to 3. Additional barriers and amenities from 0 to 10 each. The share of the route without data from none to all of it; in Kraków it is often large.
-- States of the screen: the usual result; an unverified or disputed barrier with a proposed alternative route; no route without barriers; the routing service not answering, with a plain message and no guessed route; a stale copy of OpenStreetMap data, with its date; a route that is mostly without data; loading.
+- States of the screen: the usual result; an unverified or disputed barrier with one proposed alternative route; the alternative shown as the route, with the way back; no route without barriers; the routing service not answering, with a plain message and no guessed route; a route that is mostly without data; a profile without barriers; planning again after the profile changed or a vote or a report of the person was saved; loading.
+- Every route has a stretch without data at each end, the straight line between a chosen point and the pedestrian network. The summary line therefore starts and ends in the state no data, and the distance without data is never zero.
+- A way that OpenStreetMap marks as not accessible for wheelchairs is partial data where it would be no barrier, and the list says so in a sentence.
+- A profile without barriers: no segment has a state. The route is drawn in a neutral style that is none of the four, the view says that the segments are not assessed, and the tile with the barriers of the profile has nothing to count. This style has no design yet.
 - An empty group never reads as accessible. It says that no barriers are known and repeats how much of the route is unknown.
-- States of a fact: unverified, confirmed, disputed, outdated, a fact from OpenStreetMap, and an unverified report that contradicts OpenStreetMap.
+- Statuses a person sees: unverified, confirmed, disputed. An outdated fact is shown nowhere. A fact from OpenStreetMap has the same statuses, and a report that contradicts OpenStreetMap below the threshold shows as an unverified report icon.
 
 ## Interaction and layout
 
-- Header, top to bottom: the profile as a yellow pill and the action that changes the route; the line diagram in a white panel with the place names under its ends; three tiles with the facts.
+- Header, top to bottom: the entry to the needs as a yellow pill and the action that changes the route; the line diagram in a white panel with the place names under its ends; three tiles with the facts.
 - Tiles: barriers from the profile in a yellow frame, the distance without data in a dashed frame, the whole route in a plain frame. The frame repeats the meaning of the number.
 - Map: the route in the four states, markers for the barriers and amenities from the profile, the sample data mark, the OpenStreetMap attribution.
 - Sheet: it overlaps the bottom of the map and has a handle. It holds the legend and the list in three groups: from the profile, additional barriers, amenities on the route.
 - List row: the same fields in the same places - icon, type, distance from the start aligned to the right, place, then the status with its icon and word, the source and the date.
 - The proposal of an alternative route stands directly under the barrier that causes it and names the reason.
-- Fact detail: source, date of the last confirmation, status, and two equal buttons, "Nadal jest" and "Już nie ma".
-- Bottom bar: the route, the primary action "Zgłoś barierę" in yellow, the profile.
+- Fact detail: a panel over the map with the source, the date - the last OpenStreetMap edit for a fact from OpenStreetMap, the last confirmation for a user fact - the status, the person's own latest vote, and two equal buttons, "Nadal jest" and "Już nie ma", inactive for a day after the person voted. A report, a geozone and a converted fact also have the flag action.
+- Legend: the four states, the kinds of markers, the sample data mark and the date of the OpenStreetMap copy.
+- Bottom bar: the map, the primary action that starts a report in yellow, the needs. The account, the language, the privacy information, the page about the data and moderation are in a menu in the header (`docs/product/views.md`, V-1 and V-10). The mock still shows the earlier labels of the bar.
 - Proposed, not yet confirmed: tapping a stop on the diagram scrolls the list to its row and highlights its marker on the map.
 - The screen is designed for a width of 360 to 430 px. On a desktop browser it must not break.
 

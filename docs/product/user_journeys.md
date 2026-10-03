@@ -6,7 +6,7 @@ Document state: 2026-10-03
 
 This document describes, step by step, what a person does in the app and what the app answers, for every mandatory feature M1 - M11 of `docs/product/specification.md`, version 6. It is derived from that specification and from `plans/mvp/MVP_PRD.md`, and it adds no product rule of its own: where the journeys needed behavior that no earlier version described, the rule was decided by the user on 2026-10-03 and entered version 6 of the specification. In case of a discrepancy the specification prevails.
 
-The journeys are the input for two things: the list of views of the web frontend, and the consultation of the frontend person on the contract of the programming interface (`plans/api_contract/API_CONTRACT_PLAN.md`, Q-1). They do not describe the layout or the look of a screen; the design direction is in `PRODUCT.md` and `.impeccable/briefs/`.
+The journeys are the input for two things: the list of views of the web frontend (`docs/product/views.md`), and the consultation of the frontend person on the contract of the programming interface (`plans/api_contract/API_CONTRACT_PLAN.md`, Q-1). They do not describe the layout or the look of a screen; the design direction is in `PRODUCT.md` and `.impeccable/briefs/`.
 
 ## How to read it
 
@@ -390,12 +390,10 @@ Proposed by the agent and accepted with the journeys, not asked one by one:
 
 ## What stays open
 
-None of these blocks the list of views:
+Where the date of the OpenStreetMap copy stands and how a moderator reaches the moderator view were open when the journeys were written; both are settled in `docs/product/views.md`. Still open, and blocking neither document:
 
 - the wording of the messages and of every label, in Polish and in English, and the Polish names of the terms of the specification,
 - the name of the product,
-- where the date of the OpenStreetMap copy stands on a screen,
-- how a moderator reaches the moderator view,
-- the layout and the look of every screen, the route result apart, whose direction is in `.impeccable/briefs/route-result.md`.
+- the look of every screen, the route result apart, whose direction is in `.impeccable/briefs/route-result.md`.
 
 Five rules of version 6 change work owned by other people and wait for their confirmation: the description of a geozone and the rules of a pseudonym (`plans/fact_schema/`), and the own vote, the street name of an item and outdated facts left out of every reading (`plans/api_contract/`).
