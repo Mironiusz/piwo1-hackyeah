@@ -12,6 +12,8 @@ Constraints that come from the challenge briefs, not from product decisions: the
 
 The source of truth for the product is `docs/product/specification.md`: what the product does, for whom, the scope of the prototype and what stays out of it. Since 2026-10-03 it settles the target group and the scope of the MVP; product behavior it does not describe is still undecided, and every question about it goes to the user. In case of a discrepancy between the specification and anything else in the repository, the specification prevails. The challenge requirements and judging criteria are summarized in `docs/hackathon/challenge_requirements.md` - they are external constraints the specification has to satisfy, so a conflict between the specification and a challenge requirement is raised with the user, never resolved silently. The same description in two sentences is in `agent_docs/session_context.md`, from which the SessionStart hook inserts it at the beginning of every session.
 
+How the MVP is built - the initiatives that implement it, their owners and order, and the requirements of the MVP each of them meets - is summarized in `MVP.md` in the repository root. It decides nothing of its own, and the specification prevails over it.
+
 ## Language and communication style
 
 - Talk to the user in Polish, always with Polish diacritics.

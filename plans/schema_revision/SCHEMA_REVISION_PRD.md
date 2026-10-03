@@ -44,7 +44,7 @@ FR-2. The revision handed to the MVP plan. `plans/mvp/MVP_PLAN.md` states that a
 - the names of the database objects it creates entered in the registry of names of the repository;
 - the order: after the local setup, its configuration of schema changes and the backend skeleton, and before the critical tests of `plans_finished/local_database/LOCAL_DATABASE_PLAN.md` D-8 that check the first revision.
 
-Which work package builds which code of the rules is that plan's decision.
+Which work package builds which code of the rules is that plan's decision. Changed on 2026-10-04 by the user in `plans/mvp/` (`plans/mvp/MVP_PLAN.md` D-13): `plans/mvp/` builds no code, and every work package of `plans/mvp/` named in this document is the initiative `MVP.md` names for it: `schema_first_revision` builds the first schema revision; FR-2 is met by D-11 of `plans/mvp/MVP_PLAN.md` with that builder, and AC-3 by D-11 together with `MVP.md`, which names it.
 
 FR-3. The references follow. D-11, the Risks, Q-11 and the Supplementary files of `plans/mvp/MVP_PLAN.md` and the entry Technical directions of the MVP plan in `docs/standards/decision_registry.md` name the work package of FR-2 instead of this task as the builder of the first revision, and none of them says any longer that this task waits for Q-11 or for the backend skeleton.
 
@@ -54,7 +54,7 @@ AC-1 (FR-1). The specification has a new version approved by the user, whose his
 
 AC-2 (FR-1). The target schema says which facts carry a key and which do not, and that a key is kept for as long as its fact exists. Its form either meets the convention of `docs/standards/standard_idempotency.md`, section Reconciliation key, or a deviation from it is recorded with its reason where the standards of the repository record deviations. A comparison of the new version with version 7 shows no other change of a rule or of the target schema.
 
-AC-3 (FR-2). A person who reads only `plans/mvp/MVP_PLAN.md` and the specification finds every item of FR-2 and knows that a work package of the MVP plan builds the first revision, without opening `plans/schema_revision/` or `plans_finished/`.
+AC-3 (FR-2). A person who reads only `plans/mvp/MVP_PLAN.md` and the specification finds every item of FR-2 and knows that a work package of the MVP plan builds the first revision, without opening `plans/schema_revision/` or `plans_finished/`. Changed on 2026-10-04 by the user in `plans/mvp/` (`plans/mvp/MVP_PLAN.md` D-13): `plans/mvp/` builds no code, and every work package of `plans/mvp/` named in this document is the initiative `MVP.md` names for it: `schema_first_revision` builds the first schema revision; FR-2 is met by D-11 of `plans/mvp/MVP_PLAN.md` with that builder, and AC-3 by D-11 together with `MVP.md`, which names it.
 
 AC-4 (FR-3). No document in force names this task as the builder of the first revision or says that it waits for Q-11 or for the backend skeleton; the archived artifacts of `plans_finished/` are unchanged.
 

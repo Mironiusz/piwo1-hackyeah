@@ -1,6 +1,6 @@
 # Standards map
 
-Document state: 2026-10-03
+Document state: 2026-10-04
 
 This directory is the set of all standards in force in the repository. This file is the entry point to the set - do not open a standard while skipping this map, because the status of a document and its group are recorded here.
 
@@ -55,6 +55,7 @@ The project adds its own directories next to `docs/standards/`, each with its pr
 - `docs/hackathon/` - `challenge_requirements.md`, a working summary of the rules and task descriptions of the two HackYeah 2026 challenges the project is submitted to, written on 2026-10-03 from the organizers' PDFs. The PDFs remain the authority and are not stored in the repository.
 - `docs/deployment/` - `hosted_demo.md`, the written instructions for standing the hosted demo up on the server, written on 2026-10-04 by `plans_finished/deployment/`, with the commands completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`.
 - `AI_WORKFLOW.md` in the repository root - the description of how AI tools are used here, required by the Huawei challenge.
+- `MVP.md` in the repository root - the summary of the MVP: its scope, its technical decisions, the initiatives that build it with their owners and order, and the requirements each of them meets, written on 2026-10-04 by `plans/mvp/`. The product specification prevails over it.
 - `TEAM.md` in the repository root - the members of the team and the role each one holds, set by Rafał on 2026-10-04, so that documents name people instead of roles (`CLAUDE.md`, section Language and communication style).
 
 ## Deviation rule
@@ -120,7 +121,7 @@ Decisions recorded on 2026-10-03, when the project was set up from the template:
 Decisions recorded on 2026-10-03 by `plans_finished/frontend_stack/`:
 
 - Frontend code is held to the workflow core and to `standard_frontend.md` only. A full frontend profile mirroring the Python one was decided against, so the frontend has no standard for the names of its files and for its split into directories. Condition for writing it: the split starts raising questions in review.
-- The four gates of `standard_frontend.md` do not run until `plans/mvp/` writes the first frontend code and sets them up. Until then the standard is checked by review alone.
+- The four gates of `standard_frontend.md` do not run until the initiative `frontend_app` of `MVP.md` writes the first frontend code and sets them up. Until then the standard is checked by review alone.
 
 Decision recorded on 2026-10-03, outside an initiative, on the request of the user to stop the gates failing on the `impeccable` skill:
 

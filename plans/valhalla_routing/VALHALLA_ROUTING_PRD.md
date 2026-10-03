@@ -127,6 +127,7 @@ AC-16 (FR-13). The decision names, for each of FR-1 - FR-4 and FR-10, what the i
 - `docs/product/api_contract.md`: the switch of FR-5, the public transport segments of FR-7 and the statement of FR-8 change the route operation, and a change of an operation is a change of that document first (`plans/mvp/MVP_PLAN.md` D-12).
 - `plans_finished/frontend_stack/` and the frontend work package of `plans/mvp/`: the switch, the public transport segment and the statement are shown by the frontend.
 - `docs/product/specification.md`, `CLAUDE.md` and `AI_WORKFLOW.md` (FR-12).
+- Changed on 2026-10-04 by the user in `plans/mvp/` (`plans/mvp/MVP_PLAN.md` D-13): `plans/mvp/` builds no code, and every work package of `plans/mvp/` named in this document is the initiative `MVP.md` names for it: `osm_import` for the import work package, `route_planning` for the route work package and `frontend_app` for the frontend work package; the initiative of O9 is `public_transport_routing`.
 
 ## Risks and notes
 

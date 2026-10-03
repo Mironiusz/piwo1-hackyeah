@@ -10,7 +10,7 @@ web
 
 Backend: Python 3.13 with FastAPI, on PostgreSQL with PostGIS (`plans/mvp/MVP_PLAN.md` D-1). The demo runs on a hosted service reachable at a public link (`plans_finished/demo_environment/`).
 
-Frontend: decided by the frontend person on 2026-10-03 in `plans_finished/frontend_stack/FRONTEND_STACK_PLAN.md`. It is a single-page application in TypeScript with React, built by Vite into static files and kept in `frontend/` as one code unit. The map is drawn by MapLibre GL JS from one archive of vector tiles of Kraków in the PMTiles format, cut from the daily Protomaps build of OpenStreetMap data and served by the project together with the map fonts and sprites. Four rules of that initiative bind all interface work: the programming interface has two clients from the start, the web frontend and a HarmonyOS port that is a separate client, not an embedding of the web app; the web frontend is chosen for the browser; the browser talks only to the server of the project; and frontend code follows the workflow core standards plus `docs/standards/standard_frontend.md`, which is written when the plan of that initiative is carried out. All frontend code is written as work packages of `plans/mvp/`.
+Frontend: decided by the frontend person on 2026-10-03 in `plans_finished/frontend_stack/FRONTEND_STACK_PLAN.md`. It is a single-page application in TypeScript with React, built by Vite into static files and kept in `frontend/` as one code unit. The map is drawn by MapLibre GL JS from one archive of vector tiles of Kraków in the PMTiles format, cut from the daily Protomaps build of OpenStreetMap data and served by the project together with the map fonts and sprites. Four rules of that initiative bind all interface work: the programming interface has two clients from the start, the web frontend and a HarmonyOS port that is a separate client, not an embedding of the web app; the web frontend is chosen for the browser; the browser talks only to the server of the project; and frontend code follows the workflow core standards plus `docs/standards/standard_frontend.md`, which is written when the plan of that initiative is carried out. All frontend code is written by the initiatives `frontend_app` and `map_tiles` of `MVP.md`.
 
 ## Users
 
@@ -92,7 +92,6 @@ Undecided:
 - The product name.
 - The Polish wording of the interface terms.
 - The exact visual styles of the four segment states - the specification leaves them to design.
-- The backend architecture with the worker, which the user moved on 2026-10-03 from Q-11 of `plans/mvp/MVP_PLAN.md` to a separate initiative set up later.
 - The form of the HarmonyOS client, and the licence of the repository.
 - Two ideas the user raised on 2026-10-03 that the specification does not contain: a venue card through which owners and event organizers describe their own place, also as the business model, and measuring slope and surface with the phone's sensors. The specification has only place cards, as the optional feature O6. Neither idea is designed until the specification includes it.
 
