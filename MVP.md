@@ -12,7 +12,7 @@ A change that makes an item of this file untrue updates it in the same change. A
 
 ## Goal and deadline
 
-By 11:00 on 4 October 2026 the team has a working prototype of the main scenario of the specification in Kraków that meets the requirements of the "Kraków bez barier" brief. The prototype is the core of the Kraków submission - the demo, the video and the presentation are built on it - and the base of the Huawei submission, which is mandatory, with a HarmonyOS client of the same programming interface built by `plans/stage5_harmonyos_port/` (`plans_finished/mvp/MVP_PRD.md`, Business goal; `plans/final_checklist/FINAL_CHECKLIST_SHAPE.md`, requirement 7).
+By 11:00 on 4 October 2026 the team has a working prototype of the main scenario of the specification in Kraków that meets the requirements of the "Kraków bez barier" brief. The prototype is the core of the Kraków submission - the demo, the video and the presentation are built on it - and the base of the Huawei submission, which is mandatory, with a HarmonyOS client of the same programming interface built by `plans/stage5_harmonyos_port/` (`plans_finished/mvp/MVP_PRD.md`, Business goal; `plans_finished/final_checklist/FINAL_CHECKLIST_SHAPE.md`, requirement 7).
 
 ## Scope
 
@@ -109,7 +109,7 @@ This initiative builds no code of the rules. The scenarios of AC-1 - AC-12 of `p
 
 ## Order and critical path
 
-Every initiative starts at once from the documents of its column Starts from, and none waits for the code of another to begin (`plans/final_checklist/FINAL_CHECKLIST_SHAPE.md`, requirement 10). The one exception is still open: until `docs/standards/decision_registry.md`, entry When the initiative of O9 starts its code, is resolved, `public_transport_routing` starts its code after `route_planning` and `osm_importer`, as `plans_finished/mvp/MVP_PLAN.md` D-15 and D-20 record.
+Every initiative starts at once from the documents of its column Starts from, and none waits for the code of another to begin (`plans_finished/final_checklist/FINAL_CHECKLIST_SHAPE.md`, requirement 10). The one exception is still open: until `docs/standards/decision_registry.md`, entry When the initiative of O9 starts its code, is resolved, `public_transport_routing` starts its code after `route_planning` and `osm_importer`, as `plans_finished/mvp/MVP_PLAN.md` D-15 and D-20 record.
 
 What an initiative waits for is the moment its effect can be verified. That wait sets its stage in `FINAL_CHECKLIST.md`, section Stages, and in its `STAGE.md`; the initiatives of one stage do not wait for each other. The initiatives of this file by stage:
 
@@ -123,7 +123,7 @@ The critical path runs through `backend_skeleton`, `schema_first_revision` and `
 
 ## Open decisions and confirmations
 
-- The division of the work of `plans/final_checklist/FINAL_CHECKLIST_SHAPE.md`, requirement 22, which the column Owner of the section Initiatives and `TEAM.md`, column Works on, record, given by the user in place of Marek, Kuba, Kuber and Adrian, whose work it changes, and to be confirmed by them in check 1.4 of `FINAL_CHECKLIST.md`.
+- The division of the work of `plans_finished/final_checklist/FINAL_CHECKLIST_SHAPE.md`, requirement 22, which the column Owner of the section Initiatives and `TEAM.md`, column Works on, record, given by the user in place of Marek, Kuba, Kuber and Adrian, whose work it changes, and to be confirmed by them in check 1.4 of `FINAL_CHECKLIST.md`.
 - Rulings given by the user in place of a member of the team and still to be confirmed: Marek for D-9 and D-14, Kuber and Adrian for the contract of D-12. Kuba confirmed on 2026-10-04 the rulings given in Kuba's place for D-11, the answers of the interview of `plans_finished/schema_revision/` and the form of the idempotency key of version 12 (`plans/schema_first_revision/SCHEMA_FIRST_REVISION_SHAPE.md`, questions 6 and 9).
 - The thresholds and value lists of D-5, which Mateusz confirms or changes before the demo is recorded.
 - The share-alike terms of the ODbL for a database that combines OpenStreetMap data with the facts of users, raised and not settled (`plans_finished/mvp/MVP_PRD.md`, Risks and notes). Nothing here is legal advice.

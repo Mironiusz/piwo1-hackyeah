@@ -5,13 +5,13 @@ Document state: 2026-10-04
 ## How to read this list
 
 - The project is finished when check 10.6 is ticked.
-- A check is done when its effect works and a person has verified it; the artifacts of the chain - a PRD, a plan, a review, a move to `plans_finished/` - are not a condition. Who verifies and ticks a check is set in `plans/final_checklist/FINAL_CHECKLIST_SHAPE.md`, requirements 9 and 17. A check is ticked by turning its `- [ ]` into `- [x]`.
+- A check is done when its effect works and a person has verified it; the artifacts of the chain - a PRD, a plan, a review, a move to `plans_finished/` - are not a condition. Who verifies and ticks a check is set in `plans_finished/final_checklist/FINAL_CHECKLIST_SHAPE.md`, requirements 9 and 17. A check is ticked by turning its `- [ ]` into `- [x]`.
 - The list is flat: no check has an owner, a priority or an intermediate time, and the only times it names are the deadlines of the challenges. Who carries which initiative is in `MVP.md`, section Initiatives, and in `TEAM.md`.
 - Check 4.2 is the only optional check; it does not condition the end of the project.
 - Every check names its effect and, where a set has more than one initiative, the initiative that delivers it. Done when is the effect a person verifies. Waits for names the checks whose effect it needs before its own effect can be verified. Before that says what of the check can be done at once and which documents it starts from.
 - A stage tells when the effect of an initiative can be verified, never when its work starts: the work of every stage starts at once on documents.
 - A reference MVP AC-n is an acceptance criterion of `plans_finished/mvp/MVP_PRD.md`, Valhalla AC-n one of `plans_finished/valhalla_routing/VALHALLA_ROUTING_PRD.md`, and D-n a technical decision of `MVP.md`.
-- The source of this list is `plans/final_checklist/`.
+- The source of this list is `plans_finished/final_checklist/`.
 
 ## Stages
 
@@ -64,7 +64,7 @@ Initiatives: `backend_skeleton`, `schema_first_revision`, `accounts`, `address_s
   - Done when: The backend of D-1 and D-14 starts locally with the local database of D-7 and its revision tooling, and the critical tests of the local database that do not check the first revision pass.
   - Waits for: Nothing.
   - Before that: Everything, from its plan.
-- [ ] 2.2 `schema_first_revision`
+- [x] 2.2 `schema_first_revision`
   - Done when: The first revision builds the target schema of `docs/product/schema.md` on an empty local database, and its tests and the critical tests that check it pass.
   - Waits for: Nothing.
   - Before that: The revision and its tests written from `docs/product/schema.md` and D-11.
@@ -144,7 +144,7 @@ Initiatives: `frontend_app` together with `map_tiles`.
   - Done when: The account, the moderation, the privacy information and the Polish and English interface work in the browser against the running service (MVP AC-11, AC-13, AC-18, AC-19).
   - Waits for: 2.3, 5.3.
   - Before that: The same documents as check 6.1.
-- [ ] 6.4 The map (`frontend_app`, `map_tiles`)
+- [x] 6.4 The map (`frontend_app`, `map_tiles`)
   - Done when: The map of Kraków is drawn in the app from the tile archive, the style, the fonts and the sprites served by the project, and nothing is fetched from outside during the demo (D-6).
   - Waits for: Nothing.
   - Before that: Everything; the archive, the fonts and the sprites were produced on 2026-10-03.
@@ -239,7 +239,7 @@ Initiatives: `stage8_materials_and_pitch`.
 - [ ] 10.5 Both submissions
   - Done when: The Kraków submission in Polish - title, team ID, description, data sources, business model, the deck and the video - is on HackTribe before 11:00, and the Huawei submission in English is on HackTribe before the deadline of check 1.1.
   - Waits for: 10.1 - 10.3, 9.1 - 9.5, 8.4, 1.1.
-  - Before that: The texts of the forms prepared. Every part of sending waits, the exception of `plans/final_checklist/FINAL_CHECKLIST_SHAPE.md`, requirement 12.
+  - Before that: The texts of the forms prepared. Every part of sending waits, the exception of `plans_finished/final_checklist/FINAL_CHECKLIST_SHAPE.md`, requirement 12.
 - [ ] 10.6 The pitch with a live demo
   - Done when: The pitch with a live demonstration has been given before the Kraków jury. Ticking this check finishes the project.
   - Waits for: 7.2, 7.3, 10.1, 1.2.

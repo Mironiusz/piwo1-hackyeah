@@ -1,0 +1,9 @@
+/* Styles of the slide title: The route of the title slide, along the bottom edge. */
+
+.reveal .title-slide .title-route {
+  position: absolute;
+  left: var(--pad-x);
+  bottom: 70px;
+  width: 1440px;
+  height: 260px;
+}

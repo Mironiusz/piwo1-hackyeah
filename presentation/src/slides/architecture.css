@@ -1,0 +1,53 @@
+/* Styles of the slide architecture: Three columns joined by arrows, then two lists under them. */
+
+.reveal .arch-row {
+  display: flex;
+  align-items: stretch;
+  gap: 20px;
+  margin-top: 36px;
+}
+
+.reveal .arch-col {
+  flex: 1;
+  padding: 24px 28px;
+  border: 2px solid var(--primary);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.reveal .arch-col.is-api {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.reveal .arch-col.is-api h3 {
+  color: var(--on-primary);
+}
+
+.reveal .arch-col ul {
+  margin: 0;
+  padding-left: 26px;
+  font-size: 32px;
+  line-height: 1.4;
+}
+
+.reveal .arch-arrow {
+  align-self: center;
+  font-size: 48px;
+  color: var(--primary);
+}
+
+.reveal .arch-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  margin-top: 56px;
+}
+
+.reveal .arch-bottom h3 {
+  font-size: 36px;
+}
+
+.reveal .arch-bottom li {
+  font-size: 32px;
+}

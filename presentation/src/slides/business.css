@@ -1,0 +1,24 @@
+/* Styles of the slide business: Three columns: free, paying, running. */
+
+.reveal .biz-row {
+  display: grid;
+  grid-template-columns: 0.8fr 1.3fr 1.1fr;
+  gap: 36px;
+  margin-top: 40px;
+}
+
+.reveal .biz-col {
+  padding: 26px 28px;
+  border-top: 8px solid var(--primary);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.reveal .biz-col li {
+  font-size: 32px;
+}
+
+.reveal .biz-footer {
+  margin-top: 40px;
+  font-size: 36px;
+}

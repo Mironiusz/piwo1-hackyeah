@@ -1,0 +1,31 @@
+{
+  "name": "enableme-deck",
+  "version": "0.1.0",
+  "private": true,
+  "description": "EnableMe pitch deck in Polish and English for HackYeah 2026: reveal.js, GSAP animations, one offline HTML file per language",
+  "type": "module",
+  "scripts": {
+    "dev:pl": "vite --mode pl",
+    "dev:en": "vite --mode en",
+    "build": "npm run build:pl && npm run build:en",
+    "build:pl": "vite build --mode pl",
+    "build:en": "vite build --mode en",
+    "preview": "vite preview",
+    "snapshots": "node scripts/snapshots.mjs",
+    "pdf": "node scripts/pdf.mjs",
+    "format": "prettier --write .",
+    "lint": "prettier --check . && node scripts/style-check.mjs && node scripts/content-check.mjs"
+  },
+  "dependencies": {
+    "@fontsource/barlow-condensed": "^5.3.0",
+    "@fontsource/barlow-semi-condensed": "^5.3.0",
+    "gsap": "^3.15.0",
+    "reveal.js": "^6.0.2"
+  },
+  "devDependencies": {
+    "playwright": "^1.63.0",
+    "prettier": "3.7.4",
+    "vite": "^8.3.0",
+    "vite-plugin-singlefile": "^2.3.3"
+  }
+}
