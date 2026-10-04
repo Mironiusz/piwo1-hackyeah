@@ -1,6 +1,6 @@
 # Valhalla with accessibility patches
 
-This directory builds the image of the routing engine of `plans/valhalla_routing/`: the official Valhalla 3.9.0 image with two patches to its source. Without them the walking legs of a public transport route ignore every place the request asks to avoid, and the accessibility of a stop is honoured only when the pedestrian costing is `type: wheelchair`, which also switches on the own wheelchair rules of Valhalla. Both break the rules of a walking route of M2 in `docs/product/specification.md`.
+This directory builds the image of the routing engine of `plans_finished/valhalla_routing/`: the official Valhalla 3.9.0 image with two patches to its source. Without them the walking legs of a public transport route ignore every place the request asks to avoid, and the accessibility of a stop is honoured only when the pedestrian costing is `type: wheelchair`, which also switches on the own wheelchair rules of Valhalla. Both break the rules of a walking route of M2 in `docs/product/specification.md`.
 
 ## The patches
 
@@ -88,7 +88,7 @@ The token stays on that server and never enters the repository. Whether the pack
 
 ## Evidence and status
 
-- Measured in the Valhalla spike of 2026-10-03, run outside the repository (`plans/valhalla_routing/VALHALLA_ROUTING_PRD.md`, section Risks and notes). The patches in this directory are byte for byte the ones measured there, and the Dockerfile is the one the spike built and smoke-tested, without its header comment.
+- Measured in the Valhalla spike of 2026-10-03, run outside the repository (`plans_finished/valhalla_routing/VALHALLA_ROUTING_PRD.md`, section Risks and notes). The patches in this directory are byte for byte the ones measured there, and the Dockerfile is the one the spike built and smoke-tested, without its header comment.
 - On 2026-10-03 the upstream `master` branch had the same unpatched code, so nothing could be taken from upstream instead.
 - The upstream pull requests are not opened yet. Until both changes are accepted upstream, the project owns this build and re-applies and re-tests the patches on every upgrade of Valhalla.
 - A build from scratch took 11 min 33 s in the spike and produced an image of 659 MB, against 638 MB of the official image.
