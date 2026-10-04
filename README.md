@@ -20,6 +20,7 @@ The repository was created on 2026-10-03 from a pre-existing project template, "
 - `MVP.md`, `PRODUCT.md`, `TEAM.md`, `AI_WORKFLOW.md` - the summary of the MVP, the product summary that interface work starts from, the team, and how AI tools are used here.
 - `.impeccable/briefs/` - the design briefs and the mocks of the views made with the `impeccable` skill.
 - `valhalla/` - the build of the routing engine Valhalla with two accessibility patches, and `.github/workflows/valhalla-image.yml`, which publishes its image when a person starts it.
+- `db/` - the shared database package and separate local setup, migration and schema checks, described in `db/README.md`.
 - `tests/architecture/` - the core gates: Claude Code and Codex parity, the list of third-party content, hooks, prose style, plan document contract, conflict markers.
 - `plans/` and `plans_finished/` - the initiatives in progress and their archive.
 - `pyproject.toml`, `makefile`, `package.json`, `.prettierrc` - quality and formatting tools.

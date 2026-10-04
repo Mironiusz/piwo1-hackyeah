@@ -1,6 +1,11 @@
-"""Refuse real-dependency tests on target before any fixture can execute."""
+"""Refuse real-dependency tests on target before any fixture can execute, and share exact cleanup."""
+
+from collections.abc import Iterator
 
 import pytest
+from sqlalchemy import Engine
+
+from tests.common_database_fixtures import DatabaseFixtureRegistry
 
 
 def pytest_collection_finish(session: pytest.Session) -> None:
@@ -47,3 +52,13 @@ def stored_account_cleanup(registered_cleanup):
 def pytest_addoption(parser):
     """Accept an explicit local maintenance URL solely for scratch fixtures."""
     parser.addoption("--scratch-database-url", default=None, help="Local owner URL for registered scratch setup only")
+
+
+@pytest.fixture
+def database_cleanup_registry(schema_owner_engine: Engine) -> Iterator[DatabaseFixtureRegistry]:
+    """Shares exact cleanup through the skeleton-owned validated local owner engine."""
+    registry = DatabaseFixtureRegistry(schema_owner_engine)
+    try:
+        yield registry
+    finally:
+        registry.apply_cleanup()

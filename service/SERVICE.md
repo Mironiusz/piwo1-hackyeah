@@ -210,6 +210,16 @@ Six files hold the walking route of `plans_finished/route_planning/`, the operat
 
 Every route request reads in one `REPEATABLE READ READ ONLY` snapshot on `fetch_api_engine()`, so every read sees one state of the database. The graph and the boundary are caches of the process keyed by the instant of the copy; each is rebuilt under a `threading.Lock` when that instant changes, and a failed build or read leaves nothing behind. The graph is rebuilt inside the snapshot of the request with a statement limit of 60 seconds, so a route always uses one copy. The routing service is reached only through `data/valhalla.py`, which retries nothing; the two repetitions are rules of this layer: a trace once more with `walk_or_snap` after error 443, and a route once more with the crossed barriers excluded. A database error or a failure of the routing service becomes `RoutingUnavailableError`, logged at ERROR with its kind and never with a coordinate. The tests are scenario tests on small invented networks, with the functions of the data layer replaced at their seam; the reads themselves are covered by the critical tests of `tests/data/`.
 
+## Sample data
+
+`sample_data.py` holds the sample step of `plans/sample_data/`: it validates four fictional demonstration facts and reconciles them without resetting contributions. The fixed dataset and the loading contract are in `docs/data/sample_data.md`.
+
+`apply_sample_data() -> SampleDataResult` takes no arguments. It returns only after an acknowledged commit or raises the failure described in `plans/sample_data/SAMPLE_DATA_LOADING_HANDOFF.md`. The result carries `outcome`, `created_count`, `unchanged_count`, `initial_votes_created_count` and the four stable identifiers.
+
+The operation reads typed network, fact and fictional-author snapshots through `data/sample_data.py`, prepares the missing facts and receives an acknowledged transaction result. The database package supplies the closed lists and the offset pairs; the clock and the logger of the backend foundation are bound when the provider is called, so importing its pure decisions neither reads configuration nor configures logging. These runtime dependencies are required, with no private replacement.
+
+The step is a synchronous administrative step of the common loading program, which owns its adapter and command. No endpoint, separate command, automatic retry or periodic task is supplied here. `sample_data.py` holds the fixed dataset, the pure network, content and history decisions and the transactional orchestration. `common_sample_data.py` in the repository root holds the immutable definitions, measured prerequisites, reconciliation snapshots and results. `SampleDataFailure` is the public alias of `SampleDataError`, keeping the handoff contract while satisfying the exception naming rule. Database access stays behind the data layer.
+
 ## Relation to SERVICE_ALGORITHM.md
 
 `SERVICE_ALGORITHM.md` describes the domain rules and the run order these files implement.

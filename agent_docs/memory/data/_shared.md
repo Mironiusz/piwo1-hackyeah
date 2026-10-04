@@ -25,3 +25,10 @@
 - Why: `ConfigurationError` of `config/settings.py` derives from `ValueError`, so a missing entry was reported as an unavailable routing service; `ValueError` is caught there only for an answer that is not JSON.
 - Reusable pattern: in the data layer, call whatever reads `config.config` outside a `try` that catches `ValueError`, and keep that `try` around the call and the decoding alone.
 - Risk / notes: `fetch_krakow_boundary` of `service/route_boundary.py` follows the same rule; a new adapter that catches `ValueError` has to as well.
+
+## 2026-10-04 - Sample transaction completion and data-layer documentation (sample_data)
+
+- What changed: sample storage uses one Repeatable Read snapshot, explicit bound projections and batch inserts, returning provider success only after acknowledged commit.
+- Why: site checks must not mix published network versions, and a retry after uncertainty must preserve existing facts and votes.
+- Reusable pattern: a primary-key conflict does not overwrite; only returned new identifiers receive author votes. A failed or invalidated connection is insufficient rollback evidence, and failure around a sent commit remains unknown unless the server explicitly rejects it.
+- Risk / notes: use the sole shared engine factory; no runtime delete or DDL belongs in this provider. `data/DATA.md` and `data/DATA_ALGORITHM.md` do not describe `data/sample_data.py` yet; its storage contract lives in `service/SERVICE.md`, `service/SERVICE_ALGORITHM.md` and `docs/data/sample_data.md`.
