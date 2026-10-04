@@ -25,7 +25,7 @@ All checks were made by the agent that built the frontend, in a browser at a wid
 - The status of a fact is a word with an icon. The sample data mark and the source are words.
 - Every control is a button, a link, a checkbox or a labelled field with a text name. The hint and the error of a field are tied to it, an error is announced when it appears, and a change of state - a loading list, a saved vote, the number of search results - stands in a status region.
 - The map can be moved with the arrow keys and zoomed with its two buttons, which have a text name in both languages, so no action needs a pinch or a drag.
-- A point is picked by moving the map under a fixed mark, with touch or with the arrow keys, and confirmed with a button.
+- A point is picked by moving the map under a fixed mark, with touch or with the arrow keys, and confirmed with a button. Both views that pick a point, for a route and for a report, have a control that moves the focus to the map.
 - Both languages have every text, the page states its language, and the switch changes the language without losing a planned route.
 - The texts and the controls keep the contrast ratios of the table below.
 

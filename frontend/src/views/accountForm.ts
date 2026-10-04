@@ -34,7 +34,7 @@ export const ACCOUNT_FIELD_RULES: Record<AccountField, string> = {
  */
 export const NO_ACCOUNT_FIELD_ERRORS: AccountFieldErrors = { pseudonym: null, password: null };
 
-const PSEUDONYM_PATTERN = /^[\p{L}\p{N}_-]{3,30}$/u;
+const PSEUDONYM_PATTERN = /^[A-Za-ząćęłńóśźżĄĆĘŁŃÓŚŹŻ0-9_-]{3,30}$/;
 
 const PASSWORD_MIN_LENGTH = 5;
 
@@ -47,7 +47,8 @@ export function trimPseudonym(pseudonym: string): string {
 
 /**
  * Tells whether a pseudonym keeps its rule: after its leading and trailing spaces are removed it has 3 to 30 characters
- * of letters, the Polish ones included, digits, the underscore and the hyphen.
+ * of the 26 Latin letters and the nine Polish letters, each in both cases, the digits 0 to 9, the underscore and the hyphen.
+ * A letter of another alphabet and a Polish letter written as a letter with a separate mark are refused, as the service refuses them.
  */
 export function isPseudonymValid(pseudonym: string): boolean {
   return PSEUDONYM_PATTERN.test(trimPseudonym(pseudonym));

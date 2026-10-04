@@ -5,6 +5,7 @@ import { Navigate, useNavigate } from "react-router";
 import { searchAddress } from "../../api/client.ts";
 import { errorTextKey, toApiError } from "../../api/errors.ts";
 import type { AddressMatch, Point } from "../../api/types.ts";
+import { focusMap } from "../../map/focusMap.ts";
 import { isInsideKrakow } from "../../map/krakowBounds.ts";
 import { EMPTY_MAP_SCENE, useMap, useMapScene, type MapCamera, type MapRest, type MapScene } from "../../map/mapScene.ts";
 import { Button } from "../../parts/Button.tsx";
@@ -14,7 +15,7 @@ import { Panel } from "../../parts/Panel.tsx";
 import { ACTIONS, HINT, PANEL_TEXT } from "../../parts/styles.ts";
 import { useReportDraft } from "../../state/reportDraft.tsx";
 import { splitLabel } from "../routeText.ts";
-import { buildMoveCamera, focusMap, isSamePlace } from "./reportMap.ts";
+import { buildMoveCamera, isSamePlace } from "./reportMap.ts";
 import { ReportStepHead } from "./ReportStepHead.tsx";
 import { countSteps, findOpenStep, findStepNumber, REPORT_HEADING_ID, REPORT_PATHS, SEARCH_TEXT_MAX_LENGTH } from "./reportSteps.ts";
 

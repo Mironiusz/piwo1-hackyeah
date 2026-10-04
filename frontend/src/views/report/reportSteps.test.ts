@@ -215,13 +215,14 @@ describe("buildCreateFactRequest", () => {
 });
 
 describe("rememberConfirmation", () => {
-  it("remembers a confirmation with its day and the instant one day later", () => {
+  it("remembers a confirmation with its voter, its day and the start of the next calendar day", () => {
     vi.stubGlobal("localStorage", createMemoryStorage());
     const now = new Date(2026, 9, 4, 9, 5, 7, 8);
 
-    rememberConfirmation(42, now);
+    rememberConfirmation(42, "anna", now);
 
-    const vote = readOwnVote(42);
+    const vote = readOwnVote(42, "anna");
+    expect(readOwnVote(42, null)).toBeNull();
     expect(vote?.verdict).toBe("confirm");
     expect(vote?.votedOn).toBe("2026-10-04");
     expect(vote?.repeatAllowedAt.startsWith("2026-10-05T")).toBe(true);

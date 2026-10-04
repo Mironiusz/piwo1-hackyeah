@@ -13,7 +13,7 @@ The frontend shows a person what the service knows - the facts of an area, a rou
 - Segment state: one of the four states the service gives a segment of a route - barrier, no barrier, partial data, no data.
 - Assessed route: a route planned for needs with at least one barrier. A route planned for needs without a barrier is not assessed, and its segments are drawn in a neutral style that is none of the four states.
 - Stale route: a shown route planned for needs that have changed since, or planned before a vote or a report of the person was saved.
-- Own vote: the latest vote of the person on a fact, with the instant from which the next vote is accepted, the start of the next calendar day. The service returns no vote of the person, so the device remembers it.
+- Own vote: the latest vote of the person on a fact, with the instant from which the next vote is accepted, the start of the next calendar day. The service returns no vote of the person, so the device remembers it, together with its voter: the pseudonym of the account of the session, or nobody for a person without an account. A remembered vote is shown only to its voter.
 - Rest: the position of the map once it has stood still for 0.3 seconds.
 - Sample data mark: the mark on every fact the demo added for the show.
 
@@ -31,7 +31,7 @@ The frontend shows a person what the service knows - the facts of an area, a rou
 Opening:
 
 - The language is the stored one, else Polish when the first language of the browser is Polish, else English.
-- A stored session token is checked once by reading the account of the session. A token the service refuses is removed, and the person is told once that they are logged out.
+- A stored session token is checked once by reading the account of the session. A token the service refuses is removed, and the person is told once that they are logged out. When the check gets no answer about the token, the token stays, and the account page says that something went wrong and offers to try again, in place of the form for logging in.
 - Needs with the first opening not yet done lead every address to the needs. Leaving the needs, by any way, ends the first opening.
 
 Map of facts:
@@ -40,7 +40,8 @@ Map of facts:
 - While a request runs, the last facts stay on the screen. An answer that arrives after a newer request started is dropped.
 - With the scope of the needs, a fact is shown when its type is one of the needs; an area is shown by its barrier type. Needs without any item show every fact, and the switch is inactive and says why.
 - An answer marked as cut off asks the person to zoom in. No fact in the scope says that none is known here.
-- When the map cannot be drawn, a message stands in its place, and the list shows the facts around the place the map would have opened on.
+- Until the map has rested for the first time the list says that it is loading, and never that no fact is known.
+- When the map cannot be drawn, a message stands in its place, and the list shows the facts around the place the map would have opened on. The map cannot be drawn when it cannot be created, when its style does not load, and when the tile archive cannot be read; an error of one tile or of a font leaves the map on the screen.
 
 Route:
 
@@ -56,7 +57,7 @@ Fact detail:
 
 - The detail shows the kind, the source, every day the service gave, the status, and for a fact of a route its distance from the start.
 - The two votes are inactive while a vote of the person is remembered and the next calendar day has not started, while a vote is being sent, and after the service answered that the vote came too soon.
-- A saved vote stores the verdict, the day and the start of the next calendar day on the clock of the device, and marks a shown route as stale.
+- A saved vote stores the voter, the verdict, the day and the start of the next calendar day on the clock of the device, and marks a shown route as stale. The device keeps one vote for a fact, the latest one cast on it.
 - The flag action exists only for a fact the service marks as one that can be flagged, and it asks for one confirmation.
 
 Report:
@@ -64,6 +65,7 @@ Report:
 - Nothing is sent before the summary is approved, except the check for existing facts once the details are given.
 - The answer that the report is one of the existing facts sends a confirmation of that fact and saves no report.
 - The key of a save is generated once, when the summary is approved, and repeated with every attempt of the same save.
+- A saved report is remembered on the device as the own vote of its author on the new fact, because a report carries the confirmation of its author.
 
 ## Domain rules
 
@@ -77,9 +79,9 @@ Report:
 - The source of a fact is called map data. The name OpenStreetMap stands only in the attribution on the map and on the page about the data.
 - A day is written as the service gave it, in the form of the language, and an instant shows the hour of its text. No time zone is converted.
 - A text written by a person is shown as plain text.
-- A pseudonym is checked in the form against the rule of the specification: 3 to 30 characters of letters, digits, the underscore and the hyphen.
+- A pseudonym is checked in the form against the rule of the contract: 3 to 30 characters of the 26 Latin letters and the nine Polish letters, each in both cases, the digits 0 to 9, the underscore and the hyphen.
 - A label of a stop of the summary line is left out when it would run into the label before it. The text next to the line and the list name every barrier.
-- The markers of the map are buttons with a text name and are left out of the order of the Tab key, because the list under the map holds the same facts as links. The map itself is one stop the keyboard can leave.
+- The markers of the map are buttons with a text name and are left out of the order of the Tab key, because the list under the map holds the same facts as links. The map itself is one stop the keyboard can leave. A view that picks a point on the map has a control that moves the focus to the map.
 
 ## Reconcile and deduplication
 
