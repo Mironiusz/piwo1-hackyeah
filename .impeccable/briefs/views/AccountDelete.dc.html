@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Konto, potwierdzenie usunięcia</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow+Semi+Condensed:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="ph" style="width: 390px; height: 760px">
+<header class="top"><span class="name">[Nazwa produktu]</span><span class="sp"></span><button type="button" class="icon-btn" aria-label="Menu"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button></header>
+<main class="page">
+<button type="button" class="back"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>Wróć</button>
+<h1>Usunąć konto wozek_krk?</h1>
+<h2>Co zniknie</h2>
+<ul class="txt">
+<li>Konto i możliwość logowania.</li>
+<li>Pseudonim wozek_krk. Ktoś inny będzie mógł go potem zająć.</li>
+</ul>
+<h2>Co zostanie</h2>
+<ul class="txt">
+<li>Twoje zgłoszenia i głosy, odłączone od Ciebie. Nadal liczą się do statusów.</li>
+<li>Twoje potrzeby na tym urządzeniu, bo nie są częścią konta.</li>
+</ul>
+<p class="note strong" style="margin-top: 18px">Tego nie da się cofnąć.</p>
+<div class="actions"><button type="button" class="btn">Anuluj</button><button type="button" class="btn primary" style="background: var(--barrier); border-color: var(--barrier)">Usuń konto</button></div>
+</main>
+<nav class="tabbar" aria-label="Główna nawigacja">
+<button type="button" class="tab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Mapa</button>
+<button type="button" class="tab cta"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4M6 5h11l-2 4 2 4H6"></path></svg>Zgłoś</button>
+<button type="button" class="tab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"></path><circle cx="15" cy="7" r="2"></circle><circle cx="9" cy="17" r="2"></circle></svg>Potrzeby</button>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":760}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

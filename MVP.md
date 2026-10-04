@@ -16,7 +16,7 @@ By 11:00 on 4 October 2026 the team has a working prototype of the main scenario
 
 ## Scope
 
-- The mandatory features M1 - M11 of `docs/product/specification.md`, version 10, with the interface in Polish and English designed for a phone, and the privacy information inside the app of the section Personal data (`plans/mvp/MVP_PRD.md`, Scope, FR-1 - FR-20).
+- The mandatory features M1 - M11 of `docs/product/specification.md`, version 11, with the interface in Polish and English designed for a phone, and the privacy information inside the app of the section Personal data (`plans/mvp/MVP_PRD.md`, Scope, FR-1 - FR-20).
 - Area: routes in the whole of Kraków; the demo in Czyżyny, the district of the Tauron Arena, with sample data marked as such (`plans/mvp/MVP_PRD.md`, FR-18 and Risks and notes).
 - The optional feature O9, routes with public transport of ZTP Kraków, through its own initiative `plans/public_transport_routing/` and within its time box of 4.5 hours of work of the people of the team (specification, O9).
 - Outside the MVP: the optional features O1 - O8, which get their own pass of `plan-prd` once M1 - M11 meet the acceptance criteria (`docs/standards/decision_registry.md`, entry Optional features of the MVP), and everything in the section Out of scope of the specification.

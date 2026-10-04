@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Konto, zalogowano</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow+Semi+Condensed:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="ph" style="width: 390px; height: 760px">
+<header class="top"><span class="name">[Nazwa produktu]</span><span class="sp"></span><button type="button" class="icon-btn" aria-label="Menu"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button></header>
+<main class="page">
+<button type="button" class="back"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>Wróć</button>
+<h1>Konto</h1>
+<dl class="kv" style="font-size: 15px">
+<dt>Zalogowano jako</dt><dd>wozek_krk</dd>
+</dl>
+<p class="note">Logowanie na tym urządzeniu trwa 24 godziny od ostatniego użycia aplikacji, także po zamknięciu przeglądarki.</p>
+<p class="note">Twoje potrzeby nie są częścią konta. Zostają tylko na tym urządzeniu.</p>
+<div class="actions one"><button type="button" class="btn">Wyloguj się</button></div>
+<h2 style="margin-top: 28px">Usunięcie konta</h2>
+<p class="t">Usuniemy konto i pseudonim. Twoje zgłoszenia i głosy zostaną, odłączone od Ciebie.</p>
+<button type="button" class="link" style="color: var(--barrier)">Usuń konto</button>
+</main>
+<nav class="tabbar" aria-label="Główna nawigacja">
+<button type="button" class="tab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Mapa</button>
+<button type="button" class="tab cta"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4M6 5h11l-2 4 2 4H6"></path></svg>Zgłoś</button>
+<button type="button" class="tab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"></path><circle cx="15" cy="7" r="2"></circle><circle cx="9" cy="17" r="2"></circle></svg>Potrzeby</button>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":760}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

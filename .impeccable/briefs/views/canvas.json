@@ -1,0 +1,284 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "FactDetail.dc.html": {
+      "h": 760,
+      "title": "V-6 Szczegóły faktu",
+      "w": 390,
+      "x": 0,
+      "y": 5190
+    },
+    "FactVoted.dc.html": {
+      "h": 840,
+      "title": "V-6 Szczegóły faktu, po głosie",
+      "w": 390,
+      "x": 470,
+      "y": 5190
+    },
+    "Main.dc.html": {
+      "h": 1060,
+      "title": "System: tokeny i części wspólne",
+      "w": 1180,
+      "x": 0,
+      "y": 0
+    },
+    "MapFacts.dc.html": {
+      "h": 1100,
+      "title": "V-3 Mapa faktów",
+      "w": 390,
+      "x": 470,
+      "y": 1480
+    },
+    "Needs.dc.html": {
+      "h": 1130,
+      "title": "V-2 Potrzeby, pierwsze otwarcie",
+      "w": 390,
+      "x": 0,
+      "y": 1480
+    },
+    "ReportDetails.dc.html": {
+      "h": 900,
+      "title": "V-7 Zgłaszanie, krok 3: szczegóły",
+      "w": 390,
+      "x": 940,
+      "y": 6450
+    },
+    "ReportExisting.dc.html": {
+      "h": 760,
+      "title": "V-7 Zgłaszanie, krok 4: istniejące fakty",
+      "w": 390,
+      "x": 1410,
+      "y": 6450
+    },
+    "ReportKind.dc.html": {
+      "h": 760,
+      "title": "V-7 Zgłaszanie, krok 1: rodzaj",
+      "w": 390,
+      "x": 0,
+      "y": 6450
+    },
+    "ReportPoint.dc.html": {
+      "h": 760,
+      "title": "V-7 Zgłaszanie, krok 2: miejsce",
+      "w": 390,
+      "x": 470,
+      "y": 6450
+    },
+    "ReportSummary.dc.html": {
+      "h": 720,
+      "title": "V-7 Zgłaszanie, krok 5: podsumowanie",
+      "w": 390,
+      "x": 1880,
+      "y": 6450
+    },
+    "RouteNeutral.dc.html": {
+      "h": 1280,
+      "title": "V-5 Wynik trasy, potrzeby bez barier",
+      "w": 390,
+      "x": 1410,
+      "y": 3030
+    },
+    "RoutePlanning.dc.html": {
+      "h": 800,
+      "title": "V-4 Planowanie trasy",
+      "w": 390,
+      "x": 0,
+      "y": 3030
+    },
+    "RouteResult.dc.html": {
+      "h": 1520,
+      "title": "V-5 Wynik trasy",
+      "w": 390,
+      "x": 940,
+      "y": 3030
+    },
+    "RouteSearch.dc.html": {
+      "h": 760,
+      "title": "V-8 Wyszukiwanie adresu, wyniki",
+      "w": 390,
+      "x": 470,
+      "y": 3030
+    },
+    "RouteNoRoute.dc.html": {
+      "h": 1160,
+      "title": "V-5 Wynik trasy, brak trasy bez barier",
+      "w": 390,
+      "x": 1880,
+      "y": 3030
+    },
+    "RouteUnavailable.dc.html": {
+      "h": 800,
+      "title": "V-4 Planowanie trasy, routing nie odpowiada",
+      "w": 390,
+      "x": 2350,
+      "y": 3030
+    },
+    "RouteSearchNone.dc.html": {
+      "h": 760,
+      "title": "V-8 Wyszukiwanie adresu, nic nie znaleziono",
+      "w": 390,
+      "x": 2820,
+      "y": 3030
+    },
+    "FactContradiction.dc.html": {
+      "h": 800,
+      "title": "V-6 Szczegóły faktu, sprzeczność z danymi mapy",
+      "w": 390,
+      "x": 940,
+      "y": 5190
+    },
+    "AreaDetails.dc.html": {
+      "h": 1000,
+      "title": "V-7 Zgłaszanie obszaru: promień i typ",
+      "w": 390,
+      "x": 2350,
+      "y": 6450
+    },
+    "ReportSaved.dc.html": {
+      "h": 720,
+      "title": "V-7 Zgłaszanie: zapisano",
+      "w": 390,
+      "x": 2820,
+      "y": 6450
+    },
+    "Menu.dc.html": {
+      "h": 760,
+      "title": "V-10 Menu",
+      "w": 390,
+      "x": 0,
+      "y": 7870
+    },
+    "AccountLogin.dc.html": {
+      "h": 760,
+      "title": "V-11 Konto, logowanie z błędem",
+      "w": 390,
+      "x": 470,
+      "y": 7870
+    },
+    "AccountCreate.dc.html": {
+      "h": 820,
+      "title": "V-11 Konto, zakładanie z błędem",
+      "w": 390,
+      "x": 940,
+      "y": 7870
+    },
+    "AccountIn.dc.html": {
+      "h": 760,
+      "title": "V-11 Konto, zalogowano",
+      "w": 390,
+      "x": 1410,
+      "y": 7870
+    },
+    "AccountDelete.dc.html": {
+      "h": 760,
+      "title": "V-11 Konto, potwierdzenie usunięcia",
+      "w": 390,
+      "x": 1880,
+      "y": 7870
+    },
+    "Privacy.dc.html": {
+      "h": 1040,
+      "title": "V-12 Informacja o prywatności",
+      "w": 390,
+      "x": 2350,
+      "y": 7870
+    },
+    "AboutData.dc.html": {
+      "h": 1270,
+      "title": "V-13 O danych",
+      "w": 390,
+      "x": 2820,
+      "y": 7870
+    },
+    "Moderation.dc.html": {
+      "h": 1100,
+      "title": "V-14 Moderacja",
+      "w": 390,
+      "x": 3290,
+      "y": 7870
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-03T20:35:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "t-fact": {
+      "kind": "title1",
+      "maxW": 1840,
+      "text": "3. Fakt: szczegóły i głos",
+      "w": 240,
+      "x": 0,
+      "y": 4890
+    },
+    "t-report": {
+      "kind": "title1",
+      "maxW": 3210,
+      "text": "4. Zgłaszanie bariery lub udogodnienia",
+      "w": 240,
+      "x": 0,
+      "y": 6150
+    },
+    "t-route": {
+      "kind": "title1",
+      "maxW": 3210,
+      "text": "2. Trasa: planowanie i wynik",
+      "w": 240,
+      "x": 0,
+      "y": 2730
+    },
+    "t-start": {
+      "kind": "title1",
+      "maxW": 1840,
+      "text": "1. Start: potrzeby i mapa faktów",
+      "w": 240,
+      "x": 0,
+      "y": 1180
+    },
+    "t-rest": {
+      "kind": "title1",
+      "maxW": 3680,
+      "text": "5. Menu, konto i strony",
+      "w": 240,
+      "x": 0,
+      "y": 7570
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Needs.dc.html",
+    "MapFacts.dc.html",
+    "RoutePlanning.dc.html",
+    "RouteSearch.dc.html",
+    "RouteResult.dc.html",
+    "RouteNeutral.dc.html",
+    "FactDetail.dc.html",
+    "FactVoted.dc.html",
+    "ReportKind.dc.html",
+    "ReportPoint.dc.html",
+    "ReportDetails.dc.html",
+    "ReportExisting.dc.html",
+    "ReportSummary.dc.html",
+    "RouteNoRoute.dc.html",
+    "RouteUnavailable.dc.html",
+    "RouteSearchNone.dc.html",
+    "FactContradiction.dc.html",
+    "AreaDetails.dc.html",
+    "ReportSaved.dc.html",
+    "Menu.dc.html",
+    "AccountLogin.dc.html",
+    "AccountCreate.dc.html",
+    "AccountIn.dc.html",
+    "AccountDelete.dc.html",
+    "Privacy.dc.html",
+    "AboutData.dc.html",
+    "Moderation.dc.html"
+  ],
+  "pages": [],
+  "title": "Widoki MVP: makiety"
+}
