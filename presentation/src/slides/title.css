@@ -1,9 +1,49 @@
-/* Styles of the slide title: The route of the title slide, along the bottom edge. */
+/* Styles of the slide title: the challenge on a plate above the name, the name, the promise, and the route on a short sheet. */
 
-.reveal .title-slide .title-route {
+.reveal #title {
+  --sheet-h: 268px;
+}
+
+.reveal .title-kicker {
+  top: 168px;
+  bottom: auto;
+  padding: 12px 22px;
+  border-radius: 6px;
+  box-shadow: none;
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.reveal .title-main {
   position: absolute;
-  left: var(--pad-x);
-  bottom: 70px;
-  width: 1440px;
-  height: 260px;
+  left: 72px;
+  top: 222px;
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 310px;
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: -0.012em;
+  color: var(--on-shell);
+}
+
+.reveal .title-sub {
+  position: absolute;
+  left: 82px;
+  top: 520px;
+  margin: 0;
+  font-size: 62px;
+  line-height: 1.05;
+  color: var(--on-shell-dim);
+}
+
+.reveal .title-route {
+  position: absolute;
+  left: var(--sheet-x);
+  top: 0;
+  width: 1600px;
+  height: 268px;
+  overflow: visible;
 }

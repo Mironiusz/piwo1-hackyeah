@@ -1,22 +1,42 @@
-/* Styles of the slide data: The table of the data sources. */
+/*
+ * Styles of the slide data: the table of the data sources across the sheet, under the plate. The English claim
+ * takes two lines and a smaller size to stay clear of the plate; the Polish one is a single line at the standard size.
+ */
+
+.reveal #data {
+  --sheet-h: 524px;
+  --sheet-pad: 80px;
+  --claim-size: 88px;
+}
+
+.reveal #data:lang(pl) {
+  --claim-size: 100px;
+}
 
 .reveal .data-table {
   width: 100%;
-  margin-top: 36px;
+  margin: 0;
   border-collapse: collapse;
-  font-size: 30px;
+  font-size: 28px;
+  line-height: 1.18;
 }
 
 .reveal .data-table th,
 .reveal .data-table td {
-  padding: 14px 16px;
+  padding: 11px 16px 13px;
   border-bottom: 2px solid var(--line);
   text-align: left;
   vertical-align: top;
 }
 
+.reveal .data-table th:first-child {
+  width: 330px;
+  padding-left: 0;
+}
+
 .reveal .data-table thead th {
-  border-bottom-color: var(--primary);
+  padding-top: 0;
+  border-bottom: 3px solid var(--primary);
   color: var(--text-dim);
   font-weight: 600;
 }
@@ -26,7 +46,7 @@
   font-weight: 700;
 }
 
-.reveal .data-footer {
-  margin-top: 36px;
-  font-size: 34px;
+.reveal .data-table tbody tr:last-child th,
+.reveal .data-table tbody tr:last-child td {
+  border-bottom: 0;
 }

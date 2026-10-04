@@ -1,60 +1,126 @@
 /*
  * Elements shared by many slides and the styles of the components in src/components.
  * Styles used by one slide only live next to that slide, as src/slides/<id>.css.
+ *
+ * A slide has four parts: the claim on the shell (.slide-title), the evidence on the sheet (.sheet),
+ * the rule on a plate on the seam between the two (.plate), and a caveat as a dashed note on the sheet (.note).
  */
 
-.reveal .slide-title {
-  margin: 0 0 28px;
-  font-family: var(--font-title);
-  font-size: 60px;
-  font-weight: 700;
-  line-height: 1.08;
-  color: var(--primary);
-}
+/* The name of the product in the top left corner of every slide but the title. */
 
-.reveal .kicker {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-}
-
-/* A footnote stays narrower than the slide, so it never runs under the slide number in the bottom right corner. */
-
-.reveal .footnote {
+.reveal .brand {
   position: absolute;
   left: var(--pad-x);
-  bottom: 28px;
-  max-width: 1200px;
+  top: 74px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
   margin: 0;
-  font-size: 18px;
-  line-height: 1.4;
-  color: var(--text-dim);
-}
-
-/* Title slide */
-
-.reveal .title-slide {
-  height: 100%;
-  padding-top: 220px;
-  box-sizing: border-box;
-}
-
-.reveal .title-main {
-  margin: 16px 0 20px;
-  font-family: var(--font-title);
-  font-size: 160px;
+  font-size: 30px;
   font-weight: 700;
   line-height: 1;
-  color: var(--primary);
+  color: var(--on-shell);
 }
 
-.reveal .title-sub {
+.reveal .brand::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background: var(--accent);
+}
+
+/* The claim: the heading of the slide, on the shell. */
+
+.reveal .slide-title {
+  position: absolute;
+  left: var(--pad-x);
+  top: 128px;
+  width: 1180px;
   margin: 0;
+  font-family: var(--font-title);
+  font-size: var(--claim-size);
+  font-weight: 700;
+  line-height: 0.98;
+  color: var(--on-shell);
+  text-wrap: balance;
+}
+
+/*
+ * The sheet: the bottom sheet of the app, as tall as --sheet-h of the slide. It runs past the frame on three sides,
+ * so it reaches the edges of the screen through the margin reveal.js keeps around a slide. --sheet-x is how far the
+ * left edge of the sheet lies outside the frame, for the parts of a slide placed by frame coordinates.
+ * The content is centered in the visible part.
+ *
+ * In the print view the sheet runs past the bottom of the frame only as far as the margin of the page: reveal.js
+ * measures the height of a slide there, and a slide taller than the page would take two pages of the PDF.
+ */
+
+.reveal .sheet {
+  --sheet-x: var(--bleed);
+  position: absolute;
+  left: calc(-1 * var(--sheet-x));
+  right: calc(-1 * var(--sheet-x));
+  bottom: -400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  height: calc(var(--sheet-h) + 400px);
+  padding: var(--sheet-pad) calc(var(--pad-x) + var(--sheet-x)) 436px;
+  border-radius: 48px 48px 0 0;
+  background: var(--surface);
+  box-shadow: 0 -14px 40px var(--shadow);
+  color: var(--text);
+}
+
+html.reveal-print .reveal .sheet {
+  bottom: calc(-1 * var(--bleed));
+  height: calc(var(--sheet-h) + var(--bleed));
+  padding-bottom: calc(36px + var(--bleed));
+}
+
+.reveal .sheet::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 16px;
+  width: 84px;
+  height: 8px;
+  margin-left: -42px;
+  border-radius: 4px;
+  background: var(--line);
+}
+
+/* The plate: the rule of the slide, on the seam between the shell and the sheet. */
+
+.reveal .plate {
+  position: absolute;
+  left: var(--pad-x);
+  bottom: calc(var(--sheet-h) - 44px);
+  box-sizing: border-box;
+  max-width: 1440px;
+  margin: 0;
+  padding: 21px 30px 23px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: 0 16px 34px var(--shadow);
   font-size: 40px;
-  color: var(--text-dim);
+  font-weight: 700;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+/* The note: a caveat, in the dashed frame the app gives a note about missing data. */
+
+.reveal .note {
+  margin: 0;
+  padding: 20px 26px;
+  border: 3px dashed var(--line-strong);
+  border-radius: 12px;
+  font-size: 29px;
+  line-height: 1.22;
+  color: var(--text);
 }
 
 /* SVG text */
@@ -76,11 +142,13 @@
   stroke-linejoin: round;
 }
 
-/* Page with notes in the PDF (npm run pdf): readable from paper */
+/* Page with notes in the PDF (npm run pdf): readable from paper, so it is dark text on a white page. */
 
 html.reveal-print .reveal .speaker-notes-pdf[data-layout='separate-page'] {
   box-sizing: border-box;
+  height: 100%;
   padding: var(--pad-top) var(--pad-x);
+  background: var(--surface);
   font-family: var(--font-sans);
   font-size: 26px;
   line-height: 1.45;
@@ -113,28 +181,13 @@ html.reveal-print .reveal .speaker-notes-pdf[data-layout='separate-page']:last-c
   page-break-after: auto;
 }
 
-/* Text blocks shared by the slides: a lead line, a statement box, a plain list, a card heading, chips and the number of a step. */
+/* Text blocks shared by the slides: a lead line, a plain list, a heading on the sheet, chips and the number of a step. */
 
 .reveal .lead {
-  margin: 28px 0 0;
-  font-size: 40px;
+  margin: 0;
+  font-size: 44px;
+  line-height: 1.15;
   color: var(--text-dim);
-}
-
-.reveal .statement {
-  margin: 64px 0 0;
-  padding: 22px 28px;
-  border-left: 8px solid var(--primary);
-  background: var(--surface);
-  font-size: 40px;
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-.reveal .statement.is-accent {
-  border-left-color: var(--on-accent);
-  background: var(--accent);
-  color: var(--on-accent);
 }
 
 .reveal .plain-list {
@@ -145,63 +198,81 @@ html.reveal-print .reveal .speaker-notes-pdf[data-layout='separate-page']:last-c
 
 .reveal .plain-list li {
   position: relative;
-  margin: 0 0 20px;
-  padding-left: 30px;
-  font-size: 34px;
-  line-height: 1.3;
+  margin: 0 0 10px;
+  padding-left: 32px;
+  font-size: 30px;
+  line-height: 1.24;
+}
+
+.reveal .plain-list li:last-child {
+  margin-bottom: 0;
 }
 
 .reveal .plain-list li::before {
   content: '';
   position: absolute;
   left: 0;
-  top: 0.5em;
-  width: 12px;
-  height: 12px;
+  top: 0.42em;
+  box-sizing: border-box;
+  width: 14px;
+  height: 14px;
+  border: 3px solid var(--primary);
   border-radius: 50%;
   background: var(--primary);
 }
 
+/* A list of what is not there yet: the same mark, hollow. */
+
+.reveal .plain-list.is-open li::before {
+  background: var(--surface);
+}
+
 .reveal h3 {
-  margin: 0 0 18px;
+  margin: 0 0 14px;
   font-size: 38px;
   font-weight: 700;
+  line-height: 1.1;
   color: var(--primary);
 }
 
 .reveal .chip-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  margin: 48px 0 0;
+  gap: 14px 16px;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .reveal .chip {
-  padding: 10px 22px;
-  border: 2px solid var(--line-strong);
+  padding: 9px 24px 11px;
+  border: 3px solid var(--line-strong);
   border-radius: 999px;
   background: var(--surface);
-  font-size: 34px;
+  font-size: 36px;
   font-weight: 600;
+  line-height: 1.1;
 }
 
 .reveal .card-num {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 52px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   background: var(--primary);
   color: var(--on-primary);
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
+  line-height: 1;
   flex: none;
 }
 
-/* Route with the four segment states (src/components/route-states.js). Each state keeps its color, icon and line pattern. */
+/*
+ * Route with the four segment states (src/components/route-states.js), in the line patterns of the app: red with
+ * white stripes, solid green, amber with dark dashes, grey dots. Each state keeps its color, its icon and its pattern.
+ */
 
 .reveal .rs-seg.is-barrier {
   --rs: var(--state-barrier);
@@ -222,30 +293,43 @@ html.reveal-print .reveal .speaker-notes-pdf[data-layout='separate-page']:last-c
 .reveal .rs-line {
   fill: none;
   stroke: var(--rs);
-  stroke-width: 14;
+  stroke-width: 22;
   stroke-linecap: round;
 }
 
-.reveal .rs-seg.is-partial .rs-line {
-  stroke-dasharray: 26 14;
-  stroke-linecap: butt;
+.reveal .rs-over {
+  fill: none;
+}
+
+.reveal .rs-seg.is-barrier .rs-over {
+  stroke: var(--surface);
+  stroke-width: 13;
+  stroke-dasharray: 8 8;
+  stroke-dashoffset: -11;
+}
+
+.reveal .rs-seg.is-partial .rs-over {
+  stroke: var(--text);
+  stroke-width: 22;
+  stroke-dasharray: 9 24;
+  stroke-dashoffset: -18;
 }
 
 .reveal .rs-seg.is-nodata .rs-line {
-  stroke-width: 10;
-  stroke-dasharray: 2 18;
+  stroke-width: 14;
+  stroke-dasharray: 0.1 30;
 }
 
 .reveal .rs-badge {
   fill: var(--surface);
   stroke: var(--rs);
-  stroke-width: 4;
+  stroke-width: 5;
 }
 
 .reveal .rs-icon {
   fill: none;
   stroke: var(--rs);
-  stroke-width: 4;
+  stroke-width: 5.5;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -256,10 +340,51 @@ html.reveal-print .reveal .speaker-notes-pdf[data-layout='separate-page']:last-c
 
 .reveal .rs-icon-text {
   fill: var(--rs);
-  font-size: 30px;
+  font-size: 40px;
   font-weight: 700;
+  text-anchor: middle;
 }
 
 .reveal .rs-end {
-  fill: var(--primary);
+  fill: var(--surface);
+  stroke: var(--text);
+  stroke-width: 5;
+}
+
+.reveal .rs-end-text {
+  fill: var(--text);
+  font-size: 30px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+/* The small route, without badges. */
+
+.reveal .route-states.is-small .rs-line {
+  stroke-width: 14;
+}
+
+.reveal .route-states.is-small .rs-seg.is-barrier .rs-over {
+  stroke-width: 8;
+  stroke-dasharray: 5 5;
+  stroke-dashoffset: -7;
+}
+
+.reveal .route-states.is-small .rs-seg.is-partial .rs-over {
+  stroke-width: 14;
+  stroke-dasharray: 6 15;
+  stroke-dashoffset: -11;
+}
+
+.reveal .route-states.is-small .rs-seg.is-nodata .rs-line {
+  stroke-width: 9;
+  stroke-dasharray: 0.1 19;
+}
+
+.reveal .route-states.is-small .rs-end {
+  stroke-width: 4;
+}
+
+.reveal .route-states.is-small .rs-end-text {
+  font-size: 21px;
 }

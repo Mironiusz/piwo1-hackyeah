@@ -1,28 +1,36 @@
-/* Styles of the slide solution: Three cards in a row: needs, route, facts. */
+/* Styles of the slide solution: three numbered rows across the sheet, needs, route and facts, parted by hairlines. */
 
-.reveal .card-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 36px;
-  margin: 72px 0 0;
+.reveal #solution {
+  --sheet-h: 566px;
+  --sheet-pad: 96px;
+}
+
+.reveal .step-rows {
+  margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.reveal .card {
-  padding: 30px;
-  border-top: 8px solid var(--primary);
-  border-radius: 12px;
-  background: var(--surface);
+.reveal .step-row {
+  display: grid;
+  grid-template-columns: 60px 270px 1fr;
+  gap: 0 32px;
+  align-items: center;
+  padding: 28px 0;
+  border-top: 2px solid var(--line);
 }
 
-.reveal .card h3 {
-  margin-top: 22px;
-  font-size: 40px;
+.reveal .step-row:first-child {
+  border-top: 0;
 }
 
-.reveal .card p {
+.reveal .step-row h3 {
   margin: 0;
-  font-size: 34px;
-  line-height: 1.35;
+  font-size: 50px;
+}
+
+.reveal .step-row p {
+  margin: 0;
+  font-size: 38px;
+  line-height: 1.18;
 }
