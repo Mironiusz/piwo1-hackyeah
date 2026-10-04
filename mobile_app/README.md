@@ -1,7 +1,7 @@
 # EnableMe - the HarmonyOS client
 
 HackYeah 2026, challenges "Kraków bez barier" and Huawei "Imagine What's Next". A native OpenHarmony application
-(ArkTS / ArkUI, Stage model, **API 20**) in `accessway/`, a second client of the same programming interface as
+(ArkTS / ArkUI, Stage model, API 20) in `accessway/`, a second client of the same programming interface as
 the web app (`docs/product/api_contract.md` in the root of the repository). It never embeds the web app.
 
 The person marks which barriers they avoid (stairs, high kerb, poor surface, steep incline, narrow passage) and
@@ -23,14 +23,14 @@ report, HTTP to the service, worker threads (`taskpool`) for decoding the map, C
 
 ## Versions
 
-| Item | Version |
-|---|---|
-| Target | OpenHarmony API 20 (`compileSdkVersion` and `compatibleSdkVersion` 20) |
-| OpenHarmony SDK | 6.0.0.47 (API 20) |
-| Command Line Tools | 5.1.0.840 (hvigor 5.18.5, ohpm 5.1.3, codelinter 5.1.140) |
-| `@oniroproject/oniro-app` CLI | 0.11.0 (pinned in `scripts/env.sh`) |
-| Emulator | Oniro emulator, OpenHarmony 6.1.0.31, QEMU x86_64 |
-| Host | Linux x86_64 with KVM, or Windows with WSL2; Node.js 20 or newer (22 used), JDK 17+, QEMU 8.x, Python 3 |
+| Item                          | Version                                                                                                 |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Target                        | OpenHarmony API 20 (`compileSdkVersion` and `compatibleSdkVersion` 20)                                  |
+| OpenHarmony SDK               | 6.0.0.47 (API 20)                                                                                       |
+| Command Line Tools            | 5.1.0.840 (hvigor 5.18.5, ohpm 5.1.3, codelinter 5.1.140)                                               |
+| `@oniroproject/oniro-app` CLI | 0.11.0 (pinned in `scripts/env.sh`)                                                                     |
+| Emulator                      | Oniro emulator, OpenHarmony 6.1.0.31, QEMU x86_64                                                       |
+| Host                          | Linux x86_64 with KVM, or Windows with WSL2; Node.js 20 or newer (22 used), JDK 17+, QEMU 8.x, Python 3 |
 
 ## From a clean clone to a running package
 
