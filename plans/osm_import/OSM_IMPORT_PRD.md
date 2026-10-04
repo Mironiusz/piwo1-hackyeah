@@ -1,6 +1,6 @@
 # PRD: OpenStreetMap copy read and common demo loading
 
-Document state: 2026-10-04, approved by the user; technical planning authorized; on 2026-10-04 the user moved the tile step from `map_tiles` to `tile_loading` (`plans/tile_loading/TILE_LOADING_PRD.md` FR-7)
+Document state: 2026-10-04, approved by the user; technical planning authorized; on 2026-10-04 the user moved the tile step from `map_tiles` to `tile_loading` (`plans_finished/tile_loading/TILE_LOADING_PRD.md` FR-7)
 
 ## Business goal
 

@@ -1,6 +1,7 @@
 """Derive the reliability status of a fact from its stored votes by the one rule of M4, for every caller alike."""
 
-from collections.abc import Iterable
+from collections import defaultdict
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from datetime import date
 from enum import StrEnum
@@ -10,7 +11,7 @@ from accessibility_db.closed_lists import VoteVerdict
 from accessibility_db.tables import OffsetInstant
 
 from common_time import build_business_day
-from data.route_facts import StoredFact
+from data.route_facts import StoredFact, StoredVote
 
 ACCOUNT_VOTE_WEIGHT = 1.0
 ANONYMOUS_VOTE_WEIGHT = 0.5
@@ -129,3 +130,11 @@ def resolve_status_from_sums(confirmations: float, denials: float, is_removed_fr
     if confirmations >= STATUS_WEIGHT_THRESHOLD:
         return FactStatus.CONFIRMED
     return FactStatus.UNVERIFIED
+
+
+def build_fact_views(facts: Sequence[StoredFact], votes: Iterable[StoredVote]) -> tuple[FactView, ...]:
+    """Pair every fact, in the given order, with the status of its own votes, grouping the votes of all the facts by fact in one pass."""
+    votes_by_fact: dict[int, list[StoredVote]] = defaultdict(list)
+    for vote in votes:
+        votes_by_fact[vote.fact_id].append(vote)
+    return tuple(FactView(fact, resolve_fact_status(votes_by_fact[fact.id], fact.is_removed_from_osm)) for fact in facts)

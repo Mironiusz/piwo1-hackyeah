@@ -230,7 +230,7 @@ The step is a synchronous administrative step of the common loading program, whi
 
 ## Tile archive step
 
-`tile_archive.py` holds the tile step of the loading program of `plans/tile_loading/`: it puts the recorded map tile archive `krakow.pmtiles` from the place a person put it on the machine into the directory the proxy serves. The common loading program of `plans/osm_import/` calls `apply_tile_archive_run`, and a person runs the step on its own with `python -m worker.tile_archive`; nothing schedules it and no API request starts it.
+`tile_archive.py` holds the tile step of the loading program of `plans_finished/tile_loading/`: it puts the recorded map tile archive `krakow.pmtiles` from the place a person put it on the machine into the directory the proxy serves. The common loading program of `plans/osm_import/` calls `apply_tile_archive_run`, and a person runs the step on its own with `python -m worker.tile_archive`; nothing schedules it and no API request starts it.
 
 | Function                      | Input                                                      | Output                                                                                                   |
 | ----------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |

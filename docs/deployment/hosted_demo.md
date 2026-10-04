@@ -12,7 +12,7 @@ The steps were written before the deployment configuration existed. Where a step
 
 ## Before the first start
 
-The server needs Docker Engine with the Compose plugin. The port of the public link has to be open to the internet. That is a setting of the host, made by its owner. Completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`: the minimum version of Docker Engine and the port.
+The server needs Docker Engine with the Compose plugin. The port of the public link has to be open to the internet. The server also needs outgoing HTTPS: the backend asks the public Nominatim instance for every address search (`plans_finished/address_search/ADDRESS_SEARCH_PLAN.md` D-13), and the loading step fetches the copies named in Loading the data. Both are settings of the host, made by its owner. Completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`: the minimum version of Docker Engine and the port.
 
 ## Getting the repository
 
@@ -35,6 +35,8 @@ The schema revisions are applied by hand, as a step of their own, with the conse
 The separate loading program loads four things: the OpenStreetMap copy together with the routing data built from it, the copy of the GTFS of ZTP Kraków together with the routing data with public transport built from it and from the same OpenStreetMap copy, the map tile archive and the sample reports. Run it by hand after the schema revisions. The start command never runs it. The step has finished when the program ends without an error and the map of Kraków shows at the public link.
 
 The copy of the GTFS is loaded by `python -m worker.gtfs_import`, run after `python -m worker.osm_import` in the same one-off container (`plans/public_transport_routing/PUBLIC_TRANSPORT_ROUTING_PLAN.md` D-10). It needs access to the feeds of ZTP Kraków and to the timezone boundaries the routing tools download, keeps the last complete copy of the GTFS when a fresh fetch fails, and ends with an error when no routing data with public transport of the OpenStreetMap copy in use exists after it.
+
+The map tile archive is not in the repository. Before the loading step, put the file `krakow.pmtiles` handed over by Adrian, the file itself and not a link to it, at the path of `TILE_ARCHIVE_SOURCE`, outside the directory of `TILE_ARCHIVE_DIR`, from which the server serves the archive at `/tiles/krakow.pmtiles`. The tile step, run on its own by `python -m worker.tile_archive` in the same one-off container, checks the file against its recorded SHA-256 value and copies it into `TILE_ARCHIVE_DIR` (`plans_finished/tile_loading/TILE_LOADING_PLAN.md` D-7). It needs `IMPORT_WORKSPACE_ROOT` and the database, because it takes the exclusion of the import: while an import runs it ends with exit code 2 and writes nothing, and it is run again after the import ends. Its outcomes and the reasons of a failure, each with what a person does, are in `docs/setup/MAP_SETUP.md`, section Handing the archive to the server.
 
 After the program ends, restart the routing service on the routing data it built. Until then every route ends with the message that a route cannot be planned right now (`plans_finished/valhalla_routing/VALHALLA_ROUTING_PLAN.md` D-3). The routing service serves the routing data with public transport when it was built from the OpenStreetMap copy in use, and the walking routing data of that copy otherwise, so a walking route always has data of the copy in use (`plans/public_transport_routing/PUBLIC_TRANSPORT_ROUTING_PLAN.md` D-9).
 
