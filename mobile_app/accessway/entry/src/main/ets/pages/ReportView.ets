@@ -1,4 +1,5 @@
 import { common } from '@kit.AbilityKit';
+import { util } from '@kit.ArkTS';
 import { appModel, errorText } from '../data/AppModel';
 import { currentPosition } from '../data/Location';
 import { ErrorCode, RepoError } from '../data/Repository';
@@ -39,8 +40,8 @@ const RADII: number[] = [10, 25, 50, 100];
 const STEP_SAVED: number = 6;
 
 /**
- * V-7: zgłaszanie bariery, udogodnienia albo obszaru krok po kroku. Przed zapisem pokazujemy fakty tego samego
- * rodzaju w promieniu 15 m, żeby można było potwierdzić istniejący zamiast dodawać duplikat.
+ * V-7: step-by-step reporting of a barrier, amenity or area. Before saving we show facts of the same kind
+ * within 15 m, so an existing one can be confirmed instead of adding a duplicate.
  */
 @Component
 export struct ReportView {
@@ -58,6 +59,8 @@ export struct ReportView {
   @State saved: Fact | null = null;
   @State error: string = '';
   @State busy: boolean = false;
+  private saveKey: string = '';
+  private saveContent: string = '';
 
   private isArea(): boolean {
     return this.category === FactCategory.AREA;
@@ -111,11 +114,26 @@ export struct ReportView {
     return isNaN(n) || n <= 0 ? 0 : Math.min(n, 999);
   }
 
+  /**
+   * The idempotency key of the summary being saved: generated once for an approved summary and kept for every
+   * retry of the same content; a changed summary gets a new key.
+   */
+  private keyFor(content: string): string {
+    if (this.saveContent !== content || this.saveKey.length === 0) {
+      this.saveContent = content;
+      this.saveKey = util.generateRandomUUID(true);
+    }
+    return this.saveKey;
+  }
+
   private async save(): Promise<void> {
     this.busy = true;
     this.error = '';
+    const content = [this.kind, this.isArea(), this.lat, this.lon, this.radius,
+      this.kind === FactKind.STEPS ? this.stepsNumber() : 0, this.description.trim()].join('|');
     try {
       this.saved = await appModel.repo.facts.report({
+        idempotencyKey: this.keyFor(content),
         kind: this.kind,
         isArea: this.isArea(),
         lat: this.lat,

@@ -25,18 +25,21 @@ def fetch_utc_now() -> datetime:
 
 def fetch_business_now() -> datetime:
     """Read the current instant in the configured business zone."""
+    return build_business_datetime(fetch_utc_now())
+
+
+def build_business_datetime(instant: datetime) -> datetime:
+    """Give an aware instant as the wall-clock time of the configured business zone, with the offset in force at it; a naive value is refused."""
     from config.config import BUSINESS_TIMEZONE
 
-    return fetch_utc_now().astimezone(ZoneInfo(BUSINESS_TIMEZONE))
+    if instant.utcoffset() is None:
+        raise ValueError("A business time needs an aware instant")
+    return instant.astimezone(ZoneInfo(BUSINESS_TIMEZONE))
 
 
 def build_business_day(instant: datetime) -> date:
     """Give the calendar day of an aware instant in the configured business zone; a naive value is refused."""
-    from config.config import BUSINESS_TIMEZONE
-
-    if instant.utcoffset() is None:
-        raise ValueError("A business day needs an aware instant")
-    return instant.astimezone(ZoneInfo(BUSINESS_TIMEZONE)).date()
+    return build_business_datetime(instant).date()
 
 
 def fetch_monotonic_seconds() -> float:

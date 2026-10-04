@@ -107,3 +107,22 @@ Consequence for S-5: the joint negative-identifier and live-vote checks cannot r
 ### User decision and return up the chain
 
 On 2026-10-04 the user chose the dataset of the demo scenario for the hosted demo: the eight facts of `STAGE7_DEMO_SCENARIO_SHAPE.md`, Domain rules, in place of the four approved examples. This overturns `SAMPLE_DATA_SHAPE.md` functional requirements 1, 2 and 6 and the PRD built on them, so the plan is no longer a valid contract. Following ch. 4.3 of `docs/standards/standard_agentic_workflow.md`, implementation does not continue on it: the shape is reopened with the decision recorded and new open questions, then the PRD and the plan are redone through `plan-prd`. The delivered code stays in the tree unchanged until the new plan says what of it is reused. The stage7 PRD itself still awaits the user's confirmation in its own initiative.
+
+## 2026-10-04 - Shape, PRD and plan redone; implementation deferred by the user
+
+The reopened shape was closed after the user answered Q-3 - Q-7. All sample votes are fictional votes without an account, of weight 0.5. Dates are relative to the first loading. The loader writes the moderation of S-6 - S-8 directly. The identifiers -1 - -8 are recorded as a convention in `docs/product/schema.md`. The agent chooses the places from public OpenStreetMap data. The user approved the rewritten PRD.
+
+During phase B the proxy check of public data showed that the wheelchair route from the Tauron Arena to Ogród Doświadczeń crosses no street, so it has no kerb crossing for S-5. The user chose to propose M1 Kraków, al. Pokoju 67, as the replacement destination of the scenario, and the places were fitted to it. The method, the places and the checks are in `SAMPLE_DATA_OSM_EVIDENCE.md`. The plan was rewritten, closed, and passed the plan-format and prose checks: 54 passed.
+
+The user then chose not to implement the plan now. No code, test or shared document was changed by this run. `common_sample_data.py`, `service/sample_data.py`, `data/sample_data.py`, their tests and `docs/data/sample_data.md` still describe the four examples of the first plan, which no longer match the approved PRD.
+
+### Verdict
+
+Not ready. The scope of this entry is the initiative's artifacts: the shape, the PRD, the plan, the OSM evidence and this review. The delivered code implements a superseded dataset. The initiative stays in `plans/sample_data/` and does not qualify for `plans_finished/`. The next step is `plan-implement` on the closed `SAMPLE_DATA_PLAN.md`, from S-1.
+
+Open items outside this initiative:
+
+- Rafał and Mateusz accept or change the replacement destination in `stage7_demo_scenario`.
+- Kuber decides about S-5's departure in `DemoSeed.ets`.
+- Kuba confirms the identifier convention.
+- The `osm_import` session was told of the planned code rename `surface_not_absent` -> `contradiction_missing`; the loading handoff changes only when S-5 of the plan is implemented.

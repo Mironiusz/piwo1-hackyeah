@@ -54,7 +54,7 @@ const KINDS: Record<string, Pair> = {
   'handrail': { pl: 'Poręcz przy schodach', en: 'Handrail on stairs' }
 };
 
-/** Nazwa rodzaju faktu, jak na listach potrzeb i w zgłaszaniu. */
+/** Name of the fact kind, as shown in the needs lists and in reporting. */
 export function kindLabel(k: FactKind): string {
   return pick(KINDS, k);
 }
@@ -73,7 +73,7 @@ const SHORT: Record<string, Pair> = {
   'handrail': { pl: 'poręcz', en: 'handrail' }
 };
 
-/** Krótka nazwa małą literą: podpis przystanku na schemacie trasy i typ w podsumowaniu zgłoszenia. */
+/** Short lowercase name: the stop label on the route diagram and the type in the report summary. */
 export function kindShort(k: FactKind): string {
   return pick(SHORT, k);
 }
@@ -120,7 +120,7 @@ const ALREADY: Record<string, Pair> = {
   'handrail': { pl: 'jest już zgłoszona poręcz', en: 'a handrail is already reported' }
 };
 
-/** Pytanie z kroku 4 zgłaszania, na przykład "Czy to te same schody?". */
+/** Question from step 4 of reporting, for example "Czy to te same schody?" (Are these the same stairs?). */
 export function sameQuestion(k: FactKind): string {
   return tr(`Czy to ${pick(SAME, k)}?`, `Is this ${pick(SAME, k)}?`);
 }
@@ -137,7 +137,7 @@ export function isAmenity(k: FactKind): boolean {
   return AMENITY_KINDS.indexOf(k) >= 0;
 }
 
-/** Odmiana liczebnika: 1 forma pojedyncza, 2-4 (poza 12-14) forma "kilka", reszta forma "wiele". */
+/** Numeral inflection: 1 is singular, 2-4 (except 12-14) take the "kilka" (few) form, the rest "wiele" (many). */
 export function plural(n: number, one: string, few: string, many: string): string {
   if (n === 1) {
     return one;
@@ -167,7 +167,7 @@ export function countSteps(n: number): string {
   return tr(`${n} ${plural(n, 'stopień', 'stopnie', 'stopni')}`, `${n} ${n === 1 ? 'step' : 'steps'}`);
 }
 
-/** Tytuł faktu w wierszu listy: rodzaj, liczba stopni i dla obszaru promień. */
+/** Fact title in a list row: the kind, the number of steps and, for an area, the radius. */
 export function factTitle(kind: FactKind, category: FactCategory, stepCount: number, radiusM: number): string {
   if (category === FactCategory.AREA) {
     return tr(`Obszar: ${kindShortArea(kind)}, ${radiusM} m`, `Area: ${kindShortArea(kind)}, ${radiusM} m`);
@@ -220,7 +220,7 @@ export function edgeStateLabel(s: EdgeState): string {
 
 const MONTHS_EN: string[] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-/** Data dnia jak w makietach: 3.10.2026 po polsku, 3 Oct 2026 po angielsku. */
+/** Day date as in the mockups: 3.10.2026 in Polish, 3 Oct 2026 in English. */
 export function formatDate(ms: number): string {
   if (ms <= 0) {
     return tr('data nieznana', 'date unknown');
@@ -236,7 +236,7 @@ export function formatDate(ms: number): string {
 const NO_PREFIX: string[] = ['ul.', 'ulica', 'al.', 'plac', 'pl.', 'rondo', 'park', 'osiedle', 'os.', 'most', 'bulwar',
   'rynek', 'skwer', 'tauron', 'centrum', 'kopiec', 'ogród'];
 
-/** Nazwa ulicy jak na makietach: "ul. Stanisława Lema", "al. Pokoju"; place, parki i rynki bez przedrostka. */
+/** Street name as in the mockups: "ul. Stanisława Lema", "al. Pokoju"; squares, parks and markets get no prefix. */
 export function streetLabel(name: string): string {
   const n = name.trim();
   if (n.length === 0) {

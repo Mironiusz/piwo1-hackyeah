@@ -92,7 +92,7 @@ frontend/
 
 ## Architectural decisions
 
-- The state and the requests use React alone: contexts, hooks and one request hook. No answer of the service is checked at run time; the types are trusted, and the error boundary catches what they miss (`plans/frontend_app/FRONTEND_APP_PLAN.md`, D-5 and D-8).
+- The state and the requests use React alone: contexts, hooks and one request hook. No answer of the service is checked at run time; the types are trusted, and the error boundary catches what they miss (`plans_finished/frontend_app/FRONTEND_APP_PLAN.md`, D-5 and D-8).
 - One map lives in the layout of the map views and stays while the panels change. A view never touches the map library: it describes a scene (D-13).
 - The style of the map is put together from the base style and the layers of the view and handed to the map as a whole, which applies only the difference.
 - The styles are Tailwind utility classes with the tokens of the mocks as the theme (D-6). The texts are two flat dictionaries read by i18next, with the keys of `docs/product/interface_texts.md` (D-7).

@@ -33,7 +33,7 @@ import { readFileText, readRawText, writeFileText } from './Storage';
 
 const STATE_FILE: string = 'local_repository.json';
 const SESSION_MS: number = DAY_MS;
-/** W wersji lokalnej rolę moderatora dostaje konto o tym pseudonimie; w API rolę nadaje serwer. */
+/** In the local version the account with this nickname gets the moderator role; in the API the server grants it. */
 export const LOCAL_MODERATOR: string = 'moderator';
 
 interface StoredAccount {
@@ -74,7 +74,7 @@ function sha256Hex(text: string): string {
   return hex;
 }
 
-/** Wspólny stan wersji lokalnej: sieć piesza z pliku i zgłoszenia, głosy oraz konta zapisane na urządzeniu. */
+/** Shared state of the local version: walking network from a file, plus reports, votes and accounts on the device. */
 export class LocalCore {
   ctx: common.Context | null = null;
   ds: Dataset = new Dataset();
@@ -165,7 +165,7 @@ export class LocalCore {
     return this.factsCache;
   }
 
-  /** Aktywne konto albo null; sesja wygasa po dobie od ostatniego użycia aplikacji. */
+  /** The active account or null; the session expires a day after the app was last used. */
   account(): StoredAccount | null {
     const s = this.session;
     if (s === null) {
@@ -235,7 +235,7 @@ class LocalFacts implements FactsRepository {
     return this.info();
   }
 
-  /** Wersja lokalna zna wszystkie fakty naraz, więc oddaje całość niezależnie od prostokąta. */
+  /** The local version knows all facts at once, so it returns all of them regardless of the rectangle. */
   async listFacts(area: Area): Promise<FactsPage> {
     return { facts: this.core.facts(), truncated: false };
   }
@@ -425,7 +425,7 @@ class LocalAccounts implements AccountRepository {
     this.core.save();
   }
 
-  /** Usuwa konto i pseudonim; głosy zostają i liczą się dalej, ale są odłączone od osoby. */
+  /** Deletes the account and nickname; votes stay and still count, but are unlinked from the person. */
   async deleteAccount(): Promise<void> {
     const a = this.core.account();
     if (a === null) {
@@ -505,7 +505,7 @@ class LocalModeration implements ModerationRepository {
   }
 }
 
-/** Repozytorium działające w całości na urządzeniu; zastępuje API zespołu, dopóki nie jest podłączone. */
+/** Repository that runs entirely on the device; it stands in for the team's API until that is connected. */
 export class LocalRepository implements Repository {
   core: LocalCore = new LocalCore();
   facts: FactsRepository = new LocalFacts(this.core);

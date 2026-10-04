@@ -30,7 +30,7 @@ import { Dataset } from './OsmMapping';
 import { factsOnRoute, missingNames } from './RouteExtras';
 import { findRoute, RouteResult } from './Routing';
 
-/** Odcinek dojścia od wskazanego punktu do sieci krótszy niż ten próg nie jest pokazywany jako luka w danych. */
+/** An access segment from the chosen point to the network shorter than this threshold is not shown as a data gap. */
 export const CONNECTOR_MIN_M: number = 8;
 
 function forcedConfirmed(b: Barrier): Barrier {
@@ -68,7 +68,7 @@ function rawRoute(ds: Dataset, reports: Barrier[], req: RouteRequest, avoid: str
   return out;
 }
 
-/** Atrybuty, których brak ma znaczenie dla potrzeb, w kolejności z makiety. */
+/** Attributes whose absence matters for the needs, in the order from the mockup. */
 function relevantMissing(req: RouteRequest): string[] {
   const out: string[] = [];
   const a = req.needs.avoid;
@@ -146,8 +146,8 @@ function connector(from: LatLon, to: LatLon, fromM: number, toM: number): RouteS
 }
 
 /**
- * Plan trasy dla potrzeb: geometria w stanach, fakty na trasie, luki w danych i trasy alternatywne. Bez żadnej
- * bariery w potrzebach odcinki nie są oceniane, więc plan nie ma luk ani alternatyw.
+ * Route plan for the needs: geometry by state, facts on the route, data gaps and alternative routes. Without any
+ * barrier in the needs, segments are not assessed, so the plan has no gaps or alternatives.
  */
 export function buildPlan(ds: Dataset, facts: Fact[], reports: Barrier[], req: RouteRequest): RoutePlan {
   const raw = rawRoute(ds, reports, req, req.avoidFactIds);
