@@ -49,12 +49,18 @@ export interface RouteFact extends Fact {
 
 export type SegmentState = "barrier" | "no_barrier" | "partial_data" | "no_data";
 
+/**
+ * The state of a segment as the service answers it: one of the four states, or not_assessed for every segment
+ * of a route whose needs name no barrier.
+ */
+export type AnsweredSegmentState = SegmentState | "not_assessed";
+
 export type MissingAttribute = "kerbs" | "surface" | "incline" | "width" | "steps";
 
 export interface Segment {
   line: [number, number][];
   length_m: number;
-  state: SegmentState;
+  state: AnsweredSegmentState;
   missing_attributes: MissingAttribute[];
   is_marked_wheelchair_no: boolean;
 }
@@ -133,6 +139,7 @@ export type ApiErrorCode =
   | "fact_not_found"
   | "internal_error"
   | "routing_unavailable"
+  | "point_outside_krakow"
   | "invalid_search_text"
   | "address_search_unavailable"
   | "idempotency_key_reused"

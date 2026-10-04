@@ -1,7 +1,7 @@
 import type { LineLayerSpecification } from "maplibre-gl";
 import { describe, expect, it } from "vitest";
 
-import type { Route, Segment, SegmentState } from "../api/types.ts";
+import type { AnsweredSegmentState, Route, Segment, SegmentState } from "../api/types.ts";
 import { buildRouteLayers, findRouteBounds, ROUTE_COLORS, ROUTE_SOURCE_ID, type DrawnState, type RouteLayers } from "./routeLayers.ts";
 
 type Position = [number, number];
@@ -19,7 +19,7 @@ const G: Position = [19.986, 50.066];
 /**
  * Builds a segment of a route in one state along the given line.
  */
-function buildSegment(state: SegmentState, line: Position[]): Segment {
+function buildSegment(state: AnsweredSegmentState, line: Position[]): Segment {
   return { line, length_m: 14, state, missing_attributes: [], is_marked_wheelchair_no: false };
 }
 

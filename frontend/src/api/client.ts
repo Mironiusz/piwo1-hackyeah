@@ -1,5 +1,5 @@
 import { isText, readStored, removeStored, STORAGE_KEYS, writeStored } from "../state/storage.ts";
-import { ApiError } from "./errors.ts";
+import { ApiError, type RoutePointName } from "./errors.ts";
 import type { Account, AddressMatch, ApiErrorCode, CreateFactRequest, Fact, FactsInArea, FactType, FlaggedFact, NearbyFact, PlanRouteRequest, PlanRouteResponse, Point, Verdict } from "./types.ts";
 
 const API_PREFIX = "/api";
@@ -31,10 +31,11 @@ export function onSessionEnd(listener: SessionEndListener): () => void {
  */
 async function readError(response: Response): Promise<ApiError> {
   try {
-    const body = (await response.json()) as { error?: { code?: ApiErrorCode; fields?: string[]; repeat_allowed_at?: string } };
+    const body = (await response.json()) as { error?: { code?: ApiErrorCode; fields?: string[]; repeat_allowed_at?: string; points?: unknown[] } };
     const error = body.error;
     if (error !== undefined && typeof error.code === "string") {
-      return new ApiError(error.code, Array.isArray(error.fields) ? error.fields : [], error.repeat_allowed_at ?? null);
+      const points = Array.isArray(error.points) ? error.points.filter((point): point is RoutePointName => point === "start" || point === "destination") : [];
+      return new ApiError(error.code, Array.isArray(error.fields) ? error.fields : [], error.repeat_allowed_at ?? null, points);
     }
   } catch {
     return new ApiError("internal_error");

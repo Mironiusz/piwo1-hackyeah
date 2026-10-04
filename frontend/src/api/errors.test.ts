@@ -13,6 +13,7 @@ const FAILED_TEXT_KEY = "state.failed";
  */
 const EXPECTED_TEXT_KEYS: Record<ApiErrorCode, string> = {
   routing_unavailable: "plan.unavailable.title",
+  point_outside_krakow: "plan.outside",
   invalid_search_text: "search.invalid",
   address_search_unavailable: "search.unavailable",
   vote_too_soon: "vote.too_soon",

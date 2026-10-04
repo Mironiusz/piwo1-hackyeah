@@ -253,7 +253,9 @@ export const pl: Record<string, string> = {
   "privacy.kept.vote":
     "Identyfikator głosu bez konta. Nieodwracalny skrót adresu IP i cech przeglądarki, żeby odróżnić jedną osobę bez konta od drugiej. Do usunięcia dema i wszystkich jego danych 4 października 2026. To dane osobowe w postaci spseudonimizowanej, nie dane anonimowe.",
   "privacy.not_kept.needs": "Twoich potrzeb. Zostają tylko na Twoim urządzeniu i nie są częścią konta.",
-  "privacy.not_kept.location": "Bieżącej lokalizacji. Używamy jej tylko do wyznaczenia jednej trasy.",
+  "privacy.kept.route_log":
+    "Punkty zapytań o trasę, także Twojej bieżącej lokalizacji, w dzienniku usługi wyznaczania tras. Żeby w wersji demonstracyjnej dało się sprawdzić, jak działa wyznaczanie tras. Do usunięcia dema i wszystkich jego danych 4 października 2026.",
+  "privacy.not_kept.location": "Bieżącej lokalizacji poza dziennikiem usługi wyznaczania tras. Używamy jej tylko do wyznaczenia jednej trasy.",
   "privacy.not_kept.email": "Adresu e-mail. Nie pytamy o niego.",
   "privacy.not_kept.disability": "Informacji o niepełnosprawności. Nie pytamy o nią.",
   "privacy.others.server":

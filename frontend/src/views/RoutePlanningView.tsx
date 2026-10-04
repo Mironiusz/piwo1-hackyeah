@@ -137,7 +137,8 @@ export function RoutePlanningView() {
 
   const isPlanning = state === "loading";
   const hasFailed = state === "failed" && error !== null;
-  const isOutside = hasFailed && error.code === "invalid_request" && error.fields.some((field) => field.startsWith("start") || field.startsWith("destination"));
+  const isOutside =
+    hasFailed && (error.code === "point_outside_krakow" || (error.code === "invalid_request" && error.fields.some((field) => field.startsWith("start") || field.startsWith("destination"))));
 
   return (
     <Panel>
@@ -180,7 +181,7 @@ export function RoutePlanningView() {
 
       <div className={ACTIONS_ONE}>
         <Button look="primary" disabled={start === null || destination === null || isPlanning} onClick={() => void submit()}>
-          {t(hasFailed ? "action.retry" : "plan.submit")}
+          {t(hasFailed && !isOutside ? "action.retry" : "plan.submit")}
         </Button>
       </div>
     </Panel>

@@ -11,7 +11,7 @@ The frontend shows a person what the service knows - the facts of an area, a rou
 - Needs: the barrier types a person avoids and the amenity types a person needs. They live only on the device and travel only inside a route request.
 - Fact: a barrier, an amenity or an area with its source, its days and its status, as `docs/product/api_contract.md` defines it. A route fact is a fact with its distance from the start and the mark that the map data contradict it.
 - Segment state: one of the four states the service gives a segment of a route - barrier, no barrier, partial data, no data.
-- Assessed route: a route planned for needs with at least one barrier. A route planned for needs without a barrier is not assessed, and its segments are drawn in a neutral style that is none of the four states.
+- Assessed route: a route whose segments the service answers in the four states. For needs without a barrier the service answers `not_assessed` for every segment; such a route is not assessed, and its segments are drawn in a neutral style that is none of the four states. The frontend reads this from the answer, not from the needs it sent.
 - Stale route: a shown route planned for needs that have changed since, or planned before a vote or a report of the person was saved.
 - Own vote: the latest vote of the person on a fact, with the instant from which the next vote is accepted, the start of the next calendar day. The service returns no vote of the person, so the device remembers it, together with its voter: the pseudonym of the account of the session, or nobody for a person without an account. A remembered vote is shown only to its voter.
 - Rest: the position of the map once it has stood still for 0.3 seconds.
@@ -45,7 +45,7 @@ Map of facts:
 
 Route:
 
-- The start from the location of the device is read only when the person asks for it. A point outside the bounds of Kraków is refused before any request, with the same text the view shows when the service refuses a point.
+- The start from the location of the device is read only when the person asks for it. A point outside the bounds of Kraków is refused before any request, with the same text the view shows when the service refuses a point. A point inside the bounds but outside the boundary of Kraków stays set until the route is requested: the service refuses the route with `point_outside_krakow` and names the ends that lie outside, and the frontend removes exactly those ends and shows that text.
 - The address search is sent when the person submits the text. The matches are a list to pick from, also when there is one.
 - The route request carries the two points and the needs, and nothing else.
 - The summary line draws the segments in their order, joined where neighbours share a state, each in the pattern of its state, with a stop for every barrier of the needs. Next to the line stands the same order as a text.

@@ -8,11 +8,16 @@
  * - plan_route: a destination within 300 m of "Ogród Doświadczeń" gives the usual route with one alternative,
  *   a destination within 300 m of "Park Lotników" the route with the fewest barriers, and a start or a destination
  *   within 300 m of "Rondo Mogilskie" the refusal routing_unavailable. The address search finds all three places.
+ *   Needs without a barrier give every segment the state not_assessed. A start or a destination north of the latitude
+ *   50.115, a strip the bounds of the map hold, gives the refusal point_outside_krakow that names it.
  * - search_address: the text "unavailable" gives address_search_unavailable, and a text no label holds gives an empty list.
  * - list_facts_in_area: a rectangle that holds "Rynek Główny" is answered as cut off.
  * - cast_vote: a second vote of the same person on a fact on the same calendar day gives vote_too_soon. The author of a report has voted on it.
  * - create_account: the account named "moderator" holds the moderator role.
  * - every operation that takes a token: the token "expired", and a token the mock does not know, give session_expired.
+ * - started with --beside-service, the mock answers next to the service, for the operations the service does not have yet:
+ *   a token the mock does not know is then a token of the service, and its request is the request of a person without
+ *   an account, so a person logged in on the service is not logged out by an answer of the mock.
  * - create_fact: a fact created here is no sample data; every fact of the data files is.
  *
  * Usage: node mock-server/server.mjs
@@ -25,6 +30,7 @@ import { fileURLToPath } from "node:url";
 
 const HOST = "127.0.0.1";
 const PORT = 8787;
+const IS_BESIDE_SERVICE = process.argv.includes("--beside-service");
 const API_PREFIX = "/api";
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 const NEARBY_RADIUS_M = 15;
@@ -37,6 +43,7 @@ const BARRIER_TYPES = ["stairs", "high_kerb", "poor_surface", "steep_incline", "
 const AMENITY_TYPES = ["elevator", "ramp", "lowered_kerb", "accessible_toilet", "rest_place", "handrail_at_stairs"];
 const GEOZONE_RADII = [10, 25, 50, 100];
 const ALL_ATTRIBUTES = ["kerbs", "surface", "incline", "width", "steps"];
+const OUTSIDE_BOUNDARY_LAT = 50.115;
 
 /**
  * Reads one data file of the mock as JSON.
@@ -273,6 +280,9 @@ function buildRoute(template, start, destination, avoid, need) {
       state = "barrier";
     }
     bounds.push({ fromShare, toShare });
+    if (avoid.length === 0) {
+      state = "not_assessed";
+    }
     segments.push({
       line,
       length_m: Math.round(measureLine(line)),
@@ -375,6 +385,15 @@ const operations = [
         avoid: isListOf(body.avoid, BARRIER_TYPES),
         need: isListOf(body.need, AMENITY_TYPES),
       });
+      const outside = [
+        ["start", body.start],
+        ["destination", body.destination],
+      ]
+        .filter(([, point]) => point.lat > OUTSIDE_BOUNDARY_LAT)
+        .map(([name]) => name);
+      if (outside.length > 0) {
+        throw new Refusal(422, "point_outside_krakow", { points: outside });
+      }
       if (isNear(body.start, "routing_unavailable") || isNear(body.destination, "routing_unavailable")) {
         throw new Refusal(503, "routing_unavailable");
       }
@@ -685,7 +704,7 @@ async function readBody(request) {
 
 /**
  * Finds the account of the token a request carries, by the rules of the section Sessions and actors of the contract.
- * Returns the token with its account, or nulls for a request without a token.
+ * Returns the token with its account, or nulls for a request without a token, and beside the service also for a token of the service.
  */
 function resolveActor(request, operation) {
   const header = request.headers.authorization;
@@ -697,6 +716,12 @@ function resolveActor(request, operation) {
   }
   const token = header.replace(/^Bearer\s+/i, "");
   const account = accounts.get(sessions.get(token) ?? "");
+  if (IS_BESIDE_SERVICE && token !== EXPIRED_TOKEN && account === undefined) {
+    if (operation.actor === "required" || operation.actor === "moderator") {
+      throw new Refusal(401, "authentication_required");
+    }
+    return { token: null, account: null };
+  }
   if (token === EXPIRED_TOKEN || account === undefined) {
     throw new Refusal(401, "session_expired");
   }
