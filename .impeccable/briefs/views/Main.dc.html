@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>System: tokeny i części wspólne</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow+Semi+Condensed:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="sys" style="width: 1180px; height: 1060px">
+<h1>System: tokeny i części wspólne</h1>
+
+<section>
+<h2>Kolory</h2>
+<div class="sw-row"><span class="chip" style="background: #12306B"></span><div><b>Granat</b><span>#12306B, nagłówek i akcje</span></div></div>
+<div class="sw-row"><span class="chip" style="background: #FFD400"></span><div><b>Żółty</b><span>#FFD400, akcja Zgłoś i wejście do potrzeb</span></div></div>
+<div class="sw-row"><span class="chip" style="background: #111418"></span><div><b>Tusz</b><span>#111418, tekst</span></div></div>
+<div class="sw-row"><span class="chip" style="background: #4B5058"></span><div><b>Tekst drugi</b><span>#4B5058</span></div></div>
+<div class="sw-row"><span class="chip" style="background: #D5D8DC"></span><div><b>Linie</b><span>#D5D8DC</span></div></div>
+<div class="sw-row"><span class="chip" style="background: #F4F5F2"></span><div><b>Tło</b><span>#F4F5F2</span></div></div>
+<div class="sw-row"><span class="chip" style="background: #FFFFFF"></span><div><b>Powierzchnia</b><span>#FFFFFF, panele i strony</span></div></div>
+<h2 style="margin-top: 22px">Kolory stanów</h2>
+<div class="sw-row"><span class="chip" style="background: #C8321E"></span><div><b>Bariera</b><span>#C8321E</span></div></div>
+<div class="sw-row"><span class="chip" style="background: #1E7A46"></span><div><b>Bez barier</b><span>#1E7A46</span></div></div>
+<div class="sw-row"><span class="chip" style="background: #E0A100"></span><div><b>Dane niepełne</b><span>#E0A100</span></div></div>
+<div class="sw-row"><span class="chip" style="background: #6F7480"></span><div><b>Brak danych</b><span>#6F7480</span></div></div>
+<div class="sw-row"><span class="chip" style="background: #8A5A00"></span><div><b>Status sporny</b><span>#8A5A00, tylko tekst i ikona</span></div></div>
+</section>
+
+<section>
+<h2>Krój</h2>
+<div class="stack">
+<p style="font: 700 23px/1.15 var(--ui)">Tytuł strony, 23 px, 700</p>
+<p style="font: 700 19px/1.2 var(--ui)">Tytuł panelu, 19 px, 700</p>
+<p style="font: 600 15px/1.2 var(--ui)">Nagłówek grupy, 15 px, 600</p>
+<p style="font: 400 15.5px/1.35 var(--ui)">Tekst podstawowy, 15,5 px. Barlow Semi Condensed.</p>
+<p style="font: 400 13px/1.35 var(--ui); color: var(--muted)">Tekst drugi, 13 px, kolor #4B5058.</p>
+<p style="font: 700 30px/1 var(--num)">1,3 km <span style="font: 400 13px var(--ui); color: var(--muted)">liczby: Barlow Condensed 700</span></p>
+</div>
+<h2 style="margin-top: 26px">Stany odcinków trasy</h2>
+<div class="line-row"><svg viewBox="0 0 72 14"><line x1="3" y1="7" x2="69" y2="7" class="seg s-barrier"></line><line x1="3" y1="7" x2="69" y2="7" class="o-barrier"></line></svg><span>bariera z potrzeb</span></div>
+<div class="line-row"><svg viewBox="0 0 72 14"><line x1="3" y1="7" x2="69" y2="7" class="seg s-clear"></line></svg><span>bez barier, dane pełne</span></div>
+<div class="line-row"><svg viewBox="0 0 72 14"><line x1="3" y1="7" x2="69" y2="7" class="seg s-partial"></line><line x1="3" y1="7" x2="69" y2="7" class="o-partial"></line></svg><span>dane niepełne</span></div>
+<div class="line-row"><svg viewBox="0 0 72 14"><line x1="4" y1="7" x2="69" y2="7" class="seg s-nodata"></line></svg><span>brak danych</span></div>
+<div class="line-row"><svg viewBox="0 0 72 14"><line x1="5" y1="7" x2="67" y2="7" class="s-neutral"></line><line x1="5" y1="7" x2="67" y2="7" class="o-neutral"></line></svg><span>bez oceny: potrzeby nie mają żadnej bariery</span></div>
+<h2 style="margin-top: 26px">Statusy faktu</h2>
+<div class="stack" style="font-size: 13.5px">
+<span class="status ok"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>potwierdzone</span>
+<span class="status unv"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"></circle><path d="M12 8v5M12 16.5v.01"></path></svg>niezweryfikowane</span>
+<span class="status dis"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13M13 5l4 4-4 4M20 15H7M11 11l-4 4 4 4"></path></svg>sporne</span>
+<span class="status out"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M6.5 17.5 17.5 6.5"></path></svg>nieaktualne</span>
+<span class="hint">Fakt nieaktualny zostaje na mapie faktów i można go potwierdzić ponownie. Na trasie i na jej liście go nie ma.</span>
+</div>
+<h2 style="margin-top: 26px">Znaczniki na mapie</h2>
+<svg viewBox="0 0 300 40" style="width: 300px; height: 40px" role="img" aria-label="Znaczniki: bariera, udogodnienie, zgłoszenie sprzeczne z danymi mapy, obszar, fakt nieaktualny">
+<g class="mk" transform="translate(4 9)"><rect width="22" height="22" rx="5"></rect><path d="M4 15h7V8h7"></path></g>
+<g class="mk am" transform="translate(64 9)"><rect width="22" height="22" rx="5"></rect><path d="M4 14h5l4-4h5"></path></g>
+<g class="mk unv" transform="translate(124 9)"><rect width="22" height="22" rx="5"></rect><path d="M4 17h4v-4h4V9h5"></path></g>
+<circle class="zone" cx="205" cy="20" r="17"></circle>
+<g class="mk out" transform="translate(254 9)"><rect width="22" height="22" rx="5"></rect><path d="M4 15h7V8h7"></path></g>
+</svg>
+<p class="hint">Bariera, udogodnienie, zgłoszenie sprzeczne z danymi mapy, obszar, fakt nieaktualny.</p>
+</section>
+
+<section>
+<h2>Przyciski</h2>
+<div class="ph" style="display: grid; gap: 10px">
+<div style="display: flex; gap: 10px; flex-wrap: wrap">
+<button type="button" class="btn primary">Wyznacz trasę</button>
+<button type="button" class="btn">Wróć</button>
+<button type="button" class="btn" disabled>Nadal jest</button>
+</div>
+<div style="display: flex; gap: 14px; align-items: center; flex-wrap: wrap">
+<button type="button" class="btn cta"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4M6 5h11l-2 4 2 4H6"></path></svg>Zgłoś</button>
+<button type="button" class="link">Zgłoś do moderacji</button>
+</div>
+</div>
+<h2 style="margin-top: 24px">Pole i wyszukiwanie</h2>
+<div class="ph">
+<div class="field" style="margin-top: 0"><label for="sys-q">Adres albo nazwa miejsca</label>
+<div class="searchrow"><input class="input" id="sys-q" type="text" value="Tauron Arena"><button type="button" class="btn primary">Szukaj</button></div>
+<span class="hint">Szukamy po naciśnięciu Enter albo przycisku.</span></div>
+</div>
+<h2 style="margin-top: 24px">Przełącznik</h2>
+<div class="ph"><div class="sw" role="group" aria-label="Zakres faktów na mapie"><button type="button" aria-pressed="true">Z moich potrzeb</button><button type="button" aria-pressed="false">Wszystkie</button></div></div>
+<h2 style="margin-top: 24px">Wiersz listy</h2>
+<div class="ph"><ul><li class="row" style="border-top: 0"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18h9V10h9"></path></svg><span class="t">Wysoki krawężnik</span><span class="d">0,4 km</span><span class="pl">ul. Stanisława Lema</span><span class="meta"><span class="status ok"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>potwierdzone</span><span class="src">zgłoszenie, 3.10.2026</span><span class="tag">dane przykładowe</span></span></li></ul></div>
+<h2 style="margin-top: 20px">Komunikaty</h2>
+<div class="ph">
+<p class="note strong">Nie możemy teraz wyznaczyć trasy. Spróbuj ponownie za chwilę.</p>
+<p class="note dash">Niektóre odcinki tej trasy nie mają danych. Nie wiemy, czy są tam bariery.</p>
+<p class="note">Zgłoszenie zapisane. Status: niezweryfikowane.</p>
+</div>
+<h2 style="margin-top: 20px">Pasek dolny</h2>
+<div class="ph"><nav class="tabbar" aria-label="Główna nawigacja" style="border: 1px solid var(--line)">
+<button type="button" class="tab on"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Mapa</button>
+<button type="button" class="tab cta"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4M6 5h11l-2 4 2 4H6"></path></svg>Zgłoś</button>
+<button type="button" class="tab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"></path><circle cx="15" cy="7" r="2"></circle><circle cx="9" cy="17" r="2"></circle></svg>Potrzeby</button>
+</nav></div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1180,"height":1060}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

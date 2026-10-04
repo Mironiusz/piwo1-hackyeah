@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Wynik trasy, brak trasy bez barier</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow+Semi+Condensed:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="ph" style="width: 390px; height: 1160px">
+<header class="top"><span class="name">[Nazwa produktu]</span><span class="sp"></span><button type="button" class="icon-btn" aria-label="Menu"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button></header>
+<section class="rh" aria-label="Podsumowanie trasy">
+<div class="toprow"><button type="button" class="pill"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"></path><circle cx="15" cy="7" r="2"></circle><circle cx="9" cy="17" r="2"></circle></svg>Potrzeby: 5 barier<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button><button type="button" class="edit">Zmień trasę</button></div>
+<div class="diagram">
+<div class="bar" role="img" aria-label="Schemat trasy: jedna bariera z potrzeb tuż przed celem, odcinki bez danych na początku i na końcu">
+<i class="b-nodata" style="width: 5%"></i><i class="b-clear" style="width: 52%"></i><i class="b-partial" style="width: 28%"></i><i class="b-barrier" style="width: 5%"></i><i class="b-clear" style="width: 5%"></i><i class="b-nodata" style="width: 5%"></i>
+<span class="stop" style="left: 0"></span>
+<span class="stop" style="left: 87.5%"><em>schody</em></span>
+<span class="stop" style="left: 100%"></span>
+</div>
+<div class="places"><span>Tauron Arena</span><span>Park Lotników</span></div>
+</div>
+<div class="tiles">
+<div class="tile bar-t"><b>1</b><span>bariera z potrzeb</span></div>
+<div class="tile nod"><b>230 m</b><span>bez danych</span></div>
+<div class="tile"><b>0,7 km</b><span>cała trasa</span></div>
+</div>
+</section>
+<section class="map" style="height: 262px" aria-label="Mapa trasy">
+<svg class="base" viewBox="0 0 390 250" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Mapa trasy z jedną barierą z potrzeb przed celem, dane przykładowe">
+<rect class="g" width="390" height="250"></rect>
+<path class="park" d="M228 0h170v118c-48 26-104 20-140-8s-46-70-30-110z"></path>
+<g class="blk"><rect x="18" y="16" width="86" height="58" rx="4"></rect><rect x="118" y="16" width="86" height="58" rx="4"></rect><rect x="18" y="88" width="86" height="52" rx="4"></rect><rect x="118" y="88" width="62" height="52" rx="4"></rect><rect x="210" y="170" width="74" height="62" rx="4"></rect><rect x="298" y="150" width="78" height="82" rx="4"></rect></g>
+<path class="st" d="M0 190h200M150 250V150M150 190 L360 60M0 82h210"></path>
+<text class="lbl" x="14" y="181">ul. Stanisława Lema</text><text class="lbl" x="236" y="168" transform="rotate(-31 236 168)">al. Pokoju</text><text class="lbl" x="296" y="34">Park Lotników</text>
+<path class="case" d="M50 207 95 190h55l40-25 60-37 44-17 26-17"></path>
+<path class="seg s-nodata" d="M34 224 50 207"></path>
+<path class="seg s-clear" d="M50 207 95 190h55l40-25"></path>
+<path class="seg s-partial" d="M190 165l60-37 44-17"></path><path class="o-partial" d="M190 165l60-37 44-17"></path>
+<path class="seg s-barrier" d="M294 111l14-9"></path><path class="o-barrier" d="M294 111l14-9"></path>
+<path class="seg s-clear" d="M308 102l12-8"></path>
+<path class="seg s-nodata" d="M320 94 332 78"></path>
+<g class="mk" transform="translate(286 116)"><rect width="22" height="22" rx="5"></rect><path d="M4 17h4v-4h4V9h5"></path></g>
+<g class="pin" transform="translate(34 224)"><circle r="10"></circle><text y="4">A</text></g>
+<g class="pin" transform="translate(332 78)"><circle r="10"></circle><text y="4">B</text></g>
+</svg>
+<span class="sample">Dane przykładowe</span><span class="attr">© OpenStreetMap contributors</span>
+</section>
+<div class="sheet fill">
+<div class="panel">
+<p class="note strong"><b>Nie ma trasy bez barier z Twoich potrzeb.</b> Każda droga do tego celu prowadzi przez barierę z Twoich potrzeb. Pokazujemy trasę, na której takich barier jest najmniej: 1.</p>
+</div>
+<ul class="legend" aria-label="Legenda odcinków">
+<li><svg viewBox="0 0 36 12" aria-hidden="true"><line x1="2" y1="6" x2="34" y2="6" class="seg s-barrier"></line><line x1="2" y1="6" x2="34" y2="6" class="o-barrier"></line></svg>bariera z potrzeb</li>
+<li><svg viewBox="0 0 36 12" aria-hidden="true"><line x1="2" y1="6" x2="34" y2="6" class="seg s-clear"></line></svg>bez barier, dane pełne</li>
+<li><svg viewBox="0 0 36 12" aria-hidden="true"><line x1="2" y1="6" x2="34" y2="6" class="seg s-partial"></line><line x1="2" y1="6" x2="34" y2="6" class="o-partial"></line></svg>dane niepełne</li>
+<li><svg viewBox="0 0 36 12" aria-hidden="true"><line x1="3" y1="6" x2="34" y2="6" class="seg s-nodata"></line></svg>brak danych</li>
+</ul>
+<p class="osmdate">Dane mapy z dnia 2.10.2026. <a href="#o-danych">O danych</a></p>
+<section class="list">
+<h2>Z Twoich potrzeb <span class="n">1</span></h2>
+<ul>
+<li class="row"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4v-4h4v-4h4V8h4"></path></svg><span class="t">Schody, 12 stopni</span><span class="d">0,6 km</span><span class="pl">al. Pokoju, wejście do parku</span><span class="meta"><span class="status ok"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>potwierdzone</span><span class="src">dane mapy, 8.03.2025</span></span></li>
+</ul>
+<h2>Dodatkowe bariery</h2>
+<p class="note">Nie znamy żadnych innych barier na tej trasie. 230 m trasy nie ma danych.</p>
+<h2>Udogodnienia na trasie</h2>
+<p class="note">Żadne udogodnienie z Twoich potrzeb nie leży bliżej niż 50 m od tej trasy.</p>
+</section>
+</div>
+<nav class="tabbar" aria-label="Główna nawigacja">
+<button type="button" class="tab on"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Mapa</button>
+<button type="button" class="tab cta"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4M6 5h11l-2 4 2 4H6"></path></svg>Zgłoś</button>
+<button type="button" class="tab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"></path><circle cx="15" cy="7" r="2"></circle><circle cx="9" cy="17" r="2"></circle></svg>Potrzeby</button>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1160}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

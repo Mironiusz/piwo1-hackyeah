@@ -42,31 +42,32 @@ The app presents facts and leaves the judgement to the person: no scores, no sta
 - Routes work in the whole of Kraków. The demo takes place in the district of the Tauron Arena, the venue of HackYeah, with sample reports and geozones marked as sample data.
 - The Kraków jury expects a live demo: state the needs of the chosen group, plan a route, show the concrete barriers and amenities with their source, date and status, and show a contradiction between OpenStreetMap and a user report as the case of contradictory, incomplete or unavailable data the brief asks for.
 - Whether and in what form a HarmonyOS client is built is an open entry in `docs/standards/decision_registry.md`. The MVP must not prevent a second client from using the same data and rules. If the port is built, it is a second client of the same programming interface, native or in React Native for OpenHarmony, not an application embedding the web app. The web frontend is chosen for the browser and keeps nothing the port would need outside that interface (`plans_finished/frontend_stack/FRONTEND_STACK_SHAPE.md`, Domain rules).
-- Authority: `docs/product/specification.md`, version 10, is the source of truth for the product and prevails over this file. The requirements and acceptance criteria of the MVP are in `plans/mvp/MVP_PRD.md`, the scenarios behind its rules in `plans/mvp/MVP_SHAPE.md`, and the constraints of both challenges in `docs/hackathon/challenge_requirements.md`. This file is the summary that interface work starts from.
+- Authority: `docs/product/specification.md`, version 11, is the source of truth for the product and prevails over this file. The steps of a person through every mandatory feature are in `docs/product/user_journeys.md`. The requirements and acceptance criteria of the MVP are in `plans/mvp/MVP_PRD.md`, the scenarios behind its rules in `plans/mvp/MVP_SHAPE.md`, and the constraints of both challenges in `docs/hackathon/challenge_requirements.md`. This file is the summary that interface work starts from.
 
 ## Capabilities and Constraints
 
 The MVP is the mandatory features M1-M11 of the specification. In terms of what the interface has to carry:
 
-- Preference profile. A list of barriers to avoid and amenities needed, filled in by one of three presets - "I use a wheelchair", "I walk with a baby stroller", "Walking is difficult for me" - and then editable item by item. It works without an account and is kept only on the device.
-- Route. A walking route from A to B within Kraków, starting from the current location, an address or a point on the map. It avoids the barriers and geozones that match the profile. For an unverified or disputed barrier the app proposes an alternative route and says why. When no route without barriers exists, the app says so plainly, shows the route with the fewest barriers and lists them.
-- Route segment states. Four states: barrier, no barrier, partial data, no data. The specification names them red, green, partial data, and grey dashed. Color is never the only carrier: each state also has an icon or a line pattern, a legend explains them, and the states have to be told apart in grayscale. Only barriers from the profile appear on the map.
-- List for the route. A text list in three groups - barriers from the profile, additional barriers outside the profile, amenities on the route - where each item has its type, place, source, date and status, and a segment with partial or no data names the missing attributes. The list is the text alternative for the map.
+- Preference profile. A list of barriers to avoid and amenities needed, filled in by one of three presets - "I use a wheelchair", "I walk with a baby stroller", "Walking is difficult for me" - and then editable item by item. It works without an account and is kept only on the device. The first opening shows it before anything else, and it can be skipped; a profile without any barrier is allowed.
+- Map of facts. The app opens on a map of Kraków that shows the barriers, amenities and geozones of the profile, with a switch to every fact and a list as its text form. Facts are opened, voted on and reported there without planning a route.
+- Route. A walking route from A to B within Kraków, starting from the current location, an address or a point on the map. It avoids the barriers and geozones that match the profile. For an unverified or disputed barrier the app proposes an alternative route and says why. When no route without barriers exists, the app says so plainly, shows the route with the fewest barriers and lists them. A point outside Kraków is refused with a plain message. A shown route is planned again when the profile changes and when a vote or a report of the person is saved.
+- Route segment states. Four states: barrier, no barrier, partial data, no data. The specification names them red, green, partial data, and grey dashed. Color is never the only carrier: each state also has an icon or a line pattern, a legend explains them, and the states have to be told apart in grayscale. Only barriers from the profile appear on the map. The stretches between the chosen points and the pedestrian network, at both ends of every route, are always no data. With a profile without barriers no segment has a state: the route is drawn in a neutral style that is none of the four, and the app says that the segments are not assessed.
+- List for the route. A text list in three groups - barriers from the profile, additional barriers outside the profile, amenities on the route - where each item has its type, place, source, date and status, and one plain note says when some stretches of the route have no data; the missing attributes are not named. The place is the street name from OpenStreetMap, when the way has one, and the distance from the start. The list is the text alternative for the map.
 - Reports. A point on the map with a type from a closed list and an optional description; for stairs, an optional number of steps. Before saving, the app shows the existing facts of the same type nearby and asks whether it is the same one, then shows a summary that the user approves. A saved report is not edited by anyone.
-- Confirmations and denials. Every fact, OpenStreetMap facts included, can be confirmed as still there or reported as gone. A person votes on the same fact again only after a day, and only the latest vote of a person counts. Every fact, an OpenStreetMap fact included, shows one of four statuses: unverified, confirmed, disputed, outdated.
-- Geozones. An inaccessible area marked as a point with a radius from a list and a barrier type, created with a keyboard alone, approved in a summary and not edited afterwards.
-- Accounts. A pseudonym and a password, without an email address. Reports and votes also work without an account. An account can be deleted.
-- Flagging and moderation. Anyone can flag a report, a geozone or a fact converted from OpenStreetMap; the moderator sees flagged content in a separate view and can hide it and restore it.
+- Confirmations and denials. Every fact, OpenStreetMap facts included, can be confirmed as still there or reported as gone. A person votes on the same fact again only after a day, and only the latest vote of a person counts. Every fact, an OpenStreetMap fact included, has one of four statuses: unverified, confirmed, disputed, outdated. An outdated fact stays on the map with its status, so that a person can confirm it again; only a fact outdated because it was removed in OpenStreetMap disappears. The app shows a person their own latest vote on a fact, remembered on the device, and keeps the vote controls inactive for a day after it.
+- Geozones. An inaccessible area marked as a point with a radius from a list and a barrier type, created with a keyboard alone, approved in a summary and not edited afterwards. It can carry an optional description. Reporting has one entry, where the person first chooses a barrier, an amenity or an area.
+- Accounts. A pseudonym and a password, without an email address. Reports and votes also work without an account. A pseudonym has 3 to 30 characters: letters, digits, the underscore and the hyphen. An account is deleted after one confirmation, without the password. The app says nothing about a contribution from an account counting more.
+- Flagging and moderation. Anyone can flag a report, a geozone or a fact converted from OpenStreetMap; the moderator sees flagged content in a separate view and can hide it and restore it. A flag has no reason and takes one confirmation.
 - Privacy information. A page stating which personal data the app keeps, for what purpose and for how long, and which it does not keep.
 
 Terms the interface uses:
 
 - Barriers: stairs, high kerb, poor surface, steep incline, narrow passage.
 - Amenities: ramp, elevator, lowered kerb, accessible toilet, rest place, handrail at stairs.
-- Reliability statuses of a user fact: unverified, confirmed, disputed, outdated.
-- Sources of a fact: OpenStreetMap or user report; city data once the optional feature O4 exists.
+- Reliability statuses of a fact: unverified, confirmed, disputed, outdated.
+- Sources of a fact: OpenStreetMap or user report; city data once the optional feature O4 exists. The interface calls the first one map data, in the working Polish copy "dane mapy", and uses the name OpenStreetMap only in the attribution on the map and on the page about the data.
 
-The specification gives these terms in English. Their Polish wording is not fixed yet.
+The specification gives these terms in English. Their Polish wording, with every other text of the interface in both languages, is in `docs/product/interface_texts.md`; the frontend person decided the rules of the wording on 2026-10-04, and the single texts are working copy until the views are built.
 
 Constraints:
 
@@ -90,14 +91,16 @@ Outside the MVP:
 Undecided:
 
 - The product name.
-- The Polish wording of the interface terms.
-- The exact visual styles of the four segment states - the specification leaves them to design.
+- The Polish wording of the interface terms: the texts are in `docs/product/interface_texts.md`, with the rules of the wording decided on 2026-10-04 and the single texts working copy until the views are built.
 - The form of the HarmonyOS client, and the licence of the repository.
 - Two ideas the user raised on 2026-10-03 that the specification does not contain: a venue card through which owners and event organizers describe their own place, also as the business model, and measuring slope and surface with the phone's sensors. The specification has only place cards, as the optional feature O6. Neither idea is designed until the specification includes it.
 
 ## Evidence on Hand
 
-- `docs/product/specification.md`, version 10: the target group, the features and their rules, personal data and the out-of-scope list.
+- `docs/product/specification.md`, version 11: the target group, the features and their rules, personal data and the out-of-scope list.
+- `docs/product/user_journeys.md`: fourteen journeys through the mandatory features, with their branches, and the path of the demo for the Kraków jury.
+- `docs/product/views.md`: the fourteen views of the web frontend - one map with modes, panels over it and pages - with their content, their states and what each needs from the programming interface.
+- `docs/product/interface_texts.md`: the texts of the interface in Polish and English, with the rules of the wording decided on 2026-10-04.
 - `docs/product/api_contract.md`: every operation between the clients and the service, with its request, responses and errors.
 - `plans/mvp/MVP_PRD.md`: twenty functional requirements with their acceptance criteria.
 - `plans/mvp/MVP_SHAPE.md`: twelve scenarios with concrete inputs and expected states, usable as realistic content for screens and for the demo.
