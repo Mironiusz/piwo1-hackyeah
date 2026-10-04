@@ -1,6 +1,6 @@
 # Shape: Final checklist whose completion means the project is finished
 
-Document state: 2026-10-04, interview in progress
+Document state: 2026-10-04, interview closed
 Regulator: C:40
 
 ## Problem
@@ -11,7 +11,7 @@ The result is `FINAL_CHECKLIST.md`: sets of tasks, each with a few checks. A set
 
 ## Recipient and trigger
 
-The team of `TEAM.md`, led by Rafał, on the last day of the hackathon, 4 October 2026. The trigger is the request of the seed, made at 02:53 with about eight hours left to the Kraków deadline of 11:00.
+The team of `TEAM.md`, led by Rafał, on the last day of the hackathon, 4 October 2026. The trigger is the request of the seed, made at 02:53 with about eight hours left to the Kraków deadline of 11:00. After the list is written, the team parallelizes its checks among its six people (requirement 11).
 
 ## Current state
 
@@ -27,11 +27,27 @@ Verified in the repository and on `origin/dev` at 02:53 on 2026-10-04:
 
 ## Smallest meaningful scope
 
-From the seed: one document, `FINAL_CHECKLIST.md`, with sets of tasks and a few checks in each, covering at least the current initiatives, the things still to be done, a check against the official requirements and the pitch presentation.
+One document, `FINAL_CHECKLIST.md`, with ten sets, about forty checks in all, every check with its dependencies and with what of it can be done before they are met; together with the three documents this initiative brings in line with it in the same change: `MVP.md` (requirement 13), `docs/hackathon/challenge_requirements.md` (requirement 20) and the entry HarmonyOS port and the Huawei submission of `docs/standards/decision_registry.md` (section Domain rules or explicit TODO).
+
+The ten sets and the checks they cover, approved by the user on 2026-10-04 (question 12 of the interview); the exact wording of every check, its dependencies and what of it can start at once are settled in the PRD:
+
+1. Clarifications and housekeeping: whether one team may submit to two partner challenges and the Huawei deadline; the time and length of the Kraków pitch and which Kraków set of criteria the jury uses; every unmerged branch with work merged or closed; the rulings still waiting for confirmation in `MVP.md`, section Open decisions and confirmations - Marek, Kuba, Kuber and Adrian, and the thresholds of D-5 confirmed by Mateusz.
+2. Backend foundation: `backend_skeleton`, `schema_first_revision`, `accounts` and `address_search`.
+3. Open data: `osm_import`, `sample_data` and the step of the loading program that loads the tile archive.
+4. Routes: `route_planning`, and O9 through `public_transport_routing`, marked as optional.
+5. Community facts, the large initiative `community_facts` in three fragments: reports and geozones; votes and statuses; flags and moderation.
+6. Web frontend, `frontend_app` together with `map_tiles`: the route screens (profile, search, result, list); reports, votes and geozones; account, moderation, privacy information and the Polish and English interface; the map (archive, style, fonts); the accessibility check of the main scenario.
+7. Hosted demo: `DEPLOYMENT_CONFIG` of `plans/deployment_config/` and the loading of the data; the main scenario end to end on the hosted link; the case of contradictory, incomplete or unavailable data.
+8. HarmonyOS port: the initiative of the port with the choice between ArkTS/ArkUI and React Native for OpenHarmony; a client of the same programming interface using at least one capability of the platform; the `.hap` running on an emulator; the build, installation and launch instructions with versions.
+9. Official requirements. Kraków: data sources, architecture, business model, running and maintenance, data protection, licences and dependencies, the list of what works and what still needs work. Huawei: the architecture and implementation description in English, `AI_WORKFLOW.md`, the pre-existing and third-party components, the tests of the key scenarios, and a public repository without secrets.
+10. Materials and pitch: the four materials of requirement 18; both submissions on HackTribe before the deadline; the pitch with a live demo.
 
 ## Out of scope
 
 - Everything after the pitch and the demo before the jury, the deletion of the hosted demo and its data after the results included. The deletion stays a duty of the owner of the repository under `CLAUDE.md`, section Target environment, and is not a check of the list (decided by the user on 2026-10-04, question 2 of the interview).
+- The optional features O1 - O8 of the specification (requirement 15).
+- Owners of checks, priorities and intermediate times (requirements 8 and 14).
+- Doing the work of the checks. The list says what finishes the project; the checks are carried out by their own initiatives or by the people the team assigns, not by this initiative.
 
 ## Functional requirements
 
@@ -48,35 +64,53 @@ From the seed: one document, `FINAL_CHECKLIST.md`, with sets of tasks and a few 
 11. Every set and every check is described with its dependencies, so that the team can see how much of the work can run in parallel; the tasks of the list are parallelized after it is written (stated by the user on 2026-10-04, after question 9 of the interview).
 12. A dependency is soft, not a gate: next to what a check waits for, the list says what of that check can already be done before the dependency is met. A check whose every part waits is the exception the list names explicitly (stated by the user on 2026-10-04, after question 9 of the interview).
 13. This initiative rewrites `MVP.md` in the same change: the column Waits for of the section Initiatives and the section Order and critical path name the documents an initiative starts from - the contract, the schema, a plan - instead of the code of another initiative, consistent with requirement 10. `MVP.md` itself requires that a change making one of its items untrue updates it in the same change (`MVP.md`, section Why this document exists) (decided by the user on 2026-10-04, question 9 of the interview).
-
 14. No check names an owner. The list says what is to be done and what it depends on; who takes which check is settled by the team when the work is parallelized (decided by the user on 2026-10-04, question 10 of the interview).
 15. O9, routes with public transport, is a check of the list marked as optional: it does not condition the end of the project. The mark is the only exception to the flat list of requirement 8, and it applies to O9 alone (decided by the user on 2026-10-04, question 6 of the interview). The optional features O1 - O8 are not on the list at all, because `MVP.md`, section Scope, and `docs/standards/decision_registry.md`, entry Optional features of the MVP, put them outside the MVP (Agent decision at C:40, without asking).
-
 16. `FINAL_CHECKLIST.md` lives in the root of the repository, next to `MVP.md` and `TEAM.md`; `plans/final_checklist/` keeps only the artifacts of the chain behind it (decided by the user on 2026-10-04, question 1 of the interview).
 17. Only Rafał ticks a check, once he has verified its effect in the sense of requirement 9, so that the file has one writer and no merge conflicts (decided by the user on 2026-10-04, question 7 of the interview).
 18. The presentation materials are four: a deck in Polish, a PDF of at most 10 slides, which is both the Kraków submission and the deck of the Kraków pitch; a video in Polish, an mp4 of at most 3 minutes in an open repository, for Kraków; a recorded demonstration in English of the `.hap` running on an emulator, for Huawei; and a deck in English prepared before 11:00, in case the Huawei jury invites the team to present (decided by the user on 2026-10-04, question 8 of the interview, after the official PDFs settled the languages: `RULES Cracow Without Barriers.pdf` point 5 and `RULES Imagine What_s Next.pdf` section 4).
-
 19. The facts no document in the repository holds are checks of the list, not questions of this interview: whether one team may submit one project to two partner challenges, the Huawei submission deadline, the time and length of the Kraków pitch, and which of the two Kraków sets of criteria the jury uses (`docs/hackathon/challenge_requirements.md`, Conflicts and open points 4 and 9). They are verified with the organizers or in the HackYeah 2026 schedule, and the list says which other checks depend on each of them (Agent decision at C:40, without asking).
-
 20. This initiative brings `docs/hackathon/challenge_requirements.md` up to date with the official PDFs in the same change: the section Provenance points to `docs/official/`, the Huawei section says the jury may invite teams to present, and the Kraków section says the whole submission is in Polish. The set of the list that checks the official requirements checks them against the updated document (decided by the user on 2026-10-04, question 11 of the interview).
+21. The list has the ten sets of the section Smallest meaningful scope, in that order (approved by the user on 2026-10-04, question 12 of the interview).
 
 ## Scenarios: input, flow, expected state after the run
 
+1. Start of the parallel work. Input: `FINAL_CHECKLIST.md` published in the root, six people, no product code. Flow: every person opens the list and takes a check whose input documents already exist - set 1 needs nothing, set 6 starts on `docs/product/api_contract.md` and `docs/product/views.md`, set 9 on the specification and the decided plans, set 8 on the contract. Expected state: nobody waits; every check names the documents it starts from and what of it can be done right away.
+2. A dependency not met yet. Input: at 07:00 `osm_import` has no working import yet. Flow: the check of `route_planning` says what waits for the imported data and what does not - the code against `plans_finished/valhalla_routing/` and `docs/product/api_contract.md`. Expected state: the person on `route_planning` keeps working; the dependency changes what can be verified, not what can be written.
+3. A fact that removes work. Input: in the morning the organizers answer that one project may be submitted to one partner challenge only. Flow: the check of set 1 that verifies it names the checks that depend on the answer - set 8, the Huawei part of set 9, the English deck and the English demo of set 10. Expected state: Rafał and the team see at once which checks fall away; the decision what to do about it is theirs, not the list's.
+4. Ticking during the day. Input: at 08:30 `plan_route` works on the hosted demo and the result screen uses it, without a PRD or a review of `route_planning`. Flow: Rafał verifies the effect and ticks the check. Expected state: the check is done in the sense of requirement 9.
+5. The end. Input: after 11:00 the pitch with a live demo has been given before the Kraków jury; O9 is unticked. Flow: Rafał ticks the last check of set 10. Expected state: the project is finished; the unticked O9 does not change that (requirement 15); the deletion of the demo after the results is outside the list.
+
 ## Challenging own assumptions
+
+- Is a list of about forty checks realistic with eight hours left and no product code? The list defines what finishes the project; it does not promise that everything on it gets done. Because it is flat (requirement 8), the cuts are made by the team during the day, and the list has to make each cut visible through the dependencies - otherwise dropping one check silently breaks another.
+- Does zero idle time hold for Kuber and Adrian? They carry the web frontend, the map tiles and now the mandatory port (`TEAM.md`, requirement 7). The list has no owners (requirement 14), so it cannot spread their load; it can only show that sets 6 and 8 can run in parallel on the same contract. The load is a risk the team settles when it parallelizes.
+- Is "a set is a large initiative" true of every set? Sets 1, 9 and 10 are not initiatives of `MVP.md`; they are the things to be done outside the initiatives that the seed asks for. The rule of the seed is read as "a set is a large piece of work", and the PRD keeps the sets 1, 9 and 10 to the same size as the others.
+- Is a double submission allowed at all? Nothing in the repository or in the four PDFs says so. Requirement 7 rests on it, so the list puts the check that verifies it first in set 1, with the checks that depend on it named.
+- What does "the effect works" mean for a document? For the checks of set 9 and the materials of set 10 the effect is a document or a file a person has read and found complete against the requirement it serves; the PRD writes that criterion into each such check.
+- Does this initiative itself go through the full chain? The repository requires shape, PRD and plan before the implementation, and the list has to be out early to serve the day. The chain is kept; how fast its phases go is the user's call at each gate.
+- Is the Huawei deadline 11:00? Probably, because the coding of the whole event ends then, but it is not verified; the list treats it as a fact of set 1, not as a given.
 
 ## Domain rules or explicit TODO
 
 - TODO: the decision of question 3 removes the variant "no Huawei submission" from `docs/standards/decision_registry.md`, entry HarmonyOS port and the Huawei submission, while the choice between a native ArkTS/ArkUI client and a React Native for OpenHarmony client stays open there. The entry has to say so before `FINAL_CHECKLIST.md` is published, so that the two documents do not contradict each other.
-- TODO: no initiative of `MVP.md` builds the HarmonyOS client, so the port has no owner document yet; the list has to name that gap instead of pointing to an initiative that does not exist.
+- TODO: no initiative of `MVP.md` builds the HarmonyOS client, so the port has no owner document yet; the list names that gap as the first check of set 8 instead of pointing to an initiative that does not exist.
 - The official PDFs in `docs/official/` against `docs/hackathon/challenge_requirements.md`, read by the agent on 2026-10-04. The summary is accurate on the deliverables, the deadlines, the languages and the judging criteria. What it misses or what has changed:
   - Signal 4: its section Provenance says the PDFs are not stored in the repository, which stopped being true when the user added them to `docs/official/`.
   - `RULES Imagine What_s Next.pdf`, section 5: the Huawei jury may invite selected teams to present or demonstrate their solutions. A live Huawei presentation is therefore by invitation only, while the Kraków rules, point 7, say the competition is to present the solutions and `KRYTERIA Kraków Bez Barier.pdf`, section 6, describes a working demonstration during the presentation.
   - `RULES Cracow Without Barriers.pdf`, point 5: the whole Kraków task solution is submitted to HackTribe in Polish, which covers the PDF and the video as well as the description.
   - `CRITERIA Imagine What_s Next.pdf`, Quality of the demonstration: what cannot run on the emulator (positioning, sensors) is explained in the demo, and mentors have devices on site.
   - None of the four PDFs says when the pitch takes place, how long it is, or whether one team may submit one project to two partner challenges; the general HackYeah 2026 Rules, to which both sets of rules defer, are not in the repository. Whether a double submission is allowed decides whether requirement 7 is possible at all, so it is a fact to verify, not a decision of this initiative.
+- The known departures from the Kraków brief - the hosted demo over plain HTTP and the green public transport segment without data of O9 - stay as `MVP.md`, section Known departures from the Kraków brief, records them; the list checks that the Kraków submission states them, it does not reopen them.
 
 ## Notes on data, performance and security
 
+- The list holds no address, host, login or secret of the hosted demo in any form (`CLAUDE.md`, section Target environment; `docs/standards/standard_config.md`). Set 7 names the hosted demo, never where it runs.
+- The list names no person (requirement 14) and holds no personal data.
+- The repository becomes public for the Huawei submission (requirement 7), so everything the list adds is written to be published. The four PDFs of the organizers in `docs/official/` are untracked at 03:20; whether they are committed into a public repository is a decision of the user, which the check of set 9 on the public repository raises without deciding it. Nothing here is legal advice.
+- Whether the repository carries a licence stays with `docs/standards/decision_registry.md`, entry Intellectual property between the two challenges and the repository licence; the list does not add a licence file.
+- No question of the interview touched a blocking risk category: the list changes no contract, schema, data or permission.
+
 ## Open questions
 
-12. Which sets the list has and which checks go into each. `Block: no`
+None. The facts no document holds are checks of set 1 (requirement 19), not open questions of this shape.
