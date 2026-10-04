@@ -71,8 +71,9 @@ The work is split between the agent and the people (decided by the user on 2026-
 2. The time and length of the Kraków pitch and which of the two Kraków sets of criteria the jury uses are recorded with their source in the same document (check 1.2).
 3. Every remote branch carrying work of the day is merged into `dev` or closed, and the registry entry on the initiatives outside `MVP.md` is settled for `mw` (check 1.3).
 4. Every ruling `MVP.md`, section Open decisions and confirmations, lists as given in place of a member of the team, the division of the work included, and the thresholds of D-5 are confirmed or changed by the people that section names (check 1.4).
-5. The registry entries on when the code of O9 starts, on the wording of its public transport segment and on the hash length are resolved by the people they name, or the dependent check is recorded as dropped (check 1.5).
-6. The question of `docs/standards/decision_registry.md`, entry Intellectual property between the two challenges and the repository licence - how the copyright transfer of the Kraków prize relates to the Huawei licence and to a public repository - goes to the organizers together with the questions of check 1.1, and the answer is recorded in that entry. It is not a check of set 1; it joins because it goes to the same people as check 1.1 (decided by the user on 2026-10-04, question 3 of the interview, against leaving the entry open until the results). Nothing recorded here is legal advice.
+5. `MVP.md`, section Open decisions and confirmations, gains an item for the ruling of `plans/final_checklist/FINAL_CHECKLIST_SHAPE.md`, requirement 7, that the Huawei submission is mandatory, given by the user in place of the team and to be confirmed by Kuber and Adrian, so that check 1.4 covers it; the question goes in the same message as their other confirmations (decided by the user on 2026-10-04, question 4 of the interview, against leaving the ruling without a confirmation).
+6. The registry entries on when the code of O9 starts, on the wording of its public transport segment and on the hash length are resolved by the people they name, or the dependent check is recorded as dropped (check 1.5).
+7. The question of `docs/standards/decision_registry.md`, entry Intellectual property between the two challenges and the repository licence - how the copyright transfer of the Kraków prize relates to the Huawei licence and to a public repository - goes to the organizers together with the questions of check 1.1, and the answer is recorded in that entry. It is not a check of set 1; it joins because it goes to the same people as check 1.1 (decided by the user on 2026-10-04, question 3 of the interview, against leaving the entry open until the results). Nothing recorded here is legal advice.
 
 ## Scenarios: input, flow, expected state after the run
 
@@ -94,6 +95,5 @@ To be filled in during the interview.
 
 ## Open questions
 
-4. Whether the confirmation of requirement 7 of `plans/final_checklist/FINAL_CHECKLIST_SHAPE.md` by Kuber and Adrian joins check 1.4. `Block: no`
 5. Who resolves the conflicts of the merge of `jmi/odklejka_v1` into `dev`, and which version number the specification of that branch gets next to the version 13 already on `dev`. `Block: yes` (category: database schema)
 6. What happens to `mw`: the stops of MSIP in or out of the MVP, and the branch merged or closed. `Block: no`

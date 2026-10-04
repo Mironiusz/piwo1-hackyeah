@@ -59,6 +59,7 @@ The list follows from the seed and from the decisions it names; it changes with 
 8. The check of a route against every barrier and geozone it had to avoid before it is shown (D-9 there).
 9. `routing_unavailable` in every case of D-10 there, with no route guessed and no call outside the project.
 10. The tests of D-13 there: the cases of `ROUTING_ENGINE_PLAN.md` D-16 that still hold and a test in which Valhalla answers a route crossing an excluded barrier and the request ends with `routing_unavailable`.
+11. A route of a profile without barriers: when `avoid` is empty, every segment of `route` and of `alternative` has the state `not_assessed`, a fifth value of `state` outside the four states of M7, with an empty `missing_attributes`; `not_assessed` appears in no other case (question 1). This initiative writes the value into `docs/product/api_contract.md`, section plan_route, and `docs/product/views.md`, and moves the entry Route without assessment in the contract of `docs/standards/decision_registry.md` to Resolved decisions.
 
 ## Scenarios: input, flow, expected state after the run
 
@@ -68,7 +69,7 @@ The list follows from the seed and from the decisions it names; it changes with 
 4. Routing does not answer. Input: the Valhalla service is down, or answers after 2 seconds. State after: 503 `routing_unavailable`, no route, nothing sent outside the project.
 5. Fresh copy not yet served. Input: a fresh OpenStreetMap copy is current in the database and the service still serves the walking data of the previous one. State after: 503 `routing_unavailable` until the service serves the data of the copy in use.
 6. Exclusions silently dropped. Input: Valhalla drops the excluded locations without an error (F-9 of `VALHALLA_ROUTING_PLAN.md`) and answers a route crossing a barrier of the profile. Flow: the check of D-9 finds the crossing, the request is repeated once with it excluded, and crosses it again. State after: 503 `routing_unavailable`, one entry at ERROR without coordinates.
-7. Profile without barriers. Input: a profile with no barrier to avoid. State after: open, question 1.
+7. Profile without barriers. Input: `avoid` empty and `need` of `rest_place`, a start at the Tauron Arena and a destination 1.5 km away. Flow: no barrier and no geozone is excluded, the route is traced and checked as in 1. State after: every segment, the two straight stretches at the ends included, has the state `not_assessed`; every barrier on the route is in `additional_barriers` (M8); `barrier_free_route_exists` is true, because no barrier of the profile exists to cross; `is_marked_wheelchair_no` is filled as for any other profile.
 8. Point outside Kraków. Input: a start in Wieliczka. State after: open, question 2.
 
 ## Challenging own assumptions
@@ -84,7 +85,7 @@ The list follows from the seed and from the decisions it names; it changes with 
 - The rules of M1, M2, M7, M8 and M10 of `docs/product/specification.md`, read through D-1 - D-11 of `VALHALLA_ROUTING_PLAN.md` and D-4, D-5, D-8 - D-12 and D-14 - D-16 of `ROUTING_ENGINE_PLAN.md`.
 - A route avoids the barriers of the profile known from OpenStreetMap, the confirmed barriers of the profile and the geozones of a type in the profile that are unverified, confirmed or disputed; an outdated or hidden fact changes no route (M2, M11).
 - A segment without complete data is never green, and a way marked `wheelchair=no` is never green (M7).
-- TODO: the route of a profile without barriers, question 1.
+- A route of a profile without barriers has every segment in the state `not_assessed` and is never presented as free of barriers (M1, M7). Decided by the user on 2026-10-04 in question 1, in place of Marek, against a field of the route next to a state of null and against the client deriving it from its own `avoid`; to be confirmed by Marek, and as a change of the contract also by Kuber and Adrian. `is_marked_wheelchair_no` stays as it is for such a route, because M8 names a way marked `wheelchair=no` whatever the profile. Agent decision at C:40, without asking, for `is_marked_wheelchair_no`.
 - TODO: a point outside Kraków, question 2.
 - TODO: `missing_attributes`, question 3.
 
@@ -100,6 +101,5 @@ The list follows from the seed and from the decisions it names; it changes with 
 
 ## Open questions
 
-1. How does the response of `plan_route` say that the segments of a route are not assessed, for a profile without barriers? `Block: yes` (category: stability of the programming interface (API) contract)
 2. How is a start or a destination outside the administrative boundary of Kraków refused? `Block: yes` (category: stability of the programming interface (API) contract; database schema, if the boundary is stored)
 3. Does the service fill `missing_attributes` of a segment, which no client shows since version 11 of the specification, or does the field leave the contract? `Block: yes` (category: stability of the programming interface (API) contract)
