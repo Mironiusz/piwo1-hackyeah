@@ -1,6 +1,6 @@
 # Sample-data implementation run and review
 
-Document state: 2026-10-04, provider and critical-test code delivered; final review not ready for the whole initiative
+Document state: 2026-10-04, rewritten plan implemented; ready for S-1 - S-5, not ready for the whole initiative
 
 ## 2026-10-04 - Implementation authorized
 
@@ -126,3 +126,105 @@ Open items outside this initiative:
 - Kuber decides about S-5's departure in `DemoSeed.ets`.
 - Kuba confirms the identifier convention.
 - The `osm_import` session was told of the planned code rename `surface_not_absent` -> `contradiction_missing`; the loading handoff changes only when S-5 of the plan is implemented.
+
+## 2026-10-04 - Implementation of the rewritten plan
+
+The user asked to implement `SAMPLE_DATA_PLAN.md`. The fact check found the facts true on `abe1377`: the staged merge of `b480093` changed only the docstring of `demoReports` in `DemoSeed.ets`, so F-2 holds, and the functions of F-7 - F-12 exist as cited. During the run the user completed that merge and committed twice (`d6ee8ea`, `fd66a90`); the commits took in the work in progress and changed nothing of it.
+
+### Run into during implementation
+
+- `fetch_route_network` of `data/route_network.py` set `yield_per` on the connection it received. In SQLAlchemy 2.x that changes the connection in place, so after the route graph was built inside the sample transaction every later statement ran as a server-side cursor and the fact insert failed with a syntax error at `INSERT`, confirmed on the local database. The plan did not foresee it. The user chose to fix it at the source: the three statements carry `yield_per` themselves and the connection keeps its options. `tests/data/test_route_network_critical.py` gained `test_reading_the_network_leaves_the_connection_able_to_write`.
+- A `ruff format tests/data/` run of this session removed the trailing blank line of `tests/data/test_tile_archive_cases.py`, work in progress of the `tile_loading` session. The line was restored at once and the file has no diff from this session; later formatting named only owned files.
+- A helper script wrote `service/SERVICE.md` and `service/SERVICE_ALGORITHM.md` with CRLF line endings. Both were restored to LF; their content, including the uncommitted tile section of the other session, is unchanged apart from the sample sections.
+
+### Delivered
+
+- S-1: `common_sample_data.py` with `SampleVoteDefinition`, the extended `SampleDefinition`, `SampleNetworkPrerequisites.has_kerb_contradiction`, `SampleFactRow`, `SampleVoteRow`, `StoredSampleVote`, `CONTRADICTION_MISSING` and `build_sample_voter_hash(sample_id, vote_index)`; `SAMPLE_AMENITY_DISTANCE_M` removed. `common_time.build_business_datetime`, reused by `build_business_day`.
+- S-2: `data/sample_data.py` with the reduced prerequisite read, per-fact pairs and per-vote rows in bound JSON batches, `fetch_sample_votes` and `apply_sample_inserts(connection, fact_rows, vote_rows)`.
+- S-3: `service/sample_data.py` with the dataset of D-3, `build_sample_insert_rows`, `build_expected_sample_votes`, `fetch_sample_kerb_contradiction` and the adapted decisions; the cases and integration tests rewritten.
+- S-4: `schema_owner_engine` in `tests/data/conftest.py`, consumed by `scratch_database` and the registry; the invented eight-way network with the lowered kerb 317034340; 17 critical cases.
+- S-5: both handoffs, the identifier convention in `docs/product/schema.md`, section Facts, the naming registry, `docs/data/sample_data.md`, the sample sections of the service and data documents, a fixture note in `SAMPLE_DATA_OSM_EVIDENCE.md`, and the message about `contradiction_missing` to the `osm_import` session.
+
+### Decisions
+
+- Agent decision at C:40, without asking: `has_kerb_contradiction` defaults to false in the record, and `fetch_sample_network_prerequisites` of the service sets it for S-5 only, because the storage cannot measure a rule that lives in the route graph. False is the rule of M2 for missing evidence, not a substitute value.
+- Agent decision at C:40, without asking: no current copy, a reference way the graph does not hold and a way without a stretch establish no contradiction. Validation reports `copy_missing` or `site_invalid` first when those are the cause, so `contradiction_missing` names only a failed kerb rule.
+- Agent decision at C:40, without asking: the clock, logger and engine are imported at module level instead of at call time. The earlier reason, modules that did not exist, no longer holds, and none of them reads configuration on import; the tests replace the names of `service.sample_data`.
+- Agent decision at C:40, without asking: `fetch_business_now` reuses `build_business_datetime` together with `build_business_day`, so the zone conversion has one place.
+- Agent decision at C:40, without asking: the internal serializer `build_sample_authors` became `build_sample_voters`, because it now serializes all 25 voters. The query constants keep the names of plan S-2.
+- Agent decision at C:40, without asking: `data/DATA.md` and `data/DATA_ALGORITHM.md` had no sample section to update, so each gained a short one; the data layer documents every other feature that way.
+- Agent decision at C:40, without asking: `tests/data/test_sample_data_insert_cases.py` covers which votes the batches carry and the refused vote count, which a real database cannot be made to show. The opaque result values of the transaction cases follow the eight-fact dataset.
+- Agent decision at C:40, without asking: a fixture way of more than five nodes keeps its segment nearest to the sample point and one node on each side, a shorter one stays whole. The critical cases also cover the missing ways of S-5 and S-7 and a geozone whose way lies outside its radius.
+
+### Verification
+
+Python 3.13 of the repository `venv`. The local database is a separate project `sample-data-check` of `db/compose.yaml` on a loopback port, with the first revision applied by its migrate profile and throwaway values passed only through the process environment.
+
+| Check                                                                                                                      | Result                                                                                                                                                                           |
+| -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Critical sample cases, `tests/data/test_sample_data_critical.py`                                                           | 17 passed; the database held no fact, vote, way, node, membership or copy afterwards                                                                                             |
+| Other critical data cases on the same database, including every user of `scratch_database` and the route network and facts | 27 passed, 1 skipped for Linux only                                                                                                                                              |
+| Owned noncritical cases, architecture tests and time cases                                                                 | 255 passed, 3 skipped for absent local environment files                                                                                                                         |
+| Full noncritical suite                                                                                                     | 975 passed, 11 skipped, 6 failed; the 6 OSM cases fail because osmium cannot open a temporary path with the non-ASCII user name, and pass with an ASCII `--basetemp` (22 passed) |
+| `ruff check` and `ruff format --check` on the 16 owned Python files                                                        | pass                                                                                                                                                                             |
+| `mypy`                                                                                                                     | no issues in 83 files                                                                                                                                                            |
+| `bandit` passes of the makefile for `service`, `data`, the root modules and B608                                           | no findings                                                                                                                                                                      |
+| `vulture`                                                                                                                  | no findings                                                                                                                                                                      |
+| `deptry .`                                                                                                                 | 4 findings, all imports of `mobile_app/tools/mock_backend`                                                                                                                       |
+| Prettier on the owned and edited documents                                                                                 | pass                                                                                                                                                                             |
+| Whole-tree `ruff check .`, `ruff format --check .` and Prettier                                                            | red only in `mobile_app` and vendored skill files, which this initiative does not own                                                                                            |
+
+### Remaining
+
+- PRD AC-3 - AC-5 and AC-10 wait for `community_facts_api`, `route_planning` on the imported copy, `frontend_app` and the common loader of `osm_import`.
+- The places are checked against public data and an invented network, not the imported copy or the actual route.
+- Human-only steps: Rafał and Mateusz accept or change M1 Kraków as the destination, Kuba confirms the identifier convention, Kuber decides about S-5 in `DemoSeed.ets`, and the common loader and joint checks run when their dependencies exist.
+- The local project `sample-data-check` was stopped and removed with its volumes after the review; the containers of other initiatives were not touched. Its two built images stay in the local Docker cache. Pytest left its temporary directory `C:\sample-check-pytest` outside the repository.
+
+## 2026-10-04 - Implementation DoD review
+
+Scope: S-1 - S-5 of `SAMPLE_DATA_PLAN.md` and the fix of `data/route_network.py`, on the files listed in the entry above. The tile files of `tile_loading` and `mobile_app` are other sessions' work and outside the scope. The review used the standards map, the deferred-decision registry and the tool map of `docs/standards/standard_review.md`, and ran its commands.
+
+### Blockers
+
+None in the scope of the implementation.
+
+### Risks
+
+- R-1. `docs/product/schema.md` is changed and approved like the specification, as a new version of it (its section Why this document exists). The identifier convention added to its section Facts follows plan D-2 and awaits Kuba's confirmation, but no version of `docs/product/specification.md` records it. Whether it becomes a version is for the user and Kuba to decide.
+- R-2. `data/route_network.py` belongs to the finished `route_planning`, owned by Marek. The fix keeps its reads and their streaming and is covered by a new critical case, but Marek should know of it.
+- R-3. The graph build inside the sample transaction, plan R-3, is not yet measured on the imported copy of Kraków.
+- R-4. The full noncritical suite has six environmental failures on this machine, which pass with an ASCII `--basetemp`; a green full suite is shown only with that workaround.
+
+### Improvements
+
+- I-1. The docstring of `database_cleanup_registry` in `tests/conftest.py` still named a skeleton-owned engine. Fixed after the review: it names the engine of `tests/data/conftest.py`; ruff passes and the 19 critical sample and route-network cases and 97 noncritical cases ran green again.
+- I-2. `fetch_sample_network_prerequisites` builds the route graph for S-5 before the places of S-1 - S-4 are judged, which costs a graph build on a failing place. The result is correct; left as it is.
+
+### Verification
+
+| Standard                       | State                 | Evidence                                                                                                                                                 |
+| ------------------------------ | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `standard_agentic_workflow.md` | checked automatically | parity, vendored content, session context and dangerous commands tests pass                                                                              |
+| `standard_agent_docs.md`       | checked automatically | `test_plan_document_contract.py` passes; review and memory formats checked manually                                                                      |
+| `standard_review.md`           | checked manually      | this entry                                                                                                                                               |
+| `standard_documentation.md`    | checked manually      | docstrings on every function, no line comments, sample sections in the service and data documents and `docs/data/sample_data.md`                         |
+| `standard_formatting.md`       | checked automatically | owned Python and documents pass ruff format and Prettier, `test_prose_style.py` passes; whole-tree failures lie in `mobile_app` and vendored skill files |
+| `standard_git.md`              | checked automatically | `test_conflict_markers.py` and `git diff --check` pass; no commit, push or staging by the agent                                                          |
+| `standard_architecture.md`     | checked automatically | `test_layer_boundaries.py` and `test_sample_layer_boundaries.py` pass                                                                                    |
+| `standard_config.md`           | checked automatically | environment contract and critical guard pass, with three skips for absent local files; no environment entry added                                        |
+| `standard_database.md`         | checked automatically | bandit B608 passes; bound values, no DDL, update or delete in the provider                                                                               |
+| `standard_errors.md`           | checked manually      | acknowledged commit, `commit_unknown`, no automatic retry; transaction cases pass                                                                        |
+| `standard_idempotency.md`      | checked manually      | primary key with `ON CONFLICT DO NOTHING`, votes only for returned identifiers; critical repetition and concurrency cases pass                           |
+| `standard_code_quality.md`     | checked automatically | owned ruff passes, mypy has no issue in 83 files, vulture has no finding, deptry's four findings lie in `mobile_app`                                     |
+| `standard_logging.md`          | checked automatically | ruff G passes; logs carry reason codes and counts only                                                                                                   |
+| `standard_naming.md`           | checked automatically | ruff N passes; the naming registry lists the sample names                                                                                                |
+| `standard_security.md`         | checked automatically | bandit passes on `service`, `data` and the root modules; pip-audit not applicable without a new dependency                                               |
+| `standard_tests.md`            | checked automatically | 17 critical sample cases and 27 other critical data cases pass on a local database; noncritical as R-4 says                                              |
+| `standard_time.md`             | checked manually      | UTC arithmetic with the offset of each instant; clock-change cases pass, one of them critical                                                            |
+| `standard_worker.md`           | not applicable        | no worker entry point or periodic task                                                                                                                   |
+| `standard_frontend.md`         | not applicable        | no frontend change                                                                                                                                       |
+
+### Verdict
+
+Ready for the scope of S-1 - S-5 and the fix of `data/route_network.py`, after the minor fix I-1, which is applied. Not ready for the whole `sample_data` initiative: PRD AC-3 - AC-5 and AC-10 and the human-only steps remain. The initiative stays in `plans/sample_data/` and does not qualify for `plans_finished/`.

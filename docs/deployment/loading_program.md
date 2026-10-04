@@ -57,9 +57,9 @@ Retain `created_count`, `unchanged_count`, `initial_votes_created_count` and `fa
 
 ## Tile-provider handoff
 
-Delivered by `plans/tile_loading/` on 2026-10-04 (`plans/tile_loading/TILE_LOADING_PLAN.md` D-5 - D-9).
+Delivered by `plans_finished/tile_loading/` on 2026-10-04 (`plans_finished/tile_loading/TILE_LOADING_PLAN.md` D-5 - D-9).
 
-Consume `service.tile_archive.apply_tile_archive_run(settings: TileArchiveSettings, deadline: Deadline) -> TileArchiveResult`, called synchronously while the common program holds the exclusion. Build the settings with `worker.tile_archive.build_tile_archive_settings()`, which reads `TILE_ARCHIVE_SOURCE` and `TILE_ARCHIVE_DIR` and raises `ConfigurationError` naming every missing entry and its file, and the deadline with `build_deadline(TILE_ARCHIVE_RUN_SECONDS, fetch_monotonic_seconds())`, started when the step starts. The step takes no lease and acquires no exclusion; the validation of a lease across provider steps stays with plan Q-5.
+Consume `service.tile_archive.apply_tile_archive_run(settings: TileArchiveSettings, deadline: Deadline) -> TileArchiveResult`, called synchronously while the common program holds the exclusion. Build the settings with `worker.tile_archive.build_tile_archive_settings()` in the worker entry point of the common program and pass them down, because `service/` may not import `worker/` (`tests/architecture/test_layer_boundaries.py`); the builder reads `TILE_ARCHIVE_SOURCE` and `TILE_ARCHIVE_DIR` and raises `ConfigurationError` naming every missing entry and its file, and the deadline with `build_deadline(TILE_ARCHIVE_RUN_SECONDS, fetch_monotonic_seconds())`, started when the step starts. The step takes no lease and acquires no exclusion; the validation of a lease across provider steps stays with plan Q-5.
 
 Inputs: the source place, the file a person put on the server outside the served directory, and the served directory, from which the proxy serves the archive at `/tiles/krakow.pmtiles`. The step accepts only the recorded archive, `TILE_ARCHIVE_NAME` with `TILE_ARCHIVE_SHA256`, the record of `docs/setup/MAP_SETUP.md`, section The tile archive.
 
@@ -67,7 +67,7 @@ Outcomes: `TileArchiveResult.outcome` is `loaded`, when the step put the checked
 
 Failures: `TileArchiveError` with `reason`, one of `places_overlap`, `served_directory_missing`, `served_unreadable`, `source_missing`, `source_unreadable`, `source_mismatch`, `copy_failed`, `copy_mismatch` and `deadline_expired`, and the constant message `Tile archive step failed: <reason>`, which names no path. Each leaves the served file as it was, except `copy_failed` raised when the directory cannot be synced on Linux after the replacement, which leaves the complete checked archive under the served name. An expired budget is `deadline_expired`. An unexpected exception is an unsuccessful step, with the served file either as before or the complete checked archive.
 
-Repeat: when the served file already has the recorded value the step writes nothing and returns `unchanged` without reading the source place, so a manual full-flow retry succeeds after the source file was removed; any other file or link under the served name is replaced. A temporary copy left by an interrupted run is removed by the next run.
+Repeat: when the served file already has the recorded value the step writes nothing under the served name and returns `unchanged` without reading the source place, so a manual full-flow retry succeeds after the source file was removed; any other file or link under the served name is replaced. A temporary copy left by an interrupted run is removed by the next run.
 
 Budget: 120 seconds, `TILE_ARCHIVE_RUN_SECONDS`, checked by the provider before every chunk of 1 MiB of each read and write and once more before the placement; a system call that blocks inside one chunk is not interrupted.
 

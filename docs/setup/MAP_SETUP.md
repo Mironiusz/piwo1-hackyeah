@@ -69,17 +69,17 @@ The first program is the temporary mock of the service, which the frontend runs 
 
 The archive is not in the repository, so it reaches the server of the demo as a file Adrian hands over. The person who stands the demo up puts the file itself, not a link to it, at the path of the environment entry `TILE_ARCHIVE_SOURCE`, outside the directory of `TILE_ARCHIVE_DIR`, the directory the server serves the archive from.
 
-The tile step of the loading program puts it in place, and the same step runs on its own with `python -m worker.tile_archive`. It checks the file against the SHA-256 value of the table above, copies it into a temporary file of `TILE_ARCHIVE_DIR`, checks the copy again and only then puts it under the name `krakow.pmtiles` in one replacement, readable by everyone (`plans/tile_loading/TILE_LOADING_PLAN.md` D-7). A reader of `krakow.pmtiles` therefore finds either the earlier file or the complete checked archive, never part of a file. The command also needs `IMPORT_WORKSPACE_ROOT` and the database, because it takes the exclusion of the import; a missing entry ends it with exit code 1 and the names of the missing entries.
+The tile step of the loading program puts it in place, and the same step runs on its own with `python -m worker.tile_archive`. It checks the file against the SHA-256 value of the table above, copies it into a temporary file of `TILE_ARCHIVE_DIR`, checks the copy again and only then puts it under the name `krakow.pmtiles` in one replacement, readable by everyone (`plans_finished/tile_loading/TILE_LOADING_PLAN.md` D-7). A reader of `krakow.pmtiles` therefore finds either the earlier file or the complete checked archive, never part of a file. The command also needs `IMPORT_WORKSPACE_ROOT` and the database, because it takes the exclusion of the import; a missing entry ends it with exit code 1 and the names of the missing entries.
 
 The command writes one line, `Tile archive outcome=<outcome> duration_s=<seconds>`:
 
 | Outcome     | Exit code | Meaning                                                                                                 |
 | ----------- | --------- | ------------------------------------------------------------------------------------------------------- |
 | `loaded`    | 0         | The archive is in place now; a file of another value under the name was replaced.                       |
-| `unchanged` | 0         | The archive was already in place; nothing was written and the source file was not needed.               |
+| `unchanged` | 0         | The archive was already in place; it was not rewritten and the source file was not needed.              |
 | `skipped`   | 2         | An import or the loading program was running; nothing was written. Run the command again after it ends. |
 
-A repeated run with the archive in place therefore writes nothing, even after the source file was removed. A failure writes `Tile archive outcome=failed cause=TileArchiveError: Tile archive step failed: <reason>` and ends with exit code 1, leaving `krakow.pmtiles` as it was:
+A repeated run with the archive in place therefore leaves `krakow.pmtiles` untouched, even after the source file was removed. A failure writes `Tile archive outcome=failed cause=TileArchiveError: Tile archive step failed: <reason>` and ends with exit code 1, leaving `krakow.pmtiles` as it was:
 
 | Reason                     | What happened and what a person does                                                                                                                                                 |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |

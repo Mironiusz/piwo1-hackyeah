@@ -30,7 +30,7 @@ The whole MVP demo answers at the public link of the Kraków submission, which c
 
 - The written instructions and the records of the hosting, done by `plans_finished/deployment/`. This task only completes the commands of the instructions and adjusts them where its own decisions differ from what they say.
 - A secure connection of the public link, and making routing stop answering during the live demo, both cut by the user on 2026-10-03 (`plans_finished/deployment/DEPLOYMENT_SHAPE.md`, section Out of scope).
-- The loading program itself: the import, the public transport data, the sample reports and the tile step are built by `plans_finished/osm_importer/`, `plans/osm_import/`, `plans/public_transport_routing/`, `plans/sample_data/`, `plans_finished/map_tiles/` and `plans/tile_loading/`. This task only runs them in the hosted environment.
+- The loading program itself: the import, the public transport data, the sample reports and the tile step are built by `plans_finished/osm_importer/`, `plans/osm_import/`, `plans/public_transport_routing/`, `plans/sample_data/`, `plans_finished/map_tiles/` and `plans_finished/tile_loading/`. This task only runs them in the hosted environment.
 - The backend side of the address of a person, decided and built by `plans/community_facts_api/` (D-16 there).
 - Standing the demo up and deleting it, which are steps of Rafał and of the owner of the repository.
 
@@ -50,7 +50,7 @@ FR-6. No address of a person in the log of the server in front. The server in fr
 
 FR-7. Addresses of the frontend. The server answers every path that is not a file and does not start with `/api/` with the page of the application, serves the tile archive at `/tiles/krakow.pmtiles` with byte ranges, and serves the map style and fonts under `/map/` (`plans_finished/frontend_app/FRONTEND_APP_PLAN.md` D-3).
 
-FR-8. Places of the tile archive. The tile step reads the archive from a source place where a person put the file on the server and writes it into the place the server serves at the address of FR-7. The configuration gives the one-off run both places, together with the import workspace and the database the step needs, and keeps the served place across restarts (`plans/tile_loading/TILE_LOADING_PLAN.md`; `docs/deployment/loading_program.md`, section Tile-provider handoff).
+FR-8. Places of the tile archive. The tile step reads the archive from a source place where a person put the file on the server and writes it into the place the server serves at the address of FR-7. The configuration gives the one-off run both places, together with the import workspace and the database the step needs, and keeps the served place across restarts (`plans_finished/tile_loading/TILE_LOADING_PLAN.md`; `docs/deployment/loading_program.md`, section Tile-provider handoff).
 
 FR-9. Address of a person to the backend. The server in front hands the address of the person to the backend on every request it passes, and allows the longest backend operation to finish, as `plans/community_facts_api/COMMUNITY_FACTS_API_PLAN.md` D-16 decides; the backend trusts the address only from the server in front, configured on the server and never in the repository.
 
@@ -97,7 +97,7 @@ AC-11 (FR-12). Check 7.1 of `FINAL_CHECKLIST.md` holds: the demo stands up from 
 - `plans_finished/backend_architecture/BACKEND_ARCHITECTURE_PLAN.md` D-6, D-10 and D-11: the placement of the parts, the pointer the routing service reads and the memory budget.
 - `db/README.md`, section Hosted demo: the database of the demo and its revisions, which this task joins to the other parts.
 - `valhalla/` and `docs/import/osm_importer.md`: the image of the routing tools, on which the image the import runs in is built.
-- `plans/osm_import/`, `plans/public_transport_routing/`, `plans/sample_data/` and `plans/tile_loading/`: the loading program and its steps, which this task runs.
+- `plans/osm_import/`, `plans/public_transport_routing/`, `plans/sample_data/` and `plans_finished/tile_loading/`: the loading program and its steps, which this task runs.
 - `plans/community_facts_api/` D-16: the backend side of the address of a person and its two environment entries.
 - `plans_finished/frontend_app/` D-3 and `frontend/`: the frontend build the server in front serves.
 - `docs/deployment/hosted_demo.md`, the environment templates, `docs/standards/standard_config.md` and `MVP.md`, section Open decisions and confirmations, where the entries that the owner of this task has not confirmed the requirements of FR-7, FR-8 and FR-10 are closed.
@@ -108,6 +108,6 @@ AC-11 (FR-12). Check 7.1 of `FINAL_CHECKLIST.md` holds: the demo stands up from 
 - At 09:50 on 4 October 2026 no part of the configuration existed, and the build of the routing image alone took 11 min 33 s, so the goal of 10:00 is missed; the submission closes at 11:00. A partial deployment (FR-12) keeps the link from being empty meanwhile.
 - The common loading program of `plans/osm_import/` did not exist at the time of this PRD; its steps run as separate commands until it does, and FR-5 then names the common command.
 - Whether a forged address entry sent by a person can change the hash of a vote depends on how the backend picks the address among those handed on (AC-8); if it can, the issue goes to Marek before the server in front is configured.
-- Whether the server in front sees the tile archive replaced by the tile step at once depends on the server chosen in the plan (`plans/tile_loading/TILE_LOADING_SHAPE.md`, Challenging own assumptions).
+- Whether the server in front sees the tile archive replaced by the tile step at once depends on the server chosen in the plan (`plans_finished/tile_loading/TILE_LOADING_SHAPE.md`, Challenging own assumptions).
 - The public Nominatim instance may block or limit the address of the server; the check of the instructions finds it, and the app then shows the search unavailable message.
 - The free disk of the server was not stated; the routing data, the import workspace, the database and the tile archive share it.

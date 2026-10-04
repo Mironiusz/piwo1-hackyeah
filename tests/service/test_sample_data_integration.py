@@ -28,7 +28,7 @@ SAMPLE_IDS = (-1, -2, -3, -4, -5, -6, -7, -8)
 
 
 @pytest.fixture
-def service_dependencies(monkeypatch: pytest.MonkeyPatch, runtime_settings) -> tuple[Mock, Mock]:
+def service_dependencies(monkeypatch: pytest.MonkeyPatch) -> tuple[Mock, Mock]:
     """Replaces the clock and logger the service calls, with a summer clock carrying milliseconds."""
     clock = Mock(return_value=datetime(2026, 7, 10, 8, 0, 0, 123000, tzinfo=ZoneInfo("Europe/Warsaw")))
     monkeypatch.setattr(sample_data, "fetch_business_now", clock)
