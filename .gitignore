@@ -18,6 +18,7 @@ temp/
 build
 dist
 node_modules
+frontend/public/tiles/
 .env.*
 !.env.example
 !.env.*.example

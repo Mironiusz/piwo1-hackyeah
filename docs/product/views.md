@@ -475,7 +475,6 @@ The hosted demo is served over plain HTTP (`MVP.md`, Known departures from the K
 
 ## What stays open
 
-- The name of the product, which the header shows.
 - The texts of every label and message in Polish and in English, and the Polish names of the terms: in `docs/product/interface_texts.md`, with the rules of the wording decided on 2026-10-04 and the single texts working copy until the views are built.
 - The rule for the labels of the summary line when barriers are many or close together (`.impeccable/briefs/route-result.md`, Constraints and open decisions).
 - Whether a list row names the street (decision 13).
