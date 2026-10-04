@@ -1,6 +1,6 @@
 # PRD: API and service layers of community facts
 
-Document state: 2026-10-04, awaiting user approval
+Document state: 2026-10-04, approved by the user
 
 ## Business goal
 
