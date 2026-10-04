@@ -10,10 +10,27 @@ build-backend = "setuptools.build_meta"
 name = "piwo1-hackyeah"
 version = "0.0.0"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "argon2-cffi==25.1.0",
+    "fastapi==0.142.2",
+    "starlette==1.7.0",
+    "uvicorn==0.54.0",
+    "SQLAlchemy==2.1.3",
+    "psycopg[binary]==3.3.6",
+    "pydantic==2.13.5",
+    "tzdata==2026.5",
+    "httpx==0.28.1",
+    "osmium==4.3.1",
+    "shapely==2.1.2",
+    "pyproj==3.7.2",
+    "numpy==2.5.3",
+    "scipy==1.18.1",
+    "accessibility-db==0.1.0",
+]
 
 [project.optional-dependencies]
 dev = [
+    "httpx==0.28.1",
     "bandit[toml]==1.9.4",
     "deptry==0.25.1",
     "mypy==2.3.0",
@@ -21,6 +38,7 @@ dev = [
     "pytest==9.1.1",
     "pytest-cov==7.1.0",
     "ruff==0.16.2",
+    "types-shapely==2.1.0.20260728",
     "vulture==2.16",
 ]
 
@@ -101,12 +119,23 @@ docstring-code-format = true
 # pydantic.mypy plugin: without it mypy reports missing arguments when creating the settings model, because it does not know that
 # the values come from the environment.
 [tool.mypy]
-files = [".claude/hooks"]
+files = [".claude/hooks", "config", "api", "service", "data", "worker", "common_time.py", "common_sample_data.py", "valhalla/start_routing_service.py"]
+plugins = ["pydantic.mypy"]
 cache_dir = ".cache/mypy"
+
+[[tool.mypy.overrides]]
+module = ["accessibility_db.*"]
+follow_untyped_imports = true
+
+# scipy ships no type information and its stubs are a separate package; the graph of the route uses only a few
+# of its functions, whose results the code checks itself.
+[[tool.mypy.overrides]]
+module = ["scipy.*"]
+ignore_missing_imports = true
 
 [tool.vulture]
 # Tests are scanned too: a use in a test is a use.
-paths = [".claude/hooks", "tests", "db"]
+paths = [".claude/hooks", "config", "api", "service", "data", "worker", "common_time.py", "common_sample_data.py", "valhalla/start_routing_service.py", "tests", "db"]
 # The confidence threshold is raised from the default sixty, because Pydantic model fields and ORM columns are assembled
 # by the library by name, and vulture does not see that and reports them as dead. What the gate stops seeing at this
 # threshold: an unused function, class, method, attribute and variable - vulture assigns them
@@ -119,6 +148,7 @@ min_confidence = 61
 # reports each of them as declared and unused, because it looks for them in the imports - and they will never be there.
 optional_dependencies_dev_groups = ["dev"]
 extend_exclude = ["db"]
+per_rule_ignores = {DEP002 = ["tzdata"]}
 # Bandit has no configuration section here and that is a decision, not an oversight. A suppression is to apply
 # only in the place where its reason stands, and bandit can suppress only globally - one
 # list in this file would also silence code that does not exist yet. The scope therefore stands next to the calls

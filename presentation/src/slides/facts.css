@@ -1,0 +1,110 @@
+/*
+ * Styles of the slide facts: the sheet is the detail of one fact, as the app shows it, on the left, with the
+ * statuses and the rules against abuse on the right of a hairline. The conflict between the report and the map data
+ * stands on the accent color, the one part of the fact the slide asks the room to look at. The English claim takes
+ * two lines and a smaller size to stay clear of the sheet; the Polish one is a single line at the standard size.
+ */
+
+.reveal #facts {
+  --sheet-h: 552px;
+  --sheet-pad: 56px;
+  --claim-size: 92px;
+}
+
+.reveal #facts:lang(pl) {
+  --claim-size: 100px;
+}
+
+.reveal .facts-grid {
+  display: grid;
+  grid-template-columns: 700px 1fr;
+  align-items: start;
+}
+
+.reveal .fact {
+  padding-right: 60px;
+}
+
+.reveal .fact h3 {
+  margin-bottom: 16px;
+  font-size: 50px;
+  color: var(--text);
+}
+
+.reveal .fact dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 30px;
+  align-items: center;
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.2;
+}
+
+.reveal .fact dt {
+  color: var(--text-dim);
+}
+
+.reveal .fact dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.reveal .status-chip {
+  display: inline-block;
+  padding: 2px 16px 4px;
+  border: 3px solid var(--line-strong);
+  border-radius: 999px;
+}
+
+.reveal .fact-conflict {
+  margin-top: 20px;
+  padding: 14px 22px 16px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.reveal .fact-conflict p {
+  margin: 0;
+}
+
+.reveal .fact-conflict .fact-conflict-head {
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+
+.reveal .vote-row {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.reveal .vote-btn {
+  padding: 10px 28px 12px;
+  border: 3px solid var(--primary);
+  border-radius: 8px;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--primary);
+}
+
+.reveal .facts-side {
+  padding-left: 60px;
+  border-left: 2px solid var(--line);
+}
+
+.reveal .facts-side .chip {
+  font-size: 32px;
+}
+
+.reveal .facts-rules {
+  margin-top: 34px;
+}
+
+.reveal .facts-rules li {
+  font-size: 32px;
+}

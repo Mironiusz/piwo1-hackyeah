@@ -1,0 +1,66 @@
+/*
+ * Styles of the slide states: the route across the sheet with the name of a state under each segment, and under
+ * a hairline the same route in grayscale next to the note about the channels of a state.
+ */
+
+.reveal #states {
+  --sheet-h: 500px;
+}
+
+.reveal .states-route {
+  position: absolute;
+  left: var(--sheet-x);
+  top: 0;
+  width: 1600px;
+  height: 230px;
+  overflow: visible;
+}
+
+.reveal .legend {
+  position: absolute;
+  left: calc(var(--sheet-x) + 130px);
+  top: 246px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: 1340px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reveal .legend li {
+  padding: 0 14px;
+  font-size: 33px;
+  font-weight: 600;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.reveal .states-proof {
+  position: absolute;
+  left: calc(var(--sheet-x) + var(--pad-x));
+  top: 338px;
+  display: grid;
+  grid-template-columns: 1fr 640px;
+  gap: 0 60px;
+  align-items: start;
+  box-sizing: border-box;
+  width: 1440px;
+  padding-top: 20px;
+  border-top: 2px solid var(--line);
+}
+
+.reveal .states-route-gray {
+  display: block;
+  width: 680px;
+  height: 100px;
+  overflow: visible;
+  filter: grayscale(1);
+}
+
+.reveal .states-gray-label {
+  margin: 0 0 0 24px;
+  font-size: 27px;
+  line-height: 1;
+  color: var(--text-dim);
+}

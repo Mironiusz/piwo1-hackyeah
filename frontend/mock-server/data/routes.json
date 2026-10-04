@@ -1,0 +1,104 @@
+{
+  "places": {
+    "usual_with_alternative": { "name": "Ogród Doświadczeń", "point": { "lat": 50.064, "lon": 19.9958 } },
+    "no_barrier_free_route": { "name": "Park Lotników", "point": { "lat": 50.0668, "lon": 20.003 } },
+    "routing_unavailable": { "name": "Rondo Mogilskie", "point": { "lat": 50.0657, "lon": 19.9597 } },
+    "too_many_facts": { "name": "Rynek Główny", "point": { "lat": 50.0617, "lon": 19.9373 } }
+  },
+  "place_radius_m": 300,
+  "routes": {
+    "usual": {
+      "bend": 0.12,
+      "stretches": [
+        { "share": 0.04, "state": "no_data", "fact": null },
+        { "share": 0.27, "state": "no_barrier", "fact": null },
+        { "share": 0.031, "state": "no_barrier", "fact": "kerb" },
+        { "share": 0.123, "state": "no_barrier", "fact": null },
+        { "share": 0.161, "state": "partial_data", "fact": null },
+        { "share": 0.22, "state": "no_data", "fact": null },
+        { "share": 0.031, "state": "no_barrier", "fact": "stairs" },
+        { "share": 0.084, "state": "no_barrier", "fact": null },
+        { "share": 0.04, "state": "no_data", "fact": null }
+      ],
+      "others": [
+        { "at": 0.15, "fact": "lowered_kerb" },
+        { "at": 0.4, "fact": "incline" },
+        { "at": 0.95, "fact": "ramp" }
+      ],
+      "wheelchair_no_stretch": 4
+    },
+    "alternative": {
+      "bend": -0.22,
+      "stretches": [
+        { "share": 0.04, "state": "no_data", "fact": null },
+        { "share": 0.3, "state": "no_barrier", "fact": null },
+        { "share": 0.03, "state": "no_barrier", "fact": "kerb" },
+        { "share": 0.33, "state": "no_barrier", "fact": null },
+        { "share": 0.26, "state": "partial_data", "fact": null },
+        { "share": 0.04, "state": "no_data", "fact": null }
+      ],
+      "others": [
+        { "at": 0.2, "fact": "lowered_kerb" },
+        { "at": 0.9, "fact": "ramp" }
+      ],
+      "wheelchair_no_stretch": null
+    },
+    "fewest_barriers": {
+      "bend": 0.1,
+      "stretches": [
+        { "share": 0.04, "state": "no_data", "fact": null },
+        { "share": 0.4, "state": "no_barrier", "fact": null },
+        { "share": 0.04, "state": "no_barrier", "fact": "blocking_stairs" },
+        { "share": 0.3, "state": "partial_data", "fact": null },
+        { "share": 0.18, "state": "no_barrier", "fact": null },
+        { "share": 0.04, "state": "no_data", "fact": null }
+      ],
+      "others": [{ "at": 0.6, "fact": "ramp" }],
+      "wheelchair_no_stretch": null
+    }
+  },
+  "route_facts": {
+    "kerb": {
+      "id": 9001,
+      "type": "high_kerb",
+      "step_count": null,
+      "source": "user_report",
+      "status": "confirmed",
+      "osm_edited_on": null,
+      "last_confirmed_on": "2026-10-03",
+      "is_overruled_by_osm": false
+    },
+    "stairs": { "id": 9002, "type": "stairs", "step_count": 4, "source": "user_report", "status": "unverified", "osm_edited_on": null, "last_confirmed_on": "2026-10-02", "is_overruled_by_osm": true },
+    "incline": {
+      "id": 9003,
+      "type": "steep_incline",
+      "step_count": null,
+      "source": "openstreetmap",
+      "status": "unverified",
+      "osm_edited_on": "2025-06-14",
+      "last_confirmed_on": null,
+      "is_overruled_by_osm": false
+    },
+    "lowered_kerb": {
+      "id": 9004,
+      "type": "lowered_kerb",
+      "step_count": null,
+      "source": "openstreetmap",
+      "status": "unverified",
+      "osm_edited_on": "2025-05-12",
+      "last_confirmed_on": null,
+      "is_overruled_by_osm": false
+    },
+    "ramp": { "id": 9005, "type": "ramp", "step_count": null, "source": "user_report", "status": "confirmed", "osm_edited_on": null, "last_confirmed_on": "2026-10-01", "is_overruled_by_osm": false },
+    "blocking_stairs": {
+      "id": 9006,
+      "type": "stairs",
+      "step_count": 9,
+      "source": "openstreetmap",
+      "status": "confirmed",
+      "osm_edited_on": "2025-02-08",
+      "last_confirmed_on": "2026-09-29",
+      "is_overruled_by_osm": false
+    }
+  }
+}

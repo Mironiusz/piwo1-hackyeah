@@ -1,0 +1,34 @@
+/* Styles of the slide business: three columns on the sheet, free, paying and running, parted by hairlines. */
+
+.reveal #business {
+  --sheet-h: 560px;
+  --sheet-pad: 96px;
+}
+
+.reveal .biz-row {
+  display: grid;
+  grid-template-columns: 0.8fr 1.3fr 1.1fr;
+  align-items: stretch;
+}
+
+.reveal .biz-col {
+  padding: 0 40px;
+  border-left: 2px solid var(--line);
+}
+
+.reveal .biz-col.is-free {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.reveal .biz-col.is-run {
+  padding-right: 0;
+}
+
+.reveal .biz-col h3 {
+  margin-bottom: 18px;
+}
+
+.reveal .biz-col li {
+  font-size: 32px;
+}

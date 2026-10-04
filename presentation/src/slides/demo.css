@@ -1,0 +1,39 @@
+/*
+ * Styles of the slide demo: the four scenes of the live demo in a two by two grid, over the note about the sample
+ * data. The claim is one short word in both languages, so it is set larger than the claims of the other slides.
+ */
+
+.reveal #demo {
+  --sheet-h: 590px;
+  --claim-size: 144px;
+}
+
+.reveal .demo-steps {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 44px 60px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reveal .demo-steps li {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.reveal .demo-steps h3 {
+  margin: 4px 0 6px;
+  font-size: 44px;
+}
+
+.reveal .demo-steps p {
+  margin: 0;
+  font-size: 40px;
+  line-height: 1.15;
+}
+
+.reveal .demo-note {
+  margin-top: 48px;
+}

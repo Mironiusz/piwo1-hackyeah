@@ -1,0 +1,390 @@
+/*
+ * Elements shared by many slides and the styles of the components in src/components.
+ * Styles used by one slide only live next to that slide, as src/slides/<id>.css.
+ *
+ * A slide has four parts: the claim on the shell (.slide-title), the evidence on the sheet (.sheet),
+ * the rule on a plate on the seam between the two (.plate), and a caveat as a dashed note on the sheet (.note).
+ */
+
+/* The name of the product in the top left corner of every slide but the title. */
+
+.reveal .brand {
+  position: absolute;
+  left: var(--pad-x);
+  top: 74px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--on-shell);
+}
+
+.reveal .brand::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background: var(--accent);
+}
+
+/* The claim: the heading of the slide, on the shell. */
+
+.reveal .slide-title {
+  position: absolute;
+  left: var(--pad-x);
+  top: 128px;
+  width: 1180px;
+  margin: 0;
+  font-family: var(--font-title);
+  font-size: var(--claim-size);
+  font-weight: 700;
+  line-height: 0.98;
+  color: var(--on-shell);
+  text-wrap: balance;
+}
+
+/*
+ * The sheet: the bottom sheet of the app, as tall as --sheet-h of the slide. It runs past the frame on three sides,
+ * so it reaches the edges of the screen through the margin reveal.js keeps around a slide. --sheet-x is how far the
+ * left edge of the sheet lies outside the frame, for the parts of a slide placed by frame coordinates.
+ * The content is centered in the visible part.
+ *
+ * In the print view the sheet runs past the bottom of the frame only as far as the margin of the page: reveal.js
+ * measures the height of a slide there, and a slide taller than the page would take two pages of the PDF.
+ */
+
+.reveal .sheet {
+  --sheet-x: var(--bleed);
+  position: absolute;
+  left: calc(-1 * var(--sheet-x));
+  right: calc(-1 * var(--sheet-x));
+  bottom: -400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  height: calc(var(--sheet-h) + 400px);
+  padding: var(--sheet-pad) calc(var(--pad-x) + var(--sheet-x)) 436px;
+  border-radius: 48px 48px 0 0;
+  background: var(--surface);
+  box-shadow: 0 -14px 40px var(--shadow);
+  color: var(--text);
+}
+
+html.reveal-print .reveal .sheet {
+  bottom: calc(-1 * var(--bleed));
+  height: calc(var(--sheet-h) + var(--bleed));
+  padding-bottom: calc(36px + var(--bleed));
+}
+
+.reveal .sheet::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 16px;
+  width: 84px;
+  height: 8px;
+  margin-left: -42px;
+  border-radius: 4px;
+  background: var(--line);
+}
+
+/* The plate: the rule of the slide, on the seam between the shell and the sheet. */
+
+.reveal .plate {
+  position: absolute;
+  left: var(--pad-x);
+  bottom: calc(var(--sheet-h) - 44px);
+  box-sizing: border-box;
+  max-width: 1440px;
+  margin: 0;
+  padding: 21px 30px 23px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: 0 16px 34px var(--shadow);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+/* The note: a caveat, in the dashed frame the app gives a note about missing data. */
+
+.reveal .note {
+  margin: 0;
+  padding: 20px 26px;
+  border: 3px dashed var(--line-strong);
+  border-radius: 12px;
+  font-size: 29px;
+  line-height: 1.22;
+  color: var(--text);
+}
+
+/* SVG text */
+
+.reveal svg text {
+  fill: var(--text);
+  font-family: var(--font-sans);
+}
+
+/* Icons in place of glyphs missing from the fonts (src/components/icons.js). They take the color of the text. */
+
+.reveal .icon {
+  display: inline-block;
+  vertical-align: -0.12em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Page with notes in the PDF (npm run pdf): readable from paper, so it is dark text on a white page. */
+
+html.reveal-print .reveal .speaker-notes-pdf[data-layout='separate-page'] {
+  box-sizing: border-box;
+  height: 100%;
+  padding: var(--pad-top) var(--pad-x);
+  background: var(--surface);
+  font-family: var(--font-sans);
+  font-size: 26px;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+html.reveal-print .reveal .speaker-notes-pdf[data-layout='separate-page']::before {
+  color: var(--text-dim);
+  opacity: 1;
+  margin-bottom: 16px;
+}
+
+html.reveal-print .reveal .speaker-notes-pdf p {
+  margin: 0 0 14px;
+}
+
+html.reveal-print .reveal .speaker-notes-pdf small {
+  font-size: 22px;
+  color: var(--primary);
+}
+
+html.reveal-print .reveal .speaker-notes-pdf strong {
+  padding: 0 0.15em;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+
+html.reveal-print .reveal .speaker-notes-pdf[data-layout='separate-page']:last-child {
+  page-break-after: auto;
+}
+
+/* Text blocks shared by the slides: a lead line, a plain list, a heading on the sheet, chips and the number of a step. */
+
+.reveal .lead {
+  margin: 0;
+  font-size: 44px;
+  line-height: 1.15;
+  color: var(--text-dim);
+}
+
+.reveal .plain-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reveal .plain-list li {
+  position: relative;
+  margin: 0 0 10px;
+  padding-left: 32px;
+  font-size: 30px;
+  line-height: 1.24;
+}
+
+.reveal .plain-list li:last-child {
+  margin-bottom: 0;
+}
+
+.reveal .plain-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.42em;
+  box-sizing: border-box;
+  width: 14px;
+  height: 14px;
+  border: 3px solid var(--primary);
+  border-radius: 50%;
+  background: var(--primary);
+}
+
+/* A list of what is not there yet: the same mark, hollow. */
+
+.reveal .plain-list.is-open li::before {
+  background: var(--surface);
+}
+
+.reveal h3 {
+  margin: 0 0 14px;
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--primary);
+}
+
+.reveal .chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reveal .chip {
+  padding: 9px 24px 11px;
+  border: 3px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.reveal .card-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  flex: none;
+}
+
+/*
+ * Route with the four segment states (src/components/route-states.js), in the line patterns of the app: red with
+ * white stripes, solid green, amber with dark dashes, grey dots. Each state keeps its color, its icon and its pattern.
+ */
+
+.reveal .rs-seg.is-barrier {
+  --rs: var(--state-barrier);
+}
+
+.reveal .rs-seg.is-clear {
+  --rs: var(--state-clear);
+}
+
+.reveal .rs-seg.is-partial {
+  --rs: var(--state-partial);
+}
+
+.reveal .rs-seg.is-nodata {
+  --rs: var(--state-nodata);
+}
+
+.reveal .rs-line {
+  fill: none;
+  stroke: var(--rs);
+  stroke-width: 22;
+  stroke-linecap: round;
+}
+
+.reveal .rs-over {
+  fill: none;
+}
+
+.reveal .rs-seg.is-barrier .rs-over {
+  stroke: var(--surface);
+  stroke-width: 13;
+  stroke-dasharray: 8 8;
+  stroke-dashoffset: -11;
+}
+
+.reveal .rs-seg.is-partial .rs-over {
+  stroke: var(--text);
+  stroke-width: 22;
+  stroke-dasharray: 9 24;
+  stroke-dashoffset: -18;
+}
+
+.reveal .rs-seg.is-nodata .rs-line {
+  stroke-width: 14;
+  stroke-dasharray: 0.1 30;
+}
+
+.reveal .rs-badge {
+  fill: var(--surface);
+  stroke: var(--rs);
+  stroke-width: 5;
+}
+
+.reveal .rs-icon {
+  fill: none;
+  stroke: var(--rs);
+  stroke-width: 5.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.reveal .rs-icon-fill {
+  fill: var(--rs);
+}
+
+.reveal .rs-icon-text {
+  fill: var(--rs);
+  font-size: 40px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.reveal .rs-end {
+  fill: var(--surface);
+  stroke: var(--text);
+  stroke-width: 5;
+}
+
+.reveal .rs-end-text {
+  fill: var(--text);
+  font-size: 30px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+/* The small route, without badges. */
+
+.reveal .route-states.is-small .rs-line {
+  stroke-width: 14;
+}
+
+.reveal .route-states.is-small .rs-seg.is-barrier .rs-over {
+  stroke-width: 8;
+  stroke-dasharray: 5 5;
+  stroke-dashoffset: -7;
+}
+
+.reveal .route-states.is-small .rs-seg.is-partial .rs-over {
+  stroke-width: 14;
+  stroke-dasharray: 6 15;
+  stroke-dashoffset: -11;
+}
+
+.reveal .route-states.is-small .rs-seg.is-nodata .rs-line {
+  stroke-width: 9;
+  stroke-dasharray: 0.1 19;
+}
+
+.reveal .route-states.is-small .rs-end {
+  stroke-width: 4;
+}
+
+.reveal .route-states.is-small .rs-end-text {
+  font-size: 21px;
+}

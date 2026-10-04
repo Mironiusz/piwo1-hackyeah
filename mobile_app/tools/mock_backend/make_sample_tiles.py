@@ -20,10 +20,23 @@ OUT = os.path.join(ROOT, "tiles/sample.pmtiles")
 MIN_Z, MAX_Z = 12, 15
 EXTENT = 4096
 
-ROAD_KIND = {"motorway": "highway", "trunk": "highway", "primary": "major_road", "secondary": "major_road",
-             "tertiary": "major_road", "residential": "minor_road", "living_street": "minor_road",
-             "unclassified": "minor_road", "service": "minor_road", "pedestrian": "path", "footway": "path",
-             "path": "path", "steps": "path", "cycleway": "path", "track": "path"}
+ROAD_KIND = {
+    "motorway": "highway",
+    "trunk": "highway",
+    "primary": "major_road",
+    "secondary": "major_road",
+    "tertiary": "major_road",
+    "residential": "minor_road",
+    "living_street": "minor_road",
+    "unclassified": "minor_road",
+    "service": "minor_road",
+    "pedestrian": "path",
+    "footway": "path",
+    "path": "path",
+    "steps": "path",
+    "cycleway": "path",
+    "track": "path",
+}
 
 
 def load():
@@ -61,21 +74,17 @@ def main():
         x1, y0 = lonlat_to_tile(z, bounds[2], bounds[3])
         for x in range(x0, x1 + 1):
             for y in range(y0, y1 + 1):
-                layers = {"earth": [{"type": 3, "props": {"kind": "earth"},
-                                     "parts": [[(0, 0), (EXTENT, 0), (EXTENT, EXTENT), (0, EXTENT), (0, 0)]]}]}
+                layers = {"earth": [{"type": 3, "props": {"kind": "earth"}, "parts": [[(0, 0), (EXTENT, 0), (EXTENT, EXTENT), (0, EXTENT), (0, 0)]]}]}
                 for layer, gtype, props, pts in feats:
                     px = [lonlat_to_tile_px(z, x, y, lon, lat, EXTENT) for lon, lat in pts]
-                    if max(p[0] for p in px) < -64 or min(p[0] for p in px) > EXTENT + 64 or \
-                            max(p[1] for p in px) < -64 or min(p[1] for p in px) > EXTENT + 64:
+                    if max(p[0] for p in px) < -64 or min(p[0] for p in px) > EXTENT + 64 or max(p[1] for p in px) < -64 or min(p[1] for p in px) > EXTENT + 64:
                         continue
                     clean = {k: v for k, v in props.items() if v != ""}
                     layers.setdefault(layer, []).append({"type": gtype, "props": clean, "parts": [px]})
                 tiles[(z, x, y)] = encode_mvt(layers, EXTENT)
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     center = ((bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2, 15)
-    write_pmtiles(OUT, tiles, MIN_Z, MAX_Z, bounds, center,
-                  {"attribution": "Schematyczna próbka AccessWay, nie są to dane OpenStreetMap",
-                   "accessway_build": "sample"})
+    write_pmtiles(OUT, tiles, MIN_Z, MAX_Z, bounds, center, {"attribution": "Schematyczna próbka EnableMe, nie są to dane OpenStreetMap", "accessway_build": "sample"})
     print("%s: %d tiles, %d bytes" % (OUT, len(tiles), os.path.getsize(OUT)))
 
 

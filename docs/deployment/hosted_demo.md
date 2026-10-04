@@ -32,9 +32,13 @@ The schema revisions are applied by hand, as a step of their own, with the conse
 
 ## Loading the data
 
-The separate loading program loads three things: the OpenStreetMap copy together with the routing data built from it, the map tile archive and the sample reports. Run it by hand after the schema revisions. The start command never runs it. The step has finished when the program ends without an error and the map of Kraków shows at the public link.
+The separate loading program loads four things: the OpenStreetMap copy together with the routing data built from it, the copy of the GTFS of ZTP Kraków together with the routing data with public transport built from it and from the same OpenStreetMap copy, the map tile archive and the sample reports. Run it by hand after the schema revisions. The start command never runs it. The step has finished when the program ends without an error and the map of Kraków shows at the public link.
 
-After the program ends, restart the routing service on the routing data it built. Until then every route ends with the message that a route cannot be planned right now (`plans_finished/valhalla_routing/VALHALLA_ROUTING_PLAN.md` D-3).
+The copy of the GTFS is loaded by `python -m worker.gtfs_import`, run after `python -m worker.osm_import` in the same one-off container (`plans/public_transport_routing/PUBLIC_TRANSPORT_ROUTING_PLAN.md` D-10). It needs access to the feeds of ZTP Kraków and to the timezone boundaries the routing tools download, keeps the last complete copy of the GTFS when a fresh fetch fails, and ends with an error when no routing data with public transport of the OpenStreetMap copy in use exists after it.
+
+After the program ends, restart the routing service on the routing data it built. Until then every route ends with the message that a route cannot be planned right now (`plans_finished/valhalla_routing/VALHALLA_ROUTING_PLAN.md` D-3). The routing service serves the routing data with public transport when it was built from the OpenStreetMap copy in use, and the walking routing data of that copy otherwise, so a walking route always has data of the copy in use (`plans/public_transport_routing/PUBLIC_TRANSPORT_ROUTING_PLAN.md` D-9).
+
+`PUBLIC_TRANSPORT_ENABLED` stays `false` on the hosted demo until a route with a tram in Kraków works there (AC-1 of `plans/public_transport_routing/PUBLIC_TRANSPORT_ROUTING_PRD.md`); only then is it set to `true`, and it goes back to `false` when the time box of O9 ends without such a route.
 
 The step is not repeated after a restart of the demo. Completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`: the command of the program and the command that restarts the routing service.
 

@@ -1,0 +1,36 @@
+/* Styles of the slide solution: three numbered rows across the sheet, needs, route and facts, parted by hairlines. */
+
+.reveal #solution {
+  --sheet-h: 566px;
+  --sheet-pad: 96px;
+}
+
+.reveal .step-rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reveal .step-row {
+  display: grid;
+  grid-template-columns: 60px 270px 1fr;
+  gap: 0 32px;
+  align-items: center;
+  padding: 28px 0;
+  border-top: 2px solid var(--line);
+}
+
+.reveal .step-row:first-child {
+  border-top: 0;
+}
+
+.reveal .step-row h3 {
+  margin: 0;
+  font-size: 50px;
+}
+
+.reveal .step-row p {
+  margin: 0;
+  font-size: 38px;
+  line-height: 1.18;
+}

@@ -1,0 +1,173 @@
+{
+  "osm_copy_date": "2026-10-02",
+  "facts": [
+    {
+      "id": 1,
+      "type": "high_kerb",
+      "point": { "lat": 50.0669, "lon": 19.9895 },
+      "geozone_radius_m": null,
+      "description": null,
+      "step_count": null,
+      "source": "user_report",
+      "status": "confirmed",
+      "osm_edited_on": null,
+      "last_confirmed_on": "2026-10-03"
+    },
+    {
+      "id": 2,
+      "type": "stairs",
+      "point": { "lat": 50.066, "lon": 19.994 },
+      "geozone_radius_m": null,
+      "description": "Schody przy bocznym wejściu, bez pochylni.",
+      "step_count": 4,
+      "source": "user_report",
+      "status": "unverified",
+      "osm_edited_on": null,
+      "last_confirmed_on": "2026-10-02"
+    },
+    {
+      "id": 3,
+      "type": "poor_surface",
+      "point": { "lat": 50.0652, "lon": 19.9962 },
+      "geozone_radius_m": 25,
+      "description": "Remont chodnika, rozkopana nawierzchnia.",
+      "step_count": null,
+      "source": "user_report",
+      "status": "disputed",
+      "osm_edited_on": null,
+      "last_confirmed_on": "2026-10-01"
+    },
+    {
+      "id": 4,
+      "type": "lowered_kerb",
+      "point": { "lat": 50.0672, "lon": 19.9903 },
+      "geozone_radius_m": null,
+      "description": null,
+      "step_count": null,
+      "source": "openstreetmap",
+      "status": "unverified",
+      "osm_edited_on": "2025-05-12",
+      "last_confirmed_on": null
+    },
+    {
+      "id": 5,
+      "type": "ramp",
+      "point": { "lat": 50.0648, "lon": 19.9951 },
+      "geozone_radius_m": null,
+      "description": null,
+      "step_count": null,
+      "source": "user_report",
+      "status": "confirmed",
+      "osm_edited_on": null,
+      "last_confirmed_on": "2026-10-01"
+    },
+    {
+      "id": 6,
+      "type": "steep_incline",
+      "point": { "lat": 50.0663, "lon": 19.9925 },
+      "geozone_radius_m": null,
+      "description": null,
+      "step_count": null,
+      "source": "openstreetmap",
+      "status": "unverified",
+      "osm_edited_on": "2025-06-14",
+      "last_confirmed_on": null
+    },
+    {
+      "id": 7,
+      "type": "elevator",
+      "point": { "lat": 50.0681, "lon": 19.9921 },
+      "geozone_radius_m": null,
+      "description": null,
+      "step_count": null,
+      "source": "openstreetmap",
+      "status": "confirmed",
+      "osm_edited_on": "2025-03-02",
+      "last_confirmed_on": "2026-09-30"
+    },
+    {
+      "id": 8,
+      "type": "narrow_passage",
+      "point": { "lat": 50.069, "lon": 19.99 },
+      "geozone_radius_m": null,
+      "description": "Słupki zwężają przejście przy przystanku.",
+      "step_count": null,
+      "source": "user_report",
+      "status": "outdated",
+      "osm_edited_on": null,
+      "last_confirmed_on": "2026-09-28"
+    },
+    {
+      "id": 9,
+      "type": "accessible_toilet",
+      "point": { "lat": 50.0676, "lon": 19.9918 },
+      "geozone_radius_m": null,
+      "description": null,
+      "step_count": null,
+      "source": "user_report",
+      "status": "confirmed",
+      "osm_edited_on": null,
+      "last_confirmed_on": "2026-10-02"
+    },
+    {
+      "id": 10,
+      "type": "rest_place",
+      "point": { "lat": 50.0658, "lon": 19.9978 },
+      "geozone_radius_m": null,
+      "description": null,
+      "step_count": null,
+      "source": "openstreetmap",
+      "status": "unverified",
+      "osm_edited_on": "2024-08-19",
+      "last_confirmed_on": null
+    },
+    {
+      "id": 11,
+      "type": "handrail_at_stairs",
+      "point": { "lat": 50.0661, "lon": 19.9942 },
+      "geozone_radius_m": null,
+      "description": null,
+      "step_count": null,
+      "source": "user_report",
+      "status": "unverified",
+      "osm_edited_on": null,
+      "last_confirmed_on": "2026-10-02"
+    },
+    {
+      "id": 12,
+      "type": "poor_surface",
+      "point": { "lat": 50.0645, "lon": 19.993 },
+      "geozone_radius_m": null,
+      "description": "Płyty chodnika są nierówne przez około 20 metrów.",
+      "step_count": null,
+      "source": "user_report",
+      "status": "unverified",
+      "osm_edited_on": null,
+      "last_confirmed_on": "2026-10-03"
+    },
+    {
+      "id": 13,
+      "type": "stairs",
+      "point": { "lat": 50.07, "lon": 19.993 },
+      "geozone_radius_m": null,
+      "description": null,
+      "step_count": 12,
+      "source": "openstreetmap",
+      "status": "confirmed",
+      "osm_edited_on": "2024-11-20",
+      "last_confirmed_on": "2026-09-27"
+    },
+    {
+      "id": 14,
+      "type": "high_kerb",
+      "point": { "lat": 50.063, "lon": 19.99 },
+      "geozone_radius_m": 50,
+      "description": "Przebudowa skrzyżowania, krawężniki bez obniżeń.",
+      "step_count": null,
+      "source": "user_report",
+      "status": "confirmed",
+      "osm_edited_on": null,
+      "last_confirmed_on": "2026-10-03"
+    }
+  ]
+}

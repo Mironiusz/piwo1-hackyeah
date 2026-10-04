@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>EnableMe deck - direction mock</title>
+    <link rel="stylesheet" href="../../../presentation/node_modules/@fontsource/barlow-condensed/700.css" />
+    <link rel="stylesheet" href="../../../presentation/node_modules/@fontsource/barlow-semi-condensed/400.css" />
+    <link rel="stylesheet" href="../../../presentation/node_modules/@fontsource/barlow-semi-condensed/500.css" />
+    <link rel="stylesheet" href="../../../presentation/node_modules/@fontsource/barlow-semi-condensed/600.css" />
+    <link rel="stylesheet" href="../../../presentation/node_modules/@fontsource/barlow-semi-condensed/700.css" />
+    <style>
+      :root {
+        --shell: #12306b;
+        --shell-deep: #0b2150;
+        --accent: #ffd400;
+        --surface: #ffffff;
+        --ink: #111418;
+        --dim: #4b5058;
+        --line: #d5d8dc;
+        --soft: #dfe6f5;
+        --barrier: #c8321e;
+        --clear: #1e7a46;
+        --partial: #e0a100;
+        --nodata: #6f7480;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        width: 1600px;
+        height: 900px;
+        overflow: hidden;
+        background: var(--shell);
+      }
+
+      .slide {
+        position: relative;
+        width: 1600px;
+        height: 900px;
+        overflow: hidden;
+        background: radial-gradient(ellipse 70% 80% at 82% 18%, #1c4390 0%, var(--shell) 55%, var(--shell-deep) 100%);
+        color: #ffffff;
+        font-family: "Barlow Semi Condensed", sans-serif;
+      }
+
+      .progress {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 40px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .progress i {
+        flex: 1;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.24);
+      }
+
+      .progress i.is-done {
+        background: var(--accent);
+      }
+
+      .bug {
+        position: absolute;
+        left: 80px;
+        top: 74px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-weight: 700;
+        font-size: 30px;
+        line-height: 1;
+      }
+
+      .bug i {
+        width: 16px;
+        height: 16px;
+        background: var(--accent);
+      }
+
+      .count {
+        position: absolute;
+        right: 80px;
+        top: 70px;
+        font-family: "Barlow Condensed", sans-serif;
+        font-weight: 700;
+        font-size: 36px;
+        line-height: 1;
+        letter-spacing: 0.02em;
+      }
+
+      .count span {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .claim {
+        position: absolute;
+        left: 80px;
+        font-family: "Barlow Condensed", sans-serif;
+        font-weight: 700;
+        line-height: 0.98;
+        text-wrap: balance;
+      }
+
+      .plate {
+        position: absolute;
+        background: var(--accent);
+        color: var(--ink);
+        border-radius: 10px;
+        box-shadow: 0 16px 34px rgba(4, 12, 32, 0.38);
+        font-weight: 700;
+      }
+
+      .sheet {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--surface);
+        color: var(--ink);
+        border-radius: 48px 48px 0 0;
+        box-shadow: 0 -14px 40px rgba(4, 12, 32, 0.36);
+      }
+
+      .sheet::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 16px;
+        width: 84px;
+        height: 8px;
+        margin-left: -42px;
+        border-radius: 4px;
+        background: var(--line);
+      }
+
+      svg {
+        display: block;
+        overflow: visible;
+      }
+
+      .end {
+        fill: #ffffff;
+        stroke: var(--ink);
+        stroke-width: 5;
+      }
+
+      .end-text {
+        font-family: "Barlow Semi Condensed", sans-serif;
+        font-weight: 700;
+        font-size: 30px;
+        fill: var(--ink);
+        text-anchor: middle;
+      }
+
+      .badge {
+        fill: #ffffff;
+        stroke-width: 5;
+      }
+
+      .icon {
+        fill: none;
+        stroke-width: 5.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .icon-text {
+        font-family: "Barlow Semi Condensed", sans-serif;
+        font-weight: 700;
+        font-size: 40px;
+        text-anchor: middle;
+      }
+
+      .is-gray {
+        filter: grayscale(1);
+      }
+
+      /* Title slide. */
+      .title .kicker {
+        left: 80px;
+        top: 168px;
+        padding: 12px 22px;
+        font-size: 28px;
+        line-height: 1;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        box-shadow: none;
+        border-radius: 6px;
+      }
+
+      .title .name {
+        position: absolute;
+        left: 72px;
+        top: 222px;
+        font-weight: 700;
+        font-size: 310px;
+        line-height: 0.92;
+        letter-spacing: -0.012em;
+      }
+
+      .title .promise {
+        position: absolute;
+        left: 82px;
+        top: 520px;
+        font-weight: 500;
+        font-size: 62px;
+        line-height: 1.05;
+        color: var(--soft);
+      }
+
+      .title .sheet {
+        height: 268px;
+      }
+
+      .title .route {
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+
+      /* States slide. */
+      .states .claim {
+        top: 128px;
+        width: 1180px;
+        font-size: 100px;
+      }
+
+      .states .rule {
+        left: 80px;
+        top: 356px;
+        z-index: 2;
+        padding: 21px 30px 23px;
+        font-size: 40px;
+        line-height: 1.1;
+        white-space: nowrap;
+      }
+
+      .states .sheet {
+        height: 500px;
+      }
+
+      .states .route {
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+
+      .legend {
+        position: absolute;
+        left: 130px;
+        top: 246px;
+        width: 1340px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .legend span {
+        padding: 0 14px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 33px;
+        line-height: 1.1;
+      }
+
+      .divider {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 338px;
+        height: 2px;
+        background: var(--line);
+      }
+
+      .gray-label {
+        position: absolute;
+        left: 104px;
+        top: 444px;
+        font-weight: 500;
+        font-size: 27px;
+        line-height: 1;
+        color: var(--dim);
+      }
+
+      .note {
+        position: absolute;
+        right: 80px;
+        top: 358px;
+        width: 640px;
+        padding: 22px 28px;
+        border: 2.5px dashed var(--dim);
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 29px;
+        line-height: 1.22;
+        color: var(--ink);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stage"></div>
+    <script>
+      const TEXT = {
+        pl: {
+          kicker: "HackYeah 2026 - Kraków bez barier",
+          name: "EnableMe",
+          promise: "Sprawdź trasę, zanim wyjdziesz z domu",
+          heading: "Każdy odcinek mówi, co o nim wiemy",
+          legend: ["bariera z Twoich potrzeb", "bez barier, dane pełne", "dane niepełne", "brak danych"],
+          grayscale: "ta sama trasa w skali szarości",
+          rule: "Brak informacji nigdy nie jest pokazywany jako dostępność.",
+          channels: "Stan niesie kolor, ikona i wzór linii. Pod mapą ta sama trasa jest listą tekstową.",
+        },
+        en: {
+          kicker: "HackYeah 2026 - Imagine What's Next",
+          name: "EnableMe",
+          promise: "Check the route before you leave home",
+          heading: "Every segment tells what we know about it",
+          legend: ["a barrier from your needs", "no barriers, full data", "partial data", "no data"],
+          grayscale: "the same route in grayscale",
+          rule: "Missing information is never shown as accessible.",
+          channels: "A state is carried by color, icon and line pattern. Under the map the same route is a text list.",
+        },
+      };
+
+      const STATES = ["barrier", "clear", "partial", "nodata"];
+      const COLORS = { barrier: "#c8321e", clear: "#1e7a46", partial: "#e0a100", nodata: "#6f7480" };
+
+      /* Draws one segment of the route in the line pattern of its state, the patterns the app uses. */
+      function drawLine(state, a, b, weight) {
+        const d = `M${a.x} ${a.y} L${b.x} ${b.y}`;
+        const color = COLORS[state];
+        if (state === "clear") {
+          return `<path d="${d}" stroke="${color}" stroke-width="${weight}" stroke-linecap="round" fill="none" />`;
+        }
+        if (state === "barrier") {
+          return (
+            `<path d="${d}" stroke="${color}" stroke-width="${weight}" stroke-linecap="round" fill="none" />` +
+            `<path d="${d}" stroke="#ffffff" stroke-width="${weight - 9}" stroke-dasharray="${weight * 0.36} ${weight * 0.36}" stroke-dashoffset="${-weight * 0.5}" fill="none" />`
+          );
+        }
+        if (state === "partial") {
+          return (
+            `<path d="${d}" stroke="${color}" stroke-width="${weight}" stroke-linecap="round" fill="none" />` +
+            `<path d="${d}" stroke="#111418" stroke-width="${weight}" stroke-dasharray="${weight * 0.42} ${weight * 1.1}" stroke-dashoffset="${-weight * 0.8}" fill="none" />`
+          );
+        }
+        return `<path d="${d}" stroke="${color}" stroke-width="${weight * 0.62}" stroke-dasharray="0.1 ${weight * 1.35}" stroke-linecap="round" fill="none" />`;
+      }
+
+      /* Draws the icon of a state inside its badge. */
+      function drawIcon(state, x, y, size) {
+        const color = COLORS[state];
+        const s = size;
+        if (state === "barrier") {
+          return `<path class="icon" stroke="${color}" d="M${x - s} ${y - s} l${2 * s} ${2 * s} M${x + s} ${y - s} l${-2 * s} ${2 * s}" />`;
+        }
+        if (state === "clear") {
+          return `<path class="icon" stroke="${color}" d="M${x - s * 1.2} ${y + s * 0.1} l${s * 0.8} ${s * 0.9} l${s * 1.6} ${-s * 1.9}" />`;
+        }
+        if (state === "partial") {
+          return `<path fill="${color}" d="M${x} ${y - s * 1.25} a${s * 1.25} ${s * 1.25} 0 0 1 0 ${s * 2.5} z" /><circle class="icon" stroke="${color}" cx="${x}" cy="${y}" r="${s * 1.25}" />`;
+        }
+        return `<text class="icon-text" fill="${color}" x="${x}" y="${y + s * 1.25}" style="font-size:${s * 3.4}px">?</text>`;
+      }
+
+      /* Draws the route of four segments from A to B, one segment per state, with a badge over each. */
+      function drawRoute({ x, y, width, bend, weight, badge, lift, endFont = 30, className = "" }) {
+        const step = width / 4;
+        const shape = [0, -1, 0.6, -0.65, 0.3];
+        const points = shape.map((factor, index) => ({ x: x + index * step, y: y + factor * bend }));
+        let lines = "";
+        let badges = "";
+        STATES.forEach((state, index) => {
+          const a = points[index];
+          const b = points[index + 1];
+          lines += drawLine(state, a, b, weight);
+          const mx = (a.x + b.x) / 2;
+          const my = (a.y + b.y) / 2 - lift;
+          badges += `<circle class="badge" stroke="${COLORS[state]}" cx="${mx}" cy="${my}" r="${badge}" />` + drawIcon(state, mx, my, badge * 0.36);
+        });
+        const first = points[0];
+        const last = points[4];
+        const ends =
+          `<circle class="end" cx="${first.x}" cy="${first.y}" r="${weight * 1.25}" /><text class="end-text" style="font-size:${endFont}px" x="${first.x}" y="${first.y + endFont * 0.34}">A</text>` +
+          `<circle class="end" cx="${last.x}" cy="${last.y}" r="${weight * 1.25}" /><text class="end-text" style="font-size:${endFont}px" x="${last.x}" y="${last.y + endFont * 0.34}">B</text>`;
+        return `<g class="${className}">${lines}${badges}${ends}</g>`;
+      }
+
+      function frame(index) {
+        const blocks = Array.from({ length: 10 }, (_, i) => `<i class="${i < index ? "is-done" : ""}"></i>`).join("");
+        const number = String(index).padStart(2, "0");
+        return `<div class="progress">${blocks}</div><div class="count">${number} <span>/ 10</span></div>`;
+      }
+
+      function titleSlide(t) {
+        return `<div class="slide title">
+          ${frame(1)}
+          <div class="plate kicker">${t.kicker}</div>
+          <div class="name">${t.name}</div>
+          <div class="promise">${t.promise}</div>
+          <div class="sheet">
+            <svg class="route" width="1600" height="268" viewBox="0 0 1600 268">${drawRoute({ x: 150, y: 176, width: 1300, bend: 40, weight: 22, badge: 32, lift: 72 })}</svg>
+          </div>
+        </div>`;
+      }
+
+      function statesSlide(t) {
+        return `<div class="slide states">
+          ${frame(4)}
+          <div class="bug"><i></i><span>EnableMe</span></div>
+          <div class="claim">${t.heading}</div>
+          <div class="plate rule">${t.rule}</div>
+          <div class="sheet">
+            <svg class="route" width="1600" height="230" viewBox="0 0 1600 230">${drawRoute({ x: 130, y: 184, width: 1340, bend: 32, weight: 22, badge: 32, lift: 72 })}</svg>
+            <div class="legend">${t.legend.map((label) => `<span>${label}</span>`).join("")}</div>
+            <div class="divider"></div>
+            <svg class="route" style="top:350px" width="800" height="100" viewBox="0 0 800 100">${drawRoute({ x: 124, y: 58, width: 590, bend: 15, weight: 14, badge: 0, lift: 0, endFont: 21, className: "is-gray" })}</svg>
+            <div class="gray-label">${t.grayscale}</div>
+            <div class="note">${t.channels}</div>
+          </div>
+        </div>`;
+      }
+
+      const params = new URLSearchParams(location.search);
+      const lang = params.get("lang") === "en" ? "en" : "pl";
+      const slide = params.get("slide") === "states" ? "states" : "title";
+      document.documentElement.lang = lang;
+      document.getElementById("stage").innerHTML = slide === "states" ? statesSlide(TEXT[lang]) : titleSlide(TEXT[lang]);
+    </script>
+  </body>
+</html>

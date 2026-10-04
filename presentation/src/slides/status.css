@@ -1,0 +1,43 @@
+/*
+ * Styles of the slide status: what works with a full mark and what is next with a hollow one, in two columns
+ * parted by a hairline, the limits as a note under them, and the closing line on a larger plate.
+ */
+
+.reveal #status {
+  --sheet-h: 580px;
+  --sheet-pad: 78px;
+}
+
+/* The closing plate is shorter than half the sheet, so the handle would show from behind its right edge. */
+
+.reveal #status .sheet::before {
+  display: none;
+}
+
+.reveal .status-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+}
+
+.reveal .status-col.is-works {
+  padding-right: 40px;
+}
+
+.reveal .status-col.is-next {
+  padding-left: 40px;
+  border-left: 2px solid var(--line);
+}
+
+.reveal .status-col li {
+  font-size: 30px;
+}
+
+.reveal .status-limits {
+  margin-top: 40px;
+}
+
+.reveal .closing {
+  padding: 21px 34px 23px;
+  font-size: 48px;
+}

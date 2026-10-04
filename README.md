@@ -1,6 +1,6 @@
-# piwo1-hackyeah
+# EnableMe
 
-A HackYeah 2026 project (3-4 October 2026, Kraków): a community app about the accessibility of places in Kraków. It combines open data (OpenStreetMap, open city data) with reports from people, including photos, shows where every piece of information comes from, how fresh and how reliable it is, and plans routes matched to the needs of people with different disabilities. Web first, with a HarmonyOS port if time allows.
+EnableMe, in the repository piwo1-hackyeah, is a HackYeah 2026 project (3-4 October 2026, Kraków): a community app about the accessibility of places in Kraków. It combines open data (OpenStreetMap, open city data) with reports from people, including photos, shows where every piece of information comes from, how fresh and how reliable it is, and plans routes matched to the needs of people with different disabilities. Web first, with a HarmonyOS port if time allows.
 
 The project is submitted to two partner challenges: "Kraków bez barier" (City of Kraków) and "Imagine What's Next" (Huawei). Their requirements, deliverables and judging criteria are summarized in `docs/hackathon/challenge_requirements.md`. The product specification, with the target group and the MVP scope, is in `docs/product/specification.md`.
 
@@ -20,6 +20,7 @@ The repository was created on 2026-10-03 from a pre-existing project template, "
 - `MVP.md`, `PRODUCT.md`, `TEAM.md`, `AI_WORKFLOW.md` - the summary of the MVP, the product summary that interface work starts from, the team, and how AI tools are used here.
 - `.impeccable/briefs/` - the design briefs and the mocks of the views made with the `impeccable` skill.
 - `valhalla/` - the build of the routing engine Valhalla with two accessibility patches, and `.github/workflows/valhalla-image.yml`, which publishes its image when a person starts it.
+- `db/` - the shared database package and separate local setup, migration and schema checks, described in `db/README.md`.
 - `tests/architecture/` - the core gates: Claude Code and Codex parity, the list of third-party content, hooks, prose style, plan document contract, conflict markers.
 - `plans/` and `plans_finished/` - the initiatives in progress and their archive.
 - `pyproject.toml`, `makefile`, `package.json`, `.prettierrc` - quality and formatting tools.
@@ -32,10 +33,13 @@ The machine needs `make`, `python` 3.13 and `node` with `npm` for prettier, whic
 
 ```bash
 python -m venv venv
-venv/Scripts/python -m pip install -e ".[dev]"
+venv/bin/python -m pip install ./db
+venv/bin/python -m pip install -e ".[dev]"
 npm ci
 make check
 ```
+
+On Windows use `py -3.13 -m venv venv`, `venv/Scripts/python -m pip install ./db` and `venv/Scripts/python -m pip install -e ".[dev]"`. The package `db/` goes in first, because the root dependency `accessibility-db` is that local package. Activate the virtual environment before running make. Local database requirements and the protected critical suite are in `docs/setup/backend.md`.
 
 ## Setup from the template
 

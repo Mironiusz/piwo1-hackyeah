@@ -1,0 +1,134 @@
+@import "tailwindcss";
+@import "@fontsource/barlow-semi-condensed/400.css";
+@import "@fontsource/barlow-semi-condensed/500.css";
+@import "@fontsource/barlow-semi-condensed/600.css";
+@import "@fontsource/barlow-semi-condensed/700.css";
+@import "@fontsource/barlow-condensed/600.css";
+@import "@fontsource/barlow-condensed/700.css";
+@import "maplibre-gl/dist/maplibre-gl.css";
+
+/*
+ * The tokens of the mocks in .impeccable/briefs/views/app.css, as the theme of Tailwind.
+ * The default palette is switched off, so a view can use only these colors.
+ */
+@theme {
+  --color-*: initial;
+  --color-shell: #12306b;
+  --color-yellow: #ffd400;
+  --color-bg: #f4f5f2;
+  --color-surface: #ffffff;
+  --color-ink: #111418;
+  --color-muted: #4b5058;
+  --color-line: #d5d8dc;
+  --color-clear: #1e7a46;
+  --color-barrier: #c8321e;
+  --color-partial: #e0a100;
+  --color-nodata: #6f7480;
+  --color-disputed: #8a5a00;
+  --color-field: #7b818a;
+  --color-off: #eef0ec;
+  --color-off-ink: #5a5f67;
+  --color-white: #ffffff;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --font-ui: "Barlow Semi Condensed", sans-serif;
+  --font-num: "Barlow Condensed", sans-serif;
+
+  --radius-control: 3px;
+  --radius-panel: 6px;
+  --radius-sheet: 16px;
+
+  --shadow-sheet: 0 -3px 10px rgba(20, 20, 30, 0.13);
+  --shadow-menu: 0 8px 18px rgba(20, 20, 30, 0.16);
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-ui);
+    font-size: 15.5px;
+    line-height: 1.35;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    color: var(--color-shell);
+  }
+
+  button,
+  a,
+  label,
+  input[type="checkbox"],
+  input[type="radio"] {
+    touch-action: manipulation;
+  }
+
+  button:not(:disabled),
+  label {
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-shell);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-shell);
+    color: var(--color-white);
+  }
+}
+
+/*
+ * The frame of the application fills the screen. The second height is the one that follows the bars of a phone browser;
+ * a browser that does not know it keeps the first.
+ */
+.app-frame {
+  height: 100vh;
+  height: 100dvh;
+}
+
+/*
+ * The parts of the map that MapLibre GL JS draws itself and that no component of the application renders.
+ * These rules stand outside a layer, because the stylesheet of the map library is not layered and would win over a layer.
+ * The controls at the bottom are lifted over the edge of the panel that lies over the map.
+ */
+.maplibregl-map {
+  font-family: var(--font-ui);
+}
+
+.maplibregl-canvas:focus-visible {
+  outline: 3px solid var(--color-shell);
+  outline-offset: -3px;
+}
+
+.maplibregl-ctrl-bottom-right,
+.maplibregl-ctrl-bottom-left {
+  bottom: 14px;
+}
+
+.maplibregl-ctrl.maplibregl-ctrl-attrib {
+  padding: 1px 4px;
+  font-size: 10px;
+  line-height: 1.3;
+  color: #3a3a3a;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.maplibregl-ctrl-attrib a {
+  color: #3a3a3a;
+  text-decoration: underline;
+}
+
+.maplibregl-ctrl-attrib-button {
+  display: none;
+}

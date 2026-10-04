@@ -1,0 +1,174 @@
+/*
+ * Theme of the deck: the fact panel of the EnableMe app at room scale. The ground of every slide is the navy shell
+ * of the app, the evidence of a slide lies on a white sheet that rises from the bottom edge, and a rule stands on
+ * a yellow plate. The color tokens are those of the HarmonyOS app
+ * (mobile_app/accessway/entry/src/main/ets/components/Theme.ets, class Palette).
+ * Slides and components use only these tokens, never raw color values. What each color means
+ * is fixed in MODULE.md, section Main records and contracts.
+ */
+
+:root {
+  --bg: #12306b;
+  --bg-lift: #1c4390;
+  --bg-deep: #0b2150;
+  --surface: #ffffff;
+  --line: #d5d8dc;
+  --line-strong: #4b5058;
+
+  --text: #111418;
+  --text-dim: #4b5058;
+  --on-shell: #ffffff;
+  --on-shell-dim: #dfe6f5;
+  --on-shell-faint: rgba(255, 255, 255, 0.24);
+
+  --primary: #12306b;
+  --on-primary: #ffffff;
+  --accent: #ffd400;
+  --on-accent: #111418;
+
+  --state-barrier: #c8321e;
+  --state-clear: #1e7a46;
+  --state-partial: #e0a100;
+  --state-nodata: #6f7480;
+
+  --shadow: rgba(4, 12, 32, 0.36);
+
+  --font-sans: 'Barlow Semi Condensed', system-ui, sans-serif;
+  --font-title: 'Barlow Condensed', system-ui, sans-serif;
+
+  --pad-x: 80px;
+  --pad-top: 56px;
+  --bleed: 34px;
+  --sheet-h: 500px;
+  --sheet-pad: 64px;
+  --claim-size: 100px;
+}
+
+html,
+body {
+  background: var(--bg);
+}
+
+.reveal {
+  font-family: var(--font-sans);
+  font-size: 30px;
+  font-weight: 400;
+  color: var(--on-shell);
+  background: var(--bg);
+}
+
+/*
+ * The light on the shell. The engine gives every slide its ground color through reveal.js, which reaches the print
+ * view; the gradient is laid over that color here and fills the whole screen, the margin around the slide included.
+ */
+
+.reveal .slide-background {
+  background-image: radial-gradient(ellipse 70% 80% at 82% 18%, var(--bg-lift) 0%, var(--bg) 55%, var(--bg-deep) 100%) !important;
+}
+
+.reveal .slides {
+  text-align: left;
+}
+
+.reveal .slides > section {
+  height: 100%;
+}
+
+/*
+ * The frame of a slide. Its two counters feed the slide number: the position of the slide and the total. They are
+ * set here and not counted, because reveal.js takes the slides that are not on screen out of the page.
+ */
+
+.reveal .slide-frame {
+  position: relative;
+  box-sizing: border-box;
+  width: 1600px;
+  height: 900px;
+  counter-reset: slide var(--done) total 10;
+}
+
+.reveal ::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/*
+ * Progress: ten blocks along the top edge of the frame, the blocks up to the current slide in yellow. It is drawn
+ * inside the frame, so it is also on every page of the PDF. The position of a slide is its place in
+ * src/slides/index.js; a change of the order or of the number of slides changes this list and the total of the frame.
+ */
+
+.reveal #title {
+  --done: 1;
+}
+
+.reveal #problem {
+  --done: 2;
+}
+
+.reveal #solution {
+  --done: 3;
+}
+
+.reveal #states {
+  --done: 4;
+}
+
+.reveal #facts {
+  --done: 5;
+}
+
+.reveal #demo {
+  --done: 6;
+}
+
+.reveal #data {
+  --done: 7;
+}
+
+.reveal #architecture {
+  --done: 8;
+}
+
+.reveal #business {
+  --done: 9;
+}
+
+.reveal #status {
+  --done: 10;
+}
+
+.reveal .slide-frame::before {
+  content: '';
+  position: absolute;
+  left: var(--pad-x);
+  top: 40px;
+  width: 1440px;
+  height: 8px;
+  background: linear-gradient(90deg, var(--accent) 0 calc(var(--done) * 145px - 10px), var(--on-shell-faint) calc(var(--done) * 145px - 10px) 100%);
+  -webkit-mask-image: repeating-linear-gradient(90deg, black 0 135px, transparent 135px 145px);
+  mask-image: repeating-linear-gradient(90deg, black 0 135px, transparent 135px 145px);
+}
+
+/* Slide number in the top right corner of the frame, with the total. */
+
+.reveal .slide-frame::after {
+  content: counter(slide, decimal-leading-zero) ' / ' counter(total);
+  position: absolute;
+  right: var(--pad-x);
+  top: 70px;
+  font-family: var(--font-title);
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--on-shell);
+}
+
+/* The progress bar and the slide number of reveal.js give way to the two drawn inside the frame. */
+
+.reveal .progress,
+.reveal .slide-number {
+  display: none !important;
+}

@@ -90,7 +90,6 @@ Outside the MVP:
 
 Undecided:
 
-- The product name.
 - The Polish wording of the interface terms: the texts are in `docs/product/interface_texts.md`, with the rules of the wording decided on 2026-10-04 and the single texts working copy until the views are built.
 - The form of the HarmonyOS client, and the licence of the repository.
 - Two ideas the user raised on 2026-10-03 that the specification does not contain: a venue card through which owners and event organizers describe their own place, also as the business model, and measuring slope and surface with the phone's sensors. The specification has only place cards, as the optional feature O6. Neither idea is designed until the specification includes it.
@@ -106,7 +105,7 @@ Undecided:
 - `plans_finished/mvp/MVP_SHAPE.md`: twelve scenarios with concrete inputs and expected states, usable as realistic content for screens and for the demo.
 - The organizers' briefs, summarized in `docs/hackathon/challenge_requirements.md`.
 
-There is no product name, logo or brand asset. There is no product code, no imported OpenStreetMap data and no sample data for the demo district yet. There is no user research, no testimonials, no partners, no usage numbers and no endorsement from the City. Future work must not fabricate any of these.
+The product is called EnableMe, decided by the team on 2026-10-04. There is no logo or brand asset. There is no product code, no imported OpenStreetMap data and no sample data for the demo district yet. There is no user research, no testimonials, no partners, no usage numbers and no endorsement from the City. Future work must not fabricate any of these.
 
 ## Product Principles
 
