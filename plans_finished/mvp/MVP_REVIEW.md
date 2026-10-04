@@ -1,6 +1,6 @@
 # Review: MVP of the accessibility app
 
-Document state: 2026-10-04, ready for the whole initiative, initiative closed
+Document state: 2026-10-04, ready for the whole initiative, initiative closed; its plan amended after closure, see the entry Decisions amended after closure
 
 ## Implementation run of 2026-10-04
 
@@ -72,3 +72,7 @@ Verdict: ready, for the whole initiative `mvp` (Report C), given before the move
 The directory lies in `plans_finished/mvp/` (`docs/standards/standard_agentic_workflow.md` ch. 4.6). Before the move the target did not exist, the only change in the tree was this file, and the directory held no link. It was moved with the native directory move, not `git mv`, and kept its five files with identical checksums.
 
 References. The location of `plans/mvp/` changed to `plans_finished/mvp/` in `MVP.md`, `PRODUCT.md`, `docs/product/specification.md`, `docs/product/user_journeys.md`, `docs/product/views.md`, `docs/hackathon/challenge_requirements.md`, `docs/standards/README.md`, `docs/standards/decision_registry.md` and `.impeccable/briefs/route-result.md`, in the shape, the PRD and the plan of this initiative, and in the shapes, PRDs and plans of the archived initiatives `account_sessions`, `api_contract`, `backend_architecture`, `demo_environment`, `deployment`, `fact_schema`, `frontend_stack`, `geocoding`, `local_database`, `nominatim_client`, `osm_barrier_mapping`, `osm_data_source`, `routing_engine`, `schema_revision` and `valhalla_routing`. Prettier realigned two rows of the table Initiatives of `MVP.md` whose path grew longer. Seeds, the eleven seeds of D-15 among them, review entries, the entries of `agent_docs/memory/`, the log of `AI_WORKFLOW.md` and the attachment of `nominatim_client` keep the old path as a historical record. So do the quoted messages of closed question 1 in the plan, the text of the log entry in step 4 of `plans_finished/deployment/DEPLOYMENT_PLAN.md`, and three sentences of the plan that describe the move itself - in D-16, in the Rollout order and in the Risks - where `plans/mvp/` names the source of the move. No code or tool reads the files of this initiative.
+
+## 2026-10-04 - Decisions amended after closure
+
+After the closure above, the merge of `md/fast-setup` into `dev` on 2026-10-04 wrote the import handoff of `plans/osm_importer/` (its plan D-19 - D-21) into the closed `MVP_PLAN.md`: D-4, D-5, D-14, the opening of D-15 and a new D-20, without resuming this initiative. `plans/repository_consistency/` found the edit, and the user decided on 2026-10-04 to keep it and to record it as the second exception to the protection of history in `docs/standards/standard_agentic_workflow.md` ch. 4.6, against reverting it and against resuming this initiative. The same day `plans/repository_consistency/` brought items 3, 4 and 11 of D-15, a new item 12 for `osm_importer` and item 8 of D-16 in line with D-20, and gave D-14 the path of the plan it cites. The verdict of the closure above was given on the text before that edit and is not repeated for the amended decisions; the initiative stays closed.

@@ -2,7 +2,7 @@
 
 Document state: 2026-10-03, mocks reviewed by the user and corrected after the review; the corrected mocks are in `.impeccable/briefs/views/`
 
-Product truth is in `PRODUCT.md` and `docs/product/specification.md`, version 12. What every view shows and which states it has is in `docs/product/views.md`; this brief does not repeat it. The visual world is the one approved for the route result in `.impeccable/briefs/route-result.md`, and no new direction was chosen here.
+Product truth is in `PRODUCT.md` and `docs/product/specification.md`, version 13. What every view shows and which states it has is in `docs/product/views.md`; this brief does not repeat it. The visual world is the one approved for the route result in `.impeccable/briefs/route-result.md`, and no new direction was chosen here.
 
 ## Job and audience
 

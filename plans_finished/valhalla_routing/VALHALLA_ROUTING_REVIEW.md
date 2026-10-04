@@ -1,6 +1,6 @@
 # Review: Valhalla as the routing engine and public transport routes from static GTFS
 
-Document state: 2026-10-04, ready for the whole initiative, initiative closed
+Document state: 2026-10-04, ready for the whole initiative, initiative closed; its plan amended after closure, see the entry Decisions amended after closure
 
 ## Implementation run of 2026-10-04
 
@@ -72,3 +72,7 @@ Order of the closure, recorded because it departs from ch. 4.6. The directory wa
 Verdict: ready, for the whole initiative `valhalla_routing` (report C). D-16 and the steps for a human of the plan are steps after the closure, and the archive confirms none of them. The directory lies in `plans_finished/valhalla_routing/` (`docs/standards/standard_agentic_workflow.md` ch. 4.6).
 
 References. In the plan of this initiative only the location of references changed: every `plans/valhalla_routing/` points to `plans_finished/valhalla_routing/`; its shape and PRD hold no such path. `MVP.md` also follows the closure, as its section Why this document exists requires: the item of this initiative under Initiatives in progress that build no product code is removed, and Open decisions and confirmations points to the entry of the registry for I-2. The location of references changed as well in `MVP.md`, `docs/product/specification.md`, `docs/standards/decision_registry.md`, `docs/deployment/hosted_demo.md`, `docs/hackathon/challenge_requirements.md`, `valhalla/README.md`, the PRD and the plan of `plans/mvp/`, the shape, the PRD and the plan of `plans/schema_revision/`, and the shapes, PRDs and plans of `plans_finished/backend_architecture/` and `plans_finished/deployment/`. Seeds, review entries, the entries of `agent_docs/memory/`, the log of `AI_WORKFLOW.md` and the report and time log of the spike keep the old path as a historical record.
+
+## 2026-10-04 - Decisions amended after closure
+
+After the closure above, the merge of `md/fast-setup` into `dev` on 2026-10-04 wrote the import handoff of `plans/osm_importer/` (its plan D-19 - D-21) into D-13 of the closed `VALHALLA_ROUTING_PLAN.md`, which now names `osm_importer` for the importer and the walking data of the routing engine, without resuming this initiative. `plans/repository_consistency/` found the edit, and the user decided on 2026-10-04 to keep it and to record it as the second exception to the protection of history in `docs/standards/standard_agentic_workflow.md` ch. 4.6, against reverting it and against resuming this initiative. The verdict of the closure above was given on the text before that edit and is not repeated for the amended decisions; the initiative stays closed.

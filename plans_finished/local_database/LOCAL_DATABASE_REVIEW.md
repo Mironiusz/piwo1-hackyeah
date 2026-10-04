@@ -1,6 +1,6 @@
 # Review: Choice of the local PostgreSQL environment with PostGIS for the MVP
 
-Document state: 2026-10-03, implementation finished, the archive move handed to the session that moves the sibling initiatives
+Document state: 2026-10-04, implementation finished, moved to `plans_finished/` on 2026-10-03 by the session that moved the sibling initiatives
 
 ## Implementation run of 2026-10-03
 
@@ -84,3 +84,7 @@ Final verdict: ready, for the whole initiative `plans/local_database/`. R-1 - R-
 The final verdict covers the whole initiative, so the directory qualifies for `plans_finished/` under `docs/standards/standard_agentic_workflow.md` ch. 4.6. The move was not made in this run. A second agent session was working on the same tree at the same time: at the user's request it moves `plans/geocoding/`, `plans/osm_data_source/`, `plans/osm_barrier_mapping/` and `plans/frontend_stack/` to `plans_finished/` and rewrites the editable references in the same files this run changed. Two sessions rewriting references in the same files would get in each other's way (ch. 4.7).
 
 Decided by the user on 2026-10-03: that session moves `plans/local_database/` together with the other four, with the checks of ch. 4.6. This run leaves the directory as it is after this entry.
+
+## 2026-10-04 - Archiving recorded after the fact
+
+The directory was moved to `plans_finished/local_database/` on 2026-10-03 by the session of `plans/consistency_check/`, as this review handed it over (`plans_finished/consistency_check/CONSISTENCY_CHECK_REVIEW.md`, section What was done); git first holds it there in commit `feee392` of 2026-10-03. This review recorded the verdict that qualifies the initiative for the archive under `docs/standards/standard_agentic_workflow.md` ch. 4.6, but not the move itself, so `plans/repository_consistency/` appended this entry on 2026-10-04 at the request of the user. That session records its checks of ch. 4.6 for this move in the same section.

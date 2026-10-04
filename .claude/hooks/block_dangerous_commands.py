@@ -20,7 +20,7 @@ Names of files whose contents must never reach the command output.
 
 The set lists the names exactly, not by a pattern, and that is deliberate: the versioned templates `.env.example`
 and `.env.priv.example` share the same prefix name and must pass unhindered, because without
-them the environment cannot be set up. The list is the same as the list of read blocks in
+them the environment cannot be set up. The list is the same as the environment files among the read blocks of
 `.claude/settings.json` - a new secrets file has to be added in both places, because one protects against
 the tool that reads files, and this one here against the shell.
 
