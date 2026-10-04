@@ -33,7 +33,7 @@ This task also unblocks the two initiatives waiting for it: items 3 and 4 of `pl
 - A date of the timetable in the interface; the freshness of the GTFS goes into the description of the data sources (section Domain rules).
 - Turn-by-turn navigation, which stays out of scope as the specification says.
 - Any routing service outside the project, a public Valhalla instance included (M2).
-- Building the backend skeleton, the database schema and the deployment configuration, which `plans_finished/backend_architecture/`, `plans/schema_revision/` and `plans/deployment_config/` do; this task hands them its needs (Scope, item 5).
+- Building the backend skeleton, the database schema and the deployment configuration, which `plans_finished/backend_architecture/`, `plans_finished/schema_revision/` and `plans/deployment_config/` do; this task hands them its needs (Scope, item 5).
 - Taking routing down on the hosted demo during the live demo, cut by the user on 2026-10-03 in `plans_finished/deployment/` (`DEPLOYMENT_SHAPE.md`, section Out of scope). The behavior of the app when the engine does not answer stays (FR-10).
 - Changing the tag rules and thresholds of M6, the segment rules of M7 and the list of M8, which this task applies as they stand.
 
@@ -122,7 +122,7 @@ AC-16 (FR-13). The decision names, for each of FR-1 - FR-4 and FR-10, what the i
 - `plans_finished/backend_architecture/`: its items 3 and 4 wait for this task by the decision of the user (`BACKEND_ARCHITECTURE_SHAPE.md`, question 2), and Q-11 of the MVP plan closes only after them.
 - `plans_finished/deployment/`: deploys the engine as one service of its own in a container, from an image of the project that serves both kinds of route, with its data and, if the optional feature is built, the public transport data (`DEPLOYMENT_SHAPE.md`, section Current state, answer of the user of 2026-10-04; one service decided by the user in phase B on 2026-10-04, against a second service for public transport).
 - The initiative of O9, set up by the user (section Out of scope).
-- `plans/schema_revision/` and `docs/product/schema.md`: the route takes its facts and geozones from the stored data; whether the engine needs anything stored beyond it is for phase B, and a need beyond it is raised with the db person, never assumed (`plans_finished/routing_engine/ROUTING_ENGINE_PRD.md` FR-3).
+- `plans_finished/schema_revision/` and `docs/product/schema.md`: the route takes its facts and geozones from the stored data; whether the engine needs anything stored beyond it is for phase B, and a need beyond it is raised with the db person, never assumed (`plans_finished/routing_engine/ROUTING_ENGINE_PRD.md` FR-3).
 - `plans_finished/osm_data_source/`: the copy of OpenStreetMap lives in the database and the downloaded file is deleted after each run (D-14 there), while the engine builds its own data from a file; reconciling the two, without breaking FR-3, is for phase B, and a change to a decision of that finished initiative is raised with the user.
 - `docs/product/api_contract.md`: the switch of FR-5, the public transport segments of FR-7 and the statement of FR-8 change the route operation, and a change of an operation is a change of that document first (`plans/mvp/MVP_PLAN.md` D-12).
 - `plans_finished/frontend_stack/` and the frontend work package of `plans/mvp/`: the switch, the public transport segment and the statement are shown by the frontend.

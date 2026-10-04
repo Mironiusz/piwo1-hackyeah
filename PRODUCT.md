@@ -42,7 +42,7 @@ The app presents facts and leaves the judgement to the person: no scores, no sta
 - Routes work in the whole of Kraków. The demo takes place in the district of the Tauron Arena, the venue of HackYeah, with sample reports and geozones marked as sample data.
 - The Kraków jury expects a live demo: state the needs of the chosen group, plan a route, show the concrete barriers and amenities with their source, date and status, and show a contradiction between OpenStreetMap and a user report as the case of contradictory, incomplete or unavailable data the brief asks for.
 - Whether and in what form a HarmonyOS client is built is an open entry in `docs/standards/decision_registry.md`. The MVP must not prevent a second client from using the same data and rules. If the port is built, it is a second client of the same programming interface, native or in React Native for OpenHarmony, not an application embedding the web app. The web frontend is chosen for the browser and keeps nothing the port would need outside that interface (`plans_finished/frontend_stack/FRONTEND_STACK_SHAPE.md`, Domain rules).
-- Authority: `docs/product/specification.md`, version 11, is the source of truth for the product and prevails over this file. The steps of a person through every mandatory feature are in `docs/product/user_journeys.md`. The requirements and acceptance criteria of the MVP are in `plans/mvp/MVP_PRD.md`, the scenarios behind its rules in `plans/mvp/MVP_SHAPE.md`, and the constraints of both challenges in `docs/hackathon/challenge_requirements.md`. This file is the summary that interface work starts from.
+- Authority: `docs/product/specification.md`, version 12, is the source of truth for the product and prevails over this file. The steps of a person through every mandatory feature are in `docs/product/user_journeys.md`. The requirements and acceptance criteria of the MVP are in `plans/mvp/MVP_PRD.md`, the scenarios behind its rules in `plans/mvp/MVP_SHAPE.md`, and the constraints of both challenges in `docs/hackathon/challenge_requirements.md`. This file is the summary that interface work starts from.
 
 ## Capabilities and Constraints
 
@@ -97,7 +97,7 @@ Undecided:
 
 ## Evidence on Hand
 
-- `docs/product/specification.md`, version 11: the target group, the features and their rules, personal data and the out-of-scope list.
+- `docs/product/specification.md`, version 12: the target group, the features and their rules, personal data and the out-of-scope list.
 - `docs/product/user_journeys.md`: fourteen journeys through the mandatory features, with their branches, and the path of the demo for the Kraków jury.
 - `docs/product/views.md`: the fourteen views of the web frontend - one map with modes, panels over it and pages - with their content, their states and what each needs from the programming interface.
 - `docs/product/interface_texts.md`: the texts of the interface in Polish and English, with the rules of the wording decided on 2026-10-04.

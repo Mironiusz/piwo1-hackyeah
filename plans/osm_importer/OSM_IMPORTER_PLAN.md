@@ -2,6 +2,8 @@
 
 Document state: 2026-10-04, plan in progress
 
+Owner: Mateusz. Handoff on 2026-10-04: the user ended work on this initiative in the current conversation and transferred its continuation to Mateusz. The plan remains unfinished, with Q-1 - Q-3 open. The proposed recovery of the routing-data pointer during a subsequent import has been explained but has not been approved. Revalidate shared contracts and references against the repository after the concurrent merge is resolved before continuing.
+
 ## Goal
 
 Implement `OSM_IMPORTER_PRD.md` FR-1 - FR-13 and AC-1 - AC-14, including the scope amendment approved by the user on 2026-10-04. Deliver the first import, manual refresh, source validation, the pedestrian network, accessibility mapping, atomic database publication, reconciliation and matching Valhalla walking-routing data without losing votes or moderation state.
@@ -78,6 +80,8 @@ D-19. Permit modifications to the MVP initiative and `MVP.md`. Decided by the us
 D-20. Include the network PBF, Valhalla walking-routing data build and post-commit routing-data pointer publication in osm_importer. Decided by the user on 2026-10-04 in response to the proposed Q-4 scope amendment. The SHAPE and PRD record this approved extension, and the PRD's vote-history requirements now follow specification version 10. Preparation finishes before the 120-second database transaction starts. Adopt the existing routing transformation and per-copy publication protocol of F-21. The routing image, service startup/restart, served-copy check, fewest-barriers graph and public transport ingestion remain with Marek's initiatives. Record the ownership handoff in MVP under D-19; do not edit the archived backend architecture plan. Preserve the explicit local/server execution and timeout decisions D-14 - D-18.
 
 D-21. Retain read_osm_copy and the common demo-loading program in osm_import. Agent decision at C:40, without asking: these are existing responsibilities beyond the approved importer scope (F-22), so retaining them avoids silently adding app endpoints or another loading workflow here. osm_import consumes this importer's service operation and must not implement a second download, mapping, reconciliation or Valhalla build. MVP names osm_importer as the executor of the actual import and its tests.
+
+D-22. Hand osm_importer over to Mateusz. Decided by the user on 2026-10-04, explicitly clarifying the initiative name after initially naming osm_import. Mateusz owns the remaining planning, implementation, verification and documentation. Stop work on this initiative in the current conversation; retain the approved scope, outstanding questions and plan-in-progress state. This is an ownership transfer, not completion, cancellation or approval of the proposed routing-pointer recovery mechanism. The initiative stays in plans. No message is sent to Mateusz as part of recording this handoff.
 
 ## Scope of changes
 

@@ -47,6 +47,8 @@ Later on 2026-10-04, in phase B, the user chose to settle the importer integrati
 
 Scope reconciliation on 2026-10-04: the user approved adding preparation of the pedestrian-network file, construction of Valhalla walking-routing data and publication of the routing-data pointer to `osm_importer`. The importer owns these outputs and their tests. `osm_import` retains its previously assigned copy-read operation and the common demo-loading program, consuming this importer rather than building another one. Shared backend and schema implementation, route computation, routing-service startup and public transport ingestion remain outside this initiative.
 
+Ownership handoff on 2026-10-04: the user ended work on osm_importer in this conversation and handed the initiative to Mateusz, explicitly clarifying that osm_importer, rather than osm_import, is being transferred. Mateusz takes over remaining technical planning, implementation, verification and documentation. The initiative remains in plans with its approved scope and unfinished plan; it is neither completed nor cancelled. Q-1 - Q-3 and the proposed routing-pointer recovery behavior remain unresolved. No further work on this initiative is performed in this conversation without a new request.
+
 ## Smallest meaningful scope
 
 Deliver the complete importer that obtains the selected source, checks it, limits it to Kraków, derives the agreed pedestrian network and accessibility information, and makes a complete copy available in the shared project database.
