@@ -1,0 +1,27 @@
+# local toolchain and machine-specific files
+.tools/
+.xfer/
+accessway/local.properties
+accessway/signatures/
+*.p12
+*.cer
+*.p7b
+*.csr
+
+# map tiles (make tiles, make tiles-sample)
+tiles/
+
+# build outputs
+accessway/**/build/
+accessway/.hvigor/
+accessway/oh_modules/
+accessway/**/oh_modules/
+*.hap
+*.app
+
+# editors / OS
+.idea/
+.DS_Store
+*.log
+.env
+.env.*

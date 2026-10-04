@@ -1,180 +1,103 @@
 """
-Mock backend for the map tiles of AccessWay, standard library only.
+Mock of the host of the project for AccessWay, standard library only: the programming interface and the map.
 
-Serves one PMTiles archive of Kraków (`make tiles`) or the sample archive (`make tiles-sample`):
+The documents of the project decide one host that serves the programming interface of
+`docs/product/api_contract.md` under `/api` and one PMTiles archive of Kraków read by every client in byte ranges
+(piwo1-hackyeah, `plans_finished/frontend_stack/` D-3 and D-5, `docs/standards/standard_frontend.md`). This server
+stands in for that host during development, so the HarmonyOS app talks to it the way it will to the hosted demo.
 
-  GET /tiles/info.json             bounds, zoom range, attribution and the build the archive was cut from
-  GET /tiles/{z}/{x}/{y}.json      one tile ready to draw for the HarmonyOS app: geometry by render class,
-                                   simplified and in integer tile pixels (see Tiles.tile_json)
-  GET /tiles/krakow.pmtiles        the archive itself with byte ranges (Range header), for MapLibre in the web app
-  GET /health                      "ok"
+  /api/...                    the sixteen operations of the contract, in memory (`api_mock.py`)
+  GET /<archive file name>    the archive, with byte ranges (Range header, 206 Partial Content), also HEAD
+  GET /health                 "ok"
 
 Usage: python3 tools/mock_backend/server.py [--archive tiles/krakow.pmtiles] [--port 8090] [--host 0.0.0.0]
-The emulator reaches the computer running this server at http://10.0.2.2:<port>.
+The emulator reaches the computer running this server at http://10.0.2.2:<port>; the address to put into
+`tiles_url` of `rawfile/config/api.json` is printed at start.
 """
 
 import argparse
-import functools
+import hashlib
 import json
 import os
 import re
 import sys
+import time
+import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from pmtiles_mvt import PMTilesReader, decode_mvt
+from api_mock import Api, ApiError, Network, Store
+from pmtiles_mvt import PMTilesReader
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-TILE_RE = re.compile(r"^/tiles/(\d+)/(\d+)/(\d+)\.json$")
-OUT_EXTENT = 512
-GREEN_KINDS = frozenset(("park", "grass", "garden", "forest", "wood", "nature_reserve", "cemetery",
-                         "recreation_ground", "pitch", "playground", "golf_course", "meadow", "allotments",
-                         "village_green", "grassland", "scrub", "orchard", "zoo"))
-FILL_CLASSES = ("green", "water", "building")
-LINE_CLASSES = ("path", "minor", "major")
-
-
-def prop_kind(props):
-    return str(props.get("kind") or props.get("pmap:kind") or "")
-
-
-def prop_name(props):
-    return str(props.get("name:pl") or props.get("name") or "")
-
-
-def classify(layer, ftype, kind, z):
-    """Render class of one feature at zoom z, or None when the app does not draw it at that zoom."""
-    if ftype == 3:
-        if layer == "landcover" or (layer == "landuse" and kind in GREEN_KINDS):
-            return "green"
-        if layer == "water":
-            return "water"
-        if layer == "buildings" and z >= 14:
-            return "building"
-        return None
-    if ftype == 2 and layer == "roads":
-        if kind in ("major_road", "highway"):
-            return "major"
-        if kind == "minor_road" and z >= 13:
-            return "minor"
-        if kind in ("path", "other") and z >= 14:
-            return "path"
-    return None
-
-
-def simplify(pts, tol):
-    """Douglas-Peucker on a list of (x, y), iterative, keeps the first and the last point."""
-    if len(pts) < 3:
-        return pts
-    keep = [False] * len(pts)
-    keep[0] = keep[-1] = True
-    stack = [(0, len(pts) - 1)]
-    tol2 = tol * tol
-    while stack:
-        a, b = stack.pop()
-        ax, ay = pts[a]
-        bx, by = pts[b]
-        dx, dy = bx - ax, by - ay
-        den = dx * dx + dy * dy
-        best, idx = tol2, -1
-        for i in range(a + 1, b):
-            px, py = pts[i]
-            if den == 0:
-                d = (px - ax) ** 2 + (py - ay) ** 2
-            else:
-                t = ((px - ax) * dx + (py - ay) * dy) / den
-                t = 0 if t < 0 else (1 if t > 1 else t)
-                d = (px - ax - t * dx) ** 2 + (py - ay - t * dy) ** 2
-            if d > best:
-                best, idx = d, i
-        if idx >= 0:
-            keep[idx] = True
-            stack.append((a, idx))
-            stack.append((idx, b))
-    return [p for p, k in zip(pts, keep) if k]
-
-
-def compact(part, extent, closed):
-    """One part simplified to about one screen pixel and quantized to OUT_EXTENT, flat [x, y, ...] or None."""
-    scale = OUT_EXTENT / extent
-    pts = simplify(part, 0.7 / scale)
-    flat = []
-    lx = ly = None
-    xs, ys = [], []
-    for px, py in pts:
-        qx, qy = int(round(px * scale)), int(round(py * scale))
-        if qx == lx and qy == ly:
-            continue
-        flat.append(qx)
-        flat.append(qy)
-        xs.append(qx)
-        ys.append(qy)
-        lx, ly = qx, qy
-    if closed:
-        if len(xs) < 3 or (max(xs) - min(xs)) * (max(ys) - min(ys)) < 2:
-            return None
-    elif len(xs) < 2 or (max(xs) - min(xs)) + (max(ys) - min(ys)) < 2:
-        return None
-    return flat
-
-
-class Tiles:
-    def __init__(self, path):
-        self.path = path
-        self.reader = PMTilesReader(path)
-        self.size = os.path.getsize(path)
-        meta = self.reader.metadata()
-        build = ""
-        side = path + ".build"
-        if os.path.exists(side):
-            with open(side, encoding="utf-8") as f:
-                build = f.read().strip()
-        self.info = {
-            "min_zoom": self.reader.min_zoom,
-            "max_zoom": self.reader.max_zoom,
-            "bounds": [self.reader.min_lon, self.reader.min_lat, self.reader.max_lon, self.reader.max_lat],
-            "center": [self.reader.center_lon, self.reader.center_lat, self.reader.center_zoom],
-            "attribution": meta.get("attribution") or "© OpenStreetMap contributors",
-            "build": build or meta.get("accessway_build", ""),
-            "archive_bytes": self.size,
-            "tile_format": "render-v2",
-        }
-
-    @functools.lru_cache(maxsize=1024)
-    def tile_json(self, z, x, y):
-        """
-        One tile ready to draw: geometry grouped by render class, simplified to about one pixel of a tile drawn
-        512 px wide and stored as integer tile pixels 0..512 (the app maps them to the screen with one scale
-        and offset per tile). Classes the app does not draw at this zoom are left out.
-        """
-        fills = {k: [] for k in FILL_CLASSES}
-        lines = {k: [] for k in LINE_CLASSES}
-        labels = []
-        data = self.reader.tile(z, x, y)
-        if data is not None:
-            for name, (extent, feats) in decode_mvt(data).items():
-                for f in feats:
-                    kind = prop_kind(f["props"])
-                    cls = classify(name, f["type"], kind, z)
-                    if cls is None:
-                        continue
-                    closed = f["type"] == 3
-                    parts = [p for p in (compact(part, extent, closed) for part in f["parts"]) if p is not None]
-                    if not parts:
-                        continue
-                    (fills if closed else lines)[cls].extend(parts)
-                    label = prop_name(f["props"])
-                    if not closed and label and (cls == "major" or (cls == "minor" and z >= 14)):
-                        labels.append({"name": label, "geom": parts})
-        body = {"z": z, "x": x, "y": y, "extent": OUT_EXTENT, "fills": fills, "lines": lines, "labels": labels}
-        return json.dumps(body, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+RANGE_RE = re.compile(r"^bytes=(\d*)-(\d*)$")
+REQUEST_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,128}$")
 
 
 class Handler(BaseHTTPRequestHandler):
-    tiles = None
+    archive = ""
+    size = 0
+    name = ""
+    api = None
+    protocol_version = "HTTP/1.1"
 
     def log_message(self, fmt, *args):
-        sys.stderr.write("%s %s\n" % (self.command, self.path))
+        if not self.path.startswith("/api"):
+            sys.stderr.write("%s %s %s\n" % (self.command, self.path.split("?", 1)[0], self.headers.get("Range", "")))
+
+    def _api(self):
+        """One operation of the contract; the log line carries only the operation, status, duration and request id."""
+        started = time.monotonic()
+        rid = self.headers.get("X-Request-Id", "")
+        if not REQUEST_ID_RE.match(rid):
+            rid = uuid.uuid4().hex
+        length = int(self.headers.get("Content-Length") or 0)
+        raw = self.rfile.read(length) if length > 0 else b""
+        hint = hashlib.sha256(("%s|%s" % (self.client_address[0], self.headers.get("User-Agent", ""))).encode()).hexdigest()
+        op = "unknown"
+        try:
+            op, status, body, extra = Handler.api.handle(self.command, self.path.split("?", 1)[0], self.headers, raw, hint)
+        except ApiError as e:
+            op = getattr(e, "op", op)
+            status, extra = e.status, dict(e.headers)
+            err = {"code": e.code}
+            err.update(e.extra)
+            body = {"error": err}
+        except Exception:
+            import traceback
+            traceback.print_exc()
+            status, extra, body = 500, {}, {"error": {"code": "internal_error"}}
+        data = b"" if body is None else json.dumps(body, ensure_ascii=False).encode("utf-8")
+        self.send_response(status)
+        if body is not None:
+            self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(data)))
+        self.send_header("X-Request-Id", rid)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Expose-Headers", "Session-Token, X-Request-Id")
+        for k, v in extra.items():
+            self.send_header(k, v)
+        self.end_headers()
+        self.wfile.write(data)
+        sys.stderr.write("api %s %d %.0fms %s\n" % (op, status, (time.monotonic() - started) * 1000, rid))
+
+    def _is_api(self):
+        path = self.path.split("?", 1)[0]
+        return path == "/api" or path.startswith("/api/")
+
+    def do_POST(self):
+        if self._is_api():
+            return self._api()
+        return self._send(404, b"not found", "text/plain")
+
+    def do_DELETE(self):
+        self.do_POST()
+
+    def do_PUT(self):
+        self.do_POST()
+
+    def do_PATCH(self):
+        self.do_POST()
 
     def _send(self, status, body, ctype, extra=None):
         self.send_response(status)
@@ -182,7 +105,6 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Expose-Headers", "Content-Range, Content-Length, Accept-Ranges")
-        self.send_header("Cache-Control", "public, max-age=3600")
         for k, v in (extra or {}).items():
             self.send_header(k, v)
         self.end_headers()
@@ -192,52 +114,46 @@ class Handler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(204)
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Headers", "Range")
+        self.send_header("Access-Control-Allow-Headers", "Range, Authorization, Content-Type, X-Request-Id")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, DELETE, HEAD, OPTIONS")
+        self.send_header("Content-Length", "0")
         self.end_headers()
 
     def do_HEAD(self):
         self.do_GET()
 
     def do_GET(self):
-        t = Handler.tiles
         path = self.path.split("?", 1)[0]
+        if self._is_api():
+            return self._api()
         if path == "/health":
             return self._send(200, b"ok", "text/plain")
-        if path == "/tiles/info.json":
-            return self._send(200, json.dumps(t.info).encode("utf-8"), "application/json")
-        m = TILE_RE.match(path)
-        if m:
-            z, x, y = int(m.group(1)), int(m.group(2)), int(m.group(3))
-            if z > t.reader.max_zoom or x >= (1 << z) or y >= (1 << z):
-                return self._send(404, b'{"error":{"code":"not_found"}}', "application/json")
-            return self._send(200, t.tile_json(z, x, y), "application/json")
-        if path in ("/tiles/krakow.pmtiles", "/tiles/archive.pmtiles"):
+        if path == "/" + Handler.name:
             return self._archive()
-        return self._send(404, b'{"error":{"code":"not_found"}}', "application/json")
+        return self._send(404, b"not found", "text/plain")
 
     def _archive(self):
-        t = Handler.tiles
+        size = Handler.size
         rng = self.headers.get("Range")
         if rng is None:
-            with open(t.path, "rb") as f:
+            with open(Handler.archive, "rb") as f:
                 return self._send(200, f.read(), "application/octet-stream", {"Accept-Ranges": "bytes"})
-        m = re.match(r"bytes=(\d*)-(\d*)$", rng.strip())
-        if not m:
-            return self._send(416, b"", "application/octet-stream", {"Content-Range": "bytes */%d" % t.size})
-        start_s, end_s = m.group(1), m.group(2)
-        if start_s == "":
-            start = max(0, t.size - int(end_s))
-            end = t.size - 1
+        m = RANGE_RE.match(rng.strip())
+        if not m or (m.group(1) == "" and m.group(2) == ""):
+            return self._send(416, b"", "application/octet-stream", {"Content-Range": "bytes */%d" % size})
+        if m.group(1) == "":
+            start = max(0, size - int(m.group(2)))
+            end = size - 1
         else:
-            start = int(start_s)
-            end = min(int(end_s), t.size - 1) if end_s else t.size - 1
-        if start > end or start >= t.size:
-            return self._send(416, b"", "application/octet-stream", {"Content-Range": "bytes */%d" % t.size})
-        with open(t.path, "rb") as f:
+            start = int(m.group(1))
+            end = min(int(m.group(2)), size - 1) if m.group(2) else size - 1
+        if start > end or start >= size:
+            return self._send(416, b"", "application/octet-stream", {"Content-Range": "bytes */%d" % size})
+        with open(Handler.archive, "rb") as f:
             f.seek(start)
             body = f.read(end - start + 1)
         return self._send(206, body, "application/octet-stream",
-                          {"Accept-Ranges": "bytes", "Content-Range": "bytes %d-%d/%d" % (start, end, t.size)})
+                          {"Accept-Ranges": "bytes", "Content-Range": "bytes %d-%d/%d" % (start, end, size)})
 
 
 def main():
@@ -245,6 +161,10 @@ def main():
     ap.add_argument("--archive", default="")
     ap.add_argument("--port", type=int, default=8090)
     ap.add_argument("--host", default="0.0.0.0")
+    ap.add_argument("--facts", type=int, default=6000, help="number of sample facts placed on the network")
+    ap.add_argument("--seed", type=int, default=20261004, help="seed of the sample facts")
+    ap.add_argument("--moderator-password", default="moderator",
+                    help="password of the account `moderator`, the only one with the moderator role")
     a = ap.parse_args()
     path = a.archive
     if not path:
@@ -255,11 +175,27 @@ def main():
                 break
     if not path or not os.path.exists(path):
         sys.exit("No tile archive. Run `make tiles` (Kraków, needs internet) or `make tiles-sample` first.")
-    Handler.tiles = Tiles(path)
-    info = Handler.tiles.info
-    print("Serving %s (%.1f MB, zoom %d-%d) on http://%s:%d" % (path, info["archive_bytes"] / 1e6, info["min_zoom"],
-                                                                 info["max_zoom"], a.host, a.port))
-    print("Emulator address: http://10.0.2.2:%d" % a.port)
+    reader = PMTilesReader(path)
+    build_file = path + ".build"
+    osm_copy = None
+    if os.path.exists(build_file):
+        b = open(build_file, encoding="utf-8").read().strip()
+        if re.match(r"^\d{8}$", b):
+            osm_copy = "%s-%s-%s" % (b[:4], b[4:6], b[6:])
+    started = time.monotonic()
+    network = Network.build(path)
+    Handler.api = Api(Store(network, osm_copy, a.moderator_password, a.facts, a.seed))
+    print("Network: %d nodes, %d stretches, %d sample facts (%.1f s)" % (len(network.nodes), len(network.edges),
+                                                                         len(Handler.api.s.facts),
+                                                                         time.monotonic() - started))
+    Handler.archive = path
+    Handler.size = os.path.getsize(path)
+    Handler.name = os.path.basename(path)
+    print("Serving %s (%.1f MB, zoom %d-%d) on http://%s:%d/%s" % (path, Handler.size / 1e6, reader.min_zoom,
+                                                                    reader.max_zoom, a.host, a.port, Handler.name))
+    print("For the emulator, rawfile/config/api.json: base_url http://10.0.2.2:%d, tiles_url http://10.0.2.2:%d/%s"
+          % (a.port, a.port, Handler.name))
+    print("Moderator account: pseudonym moderator, password given by --moderator-password")
     ThreadingHTTPServer((a.host, a.port), Handler).serve_forever()
 
 

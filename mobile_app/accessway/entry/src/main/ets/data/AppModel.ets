@@ -13,8 +13,8 @@ import { readFileText, writeFileText } from './Storage';
 
 const PREFS_FILE: string = 'ui_prefs.json';
 
-/** Nazwa produktu nie jest jeszcze wybrana; makiety pokazują w nagłówku ten znacznik. */
-export const PRODUCT_NAME: string = '[Nazwa produktu]';
+/** Product name in the app header and on the start screen. */
+export const PRODUCT_NAME: string = 'EnableMe';
 
 interface Prefs {
   lang?: string;
@@ -33,7 +33,7 @@ export enum ListFilter {
   ALL = 'all'
 }
 
-/** Komunikat błędu z repozytorium w bieżącym języku. */
+/** Error message from the repository in the current language. */
 export function errorText(e: Object): string {
   if (e instanceof RepoError) {
     return e.message;
@@ -45,9 +45,9 @@ export function errorText(e: Object): string {
 }
 
 /**
- * Stan interfejsu: potrzeby i język (tylko na urządzeniu), punkty trasy, ostatni plan i fakty. Dane bierze
- * wyłącznie przez interfejs Repository, więc podmiana LocalRepository na klienta API nie zmienia ekranów.
- * Mapa bazowa (ulice, budynki, zieleń) pochodzi z danych dołączonych do aplikacji.
+ * UI state: needs and language (only on the device), route points, the latest plan and facts. It gets data
+ * only through the Repository interface, so swapping LocalRepository for the API client leaves the screens as is.
+ * The base map (streets, buildings, greenery) comes from data bundled with the app.
  */
 export class AppModel {
   ctx: common.Context | null = null;
@@ -153,7 +153,7 @@ export class AppModel {
     return this.apiBaseUrl.length > 0;
   }
 
-  /** Prostokąt wokół środka mapy, co najmniej 1,5 km w każdą stronę, z którego pobieramy fakty. */
+  /** Rectangle around the map center, at least 1.5 km in each direction, from which we fetch facts. */
   factsArea(): Area {
     const ds = this.mapBase();
     let lat = this.mapLat;
@@ -191,7 +191,7 @@ export class AppModel {
     this.account = await this.repo.accounts.current();
   }
 
-  /** Liczy trasę dla bieżących potrzeb; błąd usługi zostaje w `planError`, a poprzedni plan znika. */
+  /** Computes the route for the current needs; a service error stays in `planError` and the old plan is cleared. */
   async computeRoute(): Promise<boolean> {
     if (this.start === null || this.dest === null) {
       return false;
@@ -235,7 +235,7 @@ export class AppModel {
     return null;
   }
 
-  /** Odległość faktu od startu trasy, jeśli leży na bieżącej trasie, albo -1. */
+  /** Distance of the fact from the route start if it lies on the current route, or -1. */
   routePosition(id: string): number {
     if (this.plan === null) {
       return -1;

@@ -27,7 +27,7 @@ None. Statuses, route ratings and alternatives come from fixed, tested rules.
 
 - Everything runs on the device until the API is connected; accounts, votes and reports are local.
 - Visual comparison with the mock-ups on the emulator is manual.
-- The product name is not chosen yet; the header shows "[Nazwa produktu]" as in the mock-ups.
+- The product name is "EnableMe" (constant `PRODUCT_NAME` in `accessway/entry/src/main/ets/data/AppModel.ets` and the launcher label in the string resources).
 
 ## 5. Third-party components
 

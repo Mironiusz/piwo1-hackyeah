@@ -1,6 +1,7 @@
 import { KeyCode } from '@kit.InputKit';
 import { appModel } from '../data/AppModel';
-import { latToTileY, lonToTileX, TileData, tileStore, tileXToLon, tileYToLat } from '../data/Tiles';
+import { latToTileY, lonToTileX, tileStore, tileXToLon, tileYToLat } from '../data/Tiles';
+import { TileData } from '../data/TileTypes';
 import { RouteSegment } from '../data/Repository';
 import { tr } from '../model/I18n';
 import { factTitle, isAmenity, streetLabel } from '../model/Labels';
@@ -21,9 +22,9 @@ export enum MapMode {
 }
 
 /**
- * Mapa z makiet rysowana na Canvas: beżowe tło, budynki, zieleń, białe ulice z podpisami, trasa w stanach,
- * kwadratowe znaczniki faktów i punkty A i B. W trybie wskazywania punktu środek mapy oznacza krzyżyk,
- * a mapę przesuwa się palcem albo strzałkami na klawiaturze.
+ * Map from the mockups drawn on a Canvas: beige background, buildings, greenery, white streets with labels,
+ * the route in its states, square fact markers and points A and B. In point-picking mode a crosshair marks
+ * the map center, and the map is moved with a finger or with the keyboard arrow keys.
  */
 @Component
 export struct MapCanvas {
@@ -213,7 +214,7 @@ export struct MapCanvas {
     }
   }
 
-  /** Wszystkie części jednej klasy ze wszystkich kafelków jako jedna ścieżka, w punktach bitmapy podkładu. */
+  /** All parts of one class from all tiles as a single path, in base map bitmap points. */
   private tileParts(c: CanvasRenderer, tiles: TileData[], pick: (t: TileData) => number[][], close: boolean,
     bx: (lon: number) => number, by: (lat: number) => number): boolean {
     let any = false;
@@ -261,7 +262,7 @@ export struct MapCanvas {
     }
   }
 
-  /** Kafelki potrzebne do pokrycia prostokąta; brakujący zastępuje kafelek nadrzędny z pamięci. */
+  /** Tiles needed to cover the rectangle; a missing one is replaced by its parent tile from memory. */
   private collectTiles(z: number, minLat: number, maxLat: number, minLon: number, maxLon: number): TileData[] | null {
     const x0 = lonToTileX(minLon, z);
     const x1 = lonToTileX(maxLon, z);
@@ -301,9 +302,9 @@ export struct MapCanvas {
   }
 
   /**
-   * Rysuje podkład z kafelków raz do bitmapy większej od ekranu o margines. Przesuwanie i szczypanie mapy tylko
-   * przesuwa i skaluje tę bitmapę, więc koszt ruchu nie zależy od liczby ulic i budynków na ekranie. Zwraca false,
-   * gdy nie ma jeszcze żadnego kafelka albo widok obejmuje zbyt wiele kafelków.
+   * Draws the tile base map once into a bitmap larger than the screen by a margin. Panning and pinching the map
+   * only move and scale this bitmap, so the cost of motion does not depend on the number of streets and buildings
+   * on screen. Returns false when there is no tile yet or the view covers too many tiles.
    */
   private renderBase(w: number, h: number, kx: number, ky: number, palKey: string): boolean {
     const mx = Math.round(w * BASE_MARGIN);
@@ -353,7 +354,7 @@ export struct MapCanvas {
     return true;
   }
 
-  /** Podkład z kafelków na ekranie; bitmapę rysuje od nowa tylko wtedy, gdy obecna przestała wystarczać. */
+  /** Tile base map on screen; redraws the bitmap only when the current one is no longer enough. */
   private drawTiles(c: CanvasRenderingContext2D, w: number, h: number, kx: number, ky: number,
     X: (lon: number) => number, Y: (lat: number) => number, minLat: number, maxLat: number, minLon: number,
     maxLon: number): boolean {
@@ -523,7 +524,7 @@ export struct MapCanvas {
     }
   }
 
-  /** Trasa: biała obwódka i stany odcinków; trasa bez oceny to granatowy kontur z białym środkiem. */
+  /** Route: white casing and segment states; an unrated route is a navy outline with a white center. */
   private drawRoute(c: CanvasRenderingContext2D, X: (lon: number) => number, Y: (lat: number) => number): void {
     const plan = appModel.plan;
     if (plan === null) {
@@ -593,8 +594,9 @@ export struct MapCanvas {
   }
 
   /**
-   * Znaczniki z legendy makiety: bariera to czerwony kwadrat z białym znakiem, udogodnienie to biały kwadrat
-   * z zieloną ramką, zgłoszenie sprzeczne z OpenStreetMap ma przerywaną czerwoną ramkę. Wybrany ma czarną obwódkę.
+   * Markers from the mockup legend: a barrier is a red square with a white glyph, an amenity is a white square
+   * with a green border, a report that conflicts with OpenStreetMap has a dashed red border. The selected one has
+   * a black outline.
    */
   private drawMarker(c: CanvasRenderingContext2D, f: Fact, x: number, y: number): void {
     const pal = P();
@@ -822,7 +824,7 @@ export struct MapCanvas {
   }
 }
 
-/** Próbka linii stanu do legendy, z tym samym wzorem co na mapie. */
+/** State line sample for the legend, with the same pattern as on the map. */
 @Component
 export struct LegendSwatch {
   state: EdgeState = EdgeState.CLEAR;

@@ -9,7 +9,7 @@ import { FONT, FONT_B, FONT_TITLE, fs, P } from '../components/Theme';
 import { Btn, BtnKind, BoxKind, LinkText, MessageBox, SheetBox } from '../components/Ui';
 import { Nav, AppScreen } from './Nav';
 
-/** V-4: planowanie trasy. Start i cel z wyszukiwania, z mapy albo z lokalizacji; błąd usługi tras bez zgadywania. */
+/** V-4: route planning. Start and destination from search, map or location; routing errors shown without guessing. */
 @Component
 export struct PlanView {
   nav: Nav = new Nav();

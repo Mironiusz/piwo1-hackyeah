@@ -2,11 +2,12 @@ import { common } from '@kit.AbilityKit';
 import { readRawText } from './Storage';
 
 /**
- * Adres serwera API. Jedno miejsce do zmiany: plik `entry/src/main/resources/rawfile/config/api.json`,
- * pole `base_url`, na przykład `http://203.0.113.10` albo `http://10.0.2.2:8000` dla serwera na komputerze,
- * na którym działa emulator. Pusty adres oznacza pracę bez serwera, na danych z urządzenia (LocalRepository).
- * Ścieżki operacji (`/api/...`) dokleja klient, więc adres podaje się bez `/api` i bez ukośnika na końcu.
- * Pole `tiles_url` to adres serwera kafelków mapy (`/tiles/...`); pusty oznacza podkład z danych w aplikacji.
+ * API server address. One place to change: the file `entry/src/main/resources/rawfile/config/api.json`,
+ * field `base_url`, for example `http://203.0.113.10` or `http://10.0.2.2:8000` for a server on the computer
+ * that runs the emulator. An empty address means working without a server, on device data (LocalRepository).
+ * The client appends the operation paths (`/api/...`), so give the address without `/api` and no trailing slash.
+ * Field `tiles_url` is the full address of the PMTiles archive of Kraków served next to the API, for example
+ * `http://10.0.2.2:8090/krakow.pmtiles`; empty means the sample base map bundled in the app.
  */
 export interface ApiSettings {
   base_url: string;

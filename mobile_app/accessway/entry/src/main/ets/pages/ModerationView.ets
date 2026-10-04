@@ -17,7 +17,7 @@ import {
 } from '../components/Ui';
 import { Nav, AppScreen } from './Nav';
 
-/** V-14: moderacja dla konta z rolą moderatora. Nie widać, kto dodał treść ani kto ją zgłosił. */
+/** V-14: moderation for an account with the moderator role. It hides who added the content and who flagged it. */
 @Component
 export struct ModerationView {
   nav: Nav = new Nav();

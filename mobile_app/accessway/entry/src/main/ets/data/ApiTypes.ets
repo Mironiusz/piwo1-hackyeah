@@ -1,6 +1,6 @@
 /**
- * Kształty JSON z `docs/product/api_contract.md` w repozytorium piwo1-hackyeah (stan z 2026-10-04), jeden do
- * jednego, z nazwami pól w snake case jak w kontrakcie. Zmiana kontraktu zaczyna się od tego pliku.
+ * JSON shapes from `docs/product/api_contract.md` in the piwo1-hackyeah repository (as of 2026-10-04), one to
+ * one, with field names in snake case as in the contract. A contract change starts from this file.
  */
 
 export interface ApiPoint {

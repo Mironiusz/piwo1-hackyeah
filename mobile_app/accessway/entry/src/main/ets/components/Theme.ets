@@ -1,8 +1,9 @@
 import { EdgeState } from '../model/Types';
 
 /**
- * Tokeny z artboardu "System: tokeny i części wspólne": granat nagłówka i akcji, żółty akcji Zgłoś i wejścia do
- * potrzeb, tusz tekstu, tekst drugi, linie, tło i powierzchnie oraz kolory stanów.
+ * Tokens from the "System: tokeny i części wspólne" artboard (System: tokens and shared parts): navy for the header
+ * and actions, yellow for the Zgłoś (Report) action and the entry to needs, text ink, secondary text, lines,
+ * background and surfaces, and the state colors.
  */
 export class Palette {
   primary: string = '#12306B';
@@ -42,7 +43,7 @@ export const FONT_B: string = 'BarlowSCSemi';
 export const FONT_NUM: string = 'BarlowNum';
 export const FONT_TITLE: string = 'BarlowSCBold';
 
-/** Rozmiar tekstu w fp, więc aplikacja respektuje systemowe powiększenie czcionki. */
+/** Text size in fp, so the app respects the system font scaling. */
 export function fs(base: number): number {
   return base;
 }
@@ -63,8 +64,8 @@ export interface LineStyle {
 }
 
 /**
- * Linie stanów z makiety: bariera to czerwone kreski z białymi przerwami, bez barier to ciągła zieleń, dane
- * niepełne to żółta linia z czarnymi kreskami, brak danych to szare kropki. Wzory odróżniają stany bez koloru.
+ * State lines from the mockup: barrier is red dashes with white gaps, no barriers is solid green, partial
+ * data is a yellow line with black dashes, no data is gray dots. The patterns tell states apart without color.
  */
 export function edgeStyle(s: EdgeState, k: number): LineStyle {
   const p = P();

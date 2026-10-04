@@ -1,7 +1,7 @@
 """
 PMTiles v3 reader and writer plus a Mapbox Vector Tile decoder and encoder, standard library only.
 
-The mock backend uses the reader and decoder to serve the Kraków archive as JSON tiles to the HarmonyOS app,
+The mock backend uses the reader to report the zoom range of the archive it serves, the decoder is kept to inspect tiles by hand,
 and the sample tile generator uses the writer and encoder. Specifications followed:
 https://github.com/protomaps/PMTiles/blob/main/spec/v3/spec.md and https://github.com/mapbox/vector-tile-spec.
 """

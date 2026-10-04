@@ -8,7 +8,7 @@ import { readFileText, removeFile, writeFileText } from './Storage';
 
 const TOKEN_FILE: string = 'api_session_token.txt';
 
-/** Czy operacja wysyła token sesji: nigdy, jeśli jest, albo zawsze (wtedy brak tokenu to błąd po stronie klienta). */
+/** Whether a call sends the session token: never, if present, or always (then no token is a client-side error). */
 export enum Auth {
   NONE = 'none',
   OPTIONAL = 'optional',
@@ -31,7 +31,7 @@ function headerValue(headers: Object, name: string): string {
   return '';
 }
 
-/** Komunikat dla kodu błędu z kontraktu, w bieżącym języku. */
+/** Message for an error code from the contract, in the current language. */
 export function apiErrorText(code: string, fields: string[]): string {
   if (code === 'routing_unavailable') {
     return tr('Usługa wyznaczania tras nie odpowiada. Nie pokazujemy trasy zgadywanej. Spróbuj ponownie za chwilę.',
@@ -126,9 +126,9 @@ function codeOf(apiCode: string, fields: string[]): ErrorCode {
 }
 
 /**
- * Klient HTTP zgodny z konwencjami kontraktu: JSON w UTF-8, ścieżki z prefiksem `/api`, token w
- * `Authorization: Bearer`, odnowiony token z nagłówka `Session-Token` zapisywany na urządzeniu, błędy jako
- * `{ "error": { "code": ... } }` zamieniane na RepoError z komunikatem dla osoby.
+ * HTTP client that follows the contract conventions: JSON in UTF-8, paths with the `/api` prefix, token in
+ * `Authorization: Bearer`, renewed token from the `Session-Token` header saved on the device, errors as
+ * `{ "error": { "code": ... } }` turned into a RepoError with a message for the person.
  */
 export class ApiClient {
   settings: ApiSettings;
@@ -172,7 +172,7 @@ export class ApiClient {
     return http.RequestMethod.GET;
   }
 
-  /** Wysyła żądanie i zwraca odpowiedź 2xx; każdą inną zamienia na RepoError. */
+  /** Sends the request and returns a 2xx response; turns any other into a RepoError. */
   async send(m: string, path: string, body: string, auth: Auth): Promise<ApiResponse> {
     if (auth === Auth.REQUIRED && !this.hasToken()) {
       throw new RepoError(ErrorCode.AUTH_REQUIRED, apiErrorText('authentication_required', []));
