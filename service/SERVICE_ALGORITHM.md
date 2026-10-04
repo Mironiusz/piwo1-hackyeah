@@ -226,37 +226,56 @@ Nothing of a route request is stored. The only log entries the route writes are 
 
 ## Sample data
 
-The sample step loads four fictional demonstration examples atomically while retaining existing votes and moderation decisions (`plans/sample_data/`).
+The sample step loads the eight sample facts of the demo scenario atomically while retaining existing votes and moderation decisions (`plans/sample_data/`).
 
-The examples are an explicitly contradictory poor-surface point, separate stairs with three steps, a rest place near the contradiction path and a separate poor-surface circle of 25 m. Their locations come from checked public OpenStreetMap geometry; their barrier and amenity content is invented.
+The facts are S-1 - S-8 of `stage7_demo_scenario`, with the content of the bundled HarmonyOS demonstration: a confirmed high kerb, unverified stairs, a confirmed ramp, a disputed poor-surface geozone of 25 m, a high kerb contradicted by a real lowered kerb, flagged stairs, a flagged and disputed narrow-passage geozone of 50 m and a flagged and hidden high kerb. Their places come from checked public OpenStreetMap geometry; their content is fictional.
 
 ```text
-validate a published source copy and the intended paths in one stable network snapshot
--> validate existing fixed content and original fictional author history
--> insert missing examples with one fictional confirmation each
+validate a published source copy, the reference ways and the kerb contradiction in one stable network snapshot
+-> validate existing fixed content and the sample vote history dated from each stored creation
+-> insert missing facts with their moderation, then the votes of exactly the newly inserted facts
 -> validate the complete dataset and return counts after commit acknowledgement
 ```
 
-### Source and sites
+### Source and places
 
-The two point barriers require their intended uniquely nearest pedestrian way within 15 m. Equal nearest distances fail. The contradiction requires explicit poor-surface absence; unknown data and default absence are insufficient. The rest place must be within 50 m of the contradiction path. The circle must intersect its own path and remain farther than its radius from the contradiction path. Actual-route and frontend evidence is a separate joint acceptance check.
+Each point fact requires its reference way as the uniquely nearest pedestrian way within 15 m, the way route planning places a report on; equal nearest distances fail. Each geozone requires its reference way within its radius. S-5 requires the contradiction of M2 in the route graph of the current copy: the stretch of its reference way nearest to it holds a lowered kerb point within 5 m. A high, unknown or missing kerb point, a farther one or one on another stretch establishes none. Whether a place lies on or off the actual route is a separate joint acceptance check.
 
-### Existing content and initial history
+### Existing content and vote history
 
-An occupied identifier must belong to the expected sample with the same type, exact coordinates, description, radius and step count. Its source is a user report, and its source identity and report-save key are null. Each existing sample requires exactly one historical confirmation of the reserved fictional author, with its original creation instant and offset. Invalid history is refused rather than repaired with a new vote.
+An occupied identifier must belong to the expected sample with the same type, exact coordinates, description, radius and step count. Its source is a user report, and its source identity and report-save key are null. The expected sample votes are dated from the stored creation pair by the minute differences of the definition. Each defined fictional voter must appear exactly once with its verdict, without an account and at its expected instant and offset. Invalid history is refused rather than repaired with a new vote.
 
-### Missing examples
+### Missing facts
 
-Missing definitions share one business-clock reading. Only newly inserted facts receive initial author confirmations, and both batches are in the same transaction. Each new confirmation has weight 0.5, and the initial status is unverified under the ordinary vote rules. Samples introduce no account and no alternate reliability evaluator.
+Missing definitions share one business-clock reading truncated to whole seconds. Each creation, vote, flag and hiding lies its fixed minutes before it, computed in UTC and paired with the business-zone offset in force at its own instant. Only newly inserted facts receive their sample votes, and both batches are in the same transaction. Each sample vote is a vote without an account of weight 0.5, and the statuses follow from the votes under the ordinary rule of M4. Samples introduce no account and no alternate reliability evaluator.
 
 ### Domain rules
 
-No missing source information is treated as confirmed accessibility. Samples remain visibly marked as fictional user reports. Loading does not update existing sample content, flags, hiding, contributor votes or reliability status.
+No missing source information is treated as confirmed accessibility or as a contradiction. Samples remain visibly marked as user reports with the sample mark. Loading does not update existing sample content, flags, hiding, contributor votes or reliability status.
 
 ### Reconcile and deduplication
 
-The fixed identifiers are -1, -2, -3 and -4 in definition order. A primary-key conflict leaves the stored row untouched and is followed by validation. A changed definition fails. The fictional author identity is stable across dates and initial votes are tied to newly returned identifiers, so a retry does not add later-day history.
+The fixed identifiers are -1 to -8 in definition order. A primary-key conflict leaves the stored row untouched and is followed by validation. A changed definition fails. The fictional voter identities are stable across dates and sample votes are tied to newly returned identifiers, so a retry does not add later-day history.
 
 ### Diagnostics and summary
 
-`created` means at least one missing example was inserted; `unchanged` means all four already existed and passed validation. Both require an acknowledged commit. Unchanged does not imply visible or still unverified examples. A failure aborts this sample step. Loss of commit evidence stays unknown; no automatic retry is performed and preceding common-loader effects are not rolled back.
+`created` means at least one missing fact was inserted; `unchanged` means all eight already existed and passed validation. Both require an acknowledged commit. Unchanged does not imply visible facts or their starting statuses. A failure aborts this sample step. Loss of commit evidence stays unknown; no automatic retry is performed and preceding common-loader effects are not rolled back.
+
+## Tile archive step
+
+The step puts the recorded map tile archive under the served name `krakow.pmtiles` of the directory the proxy serves, taking it from the source place a person put it in (`plans/tile_loading/TILE_LOADING_PLAN.md` D-7). It runs by hand, inside the common loading program or on its own, never on a schedule.
+
+```text
+admission under the exclusion of the importer, or skipped (standalone command only)
+-> refuse a source inside the served directory, then a missing served directory
+-> remove leftover .tile-archive-* files of the served directory
+-> served file of the recorded value: unchanged, the source is not read
+-> source: missing, unreadable or of another value refused
+-> copy into a new .tile-archive-* file of the served directory, then check the copy
+-> check the deadline, then replace the served name with the copy in one os.replace
+-> loaded
+```
+
+Repeat: when the file under the served name already has the recorded SHA-256 value, the run writes nothing and reports `unchanged`, which completes the tile effect; the source place is not needed then, so a retry after the source was removed still succeeds. When the served name is missing, holds a file of another value or is a link, the run loads the archive and replaces what was there, logging an information line when it replaces a file of another value. A link at the source counts as no source file.
+
+Every failure ends the run with its reason and leaves the served name as it was, because the archive reaches it only through the one replacement after both checks: a reader of the served name finds the earlier file or the complete checked archive, never part of a file. The one exception is a failed sync of the directory on Linux after the replacement, which ends as `copy_failed` with the complete checked archive already under the served name. A temporary copy that is not placed is removed; when even that fails, a warning is logged and the next run removes it. A copy that cannot be read back ends as `copy_failed`, a copy of another value as `copy_mismatch`. The placed file is readable by everyone and writable by its owner, because the proxy may read it as another user and the archive is public.

@@ -161,6 +161,7 @@ CREATE INDEX IX_fact_flagged_at ON fact (flagged_at) WHERE flagged_at IS NOT NUL
 - `source` is `openstreetmap` for a fact of the copy and `user_report` otherwise. A fact a fresh copy no longer holds either becomes `user_report` with its identity kept, or keeps `openstreetmap` with `is_removed_from_osm`, which makes it outdated with the reason that it was removed in OpenStreetMap; a fact that returns becomes `openstreetmap` again without that mark (M4).
 - `flagged_at` is the first flag of the fact; a flag keeps nothing about who flagged (M11). `hidden_at` is set when a moderator hides flagged content and cleared when they restore it.
 - The status of a fact, its sums and the date of its last confirmation are not columns: the code derives them from `vote` by M4, the same for every fact.
+- Negative identifiers belong only to sample data. The sample loading of `plans/sample_data/` writes S-1 - S-8 of the demo scenario under the identifiers -1 - -8 in that order, with `OVERRIDING SYSTEM VALUE`, while every other fact keeps the identifier the identity column generates. The operations of `community_facts` and `community_facts_api` must accept these identifiers like any other. This convention uses the existing column and changes no object of the schema; it was decided by the user on 2026-10-04 and awaits Kuba's confirmation as the owner of this document.
 
 ## Accounts and votes
 

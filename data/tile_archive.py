@@ -10,6 +10,7 @@ from common_time import Deadline, DeadlineExpiredError, fetch_monotonic_seconds,
 
 TILE_FILE_CHUNK_BYTES = 1048576
 TILE_TEMPORARY_PREFIX = ".tile-archive-"
+TILE_FILE_MODE = 0o644
 
 
 class TileFileError(RuntimeError):
@@ -49,32 +50,32 @@ def apply_tile_file_copy(source: Path, directory: Path, deadline: Deadline) -> P
     """
     Copy the source into a new temporary file of the directory chunk by chunk, sync it to disk and return its path.
 
-    The run deadline is checked before each chunk. When the copy fails or the deadline runs out, the partial file is
+    The file is made readable by everyone and writable by its owner, because the proxy that serves it may run as another
+    user and the archive is public. The run deadline is checked before each chunk. When the copy fails or the deadline runs out, the partial file is
     removed first; a failed copy then raises TileFileError and an exhausted deadline passes on as DeadlineExpiredError.
     DeadlineExpiredError is a TimeoutError and so an OSError, which is why it is handled before the OSError of a failed
     copy.
     """
+    temporary: Path | None = None
     try:
-        writer = tempfile.NamedTemporaryFile(mode="wb", dir=directory, prefix=TILE_TEMPORARY_PREFIX, delete=False)
-    except OSError as error:
-        raise TileFileError("Cannot copy tile archive file") from error
-    temporary = Path(writer.name)
-    try:
-        with writer, source.open("rb") as reader:
-            while True:
-                resolve_remaining_milliseconds(deadline, fetch_monotonic_seconds())
-                chunk = reader.read(TILE_FILE_CHUNK_BYTES)
-                if not chunk:
-                    break
-                writer.write(chunk)
+        with tempfile.NamedTemporaryFile(mode="wb", dir=directory, prefix=TILE_TEMPORARY_PREFIX, delete=False) as writer:
+            temporary = Path(writer.name)
+            with source.open("rb") as reader:
+                while True:
+                    resolve_remaining_milliseconds(deadline, fetch_monotonic_seconds())
+                    chunk = reader.read(TILE_FILE_CHUNK_BYTES)
+                    if not chunk:
+                        break
+                    writer.write(chunk)
             writer.flush()
+            os.fchmod(writer.fileno(), TILE_FILE_MODE)
             os.fsync(writer.fileno())
-    except DeadlineExpiredError:
-        apply_tile_file_removal(temporary)
-        raise
-    except OSError as error:
-        apply_tile_file_removal(temporary)
-        raise TileFileError("Cannot copy tile archive file") from error
+    except (DeadlineExpiredError, OSError) as failure:
+        if temporary is not None:
+            apply_tile_file_removal(temporary)
+        if isinstance(failure, DeadlineExpiredError):
+            raise
+        raise TileFileError("Cannot copy tile archive file") from failure
     return temporary
 
 

@@ -1,6 +1,8 @@
 """Check the file operations of the tile step on a temporary directory: the chunked digest, the copy into a temporary file, the placement and the removal of leftovers."""
 
 import hashlib
+import stat
+import sys
 from pathlib import Path
 
 import pytest
@@ -8,6 +10,7 @@ import pytest
 from common_time import Deadline, DeadlineExpiredError, build_deadline, fetch_monotonic_seconds
 from data.tile_archive import (
     TILE_FILE_CHUNK_BYTES,
+    TILE_FILE_MODE,
     TILE_TEMPORARY_PREFIX,
     TileFileError,
     apply_tile_file_copy,
@@ -87,6 +90,17 @@ def test_the_copy_writes_the_same_bytes_into_a_temporary_file_of_the_directory(t
     assert temporary.read_bytes() == INVENTED_ARCHIVE
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="Windows keeps no read permission bits for others")
+def test_the_copy_is_readable_by_everyone_and_writable_only_by_its_owner(tmp_path):
+    """Give the copy the mode a proxy running as another user can read, since a temporary file starts readable by its owner alone."""
+    source = tmp_path / "krakow.pmtiles"
+    source.write_bytes(INVENTED_ARCHIVE)
+    served = tmp_path / "served"
+    served.mkdir()
+    temporary = apply_tile_file_copy(source, served, build_open_deadline())
+    assert stat.S_IMODE(temporary.stat().st_mode) == TILE_FILE_MODE == 0o644
+
+
 def test_a_deadline_expiring_during_the_copy_leaves_no_temporary_file(tmp_path, monkeypatch):
     """Stop a copy of three chunks after its first chunk and find no partial file left behind."""
     source = tmp_path / "krakow.pmtiles"
@@ -135,4 +149,3 @@ def test_directory_presence_is_true_only_for_a_directory(tmp_path):
     assert fetch_tile_directory_presence(tmp_path) is True
     assert fetch_tile_directory_presence(tmp_path / "missing") is False
     assert fetch_tile_directory_presence(file) is False
-
