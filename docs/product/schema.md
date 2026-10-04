@@ -208,6 +208,8 @@ CREATE INDEX IX_vote_cast_at_with_voter_hash ON vote (cast_at) WHERE voter_hash 
 ```
 
 - An account is a pseudonym, unique without regard to letter case, a password hash and the moderator role assigned by hand (M9, M11). Deleting an account deletes its row and nothing else.
+- The account writer stores the encoded Argon2id password hash in `password_hash`, with its algorithm parameters, salt and hash in that text value (`MVP.md`, D-8). It stores no plaintext password. Account input limits and allowed pseudonym characters are checked by the application under M9 and `docs/product/api_contract.md`, not by new length or format constraints on these text columns.
+- Registration writes `is_moderator` as false; only the team assigns the role afterwards (M11). Signed sessions add no stored account field or session table. These account requirements use the existing DDL; the handoff for Kuba is recorded in `plans/accounts/ACCOUNTS_SHAPE.md`.
 - A vote confirms or denies a fact. Its person is the account or the hashed identifier of M9, never both; `is_cast_with_account` keeps the kind of voter, from which the code takes the weight of M4. The report of a user carries the confirmation of its author as its first vote.
 - `repeat_allowed_at` is the instant from which the same person may vote on the same fact again, written as `cast_at` plus the waiting time of M4. The two exclusion constraints refuse a vote of the same person on the same fact before that instant.
 - When the account is deleted, the vote stays with its weight and has no person any more, so it counts as a person of its own (M4, M9). The hash of a vote without an account is never cleared; it is deleted with the demo (M9). Votes are never deleted.

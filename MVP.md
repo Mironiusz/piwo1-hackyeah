@@ -118,7 +118,7 @@ The critical path runs through `backend_skeleton` and `schema_first_revision`, b
 - Initiatives outside this file that build parts of the MVP on branches not merged yet, recorded in `docs/standards/decision_registry.md`, entry Initiatives outside MVP.md that overlap its initiatives.
 - Whether `public_transport_routing` waits for `route_planning` and `osm_import` or starts in parallel with them, as the specification says of O9, recorded in `docs/standards/decision_registry.md`, entry When the initiative of O9 starts its code.
 - How the exception of O9 in M7 of the specification names a public transport segment the GTFS marks as accessible and the alighting at a stop, recorded in `docs/standards/decision_registry.md`, entry Wording of the public transport segment of O9.
-- The narrower rule of a pseudonym of version 11 of the specification (M9) - letters, digits, the underscore and the hyphen - which `docs/product/api_contract.md` does not carry yet; the user asks the owners of the contract to bring it in (`docs/product/views.md`, decision 12), and until then the specification prevails over the contract for `accounts`.
+- The account pseudonym rule in `docs/product/api_contract.md` was aligned with specification M9 on 2026-10-04 through `plans/accounts/ACCOUNTS_SHAPE.md`, as approved by the user. Kuber and Adrian's confirmation remains part of the outstanding contract confirmation of D-12 above.
 - Whether an item of a list names its street, deferred until Marek tests the programming interface, recorded in `docs/standards/decision_registry.md`, entry Street name of an item of a list.
 
 ## Known departures from the Kraków brief
