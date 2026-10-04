@@ -146,17 +146,18 @@ Five modules serve the walking route of `service/route_planning.py`.
 
 `tile_archive.py` holds the file operations of the tile step of `service/tile_archive.py`. It reads and writes files only and touches no database.
 
-| Name                            | Role                                                                                                                                      |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `fetch_tile_directory_presence` | Whether a path is a directory that is not a link                                                                                          |
-| `fetch_tile_file_digest`        | The SHA-256 hex digest of a regular file read in chunks under the run deadline, or `None` for a missing path, a directory and a link      |
-| `apply_tile_file_copy`          | A copy of the source in a new `.tile-archive-*` file of the served directory, written in chunks under the run deadline, mode 0644, synced |
-| `apply_tile_file_placement`     | The temporary file put under the served name with one `os.replace`, and on Linux a sync of the directory                                  |
-| `apply_tile_file_removal`       | The removal of one file if it is still there                                                                                              |
-| `apply_tile_leftover_removal`   | The removal of every regular `.tile-archive-*` file of a directory, with the count removed                                                |
-| `TILE_FILE_CHUNK_BYTES`         | 1 048 576, the size of one chunk of every read and write                                                                                  |
-| `TILE_TEMPORARY_PREFIX`         | `.tile-archive-`, the prefix of the temporary copies                                                                                      |
-| `TILE_FILE_MODE`                | 0644, the mode of the copy, so a proxy running as another user can read the public archive                                                |
+| Name                            | Role                                                                                                                                                                     |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `fetch_tile_directory_presence` | Whether a path is a directory that is not a link                                                                                                                         |
+| `fetch_tile_file_digest`        | The SHA-256 hex digest of a regular file read in chunks under the run deadline, or `None` for a missing path, a directory and a link                                     |
+| `apply_tile_file_copy`          | A copy of the source in a new `.tile-archive-*` file of the served directory, written in chunks under the run deadline, mode 0644, synced                                |
+| `apply_tile_file_placement`     | The temporary file put under the served name with one `os.replace`, and on Linux a sync of the directory                                                                 |
+| `apply_tile_file_removal`       | The removal of one file if it is still there                                                                                                                             |
+| `apply_tile_temporary_cleanup`  | The removal of a temporary copy that was not placed; a failed removal is logged as a warning and left to the next run, so it never hides the failure that ended the copy |
+| `apply_tile_leftover_removal`   | The removal of every regular `.tile-archive-*` file of a directory, with the count removed                                                                               |
+| `TILE_FILE_CHUNK_BYTES`         | 1 048 576, the size of one chunk of every read and write                                                                                                                 |
+| `TILE_TEMPORARY_PREFIX`         | `.tile-archive-`, the prefix of the temporary copies                                                                                                                     |
+| `TILE_FILE_MODE`                | 0644, the mode of the copy, so a proxy running as another user can read the public archive                                                                               |
 
 A failed read, copy, placement or removal raises `TileFileError` with one of four constant messages that name no path; the service turns it into the reason of its step. An exhausted run deadline passes on as the `DeadlineExpiredError` of `common_time.py`, which is a `TimeoutError` and so an `OSError`, so every function handles it before an `OSError`. The atomic replacement follows `apply_routing_pointer` of `routing_data.py` and the sync of the directory `apply_journal_write` of `import_workspace.py`. The tests run on temporary directories; on 2026-10-04 the Linux paths - the mode of the copy, a link at the served name and the sync of the directory - also ran in a Linux container of the image `python:3.13-slim`.
 
