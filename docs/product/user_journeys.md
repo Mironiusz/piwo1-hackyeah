@@ -392,7 +392,6 @@ Proposed by the agent and accepted with the journeys, not asked one by one:
 
 Where the date of the OpenStreetMap copy stands and how a moderator reaches the moderator view were open when the journeys were written; both are settled in `docs/product/views.md`. The look of the views, open then as well, has mocks in `.impeccable/briefs/views/`. Still open, and blocking neither document:
 
-- the wording of the messages and of every label, in Polish and in English, and the Polish names of the terms of the specification, proposed in `docs/product/interface_texts.md` and not approved yet,
-- the name of the product.
+- the wording of the messages and of every label, in Polish and in English, and the Polish names of the terms of the specification, proposed in `docs/product/interface_texts.md` and not approved yet.
 
 One rule of version 11 still differs from `docs/product/api_contract.md` and waits for its owners: the street name of an item, for which the contract has no field and the stored data keeps no name of a way. The other one, the characters of a pseudonym, the contract took on 2026-10-04.

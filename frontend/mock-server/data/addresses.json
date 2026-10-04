@@ -1,0 +1,16 @@
+{
+  "matches": [
+    { "label": "Tauron Arena Kraków, Stanisława Lema 7, Czyżyny, 31-571 Kraków", "point": { "lat": 50.0678, "lon": 19.9914 } },
+    { "label": "Ogród Doświadczeń im. Stanisława Lema, aleja Pokoju 68, Czyżyny, 31-580 Kraków", "point": { "lat": 50.064, "lon": 19.9958 } },
+    { "label": "Park Lotników Polskich, Czyżyny, 31-580 Kraków", "point": { "lat": 50.0668, "lon": 20.003 } },
+    { "label": "Rondo Mogilskie, Grzegórzki, 31-516 Kraków", "point": { "lat": 50.0657, "lon": 19.9597 } },
+    { "label": "Muzeum Lotnictwa Polskiego, aleja Jana Pawła II 39, Czyżyny, 31-864 Kraków", "point": { "lat": 50.0777, "lon": 19.9905 } },
+    { "label": "M1 Kraków, aleja Pokoju 67, Czyżyny, 31-580 Kraków", "point": { "lat": 50.0617, "lon": 19.9987 } },
+    { "label": "Plac Centralny im. Ronalda Reagana, Nowa Huta, 31-929 Kraków", "point": { "lat": 50.0718, "lon": 20.037 } },
+    { "label": "Rynek Główny, Stare Miasto, 31-042 Kraków", "point": { "lat": 50.0617, "lon": 19.9373 } },
+    { "label": "Kraków Główny, Pawia, Stare Miasto, 31-154 Kraków", "point": { "lat": 50.0672, "lon": 19.9473 } },
+    { "label": "aleja Pokoju, Grzegórzki, 31-564 Kraków", "point": { "lat": 50.0606, "lon": 19.976 } },
+    { "label": "Stanisława Lema, Czyżyny, 31-571 Kraków", "point": { "lat": 50.0667, "lon": 19.988 } },
+    { "label": "Wawel, Stare Miasto, 31-001 Kraków", "point": { "lat": 50.054, "lon": 19.9354 } }
+  ]
+}
