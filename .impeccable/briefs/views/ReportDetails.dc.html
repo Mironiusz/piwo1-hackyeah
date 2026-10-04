@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Zgłaszanie, krok 3: szczegóły</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow+Semi+Condensed:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="ph" style="width: 390px; height: 900px">
+<header class="top"><span class="name">[Nazwa produktu]</span><span class="sp"></span><button type="button" class="icon-btn" aria-label="Menu"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button></header>
+<section class="map" style="height: 150px" aria-label="Mapa">
+<svg class="base" viewBox="0 0 390 250" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Mapa z ustawionym punktem zgłoszenia">
+<rect class="g" width="390" height="250"></rect>
+<path class="park" d="M228 0h170v118c-48 26-104 20-140-8s-46-70-30-110z"></path>
+<g class="blk"><rect x="18" y="16" width="86" height="58" rx="4"></rect><rect x="118" y="16" width="86" height="58" rx="4"></rect><rect x="18" y="88" width="86" height="52" rx="4"></rect><rect x="118" y="88" width="62" height="52" rx="4"></rect><rect x="210" y="170" width="74" height="62" rx="4"></rect><rect x="298" y="150" width="78" height="82" rx="4"></rect></g>
+<path class="st" d="M0 190h200M150 250V150M150 190 L360 60M0 82h210"></path>
+<text class="lbl" x="228" y="150" transform="rotate(-31 228 150)">al. Pokoju</text>
+<g class="pin" transform="translate(196 126)"><circle r="9"></circle><circle r="3" style="fill: var(--ink)"></circle></g>
+</svg>
+<span class="attr">© OpenStreetMap contributors</span>
+</section>
+<div class="sheet fill">
+<div class="panel">
+<div class="headrow"><div class="grow"><p class="steps">Krok 3 z 5</p><h2>Jaka to bariera?</h2></div><button type="button" class="icon-btn" aria-label="Anuluj zgłoszenie" style="color: var(--ink)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div>
+<ul class="opts" style="margin-top: 8px">
+<li><label class="opt"><input type="radio" name="type" checked><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4v-4h4v-4h4V8h4"></path></svg><span>Schody</span></label></li>
+<li><label class="opt"><input type="radio" name="type"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18h9V10h9"></path></svg><span>Wysoki krawężnik</span></label></li>
+<li><label class="opt"><input type="radio" name="type"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 15c2-3 4-3 6 0s4 3 6 0 4-3 6 0M3 20h18"></path></svg><span>Zła nawierzchnia</span></label></li>
+<li><label class="opt"><input type="radio" name="type"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19 21 8v11z"></path></svg><span>Strome nachylenie</span></label></li>
+<li><label class="opt"><input type="radio" name="type"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4v16M16 4v16M3 12h3M18 12h3"></path></svg><span>Wąskie przejście</span></label></li>
+</ul>
+<div class="field"><label for="steps">Liczba stopni <span class="hint">(opcjonalnie)</span></label><input class="input" id="steps" type="number" inputmode="numeric" min="1" value="4" style="width: 120px"></div>
+<div class="field"><label for="desc">Opis <span class="hint">(opcjonalnie)</span></label><textarea class="input" id="desc">Brak poręczy po prawej stronie.</textarea><span class="hint">Opis jest publiczny. Nie podawaj danych osób.</span></div>
+<div class="actions"><button type="button" class="btn">Wróć</button><button type="button" class="btn primary">Dalej</button></div>
+</div>
+</div>
+<nav class="tabbar" aria-label="Główna nawigacja">
+<button type="button" class="tab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Mapa</button>
+<button type="button" class="tab cta" aria-current="page"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4M6 5h11l-2 4 2 4H6"></path></svg>Zgłoś</button>
+<button type="button" class="tab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"></path><circle cx="15" cy="7" r="2"></circle><circle cx="9" cy="17" r="2"></circle></svg>Potrzeby</button>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

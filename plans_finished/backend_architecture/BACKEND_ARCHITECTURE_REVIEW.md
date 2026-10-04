@@ -1,6 +1,6 @@
 # Review: Backend architecture with the worker, Q-11 of the MVP plan
 
-Document state: 2026-10-04, ready for the whole initiative, initiative closed
+Document state: 2026-10-04, ready for the whole initiative, initiative closed, moved to `plans_finished/`
 
 ## Implementation run of 2026-10-04
 
@@ -33,7 +33,7 @@ O-2. D-2 of `plans/mvp/MVP_PLAN.md` listed "D-3 - D-12, and the one still open, 
 
 ### Left for a human
 
-- Tell the db person, the owner of `plans/schema_revision/`, that the periodic task is gone and that `IX_vote_cast_at_with_voter_hash` serves nothing now; `SCHEMA_REVISION_PRD.md` lines 29, 40 and 78 still name the task.
+- Tell the db person, the owner of `plans/schema_revision/`, that the periodic task is gone and that `IX_vote_cast_at_with_voter_hash` serves nothing now; `SCHEMA_REVISION_PRD.md` still names the task in its sections Out of scope, Functional requirements and Dependencies and impact on other modules.
 - Ask the backend person and the db person to confirm the rulings given for them (plan D-16).
 - Run `make check`, then commit, push and the Merge Request.
 
@@ -42,9 +42,13 @@ O-2. D-2 of `plans/mvp/MVP_PLAN.md` listed "D-3 - D-12, and the one still open, 
 Scope: the whole initiative `backend_architecture` - the plan, the PRD, the shape and the five documents changed by S-1 - S-5, with the memory entry of `agent_docs/memory/_cross_cutting.md`.
 
 - B-1. `npx --no-install prettier --check` warned on `BACKEND_ARCHITECTURE_PLAN.md`: no blank line after the indented paragraph of D-13 in S-1 step 2. Fixed after the review by adding that line; the content of the plan did not change. Prettier on the ten changed files then reported "All matched files use Prettier code style!". Prettier over every markdown file of the repository warns only on `.agents/skills/impeccable/reference/critique.md` and `.claude/skills/impeccable/reference/critique.md`, vendored files this initiative did not touch.
-- R-1. AC-6 of the PRD asks that `plans/schema_revision/` receive the change; it is a step for a human, and `SCHEMA_REVISION_PRD.md` lines 29, 40 and 78 still name the periodic task until the db person changes them.
+- R-1. AC-6 of the PRD asks that `plans/schema_revision/` receive the change; it is a step for a human, and `SCHEMA_REVISION_PRD.md` still names the periodic task in its sections Out of scope, Functional requirements and Dependencies and impact on other modules until the db person changes them.
 - R-2. The rulings given by the user for the backend person and the db person are still to be confirmed (plan D-16).
 - R-3. D-4, D-9, D-10 and D-11 of `plans/mvp/MVP_PLAN.md` still say what "Q-11" decides; D-13 settles the former Q-11, as the plan settles its other former questions.
 - Verification: `test_agent_docs_parity.py` 4 of 4 and `test_conflict_markers.py` passed, the prose scan found 0 and 0, the plan contract found 0 and 0 over 13 closed plans, all run with Python through their functions because pytest is not installed here; prettier passed after B-1; the standards of the Python and frontend profiles do not apply, because no code changed.
 
 Verdict after the fix of B-1: ready, for the whole initiative `backend_architecture`. R-1 and R-2 are steps left to the user after the closure, which ch. 4.6 of `docs/standards/standard_agentic_workflow.md` lets the archive go ahead of. The initiative qualifies for `plans_finished/backend_architecture/`.
+
+## 2026-10-04 - Archiving recorded after the fact
+
+The directory was moved to `plans_finished/backend_architecture/` on 2026-10-04; git first holds it there in commit `1b1cf04` of 2026-10-04. This review recorded the verdict that qualifies the initiative for the archive under `docs/standards/standard_agentic_workflow.md` ch. 4.6, but not the move itself, so `plans/repository_consistency/` appended this entry on 2026-10-04 at the request of the user. Whether the checks of ch. 4.6 were run before the move is not recorded here and was not reconstructed.

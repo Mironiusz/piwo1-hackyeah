@@ -1,6 +1,6 @@
 # Review: MVP account sessions and actor resolution
 
-Document state: 2026-10-03, review ready for the whole initiative
+Document state: 2026-10-04, review ready for the whole initiative, moved to `plans_finished/`
 
 ## 2026-10-03 - Implementation run
 
@@ -155,7 +155,7 @@ None. B-3 is fixed by the withdrawal marker in the Problem section of the PRD. B
 
 ### Improvements
 
-- I-A. F-8 of `plans/api_contract/API_CONTRACT_PLAN.md` cites D-3 of this plan at line 26, while it is at line 29 since F-9 - F-11 were inserted. To be corrected together with the path of that reference at the move.
+- I-A. F-8 of `plans/api_contract/API_CONTRACT_PLAN.md` cites D-3 of this plan by a line number that no longer points at D-3, since F-9 - F-11 were inserted. To be corrected together with the path of that reference at the move.
 - I-B. Fixed after the report: the item of Risks of the plan on renewal now names what a signed-token renewal costs.
 - I-C. Fixed after the report: the change markers of FR-1, FR-2 and Domain rules of the PRD and of the rolling session of the shape name the session of a deleted account next to the expired one, as D-3, F-9 and M9 do.
 - I-D. Not applied: Human steps, Scope steps 2 and 3 and the Definition of Done of the plan describe the hand-off as it was done, under the names Q-6 and Q-3 of that time.
@@ -181,3 +181,7 @@ Not checked, the call limit of the reviewer ran out: the citations of F-1, F-3, 
 ### Verdict
 
 Ready, for the whole initiative `plans/account_sessions/`, a decision record and hand-off without code. It qualifies for `plans_finished/` under ch. 4.6 of `docs/standards/standard_agentic_workflow.md`; the move waits for the session of `plans/api_contract/` to finish its path changes (R-D).
+
+## 2026-10-04 - Archiving recorded after the fact
+
+The directory was moved to `plans_finished/account_sessions/` on 2026-10-03, after the session of `plans/api_contract/` had finished its path changes (`plans_finished/api_contract/API_CONTRACT_REVIEW.md`); who moved it is not recorded, and git first holds it there in commit `5f1aaa6` of 2026-10-03. This review recorded the verdict that qualifies the initiative for the archive under `docs/standards/standard_agentic_workflow.md` ch. 4.6, but not the move itself, so `plans/repository_consistency/` appended this entry on 2026-10-04 at the request of the user. Whether the checks of ch. 4.6 were run before the move is not recorded here and was not reconstructed.

@@ -1,3 +1,3 @@
 {
-	"recommendations": ["ms-python.python", "ms-python.vscode-pylance", "charliermarsh.ruff"]
+	"recommendations": ["ms-python.python", "ms-python.vscode-pylance", "charliermarsh.ruff", "esbenp.prettier-vscode"]
 }

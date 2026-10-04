@@ -11,32 +11,32 @@ The source of truth for every rule is the standard, not `CLAUDE.md` or `AGENTS.m
 The set is divided into three groups:
 
 - Workflow core - six standards describing work with agents, documentation, formatting, review and git. They apply in every project created from the template.
-- Python profile - twelve standards for a Python service with a PostgreSQL database, Alembic migrations and a separate worker process. A project that is not such a service removes their files, their rows from this map and from the map in `standard_review.md`, and replaces references to them in the core with its own standards or removes them. In this project the decision is deferred until the technology stack is chosen - entry in `decision_registry.md`. Until then the profile stays in the repository unchanged.
+- Python profile - twelve standards for a Python service with a PostgreSQL database, Alembic migrations and a separate worker process. A project that is not such a service removes their files, their rows from this map and from the map in `standard_review.md`, and replaces references to them in the core with its own standards or removes them. In this project the backend chosen on 2026-10-03 is such a service and the profile is kept (`MVP.md`, D-1); the entry Technology stack and the Python profile of the standards of `decision_registry.md` closes when the first backend code carries that decision.
 - Frontend profile - one standard for the web frontend in `frontend/`: its technology, its code unit, the rules it takes from the product and its automatic gates. Added on 2026-10-03 by `plans_finished/frontend_stack/`. Frontend code is held to this standard and to the six of the workflow core; the Python profile does not apply to it.
 
 Meaning of the statuses: ready - the document has the full content of its rules. partial - the document has content, but at least one of its rules is waiting for a decision or a measurement; the reason is in the standard itself. skeleton - the document has only the core sections with one-sentence descriptions of what is to be written there.
 
-| File                           | Group            | Status | Responsible for                                                                  |
-| ------------------------------ | ---------------- | ------ | -------------------------------------------------------------------------------- |
-| `standard_agentic_workflow.md` | core             | ready  | the seed -> plan -> review chain, hooks, subagents, Claude Code and Codex parity |
-| `standard_agent_docs.md`       | core             | ready  | the format of SEED, SHAPE, PRD, PLAN, REVIEW and `agent_docs/memory` entries     |
-| `standard_review.md`           | core             | ready  | the review process, the standard - tool map, Definition of Done                  |
-| `standard_documentation.md`    | core             | ready  | documentation of code units and the tone of prose                                |
-| `standard_formatting.md`       | core             | ready  | code and markdown formatting, forbidden characters, no bold in prose             |
-| `standard_git.md`              | core             | ready  | agent permissions for git, branch roles, merge directions                        |
-| `standard_architecture.md`     | Python profile   | ready  | layer boundary, one place for cross-cutting rules, external calls                |
-| `standard_config.md`           | Python profile   | ready  | three configuration layers, environment files, validation, secrets               |
-| `standard_database.md`         | Python profile   | ready  | form of schema changes, database privacy, data access, queries                   |
-| `standard_errors.md`           | Python profile   | ready  | error handling, retries, timeouts                                                |
-| `standard_idempotency.md`      | Python profile   | ready  | idempotency key, reconciliation, deduplication                                   |
-| `standard_code_quality.md`     | Python profile   | ready  | static analysis, complexity, comments, performance                               |
-| `standard_logging.md`          | Python profile   | ready  | log entry format, levels, personal data in logs                                  |
-| `standard_naming.md`           | Python profile   | ready  | names of files, functions and constants                                          |
-| `standard_security.md`         | Python profile   | ready  | static security analysis, dependency vulnerabilities, data in local environments |
-| `standard_tests.md`            | Python profile   | ready  | test layers, critical tests, mandatory tests                                     |
-| `standard_time.md`             | Python profile   | ready  | time model, time zones, time windows in data                                     |
-| `standard_worker.md`           | Python profile   | ready  | the worker process, the periodic task contract, locks                            |
-| `standard_frontend.md`         | frontend profile | ready  | technology, code unit, product rules and gates of frontend code                  |
+| File                           | Group            | Status | Responsible for                                                                    |
+| ------------------------------ | ---------------- | ------ | ---------------------------------------------------------------------------------- |
+| `standard_agentic_workflow.md` | core             | ready  | the seed -> plan -> review chain, hooks, subagents, Claude Code and Codex parity   |
+| `standard_agent_docs.md`       | core             | ready  | the format of SEED, SHAPE, PRD, PLAN, REVIEW and `agent_docs/memory` entries       |
+| `standard_review.md`           | core             | ready  | the review process, the standard - tool map, Definition of Done                    |
+| `standard_documentation.md`    | core             | ready  | documentation of code units and the tone of prose                                  |
+| `standard_formatting.md`       | core             | ready  | code and markdown formatting, forbidden characters, no bold, references by section |
+| `standard_git.md`              | core             | ready  | agent permissions for git, branch roles, merge directions                          |
+| `standard_architecture.md`     | Python profile   | ready  | layer boundary, one place for cross-cutting rules, external calls                  |
+| `standard_config.md`           | Python profile   | ready  | three configuration layers, environment files, validation, secrets                 |
+| `standard_database.md`         | Python profile   | ready  | form of schema changes, database privacy, data access, queries                     |
+| `standard_errors.md`           | Python profile   | ready  | error handling, retries, timeouts                                                  |
+| `standard_idempotency.md`      | Python profile   | ready  | idempotency key, reconciliation, deduplication                                     |
+| `standard_code_quality.md`     | Python profile   | ready  | static analysis, complexity, comments, performance                                 |
+| `standard_logging.md`          | Python profile   | ready  | log entry format, levels, personal data in logs                                    |
+| `standard_naming.md`           | Python profile   | ready  | names of files, functions and constants                                            |
+| `standard_security.md`         | Python profile   | ready  | static security analysis, dependency vulnerabilities, data in local environments   |
+| `standard_tests.md`            | Python profile   | ready  | test layers, critical tests, mandatory tests                                       |
+| `standard_time.md`             | Python profile   | ready  | time model, time zones, time windows in data                                       |
+| `standard_worker.md`           | Python profile   | ready  | the worker process, the periodic task contract, locks                              |
+| `standard_frontend.md`         | frontend profile | ready  | technology, code unit, product rules and gates of frontend code                    |
 
 The boundaries between the standards are described in the Scope and boundaries section of each of them.
 
@@ -51,11 +51,14 @@ Two files in this directory are not standards and have no core sections:
 
 The project adds its own directories next to `docs/standards/`, each with its provenance:
 
-- `docs/product/` - the product specification, `docs/product/specification.md`, written by the team, with the target database schema in `docs/product/schema.md`, part of the specification since version 6. It is the source of truth for the product, named in `CLAUDE.md`, section What we are building. Its first version, written on 2026-10-03, settles the target group and the MVP scope. Next to it, `docs/product/api_contract.md` is the contract of the programming interface between the clients and the service, decided in `plans_finished/api_contract/`; it is not part of the specification, which prevails over it.
-- `docs/hackathon/` - `challenge_requirements.md`, a working summary of the rules and task descriptions of the two HackYeah 2026 challenges the project is submitted to, written on 2026-10-03 from the organizers' PDFs. The PDFs remain the authority and are not stored in the repository.
-- `docs/deployment/` - `hosted_demo.md`, the written instructions for standing the hosted demo up on the server, written on 2026-10-04 by `plans_finished/deployment/`, with the commands completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`.
+- `docs/product/` - the product specification, `docs/product/specification.md`, written by the team, with the target database schema in `docs/product/schema.md`, part of the specification since version 6. It is the source of truth for the product, named in `CLAUDE.md`, section What we are building. Its first version, written on 2026-10-03, settles the target group and the MVP scope. Next to it, `docs/product/api_contract.md` is the contract of the programming interface between the clients and the service, decided in `plans_finished/api_contract/`; it is not part of the specification, which prevails over it. Three more documents stand there, written by the frontend person on 2026-10-03 and 2026-10-04 for version 11 of the specification: `docs/product/user_journeys.md`, the steps of a person through every mandatory feature, `docs/product/views.md`, the list of views of the web frontend derived from those journeys, with what each view needs from the programming interface, and `docs/product/interface_texts.md`, the texts of the interface in Polish and English. The specification prevails over all three.
+- `docs/hackathon/` - `challenge_requirements.md`, a working summary of the rules and task descriptions of the two HackYeah 2026 challenges the project is submitted to, written on 2026-10-03 from the organizers' PDFs. The PDFs remain the authority.
+- `docs/official/` - the four official PDFs of the organizers that `docs/hackathon/challenge_requirements.md` summarizes: the rules and the judging criteria of each of the two challenges, added by Rafał on 2026-10-04. They are the authority over the summary and are not edited.
+- `docs/deployment/` - `hosted_demo.md`, the written instructions for standing the hosted demo up on the server, written on 2026-10-04 by `plans_finished/deployment/`, with the commands still to be completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`.
+- `docs/setup/` - `EMULATOR_SETUP.md`, the instructions for installing the OpenHarmony toolchain and emulator and running a HarmonyOS client on it, merged on 2026-10-04 with pull request 16 from the branch `js/emulator-setup`. The client `accessway/`, `scripts/env.sh` and the `make` targets it runs, such as `make setup` and `make aw-run`, are not in the repository, and whether a HarmonyOS client is built is still open in `decision_registry.md`, entry HarmonyOS port and the Huawei submission.
 - `AI_WORKFLOW.md` in the repository root - the description of how AI tools are used here, required by the Huawei challenge.
-- `MVP.md` in the repository root - the summary of the MVP: its scope, its technical decisions, the initiatives that build it with their owners and order, and the requirements each of them meets, written on 2026-10-04 by `plans/mvp/`. The product specification prevails over it.
+- `MVP.md` in the repository root - the summary of the MVP: its scope, its technical decisions, the initiatives that build it with their owners and order, and the requirements each of them meets, written on 2026-10-04 by `plans_finished/mvp/`. The product specification prevails over it.
+- `PRODUCT.md` in the repository root - the product summary that interface work starts from, written on 2026-10-03 with the `impeccable` skill, which reads it before every design task. The product specification prevails over it.
 - `TEAM.md` in the repository root - the members of the team and the role each one holds, set by Rafał on 2026-10-04, so that documents name people instead of roles (`CLAUDE.md`, section Language and communication style).
 
 ## Deviation rule
@@ -111,6 +114,7 @@ Debts the template starts with:
 
 - The set has no standard describing the internal architecture of a single layer, that is, the split of responsibilities between files in its directory. A split rule written before the code exists would be guessing. Condition for writing it: a layer has so many files that their split starts raising questions in review.
 - `standard_documentation.md` has no Scope and boundaries section and no checklist.
+- Test coverage is not enforced automatically: the configuration has no threshold and no external run guards it, so enforcement stays with the human and the review (`standard_tests.md`, section Coverage scope).
 - The Python profile gates that check code (layer boundaries, environment contract, consistency of the periodic task registry) are not part of the template, because the template has no code. The project sets them up together with the first code of a given layer.
 
 Decisions recorded on 2026-10-03, when the project was set up from the template:

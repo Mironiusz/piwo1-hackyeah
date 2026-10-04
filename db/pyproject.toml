@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools==84.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "accessibility-db"
+version = "0.1.0"
+description = "The shared model of the accessibility database and the chain of its schema revisions, used by the OpenStreetMap import and by the backend."
+requires-python = ">=3.13"
+dependencies = [
+    "SQLAlchemy==2.1.3",
+    "psycopg[binary]==3.3.6",
+    "alembic==1.20.0",
+]
+
+[dependency-groups]
+dev = ["pytest==9.1.1"]
+
+[tool.setuptools.packages.find]
+include = ["accessibility_db*"]
+
+[tool.setuptools.package-data]
+accessibility_db = ["migrations/*.py", "migrations/script.py.mako", "migrations/versions/*.py"]
+
+[tool.pytest.ini_options]
+addopts = "-ra -q -p no:cacheprovider"
+testpaths = ["tests"]
+markers = [
+    "critical: critical tests (a real database brought up by db/compose.yaml; they should fail fast when something does not work)",
+]
+
+[tool.mypy]
+files = ["accessibility_db", "tests"]
+mypy_path = "tests"
+explicit_package_bases = true
+
+[tool.deptry.per_rule_ignores]
+DEP002 = ["psycopg"]

@@ -4,7 +4,7 @@ Document state: 2026-10-04
 
 ## Business goal
 
-By 10:00 on 4 October 2026 the repository holds written instructions for standing the MVP demo of `plans/mvp/` up on the user's own server in a data centre. The public link in the Kraków submission, which closes at 11:00, then works on the phones of the jury, and the live demo runs from the same place (`plans_finished/demo_environment/DEMO_ENVIRONMENT_PRD.md`, Business goal). The deadline leaves one hour before the submission closes to check the link and fix what the check finds.
+By 10:00 on 4 October 2026 the repository holds written instructions for standing the MVP demo of `plans_finished/mvp/` up on the user's own server in a data centre. The public link in the Kraków submission, which closes at 11:00, then works on the phones of the jury, and the live demo runs from the same place (`plans_finished/demo_environment/DEMO_ENVIRONMENT_PRD.md`, Business goal). The deadline leaves one hour before the submission closes to check the link and fix what the check finds.
 
 The instructions describe the steps, their order and what each step leaves behind. The deployment configuration they drive is built by a separate task, decided by the user on 2026-10-04. That task completes the commands of the instructions once its files exist.
 
@@ -15,7 +15,7 @@ This task also brings the rules of the agent and the records of the hosting in l
 The hosted demo has no written instructions. The choice of the hosting was also overturned late on 3 October 2026, when the user moved the demo from the server of the db person to a server of their own. As long as nothing changes:
 
 - Nobody but the author of the configuration knows in which order to start the demo, load its data and check it. The night up to 10:00 is the whole window for the skeleton of the app, the configuration, the first start and the check of the link, and a wrong order costs hours.
-- `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` D-8, `plans/mvp/MVP_PLAN.md` D-10 and `CLAUDE.md`, section Target environment, describe the server of the db person, so the agent reads its permissions against the wrong machine. The resolved entry of `docs/standards/decision_registry.md` says the demo is reached over a secure connection, which the user cut.
+- `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` D-8, `plans_finished/mvp/MVP_PLAN.md` D-10 and `CLAUDE.md`, section Target environment, describe the server of the db person, so the agent reads its permissions against the wrong machine. The resolved entry of `docs/standards/decision_registry.md` says the demo is reached over a secure connection, which the user cut.
 - If the instructions did not say that a restart keeps the data and that emptying the database is a separate step, a member of the team fixing something at 04:00 could wipe the reports, votes and accounts entered during the check, and the data of the demo would have to be loaded again before 10:00.
 
 ## Scope
@@ -32,10 +32,10 @@ The hosted demo has no written instructions. The choice of the hosting was also 
   - restarts that keep the data;
   - completing the commands and names that these instructions leave to it.
 - A secure connection for the public link. The user cut it on 2026-10-03: the demo is served over plain HTTP, and the user accepted the consequences listed in the shape (`DEPLOYMENT_SHAPE.md`, section Out of scope).
-- Making routing stop answering during the live demo. The user cut it on 2026-10-03. The behaviour of the app when routing does not answer, FR-17 of `plans/mvp/MVP_PRD.md`, stays, but it is not shown on the hosted link.
-- Changing `docs/product/specification.md` M10 to match that cut, and adding the start from the current location, which does not work over HTTP, to the list of what works and what does not of AC-15 of `plans/mvp/MVP_PRD.md`. Both belong to the specification and to `plans/mvp/`, not to this task.
-- The program that loads the data, that is, the import of the OpenStreetMap copy, the tile archive and the sample reports. They are work packages of `plans/mvp/MVP_PLAN.md` (D-4, D-6 there, FR-18 of `plans/mvp/MVP_PRD.md`). The instructions only say when and how to start it.
-- The routing service itself and how its data is prepared. Both are decided by `plans/valhalla_routing/` and built by the import and route work packages of `plans/mvp/MVP_PLAN.md` (`plans/valhalla_routing/VALHALLA_ROUTING_PLAN.md` D-13).
+- Making routing stop answering during the live demo. The user cut it on 2026-10-03. The behaviour of the app when routing does not answer, FR-17 of `plans_finished/mvp/MVP_PRD.md`, stays, but it is not shown on the hosted link.
+- Changing `docs/product/specification.md` M10 to match that cut, and adding the start from the current location, which does not work over HTTP, to the list of what works and what does not of AC-15 of `plans_finished/mvp/MVP_PRD.md`. Both belong to the specification and to `plans_finished/mvp/`, not to this task.
+- The program that loads the data, that is, the import of the OpenStreetMap copy, the tile archive and the sample reports. They are work packages of `plans_finished/mvp/MVP_PLAN.md` (D-4, D-6 there, FR-18 of `plans_finished/mvp/MVP_PRD.md`). The instructions only say when and how to start it.
+- The routing service itself and how its data is prepared. Both are decided by `plans_finished/valhalla_routing/` and built by the import and route work packages of `plans_finished/mvp/MVP_PLAN.md` (`plans_finished/valhalla_routing/VALHALLA_ROUTING_PLAN.md` D-13).
 - Standing the demo up and deleting it on 4 October 2026, which are steps of the user and of the owner of the repository, and written instructions for the deletion, which the user cut on 2026-10-03.
 - What happens if the skeleton of the app is not ready by 10:00. The user did not state it (Risks and notes).
 
@@ -51,7 +51,7 @@ FR-4. Check after the first start. The instructions end with a check the team ru
 
 FR-5. Records of the hosting. The records that name the server of the demo describe the server of the user in a data centre, served over plain HTTP:
 
-- D-10 of `plans/mvp/MVP_PLAN.md`, the section Target environment of `CLAUDE.md` and `AGENTS.md`, and the resolved entry of `docs/standards/decision_registry.md` describe the new server, say that D-8 of `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` is superseded, and point to this task.
+- D-10 of `plans_finished/mvp/MVP_PLAN.md`, the section Target environment of `CLAUDE.md` and `AGENTS.md`, and the resolved entry of `docs/standards/decision_registry.md` describe the new server, say that D-8 of `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` is superseded, and point to this task.
 - The archived `plans_finished/demo_environment/` is not changed: its D-8 stays as a historical record (`docs/standards/standard_agentic_workflow.md` ch. 4.6, section Protecting history). Decided by the user on 2026-10-04 in phase B, against a superseding note written into the archived plan.
 - The change of a workflow rule is recorded in `AI_WORKFLOW.md`.
 
@@ -69,7 +69,7 @@ AC-4 (FR-4). The check is the last section of the instructions. It covers the fo
 
 AC-5 (FR-5):
 
-- D-10 of `plans/mvp/MVP_PLAN.md`, the section Target environment of `CLAUDE.md` and `AGENTS.md`, and the resolved entry of `docs/standards/decision_registry.md` describe the server of the user over plain HTTP, name D-8 of `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` as superseded and point to this task.
+- D-10 of `plans_finished/mvp/MVP_PLAN.md`, the section Target environment of `CLAUDE.md` and `AGENTS.md`, and the resolved entry of `docs/standards/decision_registry.md` describe the server of the user over plain HTTP, name D-8 of `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` as superseded and point to this task.
 - `git diff` shows no change under `plans_finished/demo_environment/`.
 - `AI_WORKFLOW.md` records the change.
 - The three permission levels in `CLAUDE.md` and `AGENTS.md` read the same as before, and the two files stay identical except for the tool name.
@@ -84,18 +84,18 @@ AC-5 (FR-5):
 
 ## Dependencies and impact on other modules
 
-- The separate configuration task, decided by the user on 2026-10-04. Its files are what the instructions drive, and it completes their exact commands. It needs Q-11 of `plans/mvp/MVP_PLAN.md`, the backend architecture with the worker, and the skeleton of the app.
-- `plans/valhalla_routing/` decides the routing service the demo runs. At the time of this PRD it had a PRD and no plan; on 2026-10-04 its plan replaced D-9 of `plans/mvp/MVP_PLAN.md` with one Valhalla service run by the project. What the service needs from the server and what makes it stop answering are D-1 and D-14 of `plans/valhalla_routing/VALHALLA_ROUTING_PLAN.md`: the image built by `valhalla/Dockerfile`, on the internal network with no port of the host; at most 2.5 GB of memory; about 60 MB of routing data for walking and about 700 MB with public transport; a build that needs about 2.1 GB and 3.9 GB of memory with public transport; and no answer when the service is down, when its data is of another copy than the copy in use, or after 2 seconds for one call.
-- The work packages of `plans/mvp/MVP_PLAN.md` for the import (D-4), the tile archive (D-6) and the sample data (FR-18 of `plans/mvp/MVP_PRD.md`) together make the loading program of FR-2.
+- The separate configuration task, decided by the user on 2026-10-04. Its files are what the instructions drive, and it completes their exact commands. It needs Q-11 of `plans_finished/mvp/MVP_PLAN.md`, the backend architecture with the worker, and the skeleton of the app.
+- `plans_finished/valhalla_routing/` decides the routing service the demo runs. At the time of this PRD it had a PRD and no plan; on 2026-10-04 its plan replaced D-9 of `plans_finished/mvp/MVP_PLAN.md` with one Valhalla service run by the project. What the service needs from the server and what makes it stop answering are D-1 and D-14 of `plans_finished/valhalla_routing/VALHALLA_ROUTING_PLAN.md`: the image built by `valhalla/Dockerfile`, on the internal network with no port of the host; at most 2.5 GB of memory; about 60 MB of routing data for walking and about 700 MB with public transport; a build that needs about 2.1 GB and 3.9 GB of memory with public transport; and no answer when the service is down, when its data is of another copy than the copy in use, or after 2 seconds for one call.
+- The work packages of `plans_finished/mvp/MVP_PLAN.md` for the import (D-4), the tile archive (D-6) and the sample data (FR-18 of `plans_finished/mvp/MVP_PRD.md`) together make the loading program of FR-2.
 - `plans_finished/geocoding/` D-16: the check of an address search after the first deployment.
-- `docs/product/specification.md` M10 and AC-15 of `plans/mvp/MVP_PRD.md` have to follow the cuts of this task. That work is outside this task.
-- FR-5 changes `CLAUDE.md`, `AGENTS.md`, `AI_WORKFLOW.md`, `docs/standards/decision_registry.md` and `plans/mvp/MVP_PLAN.md`. It does not change the archived `plans_finished/demo_environment/`.
-- `plans_finished/backend_architecture/BACKEND_ARCHITECTURE_SHAPE.md`, item 3 of its scope, also planned to rewrite D-10 of `plans/mvp/MVP_PLAN.md`. On 2026-10-04 the user decided that this task rewrites D-10 under FR-5, so that initiative only refers to it.
+- `docs/product/specification.md` M10 and AC-15 of `plans_finished/mvp/MVP_PRD.md` have to follow the cuts of this task. That work is outside this task.
+- FR-5 changes `CLAUDE.md`, `AGENTS.md`, `AI_WORKFLOW.md`, `docs/standards/decision_registry.md` and `plans_finished/mvp/MVP_PLAN.md`. It does not change the archived `plans_finished/demo_environment/`.
+- `plans_finished/backend_architecture/BACKEND_ARCHITECTURE_SHAPE.md`, item 3 of its scope, also planned to rewrite D-10 of `plans_finished/mvp/MVP_PLAN.md`. On 2026-10-04 the user decided that this task rewrites D-10 under FR-5, so that initiative only refers to it.
 
 ## Risks and notes
 
 - No product code existed at the review of the shape, after 22:00 on 3 October 2026, and Q-11 was open. The instructions are written before the files they drive, so until the configuration task completes their commands they describe the steps but cannot be run as they stand. The deadline of 10:00 holds only if the skeleton of the app, the routing service and the configuration are ready early enough in the night. The user did not state what happens if they are not.
-- The server has 16 GB of memory and 16 cores, confirmed by the user on 2026-10-04. Its free disk was not stated, and its owner judges it sufficient. `plans/valhalla_routing/` sized the routing service against the 4 GB of the old server in its shape, and its plan sizes it within these 16 GB (`plans/valhalla_routing/VALHALLA_ROUTING_PLAN.md` D-14).
+- The server has 16 GB of memory and 16 cores, confirmed by the user on 2026-10-04. Its free disk was not stated, and its owner judges it sufficient. `plans_finished/valhalla_routing/` sized the routing service against the 4 GB of the old server in its shape, and its plan sizes it within these 16 GB (`plans_finished/valhalla_routing/VALHALLA_ROUTING_PLAN.md` D-14).
 - The public Nominatim instance may block or limit the address of the server. The check of FR-4 finds it before the submission, and the app then shows the search unavailable message (`plans_finished/geocoding/GEOCODING_PRD.md` FR-5).
 - Until the specification is changed, M10 requires the demo to show an unavailable routing, and this PRD does not show it. The specification prevails until then.
 - The Kraków brief lists secure connections among the basic data protection and security rules (`docs/hackathon/challenge_requirements.md`). The demo does not meet that point, by a decision of the user.

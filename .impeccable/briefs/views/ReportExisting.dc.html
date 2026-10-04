@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Zgłaszanie, krok 4: istniejące fakty</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow+Semi+Condensed:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="ph" style="width: 390px; height: 760px">
+<header class="top"><span class="name">[Nazwa produktu]</span><span class="sp"></span><button type="button" class="icon-btn" aria-label="Menu"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button></header>
+<section class="map" style="height: 170px" aria-label="Mapa">
+<svg class="base" viewBox="0 0 390 250" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Mapa z punktem zgłoszenia i dwoma istniejącymi faktami tego samego typu w pobliżu">
+<rect class="g" width="390" height="250"></rect>
+<path class="park" d="M228 0h170v118c-48 26-104 20-140-8s-46-70-30-110z"></path>
+<g class="blk"><rect x="18" y="16" width="86" height="58" rx="4"></rect><rect x="118" y="16" width="86" height="58" rx="4"></rect><rect x="18" y="88" width="86" height="52" rx="4"></rect><rect x="118" y="88" width="62" height="52" rx="4"></rect><rect x="210" y="170" width="74" height="62" rx="4"></rect><rect x="298" y="150" width="78" height="82" rx="4"></rect></g>
+<path class="st" d="M0 190h200M150 250V150M150 190 L360 60M0 82h210"></path>
+<text class="lbl" x="228" y="150" transform="rotate(-31 228 150)">al. Pokoju</text>
+<circle cx="196" cy="126" r="34" style="fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 4 4"></circle>
+<g class="mk unv" transform="translate(206 100)"><rect width="22" height="22" rx="5"></rect><path d="M4 17h4v-4h4V9h5"></path></g>
+<g class="mk" transform="translate(162 130)"><rect width="22" height="22" rx="5"></rect><path d="M4 17h4v-4h4V9h5"></path></g>
+<g class="pin" transform="translate(196 126)"><circle r="9"></circle><circle r="3" style="fill: var(--ink)"></circle></g>
+</svg>
+<span class="attr">© OpenStreetMap contributors</span>
+</section>
+<div class="sheet fill">
+<div class="panel">
+<div class="headrow"><div class="grow"><p class="steps">Krok 4 z 5</p><h2>Czy to jest już zgłoszone?</h2></div><button type="button" class="icon-btn" aria-label="Anuluj zgłoszenie" style="color: var(--ink)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div>
+<p class="p">W promieniu około 15 m od Twojego punktu są już fakty tego samego typu. Jeśli to to samo miejsce, potwierdzisz istniejący fakt zamiast dodawać nowy.</p>
+<ul style="margin-top: 10px">
+<li class="row"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4v-4h4v-4h4V8h4"></path></svg><span class="t">Schody, 4 stopnie</span><span class="d">8 m stąd</span><span class="pl">al. Pokoju</span><span class="meta"><span class="status unv"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"></circle><path d="M12 8v5M12 16.5v.01"></path></svg>niezweryfikowane</span><span class="src">zgłoszenie, 2.10.2026</span></span><span style="grid-column: 2/4; margin-top: 10px"><button type="button" class="btn small">To to samo</button></span></li>
+<li class="row"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4v-4h4v-4h4V8h4"></path></svg><span class="t">Schody</span><span class="d">12 m stąd</span><span class="pl">al. Pokoju</span><span class="meta"><span class="status unv"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"></circle><path d="M12 8v5M12 16.5v.01"></path></svg>niezweryfikowane</span><span class="src">dane mapy, 14.06.2025</span></span><span style="grid-column: 2/4; margin-top: 10px"><button type="button" class="btn small">To to samo</button></span></li>
+</ul>
+<div class="actions"><button type="button" class="btn">Wróć</button><button type="button" class="btn primary">To coś innego</button></div>
+</div>
+</div>
+<nav class="tabbar" aria-label="Główna nawigacja">
+<button type="button" class="tab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Mapa</button>
+<button type="button" class="tab cta" aria-current="page"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4M6 5h11l-2 4 2 4H6"></path></svg>Zgłoś</button>
+<button type="button" class="tab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"></path><circle cx="15" cy="7" r="2"></circle><circle cx="9" cy="17" r="2"></circle></svg>Potrzeby</button>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":760}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

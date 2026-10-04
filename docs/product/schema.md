@@ -1,6 +1,6 @@
 # Target database schema
 
-Document state: 2026-10-04, part of `docs/product/specification.md` version 9
+Document state: 2026-10-04, part of `docs/product/specification.md` version 13
 
 ## Why this document exists
 
@@ -10,7 +10,7 @@ The import of OpenStreetMap data and the backend read and write this one schema 
 
 ## Conventions
 
-- PostgreSQL 18, with the extensions `postgis` and `btree_gist`, in the schema `public`. The first revision of the chain creates both extensions and is applied by the schema owner account.
+- PostgreSQL 18, with the extension `postgis`, in the schema `public`. The first revision of the chain creates it and is applied by the schema owner account.
 - A table is a singular noun in snake case. Constraints and indexes carry the prefix `PK_`, `FK_`, `UX_` (unique), `CK_` (check), `EX_` (exclusion) or `IX_`, then the table and the subject, unquoted.
 - An instant is a pair of `timestamptz(3)` and `<column>_utc_offset_minutes` (`docs/standards/standard_time.md`); a calendar day is a `date`.
 - A closed list is a `text` domain with a check of its values; the code maps it to an enumeration.
@@ -22,8 +22,6 @@ The import of OpenStreetMap data and the backend read and write this one schema 
 
 ```sql
 CREATE EXTENSION postgis;
-
-CREATE EXTENSION btree_gist;
 
 CREATE DOMAIN utc_offset_minutes AS smallint
     CONSTRAINT CK_utc_offset_minutes_range CHECK (VALUE BETWEEN -840 AND 840);
@@ -123,6 +121,7 @@ CREATE TABLE fact (
     description text NULL,
     step_count smallint NULL,
     is_sample boolean NOT NULL,
+    idempotency_key bytea NULL,
     osm_element_type osm_element_type NULL,
     osm_element_id bigint NULL,
     osm_edited_on date NULL,
@@ -135,11 +134,14 @@ CREATE TABLE fact (
     hidden_at_utc_offset_minutes utc_offset_minutes NULL,
     CONSTRAINT PK_fact PRIMARY KEY (id),
     CONSTRAINT UX_fact_osm_identity UNIQUE (osm_element_type, osm_element_id, fact_type),
+    CONSTRAINT UX_fact_idempotency_key UNIQUE (idempotency_key),
     CONSTRAINT CK_fact_osm_identity_complete CHECK ((osm_element_type IS NULL) = (osm_element_id IS NULL)),
     CONSTRAINT CK_fact_osm_edited_on_with_identity CHECK ((osm_element_id IS NULL) = (osm_edited_on IS NULL)),
     CONSTRAINT CK_fact_openstreetmap_has_identity CHECK (source = 'user_report' OR osm_element_id IS NOT NULL),
     CONSTRAINT CK_fact_removed_only_openstreetmap CHECK (NOT is_removed_from_osm OR source = 'openstreetmap'),
     CONSTRAINT CK_fact_user_content_without_identity CHECK (osm_element_id IS NULL OR (description IS NULL AND geozone_radius_m IS NULL AND NOT is_sample)),
+    CONSTRAINT CK_fact_saved_report_has_idempotency_key CHECK ((idempotency_key IS NOT NULL) = (osm_element_id IS NULL AND NOT is_sample)),
+    CONSTRAINT CK_fact_idempotency_key_sha256 CHECK (octet_length(idempotency_key) = 32),
     CONSTRAINT CK_fact_geozone CHECK (geozone_radius_m IS NULL OR (geozone_radius_m IN (10, 25, 50, 100) AND fact_type IN ('stairs', 'high_kerb', 'poor_surface', 'steep_incline', 'narrow_passage'))),
     CONSTRAINT CK_fact_step_count CHECK (step_count IS NULL OR (step_count > 0 AND fact_type = 'stairs')),
     CONSTRAINT CK_fact_offset_pairs CHECK ((flagged_at IS NULL) = (flagged_at_utc_offset_minutes IS NULL) AND (hidden_at IS NULL) = (hidden_at_utc_offset_minutes IS NULL)),
@@ -154,6 +156,7 @@ CREATE INDEX IX_fact_flagged_at ON fact (flagged_at) WHERE flagged_at IS NOT NUL
 - A fact is a barrier or an amenity of `fact_type` at the point `geog`: a point report, a geozone, a fact from OpenStreetMap or a fact converted from one (M3 - M6). A fact from OpenStreetMap is an item the tag rules of M6 make present. For a fact of a way the point lies on the way, and the line of the way is in `osm_way`.
 - A geozone is a fact with `geozone_radius_m` of 10, 25, 50 or 100 m and a barrier type (M5).
 - `description` and `step_count` are the optional description and number of steps of M3; `step_count` also holds the number of steps OpenStreetMap gives. `is_sample` marks sample data (M10). A saved fact is never edited by a user (M3, M5).
+- `idempotency_key` is the key of the save of a report or a geozone through `create_fact` of `docs/product/api_contract.md`: the SHA-256 hash of the text `create_fact:` followed by the `idempotency_key` of the request in its canonical form, 36 lowercase characters with hyphens, which makes it the reconciliation key of `docs/standards/standard_idempotency.md`. Every fact saved that way has one, kept for as long as the fact exists, and a fact from OpenStreetMap, a fact converted from one and sample data have none. A second fact with a key already saved is refused, so a repeated save finds the fact of the first one, which holds everything of the request its content is compared with.
 - `osm_element_type`, `osm_element_id` and `fact_type` are the identity of a fact from OpenStreetMap, unique for every fact that came from OpenStreetMap, converted and outdated ones included; a fact reported by a user has none. `osm_edited_on` is the calendar day in Europe/Warsaw of the last edit of that element (M4).
 - `source` is `openstreetmap` for a fact of the copy and `user_report` otherwise. A fact a fresh copy no longer holds either becomes `user_report` with its identity kept, or keeps `openstreetmap` with `is_removed_from_osm`, which makes it outdated with the reason that it was removed in OpenStreetMap; a fact that returns becomes `openstreetmap` again without that mark (M4).
 - `flagged_at` is the first flag of the fact; a flag keeps nothing about who flagged (M11). `hidden_at` is set when a moderator hides flagged content and cleared when they restore it.
@@ -183,28 +186,28 @@ CREATE TABLE vote (
     voter_hash bytea NULL,
     cast_at timestamptz(3) NOT NULL,
     cast_at_utc_offset_minutes utc_offset_minutes NOT NULL,
-    repeat_allowed_at timestamptz(3) NOT NULL,
-    repeat_allowed_at_utc_offset_minutes utc_offset_minutes NOT NULL,
+    cast_on date GENERATED ALWAYS AS ((cast_at AT TIME ZONE 'Europe/Warsaw')::date) STORED,
     CONSTRAINT PK_vote PRIMARY KEY (id),
     CONSTRAINT FK_vote_fact FOREIGN KEY (fact_id) REFERENCES fact (id),
     CONSTRAINT FK_vote_account FOREIGN KEY (account_id) REFERENCES account (id) ON DELETE SET NULL,
+    CONSTRAINT UX_vote_account_day UNIQUE (fact_id, account_id, cast_on),
+    CONSTRAINT UX_vote_hash_day UNIQUE (fact_id, voter_hash, cast_on),
     CONSTRAINT CK_vote_account_only_with_account CHECK (is_cast_with_account OR account_id IS NULL),
     CONSTRAINT CK_vote_hash_only_without_account CHECK (NOT is_cast_with_account OR voter_hash IS NULL),
-    CONSTRAINT CK_vote_repeat_after_cast CHECK (repeat_allowed_at > cast_at),
-    CONSTRAINT EX_vote_account_limit EXCLUDE USING gist (fact_id WITH =, account_id WITH =, tstzrange(cast_at, repeat_allowed_at) WITH &&) WHERE (account_id IS NOT NULL),
-    CONSTRAINT EX_vote_hash_limit EXCLUDE USING gist (fact_id WITH =, voter_hash WITH =, tstzrange(cast_at, repeat_allowed_at) WITH &&) WHERE (voter_hash IS NOT NULL)
+    CONSTRAINT CK_vote_voter_hash_sha256 CHECK (octet_length(voter_hash) = 32)
 );
 
 CREATE INDEX IX_vote_fact_id_cast_at ON vote (fact_id, cast_at);
 
 CREATE INDEX IX_vote_account_id ON vote (account_id) WHERE account_id IS NOT NULL;
-
-CREATE INDEX IX_vote_cast_at_with_voter_hash ON vote (cast_at) WHERE voter_hash IS NOT NULL;
 ```
 
 - An account is a pseudonym, unique without regard to letter case, a password hash and the moderator role assigned by hand (M9, M11). Deleting an account deletes its row and nothing else.
+- The account writer stores the encoded Argon2id password hash in `password_hash`, with its algorithm parameters, salt and hash in that text value (`plans_finished/account_sessions/ACCOUNT_SESSIONS_PLAN.md` D-4). It stores no plaintext password. Account input limits and allowed pseudonym characters are checked by the application under M9 and `docs/product/api_contract.md`, not by new length or format constraints on these text columns.
+- Registration writes `is_moderator` as false; only the team assigns the role afterwards (M11). Signed sessions add no stored account field or session table. These account requirements use the existing DDL; the handoff for Kuba is recorded in `plans/accounts/ACCOUNTS_SHAPE.md`.
 - A vote confirms or denies a fact. Its person is the account or the hashed identifier of M9, never both; `is_cast_with_account` keeps the kind of voter, from which the code takes the weight of M4. The report of a user carries the confirmation of its author as its first vote.
-- `repeat_allowed_at` is the instant from which the same person may vote on the same fact again, written as `cast_at` plus the waiting time of M4. The two exclusion constraints refuse a vote of the same person on the same fact before that instant.
+- `voter_hash` is 32 bytes long, the output of a 256-bit hash function; what is hashed is decided by the code that writes the vote (M9).
+- `cast_on` is the calendar day of `cast_at` in Europe/Warsaw, computed by the database whatever offset the pair carries. A person votes on a fact at most once per calendar day (M4): `UX_vote_account_day` refuses a second vote of an account and `UX_vote_hash_day` a second vote of a hash on the same day. A vote of an account has no hash and a vote without an account has no account, so each uniqueness compares only its own kind of person, and a vote whose account was deleted takes part in neither.
 - When the account is deleted, the vote stays with its weight and has no person any more, so it counts as a person of its own (M4, M9). The hash of a vote without an account is never cleared; it is deleted with the demo (M9). Votes are never deleted.
 
 ## Rights of the service account
@@ -231,6 +234,6 @@ The name of the service account is an entry of the local environment files, so t
 ## Who writes what
 
 - The import writes `osm_copy`, `osm_way`, `osm_node`, `osm_way_node` and the facts with an OpenStreetMap identity: a fresh copy, the reconciliation of its facts and its row in `osm_copy` in one transaction, which upserts the ways, nodes and facts of the copy and deletes the ways and nodes it no longer holds.
-- The backend writes the facts without an OpenStreetMap identity - reports and geozones - the votes on every fact, the accounts, and `flagged_at` and `hidden_at`.
+- The backend writes the facts without an OpenStreetMap identity - reports and geozones, each with the idempotency key of its save, never changed afterwards - the votes on every fact, the accounts, and `flagged_at` and `hidden_at`.
 - No task clears `voter_hash`; it is deleted with every other piece of data when the demo is deleted (M9).
 - No one deletes a fact or a vote.

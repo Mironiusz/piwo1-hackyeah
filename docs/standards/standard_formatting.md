@@ -1,6 +1,6 @@
 # Code formatting standard
 
-Document state: 2026-10-03
+Document state: 2026-10-04
 
 Status: ready - full content. The full description of this standard's position relative to the others is in `docs/standards/README.md`.
 
@@ -12,7 +12,7 @@ Most of the rules below are already enforced automatically today by `ruff format
 
 ## Scope and boundaries
 
-This standard is responsible for code formatting: line length and the moment a call is broken into multiple lines, forbidden characters, quotation marks and emphasis - in Python code and in documentation prose. It is also responsible for formatting markdown files with prettier: which tool, with which configuration and which `make` target runs it.
+This standard is responsible for code formatting: line length and the moment a call is broken into multiple lines, forbidden characters, quotation marks and emphasis - in Python code and in documentation prose. It is also responsible for formatting markdown files with prettier: which tool, with which configuration and which `make` target runs it, and for the form in which a markdown file refers to a place in another file.
 
 Forbidden characters currently have two versions: a shortened one in `CLAUDE.md`/`AGENTS.md` (hard bans applicable without context) and a full one, with rationale, here - this is the intended architecture described in `docs/standards/README.md`, not duplication to be fixed. The shortened version in `CLAUDE.md`/`AGENTS.md` differs numerically from the full list below - this mismatch is known and remains unfixed.
 
@@ -77,6 +77,22 @@ Both files are also read by the prettier extension in VS Code, through which `.v
 
 What prettier changes in a file: it aligns table columns to the widest cell, normalizes blank lines around headings and blocks, sets the continuation indentation of a list item, unifies emphasis markers and formats fenced code blocks in a language it knows (`json`, `yaml`) to the same width of 200 characters. What it does not change: the content and wrapping of paragraphs, and `python` and `sql` blocks, which it does not parse. A technical name with an underscore standing in prose without backticks is sometimes read as italics and rewritten into asterisks (`trigger_params` into `trigger*params`), which is why a technical name in prose stands in backticks. The reason is mechanical, not stylistic: the formatter does not touch what is marked as code.
 
+## References to a place in a file
+
+A markdown file that refers to a place in another file - in prose, in the evidence of a plan finding, in a markdown link - names that place by something that moves together with its content: an item by its identifier, a section by its heading, code by its symbol. It never names a line number. A line number is true only until the first edit above it: a merge, an inserted item or a fixed typo moves the content, and the reference goes on pointing at the old number without any sign that it now points at something else. The first two days of the project showed exactly this - a fact citing a decision by a line the decision had left after three items were inserted above it, a review applying a step "to the quoted sentence, not to the line number" - and on 2026-10-04 every such reference in the repository was rewritten once (`standard_agentic_workflow.md` ch. 4.6). A heading or an identifier survives the edit together with its content, and when the content is gone, the reference visibly points at nothing instead of quietly pointing at the wrong thing.
+
+The forms, from the most precise:
+
+- an identified item alone: `D-3`, `FR-2`, `AC-12`, `Q-4`, `M4`, `step 1.4` - an identifier marks exactly one item of its document,
+- a section after the path of the file: `` `docs/standards/standard_time.md` section UTC values as keys ``, or `ch. 4.6` for a numbered chapter; a heading that repeats in the file is named together with its parent section,
+- the state line of a document, written as `the state line`, and the text above its first section, written as `the introduction`,
+- a symbol of code: `` function `fetch_copy` ``, `` method `Settings.validate` ``, `` constant `RULE_EFFECTIVE_DATE` ``; a configuration file by its own structure: `` table `[tool.mypy]` ``, `` key `files` of table `[tool.mypy]` ``, `` target `lint-docs` `` of the makefile, `` key `devDependencies.prettier` `` of a JSON file; a file without structure, such as `.gitignore` or a Dockerfile, by the entry or the instruction itself, in backticks,
+- inside a long section, when the section alone is not precise enough: the item that begins with given words, or a short literal quote, after the section.
+
+A markdown link points at the file, never at a line of it: `[LOCAL_DATABASE_PLAN.md](plans_finished/local_database/LOCAL_DATABASE_PLAN.md) (D-8)`, not a target ending in `:53` or `#L53`. A command whose output prints line numbers, such as `grep -n`, is quoted as it was run, and its result is recorded as the sections, items or symbols it found, not as the printed numbers.
+
+The rule covers every markdown file the team writes, the task artifacts in `plans/` and `plans_finished/` and the entries of `agent_docs/memory/` included. Third-party content stays outside it, for the same reason as for the prose gate above. It does not cover the conversation with the user, where a clickable path with a line number is a convenience of the moment and is never read again after the next edit; what goes from the conversation into a file takes the form above. No automatic check guards this rule - it is checked in review, like the other rules of this standard without a tool.
+
 ## Table width in documentation
 
 A table cell in documentation prose carries a short phrase or one short sentence, not several sentences of rationale. The reason is mechanical, not aesthetic: prettier, like every markdown formatter, aligns the whole column to the width of its longest cell, so one long-winded cell stretches every row of the table to the same width, including the rows that are short on their own. The effect is visible in the source as lines of several hundred characters, which cannot be read without scrolling sideways - this is the narrowing of the visible field that this rule is about, not a subjective impression.
@@ -115,6 +131,7 @@ Code and documentation in this repository do not contain the characters below. S
 - Do quotation marks in prose (docstring, comment, documentation) appear only for a literal quote, the name of a field or a code fragment in the text, and not as decoration?
 - Has a new or changed markdown file gone through `make format` before the change is merged, and does `make lint` report no prettier differences for it?
 - Is a technical name with an underscore, standing in the prose of a markdown file, in backticks, so that prettier does not rewrite it as emphasis?
+- Does every reference to a place in another file, a markdown link and the evidence of a plan finding included, name an item identifier, a section or a code symbol, and none a line number?
 - Is the prose free of bold - both in the middle of a sentence and in the form of a label opening a paragraph or a list item - and does bold appear only in headings and table cells?
 - Does no table cell carry more than a short phrase or one short sentence, and has a table whose rows are in essence separate paragraphs of rationale been converted into headings or a list?
 - Do code and documentation contain no character from the list of forbidden characters, including homoglyphs?

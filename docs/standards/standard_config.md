@@ -47,9 +47,22 @@ The third layer: local configuration. Constants belonging to one piece of code a
 
 ## Environment entries
 
-Every entry of the three templates has a record in this section, added together with the entry in the template. The record gives the entry's name, its meaning, whether the entry is required or has a default value, and how the process behaves when it is missing. The template does not contain any entry yet.
+Every entry of the three templates has a record in this section, added together with the entry in the template. The record gives the entry's name, its meaning, whether the entry is required or has a default value, and how the process behaves when it is missing. The first entries came on 2026-10-04 with the database of `db/` (`plans/schema_first_revision/`); every one of them is required and has no default value, and an empty or missing entry stops the Compose files of `db/`, `db/accessibility_db/migrations/env.py` or the critical tests of `db/tests/` with its name.
 
-A value given ad hoc at call time, such as consent to apply a revision to the target environment's database, has no entry in any template and cannot have one. Absence from the template is a rule here, not an oversight, and follows directly from the environment contract: every template key has to also be present in the local file, so an entry in the template would make you write the consent down once and for all - and consent written into a file stops being consent, and the gate becomes a fiction. For the same reason, adding such a key to your own environment file is a workaround of the rule, not a convenience: the environment contract test will not catch it, because it checks the template keys, not extra keys.
+| Entry                         | Template             | Meaning                                                                                                                           |
+| ----------------------------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `DB_BOOTSTRAP_PASSWORD`       | `.env.example`       | The password of the bootstrap superuser the database image creates at its first start, used only by the script creating accounts. |
+| `DB_SCHEMA_OWNER_PASSWORD`    | `.env.example`       | The password of the schema owner account, which owns the database and applies the revisions.                                      |
+| `DB_SERVICE_ACCOUNT_PASSWORD` | `.env.example`       | The password of the service account of the running app, the import included.                                                      |
+| `DB_NAME`                     | `.env.local.example` | The name of the database.                                                                                                         |
+| `DB_BOOTSTRAP_NAME`           | `.env.local.example` | The name of the bootstrap superuser of the database image.                                                                        |
+| `DB_SCHEMA_OWNER_NAME`        | `.env.local.example` | The name of the schema owner account.                                                                                             |
+| `DB_SERVICE_ACCOUNT_NAME`     | `.env.local.example` | The name of the service account; the first revision grants its rights to this name.                                               |
+| `DB_HOST_PORT`                | `.env.local.example` | The port of the local machine at which `db/compose.yaml` publishes the database on `127.0.0.1`; the hosted demo publishes none.   |
+
+The Compose files of `db/` also set, for the containers that apply the revisions and run the tests, `DB_HOST` and `DB_PORT`, the address of the database inside the network of Compose, and `DB_ENVIRONMENT`, `local` in `db/compose.yaml` and `target` in `db/compose.deploy.yaml`. They are written in those files, not in a template, because they follow from the file itself; the critical tests refuse to run unless `DB_ENVIRONMENT` is `local`.
+
+A value given ad hoc at call time, such as consent to apply a revision to the target environment's database, has no entry in any template and cannot have one. Absence from the template is a rule here, not an oversight, and follows directly from the environment contract: every template key has to also be present in the local file, so an entry in the template would make you write the consent down once and for all - and consent written into a file stops being consent, and the gate becomes a fiction. For the same reason, adding such a key to your own environment file is a workaround of the rule, not a convenience: the environment contract test will not catch it, because it checks the template keys, not extra keys. For the revisions of `db/` this consent is `DB_REVISION_CONSENT=apply`, given with `-e` to the call of the profile `migrate` of `db/compose.deploy.yaml`.
 
 ## Rule for assigning a value to a layer
 
@@ -68,9 +81,9 @@ Not every non-secret may be brought into the repository, and this rule is indepe
 
 The consequence of these rules is unambiguous and intended: reading an environment variable outside the second layer is a violation of the standard, no matter how local the value is and how convenient it was to read it on the spot. Scattered environment reads are exactly the state in which you cannot answer the question of what the service needs to have set without searching the whole code.
 
-The only allowed exception: code run outside the full application environment. This includes one-off tools run from the command line, `alembic/env.py`, and those conftests and tests that read entries unknown to the facade, for example the migration account address. Such an exception is described in a docstring at the place of the read, together with the reason - it is not silent.
+The only allowed exception: code run outside the full application environment. This includes one-off tools run from the command line, the environment of the schema revisions (`alembic/env.py`, in this repository `db/accessibility_db/migrations/env.py`), and those conftests and tests that read entries unknown to the facade, for example the migration account address. Such an exception is described in a docstring at the place of the read, together with the reason - it is not silent.
 
-The connection address for the schema owner account, used only when applying revisions, is read by `alembic/env.py` directly from the environment, and the second layer does not know it and is not supposed to: the account that changes the schema has no right to sit in a layer that every service process imports. A missing address stops Alembic with the name of the correct key, without a fallback.
+The connection address for the schema owner account, used only when applying revisions, is read by the environment of the schema revisions (`alembic/env.py`, in this repository `db/accessibility_db/migrations/env.py`) directly from the environment, and the second layer does not know it and is not supposed to: the account that changes the schema has no right to sit in a layer that every service process imports. A missing address stops Alembic with the name of the correct key, without a fallback.
 
 ## Validating values from the environment
 

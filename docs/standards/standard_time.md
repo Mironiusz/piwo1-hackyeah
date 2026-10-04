@@ -65,7 +65,7 @@ Comparison and sorting go by the `timestamptz` column alone. No `WHERE` conditio
 
 ## Writing the pair: one value, not two columns
 
-The pair is mapped as one attribute through `composite()` in SQLAlchemy. This is not a convenience, it is the only thing that makes writing half a pair impossible: since there is no attribute for the offset alone, there is no assignment that updates the instant and leaves the old offset.
+The pair is mapped as one attribute through `composite()` in SQLAlchemy. This is not a convenience, it is the only thing that makes writing half a pair impossible: since there is no attribute for the offset alone, there is no assignment that updates the instant and leaves the old offset. SQLAlchemy keeps a mapped attribute for every column of a composite, so the shared model of `db/accessibility_db/tables.py` maps the two columns of a pair under private keys starting with an underscore, which no code outside the model assigns.
 
 The `CK_<table>_offset_pairs` condition in the database rejects a pair in which exactly one column is `NULL`. It will not catch, however, an offset left over from a previous write, because then neither column is `NULL`. That is why the defense has three stages, and each stage guards something different: `composite()` in the model does not allow writing such code, the condition in the database catches half a pair, and a periodic control task of the worker recomputes the offsets and reports the rows that no zone in use explains. The third stage exists for the case where someone writes raw SQL or a migration bypassing the model.
 
