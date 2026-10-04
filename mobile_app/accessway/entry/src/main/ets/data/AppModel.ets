@@ -8,7 +8,7 @@ import { readApiSettings } from './ApiConfig';
 import { tileStore } from './Tiles';
 import { ApiRepository } from './ApiRepository';
 import { LocalRepository } from './LocalRepository';
-import { Account, Area, DataInfo, RepoError, Repository, RoutePlan } from './Repository';
+import { Account, Area, DataInfo, ErrorCode, RepoError, Repository, RoutePlan } from './Repository';
 import { readFileText, writeFileText } from './Storage';
 
 const PREFS_FILE: string = 'ui_prefs.json';
@@ -60,6 +60,8 @@ export class AppModel {
   langChosen: boolean = false;
   facts: Fact[] = [];
   factsTruncated: boolean = false;
+  /** True when the service does not offer the facts operations yet; the map then shows routes without facts. */
+  factsUnsupported: boolean = false;
   apiBaseUrl: string = '';
   account: Account | null = null;
   start: Endpoint | null = null;
@@ -169,14 +171,38 @@ export class AppModel {
     return { south: lat - dLat, west: lon - dLon, north: lat + dLat, east: lon + dLon };
   }
 
+  /**
+   * Facts of the visible area. A service without the facts operations yet (`not_found`) leaves the list empty and
+   * sets `factsUnsupported` once, instead of failing on every move of the map.
+   */
   async refreshFacts(): Promise<void> {
-    const page = await this.repo.facts.listFacts(this.factsArea());
-    this.facts = page.facts;
-    this.factsTruncated = page.truncated;
+    if (this.factsUnsupported) {
+      return;
+    }
+    try {
+      const page = await this.repo.facts.listFacts(this.factsArea());
+      this.facts = page.facts;
+      this.factsTruncated = page.truncated;
+    } catch (e) {
+      if (e instanceof RepoError && (e as RepoError).code === ErrorCode.NOT_SUPPORTED) {
+        this.facts = [];
+        this.factsTruncated = false;
+        this.factsUnsupported = true;
+        return;
+      }
+      throw e as Error;
+    }
   }
 
+  /** The day of the OpenStreetMap copy; without `read_osm_copy` on the service it comes from the next route instead. */
   async refreshInfo(): Promise<void> {
-    await this.repo.facts.refreshInfo();
+    try {
+      await this.repo.facts.refreshInfo();
+    } catch (e) {
+      if (!(e instanceof RepoError && (e as RepoError).code === ErrorCode.NOT_SUPPORTED)) {
+        throw e as Error;
+      }
+    }
   }
 
   accountName(): string {

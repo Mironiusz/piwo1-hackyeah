@@ -1,5 +1,6 @@
 import { common } from '@kit.AbilityKit';
 import { NearbyFact } from '../domain/Facts';
+import { sameDay } from '../domain/Trust';
 import { Fact, FactKind } from '../model/Types';
 import { ApiSettings } from './ApiConfig';
 import { ApiClient, Auth } from './ApiClient';
@@ -46,7 +47,6 @@ import {
 import { readFileText, writeFileText } from './Storage';
 
 const VOTES_FILE: string = 'api_my_votes.json';
-const DAY: number = 24 * 60 * 60 * 1000;
 
 interface StoredVote {
   id: string;
@@ -83,7 +83,7 @@ class ApiCore {
 
   rememberVote(id: string, stillThere: boolean, at: number): void {
     const now = Date.now();
-    this.votes = this.votes.filter((v: StoredVote) => v.id !== id && now - v.at < DAY);
+    this.votes = this.votes.filter((v: StoredVote) => v.id !== id && sameDay(v.at, now));
     this.votes.push({ id: id, stillThere: stillThere, at: at });
     try {
       writeFileText(`${this.ctx.filesDir}/${VOTES_FILE}`, JSON.stringify(this.votes));
@@ -172,11 +172,11 @@ class ApiFacts implements FactsRepository {
     return factFromApi(r.fact);
   }
 
-  /** The contract does not return one's own vote, so the app remembers votes cast from this device in the last day. */
+  /** The contract does not return one's own vote, so the app remembers votes cast from this device today. */
   async myVote(id: string): Promise<MyVote | null> {
     const now = Date.now();
     for (const v of this.core.votes) {
-      if (v.id === id && now - v.at < DAY) {
+      if (v.id === id && sameDay(v.at, now)) {
         return { stillThere: v.stillThere, at: v.at };
       }
     }

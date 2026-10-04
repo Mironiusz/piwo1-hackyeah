@@ -87,6 +87,14 @@ def invalid(*fields):
     return ApiError(422, "invalid_request", fields=list(fields))
 
 
+KRAKOW_BBOX = (49.9676668, 19.7922355, 50.1261338, 20.2173455)
+
+
+def in_krakow(lat, lon):
+    """The mock stands in for the administrative boundary of Kraków with its bounding box (the box of the tile archive)."""
+    return KRAKOW_BBOX[0] <= lat <= KRAKOW_BBOX[2] and KRAKOW_BBOX[1] <= lon <= KRAKOW_BBOX[3]
+
+
 def now():
     return datetime.now(ZONE)
 
@@ -713,6 +721,10 @@ class Router:
                 segments.append({"line": [line[0], line[1]], "_len": length, "state": state,
                                  "missing_attributes": list(missing), "is_marked_wheelchair_no": wheel_no,
                                  "_net": e is not None})
+        if not avoid:
+            for seg in segments:
+                seg["state"] = "not_assessed"
+                seg["missing_attributes"] = []
         segments = [{"line": [[round(p[0], 7), round(p[1], 7)] for p in seg["line"]],
                      "length_m": int(round(seg["_len"])), "state": seg["state"],
                      "missing_attributes": seg["missing_attributes"] if seg["state"] in ("partial_data", "no_data") else [],
@@ -830,6 +842,7 @@ class Api:
         ("POST", r"^/api/routes$", "plan_route"),
         ("POST", r"^/api/address-search$", "search_address"),
         ("GET", r"^/api/osm-copy$", "read_osm_copy"),
+        ("GET", r"^/api/public-transport$", "read_public_transport"),
         ("POST", r"^/api/facts/in-area$", "list_facts_in_area"),
         ("POST", r"^/api/facts/nearby$", "find_nearby_facts"),
         ("GET", r"^/api/facts/(\d+)$", "read_fact"),
@@ -847,7 +860,7 @@ class Api:
     NO_TOKEN = ("plan_route", "search_address", "create_account", "log_in")
     TOKEN_REQUIRED = ("read_own_account", "delete_own_account", "list_flagged_facts", "hide_fact", "restore_fact")
     MODERATOR = ("list_flagged_facts", "hide_fact", "restore_fact")
-    NO_BODY = ("read_osm_copy", "read_fact", "flag_fact", "read_own_account", "delete_own_account",
+    NO_BODY = ("read_public_transport", "read_osm_copy", "read_fact", "flag_fact", "read_own_account", "delete_own_account",
                "list_flagged_facts", "hide_fact", "restore_fact")
 
     def __init__(self, store):
@@ -903,12 +916,29 @@ class Api:
 
 
     def plan_route(self, body, _args, _acc, _person):
-        check_fields(body, ("start", "destination", "avoid", "need"))
+        check_fields(body, ("start", "destination", "avoid", "need"), ("route_kind",))
         start = check_point(body["start"], "start")
         dest = check_point(body["destination"], "destination")
         avoid = check_type_list(body["avoid"], "avoid", BARRIERS)
         need = check_type_list(body["need"], "need", AMENITIES)
-        return 200, self.router.plan(start, dest, avoid, need), {}
+        kind = body.get("route_kind", "walking")
+        if kind not in ("walking", "public_transport"):
+            raise invalid("route_kind")
+        outside = [name for name, (lat, lon) in (("start", start), ("destination", dest)) if not in_krakow(lat, lon)]
+        if outside:
+            raise ApiError(422, "point_outside_krakow", points=outside)
+        if kind == "public_transport":
+            raise ApiError(409, "public_transport_disabled")
+        answer = self.router.plan(start, dest, avoid, need)
+        answer["public_transport_unavailable"] = False
+        for route in [answer["route"]] + ([answer["alternative"]["route"]] if answer["alternative"] else []):
+            for seg in route["segments"]:
+                seg["public_transport"] = None
+        return 200, answer, {}
+
+    def read_public_transport(self, _body, _args, _acc, _person):
+        """The mock offers no routes with public transport (O9 is optional), so the switch stays hidden."""
+        return 200, {"is_enabled": False, "feeds": []}, {}
 
     def search_address(self, body, _args, _acc, _person):
         check_fields(body, ("text",))
@@ -952,7 +982,7 @@ class Api:
         if body["type"] not in BARRIERS + AMENITIES:
             raise invalid("type")
         lat, lon = check_point(body["point"], "point")
-        near = [(f, d) for f, d in self.s.facts_near(lat, lon, 15.0) if f.type == body["type"] and not f.is_hidden]
+        near = [(f, d) for f, d in self.s.facts_near(lat, lon, 15.0) if f.type == body["type"] and not f.is_hidden and not f.is_removed_from_osm]
         near.sort(key=lambda t: t[1])
         return 200, {"facts": [{"fact": f.to_json(), "distance_m": int(round(d))} for f, d in near]}, {}
 
@@ -1001,10 +1031,10 @@ class Api:
             raise invalid("verdict")
         f = self.s.visible(int(args[0]))
         mine = [v for v in f.votes if v["person"] == person]
-        if mine:
-            last = max(v["at"] for v in mine)
-            if now() - last < timedelta(days=1):
-                raise ApiError(409, "vote_too_soon", repeat_allowed_at=instant(last + timedelta(days=1)))
+        today = now()
+        if mine and day(max(v["at"] for v in mine)) == day(today):
+            midnight = datetime.combine(today.date() + timedelta(days=1), datetime.min.time(), ZONE)
+            raise ApiError(409, "vote_too_soon", repeat_allowed_at=instant(midnight))
         f.votes.append({"person": person, "verdict": body["verdict"], "weight": 1 if acc else 0.5, "at": now()})
         return 201, {"fact": f.to_json()}, {}
 

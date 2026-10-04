@@ -98,14 +98,19 @@ def main():
         st, body, _ = call("POST", "/api/routes", {"start": {"lat": 50.0617, "lon": 19.9373},
                                                    "destination": {"lat": 50.0678, "lon": 19.9914},
                                                    "avoid": avoid, "need": need})
-        ok = st == 200 and set(body) == {"osm_copy_date", "barrier_free_route_exists", "route", "alternative"}
+        ok = st == 200 and set(body) == {"osm_copy_date", "barrier_free_route_exists", "public_transport_unavailable", "route",
+                                         "alternative"} and body["public_transport_unavailable"] is False
         if ok:
             r = body["route"]
             ok = set(r) == {"length_m", "segments", "profile_barriers", "additional_barriers", "amenities"} and \
                 r["length_m"] > 3000 and all(
-                    set(s) == {"line", "length_m", "state", "missing_attributes", "is_marked_wheelchair_no"}
-                    and s["state"] in ("barrier", "no_barrier", "partial_data", "no_data") for s in r["segments"])
-            ok = ok and r["segments"][0]["state"] == "no_data" and r["segments"][-1]["state"] == "no_data"
+                    set(s) == {"line", "length_m", "state", "missing_attributes", "is_marked_wheelchair_no", "public_transport"}
+                    and s["public_transport"] is None
+                    and s["state"] in ("barrier", "no_barrier", "partial_data", "no_data", "not_assessed") for s in r["segments"])
+            if avoid:
+                ok = ok and r["segments"][0]["state"] == "no_data" and r["segments"][-1]["state"] == "no_data"
+            else:
+                ok = ok and all(s["state"] == "not_assessed" for s in r["segments"])
             ok = ok and all({"distance_from_start_m", "is_overruled_by_osm"} <= set(f) for f in
                             r["profile_barriers"] + r["additional_barriers"] + r["amenities"])
             if not avoid:
@@ -114,6 +119,14 @@ def main():
     st, body, _ = call("POST", "/api/routes", {"start": {"lat": 50.06}, "destination": {"lat": 50.0, "lon": 19.9},
                                                "avoid": [], "need": []})
     check("plan_route invalid", st == 422 and "start" in body["error"]["fields"][0], str(body))
+    st, body, _ = call("POST", "/api/routes", {"start": {"lat": 50.0617, "lon": 19.9373}, "destination": {"lat": 52.23, "lon": 21.01},
+                                               "avoid": [], "need": []})
+    check("point_outside_krakow", st == 422 and body == {"error": {"code": "point_outside_krakow", "points": ["destination"]}}, str(body))
+    st, body, _ = call("POST", "/api/routes", {"start": {"lat": 50.0617, "lon": 19.9373}, "destination": {"lat": 50.0678, "lon": 19.9914},
+                                               "avoid": [], "need": [], "route_kind": "public_transport"})
+    check("public_transport_disabled", st == 409 and body["error"]["code"] == "public_transport_disabled", str(body))
+    st, body, _ = call("GET", "/api/public-transport")
+    check("read_public_transport", st == 200 and body == {"is_enabled": False, "feeds": []}, str(body))
 
     pseudo = "Test_%s" % uuid.uuid4().hex[:8]
     st, body, _ = call("POST", "/api/accounts", {"pseudonym": " %s " % pseudo, "password": "haslo1"})
@@ -157,7 +170,7 @@ def main():
     check("cast_vote anon", st == 201 and body["fact"]["status"] == "unverified", str(body))
     st, body, _ = call("POST", "/api/facts/%d/votes" % new["id"], {"verdict": "deny"})
     check("vote_too_soon", st == 409 and body["error"]["code"] == "vote_too_soon"
-          and INSTANT_RE.match(body["error"]["repeat_allowed_at"]), str(body))
+          and INSTANT_RE.match(body["error"]["repeat_allowed_at"]) and "T00:00:00.000" in body["error"]["repeat_allowed_at"], str(body))
     st, body, _ = call("POST", "/api/facts/%d/votes" % new["id"], {"verdict": "confirm"}, token=token)
     check("vote_too_soon author", st == 409, str(body))
 
