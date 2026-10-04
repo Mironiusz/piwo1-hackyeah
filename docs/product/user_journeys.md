@@ -175,7 +175,7 @@ Starts: the one entry to reporting, on the map of facts and on the route result.
 
 Branches:
 
-- It is the same one. The report becomes a confirmation of the existing fact and follows J-8, its limit of one vote a day included. No new report is saved.
+- It is the same one. The report becomes a confirmation of the existing fact and follows J-8, its limit of one vote per calendar day included. No new report is saved.
 - The person leaves before approving. Nothing is saved.
 - The point lies farther than 15 m from every way of the pedestrian network. The report is saved and shown like any other; it changes no route, and the app does not say so.
 - A route is shown. After the report is saved, the app plans the route again (J-5).
@@ -216,12 +216,12 @@ The fact detail shows the type, the place, the source - OpenStreetMap or user re
 
 1. The person chooses one of two equal answers: still there, or gone.
 2. The app saves the vote and shows the status of the fact after it, together with the person's own vote.
-3. Until a day has passed since that vote, the vote controls of this fact are inactive, and the app says that the next vote is possible after a day.
+3. Until the next calendar day, the vote controls of this fact are inactive, and the app says that the next vote is possible the next day.
 
 Branches:
 
-- The person voted on this fact less than a day ago. The controls are inactive from the start, with the same explanation. A vote that reaches the server earlier than a day after the previous one is refused, and the app says so; this is an ordinary answer, not an error.
-- A change of mind after a day. The new vote replaces the earlier one; only the latest vote of a person counts, and a vote cannot be withdrawn without casting another one.
+- The person already voted on this fact the same day. The controls are inactive from the start, with the same explanation. A vote that reaches the server on the same calendar day as the previous one is refused, and the app says so; this is an ordinary answer, not an error.
+- A change of mind on a later day. The new vote replaces the earlier one; only the latest vote of a person counts, and a vote cannot be withdrawn without casting another one.
 - The fact becomes outdated. It stays on the map of facts with that status, so that a person can confirm it again, and it no longer counts for a route or for its list. A fact outdated because it was removed in OpenStreetMap disappears.
 - The fact was hidden by a moderator in the meantime. The vote is refused, and the fact is gone from the screen.
 - A fact from OpenStreetMap. It is voted on in the same way and has the same statuses; a confirmation updates its date of last confirmation, and its shown date stays the date of its last OpenStreetMap edit.
@@ -369,7 +369,7 @@ Decided by the user, the frontend person of the team, on 2026-10-03, question by
 7. During reporting the location only moves the map, in the browser (M3).
 8. A report far from every way is saved and shown, and the summary does not mention it (M3).
 9. A geozone can carry an optional description; it has no check for existing geozones (M5).
-10. The app shows a person their own vote, and the vote controls are inactive for a day after it (M4). The vote is remembered on the device, decided on 2026-10-03, because the programming interface returns no vote of the person.
+10. The app shows a person their own vote, and the vote controls are inactive until the next calendar day (M4). The vote is remembered on the device, decided on 2026-10-03, because the programming interface returns no vote of the person.
 11. The app says nothing about the weight of an account; a pseudonym has 3 to 30 characters of letters, digits, the underscore and the hyphen; deleting an account takes one confirmation, without the password (M9). On 2026-10-03 the user kept the rule of the characters against the wider one of `docs/product/api_contract.md`, and asks the owners of that contract to change it.
 12. A flag has no reason and takes one confirmation (M11).
 13. The map of facts has a switch between the facts of the profile and every fact (M4).

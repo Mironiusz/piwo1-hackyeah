@@ -1,6 +1,6 @@
 # Programming interface contract
 
-Document state: 2026-10-03, approved by the user in place of the frontend person, whose confirmation is still to be obtained
+Document state: 2026-10-03, approved by the user in place of the frontend person, whose confirmation is still to be obtained; `cast_vote` changed on 2026-10-04 with version 13 of `docs/product/specification.md`
 
 ## Why this document exists
 
@@ -351,15 +351,15 @@ The fact with its status after the vote.
 
 Errors:
 
-| Status | `code`          | When                                                                                                                                    |
-| ------ | --------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| 409    | `vote_too_soon` | The same person voted on this fact less than a day ago (M4); `repeat_allowed_at` is the instant from which their next vote is accepted. |
+| Status | `code`          | When                                                                                                                                                                                                      |
+| ------ | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 409    | `vote_too_soon` | The same person already voted on this fact on the same calendar day in Europe/Warsaw (M4); `repeat_allowed_at` is the start of the next calendar day, the instant from which their next vote is accepted. |
 
 ```json
-{ "error": { "code": "vote_too_soon", "repeat_allowed_at": "2026-10-04T09:12:44.120+02:00" } }
+{ "error": { "code": "vote_too_soon", "repeat_allowed_at": "2026-10-05T00:00:00.000+02:00" } }
 ```
 
-A vote repeated because its response was lost is refused in the same way, so a vote never counts twice. A hidden fact cannot be voted on and answers `fact_not_found` (M11).
+A vote repeated because its response was lost is refused in the same way when it arrives on the same calendar day; repeated after midnight it is accepted as a new vote, which adds no weight, because only the latest vote of a person counts. A hidden fact cannot be voted on and answers `fact_not_found` (M11).
 
 ### flag_fact
 

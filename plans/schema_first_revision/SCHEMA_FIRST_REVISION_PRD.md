@@ -25,13 +25,14 @@ It serves the judging criterion "Data reliability, presentation and updates" of 
 - A new version of the specification with the vote limit by calendar day and the length check of the hash of a vote without an account, the target schema, the programming interface contract and the documents of the frontend that follow it, and the record in `MVP.md` of what this initiative builds and what it hands over - first, before the revision.
 - The first schema revision, which creates the whole target schema in version 12, with the idempotency key, and in the version above, with the rights of the service account.
 - One shared description of the tables and of the closed lists of the target schema, used by the import and by the backend.
+- The database the import and the backend share, ready to start on a team machine and on the hosted demo, with the chain of schema changes and the shared description in one package of its own.
 - The tests that prove, against a real local database, that the stored data refuses by itself what the rules forbid, keeps the offset of an instant and gives the service account exactly its rights.
 - The names of the created database objects in the registry of names.
 
 ## Out of scope
 
 - Every code of the rules and every operation of the programming interface. The scenarios of AC-1 - AC-12 of `plans_finished/fact_schema/FACT_SCHEMA_PRD.md` that need code of the rules go with the initiative of `MVP.md` that builds that code (FR-2): the derivation of a status, AC-1 - AC-5 and the part of AC-8 in which only the later of two votes counts - `community_facts`; the reconciliation of a fresh copy, AC-6 and AC-7 - `osm_import`; the deletion of an account, AC-9 - `accounts`; hiding and the duplicate check of AC-10 - `community_facts`, and the facts of a route of AC-10 - `route_planning`; the readings of AC-12 - `community_facts`. Decided by Kuba on 2026-10-04 (shape, Problem and Out of scope).
-- The local setup, the configuration of schema changes, the backend skeleton and the checks of the local database that pass without any revision - the locale and the routing extension available - which `backend_skeleton` builds.
+- The backend skeleton, which `backend_skeleton` builds.
 - The version of the specification that brings the idempotency key into the target schema - `plans_finished/schema_revision/`, carried out as version 12.
 - How the hash of a vote without an account is computed - what is hashed and with which secret - which `community_facts` decides within the length of FR-1.
 - Applying the revision on the hosted demo - a step by hand of `docs/deployment/hosted_demo.md`, completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`.
@@ -54,9 +55,11 @@ FR-6. One shared description of the seven tables and of the closed lists of the 
 
 FR-7. The stored data refuses by itself the states of FR-15 of `plans_finished/fact_schema/FACT_SCHEMA_PRD.md` - a second vote of one person on one fact on the same calendar day, a fact type outside the closed list, a geozone radius outside the list, two accounts with pseudonyms differing only in letter case, two facts with the same OpenStreetMap identity, converted and outdated ones included - a second fact with an idempotency key already saved, and a hash of a vote without an account that is not 32 bytes long. Each refusal, the round trip of the offset of an instant and the rights of FR-5 are proven by a test against a real local database.
 
-FR-8. The checks of `plans_finished/local_database/LOCAL_DATABASE_PLAN.md` D-8 whose result depends on the first revision are delivered here: the spatial extension exists after the revision is applied, and the service account is refused creating a table and dropping or altering an object of the revision.
+FR-8. The checks of `plans_finished/local_database/LOCAL_DATABASE_PLAN.md` D-8 are delivered here: the spatial extension exists after the revision is applied, the service account is refused creating a table and dropping or altering an object of the revision, the database lowers Polish letters and compares text by bytes, and the routing extension is available without being created.
 
 FR-9. The names of the database objects the revision creates are entered in `docs/standards/naming_registry.md`.
+
+FR-10. One package of its own holds the shared description and the chain of schema changes, and the import and the backend install it. It starts the database of `plans_finished/local_database/` on a team machine, which keeps its data only while it runs, and the database of the hosted demo, which keeps its data across restarts; the schema changes are applied to either only by a separate step, to the hosted demo only with the consent given at the call, and the tests run on a container against the local database.
 
 ## Acceptance criteria
 
@@ -74,6 +77,8 @@ AC-6 (FR-7). Each of these is refused by the stored data alone, with no other co
 
 AC-7 (FR-9). `docs/standards/naming_registry.md` lists every database object the revision creates, under the name it has in the stored data.
 
+AC-8 (FR-10). On a team machine with only Docker, one step starts the local database, one applies the chain and one runs every test on a container; stopping and starting the local database gives an empty one. The database of the hosted demo keeps the applied chain across a restart and refuses to apply it without the consent given at the call. An environment entry left unfilled stops the start with its name.
+
 ## Domain rules
 
 - The rules are those of `docs/product/specification.md` and of `docs/product/schema.md`, which is part of it, in version 12, with the idempotency key, and in the version of FR-1. A change of the target schema is a new version of the specification approved by the user (`plans_finished/fact_schema/FACT_SCHEMA_PLAN.md` D-21).
@@ -87,7 +92,7 @@ AC-7 (FR-9). `docs/standards/naming_registry.md` lists every database object the
 
 ## Dependencies and impact on other modules
 
-- `backend_skeleton` builds the local database, the configuration of schema changes and the skeleton the revision and the shared description live in; FR-4 - FR-9 start after it, FR-1 - FR-3 do not wait for it.
+- `backend_skeleton` installs the package of FR-10 and uses its local database; nothing of this initiative waits for it.
 - `plans_finished/schema_revision/` wrote the version of the specification with the idempotency key, approved on 2026-10-04 as version 12; nothing of this initiative waits for it any more.
 - `community_facts` builds voting by the rule of FR-1, computes the hash of a vote without an account with a 32-byte output, and runs AC-1 - AC-5, AC-8 in part, AC-10 in part and AC-12 of `plans_finished/fact_schema/FACT_SCHEMA_PRD.md`; `osm_import` runs AC-6 and AC-7; `accounts` runs AC-9; `route_planning` runs the part of AC-10 about the facts of a route. Each of them, and `sample_data`, writes the stored data through the shared description of FR-6.
 - `frontend_app` shows the refusal of a vote that comes too soon and the own vote with the moment of the next vote. The code and the field of the refusal do not change, only the instant it names; the moment the frontend keeps on the device becomes the start of the next calendar day, and the documents Kuber and Adrian build from are rewritten by the version of FR-1.
@@ -96,7 +101,7 @@ AC-7 (FR-9). `docs/standards/naming_registry.md` lists every database object the
 
 ## Risks and notes
 
-- Time: the revision starts only after `backend_skeleton`, and five initiatives wait for it.
+- Time: five initiatives wait for the revision. Changed on 2026-10-04 by Kuba during the implementation (questions 10 - 13): the revision no longer starts only after `backend_skeleton`.
 - The target schema has never run with its spatial parts or its rights. A defect found while the revision is written needs another version of the specification approved by Kuba before the revision can match it. Running the target schema on a database with the spatial extension before the revision is written would find such a defect early, so that it enters the version of FR-1 instead.
 - Until FR-2 is written, the shapes of `community_facts`, `osm_import` and `accounts` can still read the old split and the old vote limit in `MVP.md` and in D-11 of `plans/mvp/MVP_PLAN.md`; FR-3 puts it first for that reason, and telling Marek and Mateusz at once costs nothing.
 - Until FR-1 is written, `frontend_app` can build the own vote, its texts and the moment kept on the device on the window of a day; the version of FR-1 rewrites documents Kuber and Adrian wrote, so telling them at once costs nothing either.
@@ -106,3 +111,4 @@ AC-7 (FR-9). `docs/standards/naming_registry.md` lists every database object the
 - Kuba named the key of a vote as the fact, the hash and the date. A vote with an account has no hash, so the uniqueness for such a vote stands on the account; the form of that uniqueness is a technical decision of the plan.
 - The scenarios of AC-1 - AC-12 now run in four initiatives instead of one, so a gap in the target schema that only a run of the rules would show surfaces in the initiative that runs that scenario, after this revision.
 - Changed on 2026-10-04 after the merge of `dev` `2dcccce`, which brought versions 11 and 12 of the specification: the version with the idempotency key is version 12 and approved, so nothing here waits for it and the version of FR-1 takes the number 13; FR-1 adds the own vote of version 11, the documents of the frontend and the length check of the hash of a vote without an account, FR-2 the confirmation of the form of the key, and FR-7, AC-1, AC-2 and AC-6 follow them. Decided by Kuba on 2026-10-04 (`plans/schema_first_revision/SCHEMA_FIRST_REVISION_SHAPE.md`, questions 7 - 9).
+- Changed on 2026-10-04 by Kuba during the implementation (questions 10 - 13): the shared description and the chain of schema changes are one package of their own with the local database and the database of the hosted demo (FR-10, AC-8), every check of `plans_finished/local_database/LOCAL_DATABASE_PLAN.md` D-8 is delivered here (FR-8), and nothing of this initiative waits for `backend_skeleton` any more (`plans/schema_first_revision/SCHEMA_FIRST_REVISION_SHAPE.md`, questions 10 - 13).
