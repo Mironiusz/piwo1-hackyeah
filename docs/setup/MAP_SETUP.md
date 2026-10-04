@@ -4,7 +4,7 @@ Document state: 2026-10-04
 
 ## Why this document exists
 
-The frontend draws one map of Kraków, and the browser takes every file of that map from the host of the page. This document says which files those are, where each of them comes from, how a member of the team gets a working map, and how the tile archive is handed to the persons who load it on the server. It also keeps the record of the archive, by which a copy of it is checked.
+The frontend draws one map of Kraków, and the browser takes every file of that map from the host of the page. This document says which files those are, where each of them comes from, how a member of the team gets a working map, and how the tile archive is put on the server. It also keeps the record of the archive, by which a copy of it is checked.
 
 It was written by `plans_finished/map_tiles/`; the decisions and their reasons are in `plans_finished/map_tiles/MAP_TILES_PLAN.md`.
 
@@ -67,7 +67,33 @@ The first program is the temporary mock of the service, which the frontend runs 
 
 ## Handing the archive to the server
 
-The archive is not in the repository, so it reaches the server of the demo as a file. Adrian hands it to the backend persons, who load it on the server; this initiative builds no step of the loading program (`plans_finished/map_tiles/MAP_TILES_PLAN.md`, D-1). The backend persons have not confirmed this yet.
+The archive is not in the repository, so it reaches the server of the demo as a file Adrian hands over. The person who stands the demo up puts the file itself, not a link to it, at the path of the environment entry `TILE_ARCHIVE_SOURCE`, outside the directory of `TILE_ARCHIVE_DIR`, the directory the server serves the archive from.
+
+The tile step of the loading program puts it in place, and the same step runs on its own with `python -m worker.tile_archive`. It checks the file against the SHA-256 value of the table above, copies it into a temporary file of `TILE_ARCHIVE_DIR`, checks the copy again and only then puts it under the name `krakow.pmtiles` in one replacement, readable by everyone (`plans/tile_loading/TILE_LOADING_PLAN.md` D-7). A reader of `krakow.pmtiles` therefore finds either the earlier file or the complete checked archive, never part of a file. The command also needs `IMPORT_WORKSPACE_ROOT` and the database, because it takes the exclusion of the import; a missing entry ends it with exit code 1 and the names of the missing entries.
+
+The command writes one line, `Tile archive outcome=<outcome> duration_s=<seconds>`:
+
+| Outcome     | Exit code | Meaning                                                                                                 |
+| ----------- | --------- | ------------------------------------------------------------------------------------------------------- |
+| `loaded`    | 0         | The archive is in place now; a file of another value under the name was replaced.                       |
+| `unchanged` | 0         | The archive was already in place; nothing was written and the source file was not needed.               |
+| `skipped`   | 2         | An import or the loading program was running; nothing was written. Run the command again after it ends. |
+
+A repeated run with the archive in place therefore writes nothing, even after the source file was removed. A failure writes `Tile archive outcome=failed cause=TileArchiveError: Tile archive step failed: <reason>` and ends with exit code 1, leaving `krakow.pmtiles` as it was:
+
+| Reason                     | What happened and what a person does                                                                                                                                                 |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `places_overlap`           | `TILE_ARCHIVE_SOURCE` lies inside `TILE_ARCHIVE_DIR`. Move the file outside that directory and set the entry again.                                                                  |
+| `served_directory_missing` | `TILE_ARCHIVE_DIR` is not a directory, or is a link. Create the directory the server serves, or correct the entry.                                                                   |
+| `served_unreadable`        | The file under `krakow.pmtiles` cannot be read. Check its permissions.                                                                                                               |
+| `source_missing`           | No file, or a link, is at `TILE_ARCHIVE_SOURCE`. Put the file itself there.                                                                                                          |
+| `source_unreadable`        | The source file cannot be read. Check its permissions.                                                                                                                               |
+| `source_mismatch`          | The source file is not the archive of the table, for example cut short by an interrupted upload. Copy the file of Adrian again and check it with `sha256sum`.                        |
+| `copy_failed`              | Writing, reading back or placing the copy in `TILE_ARCHIVE_DIR` failed, for example on a full disk or without write permission. Free space or correct the permissions and run again. |
+| `copy_mismatch`            | The written copy is not the archive. Check the disk of `TILE_ARCHIVE_DIR` and run again.                                                                                             |
+| `deadline_expired`         | The step did not finish within its 120 seconds. Check the speed of the disk and run again.                                                                                           |
+
+In one rare case `copy_failed` comes after the replacement, when the directory cannot be synced on Linux; the complete checked archive is then already under `krakow.pmtiles`, and the next run reports `unchanged`.
 
 What the server has to provide:
 

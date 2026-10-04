@@ -142,6 +142,39 @@ Five modules serve the walking route of `service/route_planning.py`.
 
 `fetch_read_only_snapshot` opens one `REPEATABLE READ READ ONLY` transaction and rolls it back at the end; `apply_statement_timeout` sets the limit of the current transaction only, with the value as a bound parameter. Every read of the route runs on the connection of its caller. `VISIBLE_FACT_CONDITION`, a fact neither hidden nor removed in OpenStreetMap, is the one visibility predicate of the facts, which `community_facts` reuses. `valhalla.py` is the one call site of the routing service (`docs/standards/standard_architecture.md`, Calls to external systems): one cached `httpx.Client` bound to `ROUTING_SERVICE_URL`, with a timeout of 2 seconds, no proxy from the environment and no redirect; it caches no answer and retries nothing. `fetch_osm_boundary` reads the boundary of a copy only through its manifest. The tests of `valhalla.py` use `httpx.MockTransport`, the boundary file is checked in temporary directories, and `engine.py`, `route_network.py` and `route_facts.py` are checked by critical tests against the local database of `db/`, each inside a transaction rolled back after the test.
 
+## Tile archive
+
+`tile_archive.py` holds the file operations of the tile step of `service/tile_archive.py`. It reads and writes files only and touches no database.
+
+| Name                            | Role                                                                                                                                      |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `fetch_tile_directory_presence` | Whether a path is a directory that is not a link                                                                                          |
+| `fetch_tile_file_digest`        | The SHA-256 hex digest of a regular file read in chunks under the run deadline, or `None` for a missing path, a directory and a link      |
+| `apply_tile_file_copy`          | A copy of the source in a new `.tile-archive-*` file of the served directory, written in chunks under the run deadline, mode 0644, synced |
+| `apply_tile_file_placement`     | The temporary file put under the served name with one `os.replace`, and on Linux a sync of the directory                                  |
+| `apply_tile_file_removal`       | The removal of one file if it is still there                                                                                              |
+| `apply_tile_leftover_removal`   | The removal of every regular `.tile-archive-*` file of a directory, with the count removed                                                |
+| `TILE_FILE_CHUNK_BYTES`         | 1 048 576, the size of one chunk of every read and write                                                                                  |
+| `TILE_TEMPORARY_PREFIX`         | `.tile-archive-`, the prefix of the temporary copies                                                                                      |
+| `TILE_FILE_MODE`                | 0644, the mode of the copy, so a proxy running as another user can read the public archive                                                |
+
+A failed read, copy, placement or removal raises `TileFileError` with one of four constant messages that name no path; the service turns it into the reason of its step. An exhausted run deadline passes on as the `DeadlineExpiredError` of `common_time.py`, which is a `TimeoutError` and so an `OSError`, so every function handles it before an `OSError`. The atomic replacement follows `apply_routing_pointer` of `routing_data.py` and the sync of the directory `apply_journal_write` of `import_workspace.py`. The tests run on temporary directories; on 2026-10-04 the Linux paths - the mode of the copy, a link at the served name and the sync of the directory - also ran in a Linux container of the image `python:3.13-slim`.
+
+## Sample data
+
+`sample_data.py` holds the storage of the sample step of `service/sample_data.py`. It opens its own connection and runs every statement in one Repeatable Read transaction.
+
+| Name                                                  | Role                                                                                                                                                                                                               |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `fetch_sample_prerequisites`                          | For each definition: whether a copy exists, whether its reference way exists, the two nearest ways within 15 m with their distances and the distance of the reference way                                          |
+| `fetch_stored_samples`                                | The immutable content and creation pair of the facts on the reserved identifiers, without moderation fields                                                                                                        |
+| `fetch_sample_votes`                                  | Every vote on a sample fact cast under one of its defined fictional voter identities, with its verdict, account fields and pair                                                                                    |
+| `apply_sample_inserts`                                | The missing facts with their creation, flag and hide pairs in one batch, then the votes of exactly the facts returned as new in another; a vote batch that returns another count fails with `initial_vote_invalid` |
+| `apply_sample_transaction`                            | One connection of `build_engine(5000)` in Repeatable Read, the action of the service and a commit whose acknowledgement alone means success                                                                        |
+| `apply_sample_connection` and `apply_sample_rollback` | The completion classification: an acknowledged rollback, an unknown commit and a serialization failure at commit                                                                                                   |
+
+Facts are inserted with `OVERRIDING SYSTEM VALUE` and `ON CONFLICT (id) DO NOTHING RETURNING id`, so a reserved identifier another row holds is never overwritten. Each batch travels as one bound JSON parameter, and distances are PostGIS geography distances in metres. The module writes no update, delete or DDL. The transaction and insert cases use connection substitutes; the critical tests seed an invented network as the local schema owner and run the real provider as the service account.
+
 ## Relation to DATA_ALGORITHM.md
 
 `DATA_ALGORITHM.md` describes the order of reading, writing and verification these files follow.
