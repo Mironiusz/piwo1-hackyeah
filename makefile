@@ -73,6 +73,11 @@ security:
 # The Windows supervisor uses subprocess only to encode argv for CreateProcessW; no shell is involved.
 	python -m bandit data/windows_job.py -s B404 --confidence-level medium
 	python -m bandit -r config api data worker common_time.py -t B608
+# The start script of the routing service runs in its own container: it reads the defaults of valhalla_build_config through
+# subprocess and replaces itself with valhalla_service, both with an argument list of constants, without a shell, by the name
+# from PATH of the routing image.
+	python -m bandit valhalla/start_routing_service.py -s B404,B603,B606,B607 --confidence-level medium
+	python -m bandit valhalla/start_routing_service.py -t B608
 
 audit:
 	pip-audit

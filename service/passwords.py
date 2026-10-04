@@ -2,7 +2,7 @@
 Password hashes of accounts: Argon2id in its encoded form, which carries its parameters inside every hash.
 
 The parameters are the floor of `plans_finished/account_sessions/ACCOUNT_SESSIONS_PLAN.md` D-4 - 19 MiB of memory,
-2 iterations and 1 degree of parallelism - chosen in `plans/accounts/ACCOUNTS_PLAN.md` D-4 to keep one login cheap on
+2 iterations and 1 degree of parallelism - chosen in `plans_finished/accounts/ACCOUNTS_PLAN.md` D-4 to keep one login cheap on
 the shared server of the demo. A hash written with other parameters is still verified, because they travel in it.
 
 `UNKNOWN_ACCOUNT_PASSWORD_HASH` is the hash of a random value built once per process. A login with a pseudonym that has

@@ -16,7 +16,7 @@ The run of the demo is decided by check 7.2, drafted in `plans/stage7_demo_scena
 
 ## Before recording
 
-1. Set the product name: the constant `PRODUCT_NAME` in `mobile_app/accessway/entry/src/main/ets/data/AppModel.ets` still holds `[Nazwa produktu]`, and the header of every screen shows it. It has to read `EnableMe` before the first take.
+1. Check the product name: since 2026-10-04 the constant `PRODUCT_NAME` in `mobile_app/accessway/entry/src/main/ets/data/AppModel.ets` holds `EnableMe`, and the header of every screen shows it. A build made before that change shows the placeholder `[Nazwa produktu]`, so the app is built again before the first take.
 2. Use the schematic sample map, not the real tiles: `make tiles-sample`, then `make mock`. With `make tiles` the local route lies off the real streets (`mobile_app/accessway/README.md`, section Mapa z kafelków wektorowych).
 3. Start from a clean install, so the first screen is the needs screen: `make uninstall`, then `make run`.
 4. Emulator in Polish, resolution at least 1080 x 2160 if the machine allows it (`make emulator-fast EMU_RES=1080x2160`), otherwise 540 x 1080.

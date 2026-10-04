@@ -1,6 +1,6 @@
 """
-Scenario tests of the signed session tokens of `plans/accounts/ACCOUNTS_PLAN.md` D-6: the rolling 24 hours of AC-6 of
-`plans/accounts/ACCOUNTS_PRD.md` with explicit instants, and every malformed, tampered or foreign token refused with the
+Scenario tests of the signed session tokens of `plans_finished/accounts/ACCOUNTS_PLAN.md` D-6: the rolling 24 hours of AC-6 of
+`plans_finished/accounts/ACCOUNTS_PRD.md` with explicit instants, and every malformed, tampered or foreign token refused with the
 same `SessionExpiredError` (AC-8).
 """
 

@@ -17,6 +17,7 @@ VALID = {
     "DB_NAME": "invented",
     "DB_SERVICE_ACCOUNT_NAME": "invented",
     "DB_SERVICE_ACCOUNT_PASSWORD": "invented-private",
+    "SESSION_SIGNING_KEY": "invented-private-session-signing-key",
     "ROUTING_SERVICE_URL": "http://routing:8002",
     "ROUTING_DATA_DIR": ABSOLUTE_ROUTING_DATA_DIR,
 }
@@ -63,7 +64,20 @@ def test_invalid_entries_do_not_leak_values(key: str, value: str) -> None:
 
 
 @pytest.mark.parametrize(
-    "key", ["APP_ENVIRONMENT", "API_BIND_HOST", "API_PORT", "BUSINESS_TIMEZONE", "DB_HOST", "DB_NAME", "DB_SERVICE_ACCOUNT_NAME", "DB_SERVICE_ACCOUNT_PASSWORD", "ROUTING_SERVICE_URL", "ROUTING_DATA_DIR"]
+    "key",
+    [
+        "APP_ENVIRONMENT",
+        "API_BIND_HOST",
+        "API_PORT",
+        "BUSINESS_TIMEZONE",
+        "DB_HOST",
+        "DB_NAME",
+        "DB_SERVICE_ACCOUNT_NAME",
+        "DB_SERVICE_ACCOUNT_PASSWORD",
+        "SESSION_SIGNING_KEY",
+        "ROUTING_SERVICE_URL",
+        "ROUTING_DATA_DIR",
+    ],
 )
 def test_unfilled_required_entry_is_refused_by_name(key: str) -> None:
     """Refuse the empty marker an unfilled template leaves, naming the entry and its file."""
@@ -93,7 +107,7 @@ def test_routing_entries_accept_a_service_address_and_an_absolute_directory() ->
     """Accept the address of the routing service on the internal network and an absolute routing data directory."""
     settings = Settings(**VALID)
     assert settings.ROUTING_SERVICE_URL == "http://routing:8002"
-    assert settings.ROUTING_DATA_DIR == Path(ABSOLUTE_ROUTING_DATA_DIR)
+    assert str(settings.ROUTING_DATA_DIR) == ABSOLUTE_ROUTING_DATA_DIR
 
 
 def test_optional_valhalla_paths_do_not_block_api_configuration() -> None:
@@ -101,3 +115,40 @@ def test_optional_valhalla_paths_do_not_block_api_configuration() -> None:
     settings = Settings(**VALID, VALHALLA_TOOL_DIR="", VALHALLA_CONFIG_TEMPLATE="")
     assert settings.VALHALLA_TOOL_DIR is None
     assert settings.VALHALLA_CONFIG_TEMPLATE is None
+
+
+def test_absent_public_transport_switch_keeps_walking_routes_only() -> None:
+    """Keep routes with public transport off when the switch entry is missing."""
+    assert Settings(**VALID).PUBLIC_TRANSPORT_ENABLED is False
+
+
+@pytest.mark.parametrize(("value", "expected"), [("true", True), ("false", False), ("", False)])
+def test_public_transport_switch_reads_true_false_and_the_empty_marker(value: str, expected: bool) -> None:
+    """Turn routes with public transport on only for true, and off for false and the empty template marker."""
+    assert Settings(**VALID, PUBLIC_TRANSPORT_ENABLED=value).PUBLIC_TRANSPORT_ENABLED is expected
+
+
+@pytest.mark.parametrize("value", ["yes", "1", "True"])
+def test_public_transport_switch_refuses_another_text_by_name(value: str) -> None:
+    """Refuse a switch value other than true, false or empty, naming the entry and its file without the value."""
+    with pytest.raises(ConfigurationError) as caught:
+        Settings(**VALID, PUBLIC_TRANSPORT_ENABLED=value)
+    assert "PUBLIC_TRANSPORT_ENABLED (.env.local)" in str(caught.value)
+    assert value not in str(caught.value)
+
+
+def test_session_signing_key_shorter_than_32_characters_is_refused_by_name() -> None:
+    """Refuse a signing key of 31 characters, naming the entry and its file without the key."""
+    key = "private" + "k" * 24
+    with pytest.raises(ConfigurationError) as caught:
+        Settings(**{**VALID, "SESSION_SIGNING_KEY": key})
+    assert "SESSION_SIGNING_KEY (.env)" in str(caught.value)
+    assert key not in str(caught.value)
+
+
+def test_session_signing_key_of_32_characters_is_accepted_and_kept_secret() -> None:
+    """Accept a signing key of exactly 32 characters and keep it out of the text of the settings."""
+    key = "private" + "k" * 25
+    settings = Settings(**{**VALID, "SESSION_SIGNING_KEY": key})
+    assert settings.SESSION_SIGNING_KEY.get_secret_value() == key
+    assert key not in repr(settings)

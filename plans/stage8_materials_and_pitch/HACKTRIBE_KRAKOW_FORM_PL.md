@@ -2,7 +2,7 @@
 
 Polish material for the Kraków submission on HackTribe (check 10.5); kept in Polish as the challenge requires (CLAUDE.md, Language).
 
-Product name EnableMe: Rafał's decision of 2026-10-04, not yet recorded in docs/product/specification.md
+Product name EnableMe: Rafał's decision of 2026-10-04, recorded in `docs/product/specification.md`, version 16
 
 Document state: 2026-10-04, 05:30, draft for Rafał. The Kraków submission closes at 11:00 on 2026-10-04 (`docs/hackathon/challenge_requirements.md`, Shared facts).
 
@@ -130,4 +130,4 @@ Each claim, the rule behind it and the check of `FINAL_CHECKLIST.md` that proves
 6. O9: whether routes with public transport are in the demo at 10:30, which decides the optional changes above.
 7. Form fields: whether the form has separate fields for the data sources, the business model and the rest, and whether any field has a character limit. The description fits in 2500 characters with spaces.
 8. Business model in the description: the Kraków task description gives it 20% and says business potential weighs strongly (`docs/hackathon/challenge_requirements.md`, Judging). After the choice of check 9.2, add one sentence about it to the description, or leave it to its own field.
-9. Product name: EnableMe is not yet in `docs/product/specification.md`; `CLAUDE.md` and `PRODUCT.md` still say the name is not chosen, and `mobile_app/README.md` says AccessWay. Recording it is for `repository_consistency`, check 1.6.
+9. Product name: resolved on 2026-10-04. EnableMe is recorded in `docs/product/specification.md`, version 16, and since the same day `CLAUDE.md`, `AGENTS.md`, `README.md`, `mobile_app/` and the mocks of `.impeccable/briefs/views/` use it in place of AccessWay and the placeholder. The repeated pass of `repository_consistency`, check 1.6, confirms it.

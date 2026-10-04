@@ -4,7 +4,7 @@ The input rules of an account: which pseudonym and which password a person can r
 The rules count Unicode code points. A pseudonym loses the spaces U+0020 at both ends and is then kept as it is, without
 Unicode normalization, so it is accepted only when every character is a Latin letter, one of the nine Polish letters in
 either case, a digit `0` - `9`, the underscore or the hyphen; a Polish letter written as a base letter and a combining
-mark is refused like any other character outside that set (`plans/accounts/ACCOUNTS_PLAN.md` D-3). A password is never
+mark is refused like any other character outside that set (`plans_finished/accounts/ACCOUNTS_PLAN.md` D-3). A password is never
 trimmed and accepts every character that text in UTF-8 can carry; its length is checked (D-4), and a lone surrogate, which a
 JSON escape can produce but UTF-8 cannot encode, is refused (decided by Kuba on 2026-10-04, `ACCOUNTS_REVIEW.md`).
 """

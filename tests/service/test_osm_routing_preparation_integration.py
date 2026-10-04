@@ -7,12 +7,13 @@ from zoneinfo import ZoneInfo
 
 import pytest
 from accessibility_db.closed_lists import FactType, OsmElementType
+from shapely import from_wkb
 
 from common_time import build_deadline, fetch_monotonic_seconds
 from data.import_workspace import apply_workspace_exclusion, apply_workspace_recovery
 from data.osm_reader import fetch_osm_elements
 from data.osm_valhalla import OsmTileBuildError
-from data.routing_data import ROUTING_COPIES_NAME, apply_osm_routing_manifest, fetch_osm_routing_manifest, fetch_routing_preparations
+from data.routing_data import ROUTING_COPIES_NAME, apply_osm_routing_manifest, fetch_osm_boundary, fetch_osm_routing_manifest, fetch_routing_preparations
 from service.osm_routing_preparation import apply_osm_routing_preparation, build_osm_valhalla_config, fetch_osm_prepared_copy
 from service.osm_routing_recovery import OsmRoutingIntegrityError
 from tests.common_osm_source import apply_invented_osm_source
@@ -80,13 +81,14 @@ def test_new_copy_is_built_verified_and_placed_without_a_pointer(tmp_path, monke
     routing_root.mkdir()
     with apply_workspace_exclusion(tmp_path / "workspace") as lease:
         apply_workspace_recovery(lease, lambda identity: True)
-        target = apply_osm_routing_preparation(lease, routing_root, prepared.network, STATE_AT, frozenset(), {"mjolnir": {}}, tmp_path / "tools", build_test_deadline())
+        target = apply_osm_routing_preparation(lease, routing_root, prepared.network, prepared.boundary, STATE_AT, frozenset(), {"mjolnir": {}}, tmp_path / "tools", build_test_deadline())
     assert target == routing_root / ROUTING_COPIES_NAME / NAME
     assert fetch_osm_routing_manifest(target).state_at == STATE_AT
     elements = tuple(fetch_osm_elements(target / "network.osm.pbf", build_test_deadline()))
     assert [(element.element_type, element.element_id) for element in elements] == [("node", 5), ("node", 6), ("node", 7), ("way", 10), ("way", 11)]
     assert "access" not in elements[3].tags and elements[3].tags["foot"] == "yes"
-    assert sorted(entry.name for entry in target.iterdir()) == ["manifest.json", "network.osm.pbf", "valhalla_tiles.tar"]
+    assert sorted(entry.name for entry in target.iterdir()) == ["krakow_boundary.wkb", "manifest.json", "network.osm.pbf", "valhalla_tiles.tar"]
+    assert from_wkb(fetch_osm_boundary(target, STATE_AT)).equals(prepared.boundary)
     assert not (routing_root / "current").exists()
     assert fetch_routing_preparations(routing_root) == ()
     assert len(calls) == 1
@@ -99,11 +101,12 @@ def test_complete_copy_of_the_same_instant_is_reused_without_building(tmp_path, 
     target.mkdir(parents=True)
     (target / "network.osm.pbf").write_bytes(b"network")
     (target / "valhalla_tiles.tar").write_bytes(b"tiles")
+    (target / "krakow_boundary.wkb").write_bytes(b"boundary")
     apply_osm_routing_manifest(target, STATE_AT)
     prepared = fetch_osm_prepared_copy(apply_invented_osm_source(tmp_path), build_test_deadline(), ZONE)
     with apply_workspace_exclusion(tmp_path / "workspace") as lease:
         apply_workspace_recovery(lease, lambda identity: True)
-        result = apply_osm_routing_preparation(lease, tmp_path / "routing", prepared.network, STATE_AT, frozenset(), {"mjolnir": {}}, tmp_path / "tools", build_test_deadline())
+        result = apply_osm_routing_preparation(lease, tmp_path / "routing", prepared.network, prepared.boundary, STATE_AT, frozenset(), {"mjolnir": {}}, tmp_path / "tools", build_test_deadline())
     assert result == target and calls == []
     assert (target / "network.osm.pbf").read_bytes() == b"network"
 
@@ -118,9 +121,9 @@ def test_incomplete_uncommitted_copy_is_replaced_and_a_committed_one_is_preserve
     with apply_workspace_exclusion(tmp_path / "workspace") as lease:
         apply_workspace_recovery(lease, lambda identity: True)
         with pytest.raises(OsmRoutingIntegrityError):
-            apply_osm_routing_preparation(lease, tmp_path / "routing", prepared.network, STATE_AT, frozenset({NAME}), {"mjolnir": {}}, tmp_path / "tools", build_test_deadline())
+            apply_osm_routing_preparation(lease, tmp_path / "routing", prepared.network, prepared.boundary, STATE_AT, frozenset({NAME}), {"mjolnir": {}}, tmp_path / "tools", build_test_deadline())
         assert (target / "network.osm.pbf").read_bytes() == b"truncated" and calls == []
-        result = apply_osm_routing_preparation(lease, tmp_path / "routing", prepared.network, STATE_AT, frozenset(), {"mjolnir": {}}, tmp_path / "tools", build_test_deadline())
+        result = apply_osm_routing_preparation(lease, tmp_path / "routing", prepared.network, prepared.boundary, STATE_AT, frozenset(), {"mjolnir": {}}, tmp_path / "tools", build_test_deadline())
     assert result == target
     assert fetch_osm_routing_manifest(target).state_at == STATE_AT
 
@@ -136,6 +139,6 @@ def test_failed_tiles_leave_no_copy_and_no_preparation(tmp_path, monkeypatch):
     with apply_workspace_exclusion(tmp_path / "workspace") as lease:
         apply_workspace_recovery(lease, lambda identity: True)
         with pytest.raises(OsmTileBuildError, match="Invented build failure"):
-            apply_osm_routing_preparation(lease, routing_root, prepared.network, STATE_AT, frozenset(), {"mjolnir": {}}, tmp_path / "tools", build_test_deadline())
+            apply_osm_routing_preparation(lease, routing_root, prepared.network, prepared.boundary, STATE_AT, frozenset(), {"mjolnir": {}}, tmp_path / "tools", build_test_deadline())
     assert not (routing_root / ROUTING_COPIES_NAME / NAME).exists()
     assert fetch_routing_preparations(routing_root) == ()

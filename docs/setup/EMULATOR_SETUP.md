@@ -1,7 +1,7 @@
-# Emulator setup for AccessWay (Linux and Windows)
+# Emulator setup for EnableMe (Linux and Windows)
 
 Instructions for a fresh session (human or agent) that has to install the OpenHarmony toolchain and the Oniro
-emulator, then build and run the AccessWay app from `accessway/`. Everything is driven by the `Makefile` in the
+emulator, then build and run the EnableMe app from `accessway/`. Everything is driven by the `Makefile` in the
 repository root; the toolchain versions are pinned in `scripts/env.sh`.
 
 ## What gets installed
@@ -50,7 +50,7 @@ make setup        # oniro-app CLI, SDK 6.0 (API 20), command-line tools, emulato
 make doctor       # prints node, java, qemu, kvm, SDK and cmdtools status
 ```
 
-`make setup` prepares the PainMap project in `app/`. For AccessWay, create its SDK pointer once:
+`make setup` prepares the PainMap project in `app/`. For EnableMe, create its SDK pointer once:
 
 ```bash
 printf 'sdk.dir=%s\n' "$HOME/setup-ohos-sdk/linux" > accessway/local.properties
@@ -79,7 +79,7 @@ source scripts/env.sh && oniro devices          # should list one device
 # manual fallback: ~/command-line-tools/sdk/default/openharmony/toolchains/hdc tconn 127.0.0.1:55555
 ```
 
-### 4. Build, install and run AccessWay
+### 4. Build, install and run EnableMe
 
 ```bash
 make aw-run       # build signed .hap, install, launch
@@ -176,13 +176,13 @@ reuses were.
 
 ## Known behaviour of the emulator
 
-- No GPU: rendering uses software OpenGL (llvmpipe). AccessWay draws its maps with Canvas for this reason;
+- No GPU: rendering uses software OpenGL (llvmpipe). EnableMe draws its maps with Canvas for this reason;
   ArkGraphics 3D scenes may crash on the emulator.
 - No GPS: "Moja lokalizacja" in the app shows an error message on the emulator. Use the address search or
   "Punkt na mapie" instead.
 - Internet works from the guest through QEMU user networking; the host is `10.0.2.2` from inside the
   emulator.
-- The first launch of AccessWay opens the "Twoje potrzeby" screen. Pick a set or Pomiń.
+- The first launch of EnableMe opens the "Twoje potrzeby" screen. Pick a set or Pomiń.
 - Sample data covers the area around Tauron Arena in Kraków. The demo scenario is in `accessway/README.md`.
 - The local moderator role is given to an account named `moderator` (Menu, Konto, Załóż konto).
 

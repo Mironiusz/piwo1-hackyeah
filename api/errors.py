@@ -10,11 +10,13 @@ from starlette.responses import JSONResponse
 from config.logging import apply_log_scope, fetch_logger
 
 
-def build_error_response(code: str, status: int, fields: Sequence[str] = ()) -> JSONResponse:
-    """Build a contracted failure without protected input or exception text."""
+def build_error_response(code: str, status: int, fields: Sequence[str] = (), points: Sequence[str] = ()) -> JSONResponse:
+    """Build a contracted failure without protected input or exception text; fields belong only to invalid_request and points only to point_outside_krakow."""
     error: dict[str, object] = {"code": code}
     if code == "invalid_request":
         error["fields"] = list(fields)
+    if code == "point_outside_krakow":
+        error["points"] = list(points)
     return JSONResponse({"error": error}, status_code=status)
 
 

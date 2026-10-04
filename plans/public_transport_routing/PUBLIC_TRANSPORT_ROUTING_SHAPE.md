@@ -24,9 +24,9 @@ State read on 2026-10-04 at 04:32, Europe/Warsaw.
 - `VALHALLA_ROUTING_PRD.md` FR-5 - FR-9 and FR-11, with AC-8 - AC-11 and AC-13, are the requirements this initiative meets (`MVP.md`, section Requirements and initiatives, last row: `public_transport_routing`, `frontend_app`).
 - `valhalla/` builds the image of the engine with the two patches that make the walking legs of a multimodal route honour exclusions and the accessibility of stops and trips (`valhalla/README.md`, section The patches).
 - `docs/product/api_contract.md`, section Route, operation `plan_route`: the request carries `start`, `destination`, `avoid` and `need`, and a field it does not name is refused with `invalid_request`; the response has no kind of route, no public transport segment and no statement that public transport was unavailable. A change of an operation is a change of that document first, agreed by the backend person and the frontend person (its section Why this document exists).
-- `plans/osm_importer/OSM_IMPORTER_PLAN.md` D-20 leaves public transport ingestion, the routing image, the service startup, the served-copy check and the fewest-barriers graph with the initiatives of Marek. `plans/osm_importer/OSM_IMPORTER_PRD.md` AC-12: public transport feeds are not produced by the import run.
+- `plans_finished/osm_importer/OSM_IMPORTER_PLAN.md` D-20 leaves public transport ingestion, the routing image, the service startup, the served-copy check and the fewest-barriers graph with the initiatives of Marek. `plans_finished/osm_importer/OSM_IMPORTER_PRD.md` AC-12: public transport feeds are not produced by the import run.
 - `docs/deployment/hosted_demo.md` does not mention the GTFS, and `MVP.md` names `map_tiles` and `sample_data`, not this initiative, as adding steps to the loading program of `osm_import`.
-- No product code exists: the repository root holds no `api/`, `service/`, `data/` or `worker/`. `plans/route_planning/`, which builds the walking route D-12 reuses, and `plans/backend_skeleton/` hold only a seed and `STAGE.md`.
+- No product code exists: the repository root holds no `api/`, `service/`, `data/` or `worker/`. `plans_finished/route_planning/`, which builds the walking route D-12 reuses, and `plans/backend_skeleton/` hold only a seed and `STAGE.md`.
 - `FINAL_CHECKLIST.md`, check 4.2: `public_transport_routing` is optional, waits for 4.1, 3.1 and 1.5, and does not condition the end of the project. `STAGE.md` of this initiative said stage 5 at 04:32 and stage 4 after the merge of `dev` at 04:48 (`0901955`), which renumbered the stages of `FINAL_CHECKLIST.md`; that merge changed nothing of O9 in the specification, the contract or the registry.
 - `docs/standards/decision_registry.md` holds two open entries whose condition falls on this shape: When the initiative of O9 starts its code, and Wording of the public transport segment of O9. Both name Rafał and Marek.
 - The Kraków submission closes at 11:00 on 4 October 2026 (`MVP.md`, section Goal and deadline).
@@ -46,8 +46,8 @@ Items 1 - 3 come from the seed, items 4 - 7 from the interview. The least that k
 ## Out of scope
 
 - The switch, the public transport segment and the statement in the views: `plans/frontend_app/` builds them once the interface is in the contract (`MVP.md`, section Initiatives).
-- The walking route and everything D-12 reuses from D-1 - D-11 of `VALHALLA_ROUTING_PLAN.md`: `plans/route_planning/` (`MVP.md`, section Initiatives).
-- The importer, the network file of D-2 and the walking data of the engine: `plans/osm_importer/` (`OSM_IMPORTER_PLAN.md` D-20).
+- The walking route and everything D-12 reuses from D-1 - D-11 of `VALHALLA_ROUTING_PLAN.md`: `plans_finished/route_planning/` (`MVP.md`, section Initiatives).
+- The importer, the network file of D-2 and the walking data of the engine: `plans_finished/osm_importer/` (`OSM_IMPORTER_PLAN.md` D-20).
 - Real-time public transport data (specification, section Out of scope).
 - The exception of O9 on the page about the data V-13, next to its item that missing data is never shown as accessible: `plans/frontend_app/`, which builds that page. Recorded here because version 14 makes it necessary.
 - Showing the switch and the public transport segment in the HarmonyOS client: `plans/stage5_harmonyos_port/` decides it; the contract of item 1 serves that client as it serves the web frontend. Agent decision at C:40, without asking: the seed and `MVP.md` give this initiative no view.

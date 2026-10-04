@@ -11,16 +11,16 @@ from zoneinfo import ZoneInfo
 import httpx
 import pytest
 from accessibility_db.tables import OffsetInstant
+from shapely import Polygon
 
 from data.local_lock import ImportAlreadyRunning
 from data.osm_copy import OsmCopySnapshot
 from data.publication import PublicationOutcomeUnknown, PublicationResult, PublicationRolledBack
 from data.routing_data import ROUTING_COPIES_NAME, RoutingDataError, apply_osm_routing_manifest, apply_routing_preparation_directory, build_routing_copy_name, fetch_routing_pointer
 from service.osm_acquisition import OsmExtract
-from service.osm_import import OsmImportError, OsmImportSettings, apply_osm_import
+from service.osm_import import OsmImportError, OsmImportSettings, apply_osm_import, build_osm_stamp
 from service.osm_preparation import OsmPreparedNetwork
 from service.osm_publication import OsmPublicationCounts
-from service.osm_reconciliation import OsmReconciliationError
 from service.osm_routing_preparation import OsmPreparedCopy
 from service.osm_routing_recovery import OsmRoutingIntegrityError
 from service.osm_source_validation import OsmSourceError
@@ -28,6 +28,7 @@ from service.osm_source_validation import OsmSourceError
 OLD_STATE = datetime(2026, 10, 2, tzinfo=UTC)
 NEW_STATE = datetime(2026, 10, 3, tzinfo=UTC)
 COUNTS = OsmPublicationCounts(3, 2, 4, 5)
+INVENTED_BOUNDARY = Polygon(((19.9, 50.0), (20.0, 50.0), (20.0, 50.1), (19.9, 50.0)))
 
 
 class InventedRun:
@@ -58,7 +59,7 @@ class InventedRun:
             self.steps.append("acquisition")
             yield OsmExtract(tmp_path / "source.osm.pbf", "malopolskie-261003.osm.pbf", source_state)
 
-        def apply_routing_preparation(lease, routing_root, network, state_at, committed_names, template, tool_directory, deadline):
+        def apply_routing_preparation(lease, routing_root, network, boundary, state_at, committed_names, template, tool_directory, deadline):
             self.steps.append("routing")
             assert committed_names == frozenset(build_routing_copy_name(state) for state in history)
             return routing_root / ROUTING_COPIES_NAME / build_routing_copy_name(state_at)
@@ -72,10 +73,12 @@ class InventedRun:
         monkeypatch.setattr("service.osm_import.build_import_engine", lambda timeout: SimpleNamespace(dispose=lambda: None))
         monkeypatch.setattr("service.osm_import.apply_import_exclusion", apply_exclusion)
         monkeypatch.setattr("service.osm_import.fetch_osm_valhalla_template", lambda path: {"mjolnir": {}})
-        monkeypatch.setattr("service.osm_import.fetch_business_now", lambda: datetime(2026, 10, 4, 8, tzinfo=ZoneInfo("Europe/Warsaw")))
+        monkeypatch.setattr("service.osm_import.fetch_business_now", lambda: datetime(2026, 10, 4, 8, 0, 0, 123456, tzinfo=ZoneInfo("Europe/Warsaw")))
         monkeypatch.setattr("service.osm_import.fetch_osm_copy_history", lambda connection: snapshots)
         monkeypatch.setattr("service.osm_import.fetch_osm_extract", fetch_extract)
-        monkeypatch.setattr("service.osm_import.fetch_osm_prepared_copy", lambda path, deadline, zone: self.apply_step("preparation", OsmPreparedCopy(OsmPreparedNetwork((), ()), frozenset(), ())))
+        monkeypatch.setattr(
+            "service.osm_import.fetch_osm_prepared_copy", lambda path, deadline, zone: self.apply_step("preparation", OsmPreparedCopy(OsmPreparedNetwork((), ()), frozenset(), (), INVENTED_BOUNDARY))
+        )
         monkeypatch.setattr("service.osm_import.apply_osm_routing_preparation", apply_routing_preparation)
         monkeypatch.setattr("service.osm_import.apply_publication", apply_publication)
         monkeypatch.setattr("service.osm_import.fetch_osm_commit_outcome", lambda lease, state_at, deadline: self.apply_step("commit_check", self.commit_outcome))
@@ -96,6 +99,7 @@ class InventedRun:
         directory.mkdir(parents=True)
         (directory / "network.osm.pbf").write_bytes(b"network")
         (directory / "valhalla_tiles.tar").write_bytes(b"tiles")
+        (directory / "krakow_boundary.wkb").write_bytes(b"boundary")
         apply_osm_routing_manifest(directory, state)
 
     def apply_run(self):
@@ -114,12 +118,16 @@ def test_first_import_publishes_then_points_at_the_new_copy(tmp_path, monkeypatc
 def test_a_concurrent_run_is_skipped_without_touching_anything(tmp_path, monkeypatch):
     run = InventedRun(tmp_path, monkeypatch)
 
-    @contextmanager
-    def apply_refused_exclusion(engine, workspace_root):
-        raise ImportAlreadyRunning("Another import owns database admission")
-        yield
+    class RefusedExclusion:
+        """Refuse admission the way a held database admission lock does."""
 
-    monkeypatch.setattr("service.osm_import.apply_import_exclusion", apply_refused_exclusion)
+        def __enter__(self):
+            raise ImportAlreadyRunning("Another import owns database admission")
+
+        def __exit__(self, *_):
+            return False
+
+    monkeypatch.setattr("service.osm_import.apply_import_exclusion", lambda engine, workspace_root: RefusedExclusion())
     result = run.apply_run()
     assert result.outcome == "skipped" and result.state_at is None
     assert run.steps == [] and fetch_routing_pointer(run.routing_root) is None
@@ -178,11 +186,11 @@ def test_a_named_refusal_inside_publication_is_reported_by_name_and_the_pointer_
             raise PublicationRolledBack("Publication failed before commit") from None
 
     def apply_refusing_copy(connection, prepared, state_at, filename, made_current_at):
-        raise OsmReconciliationError("A disappearing OpenStreetMap fact needs the shared vote evaluator")
+        raise OsmSourceError("Source state is no longer newer than the current copy")
 
     monkeypatch.setattr("service.osm_import.apply_publication", apply_refusing_publication)
     monkeypatch.setattr("service.osm_import.apply_osm_copy_publication", apply_refusing_copy)
-    with pytest.raises(OsmReconciliationError):
+    with pytest.raises(OsmSourceError, match="no longer newer"):
         run.apply_run()
     assert fetch_routing_pointer(run.routing_root) == old_name
 
@@ -225,3 +233,7 @@ def test_a_pointer_failure_after_commit_reports_incomplete_routing_not_a_rollbac
     monkeypatch.setattr("service.osm_import.apply_routing_pointer", apply_failed_pointer)
     result = run.apply_run()
     assert (result.outcome, result.counts) == ("routing_incomplete", COUNTS)
+
+
+def test_server_stamp_is_cut_to_the_stored_millisecond():
+    assert build_osm_stamp(datetime(2026, 10, 4, 8, 0, 0, 123456, tzinfo=UTC)) == datetime(2026, 10, 4, 8, 0, 0, 123000, tzinfo=UTC)

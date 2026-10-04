@@ -42,7 +42,7 @@ class StoredFact:
 
 @dataclass(frozen=True)
 class StoredRouteFact(StoredFact):
-    """A fact of a route with, for a fact without an OpenStreetMap identity, the nearest way of the network within 15 m."""
+    """A fact of a route with, for a fact of the source user report, the nearest way of the network within 15 m."""
 
     nearest_way_id: int | None
 
@@ -62,7 +62,7 @@ class StoredVote:
 
 _nearest_way = (
     select(_way.c.id)
-    .where(_fact.c.osm_element_id.is_(None), func.ST_DWithin(_way.c.geog, _fact.c.geog, REPORT_STRETCH_DISTANCE_M))
+    .where(_fact.c.source == FactSource.USER_REPORT.value, func.ST_DWithin(_way.c.geog, _fact.c.geog, REPORT_STRETCH_DISTANCE_M))
     .order_by(func.ST_Distance(_way.c.geog, _fact.c.geog), _way.c.id)
     .limit(1)
     .lateral("nearest_way")

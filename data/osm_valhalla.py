@@ -36,9 +36,7 @@ def apply_osm_valhalla_config(path: Path, config: dict[str, Any]) -> None:
         raise OsmTileBuildError("Cannot write Valhalla build configuration") from error
 
 
-def apply_osm_valhalla_tiles(
-    lease: WorkspaceLease, config_path: Path, tool_directory: Path, network_path: Path, archive_path: Path, state_at: datetime, deadline: Deadline
-) -> None:
+def apply_osm_valhalla_tiles(lease: WorkspaceLease, config_path: Path, tool_directory: Path, network_path: Path, archive_path: Path, state_at: datetime, deadline: Deadline) -> None:
     """Build the walking tiles and their archive with the supplied tools and stamp the archive with the source instant."""
     if state_at.utcoffset() is None:
         raise OsmTileBuildError("Routing source instant must be aware")
