@@ -43,27 +43,27 @@ Review is invoked automatically at the end of `plan-implement` (`standard_agenti
 
 The table below maps each standard to the command that checks its rule automatically - where such a command exists. The Group column says whether the standard belongs to the workflow core, to the Python profile or to the frontend profile. A project outside the Python profile removes the profile rows together with the standard files, according to `docs/standards/README.md`. None of these commands covers the whole checklist of its standard: it checks the mechanical, repeatable part (syntax, format, a known pattern), not a domain rule or an architectural decision. The review of a standard's checklist against the change always takes place, regardless of whether a command exists for it.
 
-| Standard                       | Group            | Automatic verification                                                                                                                                   |
-| ------------------------------ | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `standard_agentic_workflow.md` | core             | `pytest tests/architecture/test_agent_docs_parity.py tests/architecture/test_session_context_hook.py tests/architecture/test_dangerous_commands_hook.py` |
-| `standard_agent_docs.md`       | core             | `pytest tests/architecture/test_plan_document_contract.py`                                                                                               |
-| `standard_review.md`           | core             | no tool - manual review (this document)                                                                                                                  |
-| `standard_documentation.md`    | core             | no tool - manual review                                                                                                                                  |
-| `standard_formatting.md`       | core             | `ruff format --check .`, `npx --no-install prettier --check "**/*.md"`, `pytest tests/architecture/test_prose_style.py`                                  |
-| `standard_git.md`              | core             | `pytest tests/architecture/test_conflict_markers.py`                                                                                                     |
-| `standard_architecture.md`     | Python profile   | no tool - manual review                                                                                                                                  |
-| `standard_config.md`           | Python profile   | `pytest tests/architecture/test_environment_contract.py`, created on 2026-10-04 with the first environment entries                                       |
-| `standard_database.md`         | Python profile   | `bandit` (rule B608, building a query by concatenating strings)                                                                                          |
-| `standard_errors.md`           | Python profile   | no tool - manual review                                                                                                                                  |
-| `standard_idempotency.md`      | Python profile   | no tool - manual review                                                                                                                                  |
-| `standard_code_quality.md`     | Python profile   | `ruff check .`, `mypy`, `vulture`, `deptry .`                                                                                                            |
-| `standard_logging.md`          | Python profile   | `ruff check .` (rule G, lazy placeholders instead of an f-string)                                                                                        |
-| `standard_naming.md`           | Python profile   | `ruff check .` (rule N)                                                                                                                                  |
-| `standard_security.md`         | Python profile   | `bandit`, `pip-audit` (only for a new or upgraded dependency)                                                                                            |
-| `standard_tests.md`            | Python profile   | `pytest`                                                                                                                                                 |
-| `standard_time.md`             | Python profile   | no tool - manual review                                                                                                                                  |
-| `standard_worker.md`           | Python profile   | not in the template - the task registry consistency test is created with the first periodic task                                                         |
-| `standard_frontend.md`         | frontend profile | `npx tsc -b`, `npx oxlint`, `npx vitest run`, `pytest tests/architecture/test_prose_style.py` - set up with the first frontend code                      |
+| Standard                       | Group            | Automatic verification                                                                                                                                                                               |
+| ------------------------------ | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `standard_agentic_workflow.md` | core             | `pytest tests/architecture/test_agent_docs_parity.py tests/architecture/test_vendored_content.py tests/architecture/test_session_context_hook.py tests/architecture/test_dangerous_commands_hook.py` |
+| `standard_agent_docs.md`       | core             | `pytest tests/architecture/test_plan_document_contract.py`                                                                                                                                           |
+| `standard_review.md`           | core             | no tool - manual review (this document)                                                                                                                                                              |
+| `standard_documentation.md`    | core             | no tool - manual review                                                                                                                                                                              |
+| `standard_formatting.md`       | core             | `ruff format --check .`, `npx --no-install prettier --check "**/*.md"`, `pytest tests/architecture/test_prose_style.py`                                                                              |
+| `standard_git.md`              | core             | `pytest tests/architecture/test_conflict_markers.py`                                                                                                                                                 |
+| `standard_architecture.md`     | Python profile   | no tool - manual review                                                                                                                                                                              |
+| `standard_config.md`           | Python profile   | `pytest tests/architecture/test_environment_contract.py`, created on 2026-10-04 with the first environment entries                                                                                   |
+| `standard_database.md`         | Python profile   | `bandit` (rule B608, building a query by concatenating strings)                                                                                                                                      |
+| `standard_errors.md`           | Python profile   | no tool - manual review                                                                                                                                                                              |
+| `standard_idempotency.md`      | Python profile   | no tool - manual review                                                                                                                                                                              |
+| `standard_code_quality.md`     | Python profile   | `ruff check .`, `mypy`, `vulture`, `deptry .`                                                                                                                                                        |
+| `standard_logging.md`          | Python profile   | `ruff check .` (rule G, lazy placeholders instead of an f-string)                                                                                                                                    |
+| `standard_naming.md`           | Python profile   | `ruff check .` (rule N)                                                                                                                                                                              |
+| `standard_security.md`         | Python profile   | `bandit`, `pip-audit` (only for a new or upgraded dependency)                                                                                                                                        |
+| `standard_tests.md`            | Python profile   | `pytest`                                                                                                                                                                                             |
+| `standard_time.md`             | Python profile   | no tool - manual review                                                                                                                                                                              |
+| `standard_worker.md`           | Python profile   | not in the template - the task registry consistency test is created with the first periodic task                                                                                                     |
+| `standard_frontend.md`         | frontend profile | `npx tsc -b`, `npx oxlint`, `npx vitest run`, `pytest tests/architecture/test_prose_style.py` - set up with the first frontend code                                                                  |
 
 The command runs from the repository root, in an environment with the `dev` dependency group installed. The three `npx` commands of the frontend profile run from `frontend/`. The table points to the tool itself, not to the target name in the `makefile` - targets may be renamed, while the tool behind a standard's rule does not change with such a change.
 
@@ -110,7 +110,7 @@ A task can be considered finished when:
 - potential bugs or risks have been described to the user,
 - the code contains no line comments,
 - functions that need explanation have docstrings describing in plain language what they do,
-- the code formatting follows the rules from this file,
+- the code formatting follows `standard_formatting.md`,
 - if the implementation was larger or changed a module, the whole must, after the change, comply with all the standards from /docs/standards
 - the final reply clearly describes what was changed,
 - the final reply explains why the changes were made,

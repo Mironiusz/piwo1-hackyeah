@@ -7,7 +7,7 @@ description: review of implementation changes against the repository's Definitio
 
 Assess the implementation against the repository's Definition of Done.
 
-Before reading the code, open `docs/standards/README.md` - the map of all standards, with a separate section for each standard, saying what it is responsible for and what status it has (ready, partial, skeleton). The map replaces any fixed list of standards written out here, so this skill does not go stale as further files are added to the directory.
+Before reading the code, open `docs/standards/README.md` - the map of all standards, with a row of its table for each standard, saying what it is responsible for and what status it has (ready, partial, skeleton). The map replaces any fixed list of standards written out here, so this skill does not go stale as further files are added to the directory.
 
 Also check `docs/standards/decision_registry.md`. The absence of a rule in a given area may be a recorded deferral, not a gap - reporting as missing something that is deliberately postponed together with a reason is noise.
 
@@ -31,7 +31,7 @@ Report findings in this order:
 1. Blockers - things because of which the change is not finished.
 2. Risks - things that may be acceptable but require a conscious decision.
 3. Improvements - optional cleanups and quality suggestions.
-4. Verification - a list of all standards from the map in `standard_review.md`, each with one of three states: not applicable (with a short reason), checked automatically (the command from the map was run, the result or its summary in the report), checked manually (the standard has no mapped command). Skipping a standard without one of these three states is an incomplete Verification.
+4. Verification - a list of all standards from the map in `standard_review.md`, each with one of four states: not applicable (with a short reason), checked automatically (the command from the map was run, the result or its summary in the report), checked manually (the standard has no mapped command), not checked (the reviewer did not get to it before the call limit, so the verdict does not cover this standard yet). Skipping a standard without one of these four states is an incomplete Verification.
 5. Verdict - one of three: ready, ready after minor fixes, not ready - together with the scope it covers: the whole initiative, one task out of several, the plan alone or the indicated files.
 
 The scope of the verdict decides the further fate of the initiative directory, so name it explicitly: a final `ready` for the whole initiative qualifies it for the `plans_finished/` archive, a `ready` for one task, the plan or part of the code does not (`docs/standards/standard_agentic_workflow.md` ch. 4.6). Report this qualification in the report, but do not move anything - the review stays in read-only mode, and the move belongs to `plan-implement` or to an agent whom the user has explicitly instructed to clean up. A review called on an initiative that is already explicitly finished says so in the report, instead of assessing it anew.

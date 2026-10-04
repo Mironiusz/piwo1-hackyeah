@@ -24,9 +24,9 @@ Each log entry names the tools and models actually used in that piece of work.
 - `CLAUDE.md` and `AGENTS.md` - the permanent rules, identical for both tools: the repository is written in English and the conversation with the user in Polish, no guessing of contracts (ask instead of adding a fallback), no line comments in code, the agent never commits or pushes, and the hierarchy for resolving rule conflicts.
 - `docs/standards/` - the standards the agents follow, with the standards map as the entry point. The source of truth above them is the product specification in `docs/product/`.
 - Skills in `.claude/skills/` and `.agents/skills/`, identical in both tools: `plan-shape` (turns a raw request into a shaped plan through an interview), `plan-prd` (turns the shape into a PRD and then into an implementation plan, with a confirmation gate in between), `plan-implement` (implements a closed plan and calls the review), `implementation-dod-review` (review against the Definition of Done), `load-context` (dumps a folder into one file for analysis).
-- A third-party design skill, Impeccable 4.5.0 (Apache 2.0), in `.claude/skills/impeccable/` and `.agents/skills/impeccable/`, with four agent roles of its own (`.claude/agents/impeccable-*.md`). The design direction of the route result screen was shaped with it, and the brief and the mocks of the views of `docs/product/views.md` follow that direction in the same place (`PRODUCT.md`, `.impeccable/briefs/`). It is installed and updated by its own installer, so the team does not edit it, and the parity and prose gates skip it.
-- Hooks: `local_docs_context.py` inserts the project description and pointers to the standards at the start of every session; `block_dangerous_commands.py` blocks destructive commands as well as `git commit` and `git push`.
-- `.claude/settings.json` - denies reading and writing secret files.
+- A third-party design skill, Impeccable 4.5.0 (Apache 2.0), in `.claude/skills/impeccable/` and `.agents/skills/impeccable/`, with four agent roles of its own (`.claude/agents/impeccable-*.md`). The design direction of the route result screen was shaped with it, and the brief and the mocks of the views of `docs/product/views.md` follow that direction in the same place (`PRODUCT.md`, `.impeccable/briefs/`). It is installed and updated by its own installer, so the team does not edit it, and the parity and prose gates skip it. On the Codex side its installer also registers two hooks of the skill in `.codex/hooks.json`.
+- Hooks: `local_docs_context.py` inserts the project description and pointers to the standards at the start of every session; `block_dangerous_commands.py` blocks destructive commands, `git commit` and `git push`, reading the environment files with secrets and a search of the whole tree that does not exclude them.
+- `.claude/settings.json` - denies reading secret files and keys, and writing the two environment files with secrets, `.env` and `.env.priv`.
 
 The full description of the system, with the reasons behind each rule, is in `docs/standards/standard_agentic_workflow.md`.
 
@@ -41,12 +41,12 @@ Every task goes through the chain seed -> shape -> PRD -> plan -> implementation
 5. Implementation - exactly what the plan says; anything unforeseen stops the agent with a question, and the course of the work is logged in the task's review file.
 6. Review - against the Definition of Done in `docs/standards/standard_review.md`.
 
-Every transition between phases is manual, so a human sees each result and can turn back.
+Every transition between phases is manual, so a human sees each result and can turn back. The one exception is the review, which `plan-implement` calls itself when the implementation ends.
 
 ## How generated output is reviewed and validated
 
 - A human checkpoint at every phase boundary of the chain.
-- Automated gates run by `make check`: the architecture tests in `tests/architecture/` (Claude Code and Codex parity, hooks, prose style, plan document contract, conflict markers), ruff, mypy, vulture, deptry, bandit, pip-audit, and prettier for markdown.
+- Automated gates run by `make check`: the architecture tests in `tests/architecture/` (Claude Code and Codex parity, the list of third-party content, hooks, prose style, plan document contract, conflict markers), ruff, mypy, vulture, deptry, bandit, pip-audit, and prettier for markdown.
 - The review skill and the `dod-reviewer` role check changes against the Definition of Done and do not fix anything themselves.
 - The agent never commits or pushes. A human reads the diff and creates every commit, so the commit history shows the progress a human accepted.
 
@@ -54,7 +54,7 @@ Every transition between phases is manual, so a human sees each result and can t
 
 - The format gate for plans checks the form of the evidence behind a fact, never its truth.
 - Nothing automatic checks how many interview questions were asked or whether they were justified; the in-place marks of agent decisions are the only material for checking it.
-- The template was written for a Python service with a database; parts of it may not fit until the technology stack is chosen.
+- The template was written for a Python service with a database. The backend chosen for the MVP is such a service (`MVP.md`, D-1), so the Python profile of the standards applies to it, while the web frontend is held only to the workflow core and `docs/standards/standard_frontend.md`.
 
 ## Log
 
@@ -182,3 +182,21 @@ Every transition between phases is manual, so a human sees each result and can t
 - Why: a line number keeps pointing at the old place after the first edit above it, and here the facts of a plan are checked again before implementation while the files change several times an hour; an item, a section or a symbol moves together with its content.
 - Validation: the architecture tests pass, the plan format check included; a scan of every tracked markdown file finds no reference to a line number apart from times of day, ports, a tram line and a JSON value; prettier passes on every file this change touched.
 - Note: the rule has no automatic check, by the decision of the user, so review guards it.
+
+### 2026-10-04 - Consistency check of the whole repository after the merge of md/fast-setup
+
+- Tools: Claude Code with Claude Opus 5.5 in the main session; seven read-only `general-purpose` subagents in parallel, one per slice - the product contract, the user journeys and views, `MVP.md` with the import handoff, the workflow and tooling, the other standards, the archive and memory, and the active initiatives; throwaway scripts outside the repository checked every path named in the documents and applied the edits; another session wrote `plans/final_checklist/` on the same tree at the same time.
+- Request, summarized from Polish: go through the whole repository and its documentation and make sure everything is consistent; continued after the user merged `md/fast-setup`, which brought `plans/osm_importer/` and the import handoff.
+- Questions the agent asked, and the answers: what to do with the decisions the merge wrote into two closed plans (keep them and record an exception); whether to fix `MVP.md` after the handoff now (yes, with `osm_importer` as an initiative of its own); whether the account notes the merge wrote into the target schema make a new version of the specification (yes, version 13); how to treat the standards of the worker written for periodic tasks (an entry in the decision registry); and four smaller ones on the registry, memory and archive, all answered with the recommended option.
+- What was done: the stale and contradicting statements the slices found and that needed no decision, among them two chain skills, the `repo-researcher` role in both tools, the hook descriptions, the standards map, seven standards and the naming registry, the user journeys and the views; `MVP.md` with an `osm_importer` row and its waits; version 13 of the specification; a second exception in `docs/standards/standard_agentic_workflow.md` ch. 4.6 with an entry in each of the two reviews; four new entries of the decision registry; one memory entry; archiving entries in four archived reviews. The findings that belong to the owners of active initiatives or need further decisions are listed in `plans/repository_consistency/REPOSITORY_CONSISTENCY_REVIEW.md`.
+- Why: after a day of parallel sessions and three merges, documents that prevail over each other had drifted apart, and a stale rule in a skill, a standard or a summary misleads every following session.
+- Validation: the architecture tests, prettier, ruff, mypy and vulture pass on the whole tree; the `dod-reviewer` subagent reviewed the change in two parts with disjoint files, each with the verdict ready after minor fixes and no blocker, and the minor fixes were applied; two of them, in files the other session was writing at that moment, were left to the review of this initiative.
+- Note: the files of `plans/final_checklist/`, edited by the other session, and the chain artifacts of `plans/osm_importer/` and `plans/backend_skeleton/`, owned by Mateusz and Marek, were not changed apart from one dated sentence in `plans/accounts/ACCOUNTS_SHAPE.md` on version 13.
+
+### 2026-10-04 - Final checklist, stages of the initiatives and division of the work
+
+- Tools: Claude Code with Claude Opus 5.5 in the main session, the skills `plan-shape`, `plan-prd` and `plan-implement`; another session checked the consistency of the repository on the same tree at the same time.
+- Request, summarized from Polish: write a list in the root of the repository whose completion means the project is finished, with sets of tasks and a few checks in each, covering the current initiatives, the work still to be done, the official requirements of both challenges and the pitch; later, set up an initiative for every set no initiative covers, with its stage in its name, and give every initiative a file with its stage.
+- What was done: `FINAL_CHECKLIST.md` with ten sets and 42 checks, each with what it waits for and what of it can be done at once, and the table of stages; five new initiatives with their seeds, `plans/stage1_clarifications/`, `plans/stage5_harmonyos_port/`, `plans/stage6_official_requirements/`, `plans/stage7_demo_scenario/` and `plans/stage8_materials_and_pitch/`; twenty `STAGE.md` files, one in every initiative of `plans/`; the division of the work among the people in `MVP.md`, column Owner, and in `TEAM.md`, column Works on, with `MVP.md` naming the documents each initiative starts from and ordering the initiatives by stage; the mandatory Huawei submission in `MVP.md` and in the registry entry HarmonyOS port and the Huawei submission; and `docs/hackathon/challenge_requirements.md` brought in line with the official PDFs in `docs/official/`.
+- Why: zero idle time - every person can move their work forward at every moment of the day, starting from documents instead of waiting for the code of another initiative - and a stage per initiative, so that the team sees which initiatives can run in parallel.
+- Note: `STAGE.md` is not a chain artifact; it is described in section 3.2 of `docs/standards/standard_agentic_workflow.md`. The division of the work was given by the user in place of Marek, Kuba, Kuber and Adrian, who confirm it in check 1.4 of the list.

@@ -35,10 +35,8 @@ ROOT_DIR = Path(__file__).resolve().parents[2]
 EXCLUDED_DIRECTORY_NAMES: frozenset[str] = frozenset({".venv", "venv", ".git", ".cache", "__pycache__", "build", "dist", "node_modules", "temp", ".context"})
 EXCLUDED_DIRECTORY_PREFIXES: tuple[str, ...] = ("pytest_tmp",)
 """
-Repeats the directory exclusions from `test_prose_style.py`, so that both repository scans agree on
-what is repository content and what is an artifact of the environment or a tool. The list is repeated,
-not imported, because the helpers of an infrastructure test stay in its own file
-(`docs/standards/naming_registry.md`, section Names in tests).
+Repeats the directory exclusions from `test_prose_style.py` and adds `.context`, so that both repository scans
+agree on what is repository content and what is an artifact of the environment or a tool.
 """
 
 MARKER_LENGTH = 7

@@ -1,6 +1,6 @@
 # Shape: Final checklist whose completion means the project is finished
 
-Document state: 2026-10-04, interview closed
+Document state: 2026-10-04, interview closed, amended after the interview with requirements 22 - 25
 Regulator: C:40
 
 ## Problem
@@ -25,6 +25,14 @@ Verified in the repository and on `origin/dev` at 02:53 on 2026-10-04:
 - The four official PDFs of the challenges were added by the user on 2026-10-04 to `docs/official/` (untracked at 03:20): `KRYTERIA Kraków Bez Barier.pdf`, `RULES Cracow Without Barriers.pdf`, `CRITERIA Imagine What_s Next.pdf` and `RULES Imagine What_s Next.pdf`. The agent read all four on 2026-10-04; what they add to `docs/hackathon/challenge_requirements.md` is in the section Domain rules or explicit TODO.
 - Open decisions that touch the submissions: the HarmonyOS port and the Huawei submission, waiting for a go/no-go time, and the intellectual property between the two challenges and the repository licence, waiting for the organizers (`docs/standards/decision_registry.md`).
 
+Verified again at 03:56 on 2026-10-04, after the merge of `md/fast-setup` into `dev` and into this branch:
+
+- `plans/osm_importer/` is an initiative of the repository, owned by Mateusz, with its plan in progress; it builds the importer and the walking data of the routing engine, while `osm_import` keeps the reading of the copy and the loading program (`MVP.md`, section How the MVP is built; `docs/standards/decision_registry.md`, resolved entry OpenStreetMap importer ownership and Valhalla data preparation).
+- `plans/backend_skeleton/` holds a shape, a PRD and a plan in progress; `plans/accounts/` holds a shape and a PRD awaiting confirmation; `plans/repository_consistency/` holds only a seed. There is still no product code.
+- Unmerged work on remote branches: `origin/jmi/odklejka_v1` (the shape and the PRD of `schema_first_revision`), `origin/js/frontend-shape` (one file), `origin/mw` (`bus_station_api_integration`, outside `MVP.md`) and `origin/mw-osm-import` (one commit over the merged work).
+- `docs/setup/EMULATOR_SETUP.md` describes the setup of the HarmonyOS toolchain and emulator, but the application directory, the `Makefile` and the version script it names are not in the repository.
+- `docs/standards/decision_registry.md` has a new open entry, Hash length reported by Kuba.
+
 ## Smallest meaningful scope
 
 One document, `FINAL_CHECKLIST.md`, with ten sets, about forty checks in all, every check with its dependencies and with what of it can be done before they are met; together with the three documents this initiative brings in line with it in the same change: `MVP.md` (requirement 13), `docs/hackathon/challenge_requirements.md` (requirement 20) and the entry HarmonyOS port and the Huawei submission of `docs/standards/decision_registry.md` (section Domain rules or explicit TODO).
@@ -41,6 +49,8 @@ The ten sets and the checks they cover, approved by the user on 2026-10-04 (ques
 8. HarmonyOS port: the initiative of the port with the choice between ArkTS/ArkUI and React Native for OpenHarmony; a client of the same programming interface using at least one capability of the platform; the `.hap` running on an emulator; the build, installation and launch instructions with versions.
 9. Official requirements. Kraków: data sources, architecture, business model, running and maintenance, data protection, licences and dependencies, the list of what works and what still needs work. Huawei: the architecture and implementation description in English, `AI_WORKFLOW.md`, the pre-existing and third-party components, the tests of the key scenarios, and a public repository without secrets.
 10. Materials and pitch: the four materials of requirement 18; both submissions on HackTribe before the deadline; the pitch with a live demo.
+
+Amended after the interview (requirements 22 - 25): the same change also sets up one new initiative with its seed for every set whose checks no existing initiative covers, gives every initiative of `plans/` a file `STAGE.md` with its stage, and writes the division of the work among the people into `MVP.md` and `TEAM.md`. `osm_importer` joins set 3 and `repository_consistency` joins set 1.
 
 ## Out of scope
 
@@ -72,6 +82,10 @@ The ten sets and the checks they cover, approved by the user on 2026-10-04 (ques
 19. The facts no document in the repository holds are checks of the list, not questions of this interview: whether one team may submit one project to two partner challenges, the Huawei submission deadline, the time and length of the Kraków pitch, and which of the two Kraków sets of criteria the jury uses (`docs/hackathon/challenge_requirements.md`, Conflicts and open points 4 and 9). They are verified with the organizers or in the HackYeah 2026 schedule, and the list says which other checks depend on each of them (Agent decision at C:40, without asking).
 20. This initiative brings `docs/hackathon/challenge_requirements.md` up to date with the official PDFs in the same change: the section Provenance points to `docs/official/`, the Huawei section says the jury may invite teams to present, and the Kraków section says the whole submission is in Polish. The set of the list that checks the official requirements checks them against the updated document (decided by the user on 2026-10-04, question 11 of the interview).
 21. The list has the ten sets of the section Smallest meaningful scope, in that order (approved by the user on 2026-10-04, question 12 of the interview).
+22. The work is divided among the people as follows, and this initiative writes the division into `MVP.md`, column Owner, and `TEAM.md`, column Works on; the list itself still names no owner (requirement 14). Marek: `backend_skeleton`, `route_planning`, the reports and geozones of `community_facts`, and `public_transport_routing` last. Kuba: the local setup of `backend_skeleton`, `schema_first_revision`, `accounts`, and the votes, statuses, flags and moderation of `community_facts`. Mateusz: `osm_importer`, `osm_import`, `address_search` and `sample_data`, unchanged. Adrian: `frontend_app` and `map_tiles`, and with Rafał the Polish materials and the pitch. Kuber: the HarmonyOS port, the Huawei part of the official requirements and the English demonstration. Rafał: the clarifications, the deployment configuration and the hosted demo, the demo scenario, the Kraków documents and `AI_WORKFLOW.md`, the decks and the submissions. The division was proposed by the agent to take load off Marek and was accepted by the user on 2026-10-04 after the interview; Marek, Kuba, Kuber and Adrian confirm the change of their work, as `MVP.md`, section Open decisions and confirmations, records for other rulings given in their place.
+23. Every set whose checks no existing initiative covers gets one new initiative, set up by this initiative with its seed only: set 1, set 7 for the demo scenario and its run next to `deployment_config`, set 8, set 9 and set 10. The name of a new initiative starts with `stage<N>_`, where N is its stage. Existing initiatives keep their names (decided by the user on 2026-10-04, after the interview, against one initiative for every check without one).
+24. Every initiative in `plans/`, the existing ones, the new ones and this one, gets a file `STAGE.md` holding its stage number (decided by the user on 2026-10-04, after the interview; the user chose the English name over `etap.md` of the request, because the repository is written in English).
+25. A stage is a level of dependency, so that the initiatives of one stage can be carried out in parallel: an initiative of stage N waits only for initiatives of stages below N, initiatives of one stage do not wait for each other, and stage 1 waits for nothing. A wait is a wait of the effect in the sense of requirement 12 - what an initiative needs before its effect can be verified; the work of every stage starts at once on documents (requirement 10) (decided by the user on 2026-10-04, after the interview, against a stage as a wave of the day and against a stage as a stream of work).
 
 ## Scenarios: input, flow, expected state after the run
 
@@ -94,7 +108,7 @@ The ten sets and the checks they cover, approved by the user on 2026-10-04 (ques
 ## Domain rules or explicit TODO
 
 - TODO: the decision of question 3 removes the variant "no Huawei submission" from `docs/standards/decision_registry.md`, entry HarmonyOS port and the Huawei submission, while the choice between a native ArkTS/ArkUI client and a React Native for OpenHarmony client stays open there. The entry has to say so before `FINAL_CHECKLIST.md` is published, so that the two documents do not contradict each other.
-- TODO: no initiative of `MVP.md` builds the HarmonyOS client, so the port has no owner document yet; the list names that gap as the first check of set 8 instead of pointing to an initiative that does not exist.
+- No initiative of `MVP.md` builds the HarmonyOS client. Requirement 23 closes the gap: this initiative sets up the initiative of the port with its seed, and the first check of set 8 is the choice its shape makes.
 - The official PDFs in `docs/official/` against `docs/hackathon/challenge_requirements.md`, read by the agent on 2026-10-04. The summary is accurate on the deliverables, the deadlines, the languages and the judging criteria. What it misses or what has changed:
   - Signal 4: its section Provenance says the PDFs are not stored in the repository, which stopped being true when the user added them to `docs/official/`.
   - `RULES Imagine What_s Next.pdf`, section 5: the Huawei jury may invite selected teams to present or demonstrate their solutions. A live Huawei presentation is therefore by invitation only, while the Kraków rules, point 7, say the competition is to present the solutions and `KRYTERIA Kraków Bez Barier.pdf`, section 6, describes a working demonstration during the presentation.

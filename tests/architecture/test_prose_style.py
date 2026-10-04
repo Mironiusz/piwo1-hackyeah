@@ -28,8 +28,8 @@ SCANNED_FILE_SUFFIXES: frozenset[str] = frozenset({".py", ".md"})
 EXCLUDED_DIRECTORY_NAMES: frozenset[str] = frozenset({".venv", "venv", ".git", ".cache", "__pycache__", "build", "dist", "node_modules", "temp"})
 EXCLUDED_DIRECTORY_PREFIXES: tuple[str, ...] = ("pytest_tmp",)
 """
-Repeats `exclude` from `[tool.ruff]` in `pyproject.toml`, so that both tools agree on what
-is code and documentation of the repository and what is an artifact of the environment or a tool. `node_modules`
+Repeats `exclude` from `[tool.ruff]` in `pyproject.toml` and adds the `temp` directory and the `pytest_tmp` prefix,
+so that both tools agree on what is code and documentation of the repository and what is an artifact of the environment or a tool. `node_modules`
 is the local prettier installation from `package.json`, with the package's own documentation in someone else's style.
 """
 

@@ -36,7 +36,7 @@ The standard describes the target state and applies in full from the first commi
 
 When the repository has legacy code, relaxing this rule to the soft version is to be an explicit decision recorded in `docs/standards/README.md` together with the date and the reason. It is not a state that takes effect on its own.
 
-A clarification specific to this standard: the obligation to adapt covers every log entry in a module touched by the change, regardless of whether exactly that function was the goal of the task - in particular replacing exception logging without a traceback with logging with the full traceback, and removing or masking personal data in existing log entries. Personal data logged directly is the only place in this standard where the usual deviation "I will fix it the next time I touch the module" is not a sufficient answer on its own - see section Data in the entry content.
+A clarification specific to this standard: the obligation to adapt covers every log entry in a module touched by the change, regardless of whether exactly that function was the goal of the task - in particular replacing exception logging without a traceback with logging with the full traceback, and removing or masking personal data in existing log entries. Personal data logged directly is the one rule of this standard that keeps no transition period even if the repository ever relaxes the deviation rule to the soft version - see section Data in the entry content.
 
 ## Log levels
 

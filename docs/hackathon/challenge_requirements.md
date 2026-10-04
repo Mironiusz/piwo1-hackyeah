@@ -15,7 +15,7 @@ A working summary in our own words of four PDFs received by the team on 2026-10-
 - City of Kraków: "RULES Cracow Without Barriers.pdf" (terms and conditions with the copyright transfer agreement template) and "KRYTERIA Kraków Bez Barier.pdf" (task description).
 - Huawei: "RULES Imagine What_s Next.pdf" (challenge rules) and "CRITERIA Imagine What_s Next.pdf" (task description, technical requirements, deliverables).
 
-The PDFs are not stored in the repository and they remain the authority. When the organizers announce a change, this file gets updated together with the date and the source of the change.
+The PDFs are stored in `docs/official/` since 2026-10-04 and they remain the authority. When the organizers announce a change, this file gets updated together with the date and the source of the change.
 
 ## Shared facts
 
@@ -63,6 +63,7 @@ The prototype is narrowed to a chosen user group or a chosen kind of needs - the
 
 ### Formal deliverables
 
+- The whole task solution - the description, the presentation and the video included - is submitted on HackTribe in Polish (RULES, point 5).
 - Project title, team ID, project description - submitted on HackTribe, in Polish.
 - Description of the solution and of the problem it solves; the target group and how the solution is used.
 - Description of the data sources and of how their freshness and reliability are assessed.
@@ -144,7 +145,7 @@ Each jury member scores every criterion from 1 to 10; the final score is the wei
 | Quality of the demonstration                     | 10%    | the solution running, emulator by default; clear what was built during the hackathon                                            |
 | Reproducibility and transparency of the workflow | 10%    | build from README alone; documented dependencies and versions; commit history showing progress; AI use described                |
 
-Repositories may go through an automated technical pre-review before the jury.
+Repositories may go through an automated technical pre-review before the jury. The jury may invite selected teams to present or demonstrate their solutions (RULES, section 5), so a live Huawei presentation happens only on invitation.
 
 ### Prizes and rights
 
@@ -154,20 +155,20 @@ Repositories may go through an automated technical pre-review before the jury.
 
 ## What both challenges need, side by side
 
-| Item                       | Kraków                                                            | Huawei                                              |
-| -------------------------- | ----------------------------------------------------------------- | --------------------------------------------------- |
-| Language of the submission | Polish (HackTribe)                                                | English (everything)                                |
-| Working solution           | prototype or demo of the main scenario                            | `.hap` running on an emulator or device             |
-| Code repository            | optional; GitLab handover after winning                           | public, required                                    |
-| Presentation               | PDF, at most 10 slides                                            | not required                                        |
-| Video                      | mp4, at most 3 minutes, in an open repository                     | short recorded demo                                 |
-| Architecture description   | components, data flow, adding sources, categories and cities      | concise architecture and implementation description |
-| Data sources               | origin, terms of use, freshness, reliability, unavailability plan | not required                                        |
-| Business model and scaling | required, weighs heavily                                          | not required                                        |
-| Accessibility of the UI    | WCAG 2.2 AA goal, check of the main scenario                      | not required, fits Human-Centric Technology         |
-| Tests                      | not required                                                      | evidence of tests for key scenarios                 |
-| Build instructions         | not required                                                      | reproducible, required                              |
-| AI documentation           | not required                                                      | `AI_WORKFLOW.md`, required                          |
+| Item                       | Kraków                                                            | Huawei                                                          |
+| -------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------------- |
+| Language of the submission | Polish (HackTribe)                                                | English (everything)                                            |
+| Working solution           | prototype or demo of the main scenario                            | `.hap` running on an emulator or device                         |
+| Code repository            | optional; GitLab handover after winning                           | public, required                                                |
+| Presentation               | PDF, at most 10 slides                                            | not required; a presentation only on the invitation of the jury |
+| Video                      | mp4, at most 3 minutes, in an open repository                     | short recorded demo                                             |
+| Architecture description   | components, data flow, adding sources, categories and cities      | concise architecture and implementation description             |
+| Data sources               | origin, terms of use, freshness, reliability, unavailability plan | not required                                                    |
+| Business model and scaling | required, weighs heavily                                          | not required                                                    |
+| Accessibility of the UI    | WCAG 2.2 AA goal, check of the main scenario                      | not required, fits Human-Centric Technology                     |
+| Tests                      | not required                                                      | evidence of tests for key scenarios                             |
+| Build instructions         | not required                                                      | reproducible, required                                          |
+| AI documentation           | not required                                                      | `AI_WORKFLOW.md`, required                                      |
 
 ## Conflicts and open points
 

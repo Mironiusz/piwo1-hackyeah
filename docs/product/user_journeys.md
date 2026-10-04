@@ -1,6 +1,6 @@
 # User journeys of the MVP
 
-Document state: 2026-10-03
+Document state: 2026-10-04
 
 ## Why this document exists
 
@@ -290,7 +290,7 @@ Logging in and out:
 3. The person logs out. The app logs them out in this browser.
 
 - A wrong pseudonym or password. The app says that the two do not match, without saying which.
-- The session ended. The next action of the person is handled as without an account, and the app shows that they are not logged in.
+- The session ended. The next request the app makes with that session is refused, the app says that the person is logged out, and nothing of it is saved as a contribution without an account (M9).
 - What changes after logging in. Contributions count as made from an account. The app says nothing about their weight, shows nothing about the account to other people, and keeps the needs on the device, apart from the account.
 
 Deleting the account:
@@ -370,7 +370,7 @@ Decided by the user, the frontend person of the team, on 2026-10-03, question by
 8. A report far from every way is saved and shown, and the summary does not mention it (M3).
 9. A geozone can carry an optional description; it has no check for existing geozones (M5).
 10. The app shows a person their own vote, and the vote controls are inactive until the next calendar day (M4). The vote is remembered on the device, decided on 2026-10-03, because the programming interface returns no vote of the person.
-11. The app says nothing about the weight of an account; a pseudonym has 3 to 30 characters of letters, digits, the underscore and the hyphen; deleting an account takes one confirmation, without the password (M9). On 2026-10-03 the user kept the rule of the characters against the wider one of `docs/product/api_contract.md`, and asks the owners of that contract to change it.
+11. The app says nothing about the weight of an account; a pseudonym has 3 to 30 characters of letters, digits, the underscore and the hyphen; deleting an account takes one confirmation, without the password (M9). On 2026-10-03 the user kept the rule of the characters against the wider one of `docs/product/api_contract.md`, and asked the owners of that contract to change it; the contract took the rule on 2026-10-04.
 12. A flag has no reason and takes one confirmation (M11).
 13. The map of facts has a switch between the facts of the profile and every fact (M4).
 14. The first opening shows the needs screen, which can be skipped (M1).
@@ -395,4 +395,4 @@ Where the date of the OpenStreetMap copy stands and how a moderator reaches the 
 - the wording of the messages and of every label, in Polish and in English, and the Polish names of the terms of the specification, proposed in `docs/product/interface_texts.md` and not approved yet,
 - the name of the product.
 
-Two rules of version 11 still differ from `docs/product/api_contract.md` and wait for its owners: the characters of a pseudonym, which the contract leaves open, and the street name of an item, for which the contract has no field and the stored data keeps no name of a way.
+One rule of version 11 still differs from `docs/product/api_contract.md` and waits for its owners: the street name of an item, for which the contract has no field and the stored data keeps no name of a way. The other one, the characters of a pseudonym, the contract took on 2026-10-04.
