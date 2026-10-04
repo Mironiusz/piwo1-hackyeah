@@ -13,7 +13,7 @@ This task makes the decision that goal needs. A work package of `plans/mvp/` del
 How each member of the team gets a local PostgreSQL with PostGIS was not decided in phase B of `plans/mvp/`; the user handed the decision to the db person of the team. As long as it stays open:
 
 - nobody can run a critical test, and `docs/standards/standard_tests.md` requires one for every piece of code that reads or writes the database, so no such code can be finished,
-- the first schema change of `plans/fact_schema/`, which creates the stored data of facts and votes, has no database to run on,
+- the first schema change of `plans/schema_revision/`, which creates the stored data of facts and votes, has no database to run on,
 - `plans/mvp/MVP_PLAN.md` cannot be closed, because its open question Q-4 waits for this decision,
 - every member would set up a database their own way, and the locale of a database cannot be changed once it is created (`docs/standards/standard_database.md`, Queries in code): a database created with the wrong one breaks searching by a fragment of a Polish name and has to be set up again from scratch.
 
@@ -22,17 +22,17 @@ How each member of the team gets a local PostgreSQL with PostGIS was not decided
 - The choice of how each member of the team gets their own local PostgreSQL with PostGIS, with the pgRouting extension available, recorded with its reason.
 - The database accounts of the local environment and the rights of each.
 - Recording the decision where people look for it: the MVP plan and the deferred decisions registry.
-- Handing over to the task `DEPLOYMENT` of `plans/demo_environment/` the consequence this decision has for the hosted database of the demo.
+- Handing over to the task `DEPLOYMENT` of `plans_finished/deployment/` the consequence this decision has for the hosted database of the demo.
 
 ## Out of scope
 
-- The other technical decisions delegated in the same conversation, each with its own initiative: `plans/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/geocoding/`, `plans/account_sessions/`.
+- The other technical decisions delegated in the same conversation, each with its own initiative: `plans_finished/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans_finished/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/geocoding/`, `plans_finished/account_sessions/`.
 - The setup itself: the instructions in the README, the script creating the database and the accounts, the entries of the environment templates and the configuration that applies schema changes. A work package of `plans/mvp/` builds them, as with `plans_finished/geocoding/` and `plans_finished/osm_data_source/`. The user cut them from this initiative on 2026-10-03 (`LOCAL_DATABASE_SHAPE.md`, question 1).
 - A trial run of the chosen environment on a machine of the team. The first run is part of that work package. Agent reading of question 1 at C:40: the user chose the decision alone over delivering the setup.
 - A database shared by the team, ruled out by `docs/standards/standard_tests.md`, because a critical test seeds data durably and therefore always runs against the local database (`LOCAL_DATABASE_SHAPE.md`, question 2).
-- The hosted database of the demo, which is `plans/demo_environment/`. This task only hands over the consequence of FR-4.
+- The hosted database of the demo, which is `plans_finished/demo_environment/`. This task only hands over the consequence of FR-4.
 - Creating the pgRouting extension in the database, which waits for `plans_finished/routing_engine/` to choose it.
-- The content of the first schema change, which `plans/fact_schema/` writes.
+- The content of the first schema change, which `plans/schema_revision/` writes.
 
 ## Functional requirements
 
@@ -45,11 +45,11 @@ FR-1. Choice of the local environment. The decision names how each member of the
 
 The decision is recorded with its reason and with the alternatives it was chosen against.
 
-FR-2. Database accounts. The decision names the accounts of the local database by their role and the rights of each, as the section Domain rules describes, so that the work package of `plans/mvp/` creates them and `plans/fact_schema/` writes its first schema change for them.
+FR-2. Database accounts. The decision names the accounts of the local database by their role and the rights of each, as the section Domain rules describes, so that the work package of `plans/mvp/` creates them and `plans/schema_revision/` writes its first schema change for them.
 
 FR-3. The decision recorded. The open question Q-4 of `plans/mvp/MVP_PLAN.md` is closed by a decision entry that points to this initiative and states the constraints for the rest of that plan: a work package of that plan builds the local setup, the accounts and their rights follow FR-2, the first schema change in the chain creates PostGIS, and the environment carries pgRouting. The entry Technical directions of the MVP plan of `docs/standards/decision_registry.md` records that this initiative is decided and who builds the setup and the configuration that applies schema changes. The entry stays open as long as other initiatives listed in it are undecided.
 
-FR-4. Consequence for the demo handed over. The task `DEPLOYMENT` of `plans/demo_environment/` gets the consequence this decision has for the hosted database as an input of its interview, without deciding it there. The consequence: the same chain of schema changes runs on the hosted database, so the account that applies them is a superuser there too, and the server of the demo also runs other services of its owner.
+FR-4. Consequence for the demo handed over. The task `DEPLOYMENT` of `plans_finished/deployment/` gets the consequence this decision has for the hosted database as an input of its interview, without deciding it there. The consequence: the same chain of schema changes runs on the hosted database, so the account that applies them is a superuser there too, and the server of the demo also runs other services of its owner.
 
 ## Acceptance criteria
 
@@ -75,16 +75,16 @@ AC-4 (FR-4). The shape of the task `DEPLOYMENT` carries the consequence of FR-4 
 ## Dependencies and impact on other modules
 
 - `plans/mvp/MVP_PLAN.md` gets Q-4 closed (FR-3) and gains a work package that builds the local setup. The plan stays open while its other questions wait.
-- `plans/fact_schema/` writes the first schema change, which creates PostGIS and grants the service account its rights (FR-2). Its stored data still waits for the setup of the work package of `plans/mvp/`.
+- `plans/schema_revision/` writes the first schema change, which creates PostGIS and grants the service account its rights (FR-2). Its stored data still waits for the setup of the work package of `plans/mvp/`.
 - `plans_finished/routing_engine/` still considers pgRouting. FR-1 keeps the decision independent of its result.
-- `plans/demo_environment/`: the hosted database has to meet the same database standard as the local one (`DEMO_ENVIRONMENT_PRD.md`, Dependencies), and its task `DEPLOYMENT` receives the consequence of FR-4.
+- `plans_finished/demo_environment/`: the hosted database has to meet the same database standard as the local one (`DEMO_ENVIRONMENT_PRD.md`, Dependencies), and the task `DEPLOYMENT` of `plans_finished/deployment/` receives the consequence of FR-4.
 - `docs/standards/decision_registry.md`: the entry Technical directions of the MVP plan changes (FR-3).
 - `docs/standards/standard_database.md`, `docs/standards/standard_config.md` and `docs/standards/standard_tests.md` do not change. The decision follows them as they stand.
 
 ## Risks and notes
 
-- The answers behind this PRD were given by the user, who has not stated being the db person. The ruling of the db person is still to be confirmed, as in `plans/fact_schema/`.
-- Ending with the decision alone delays the first schema change of `plans/fact_schema/`. That change waits for the setup and the configuration that applies schema changes, which come from a work package of `plans/mvp/`, and that plan is implemented only once it is closed. The user chose this knowing the cost.
+- The answers behind this PRD were given by the user, who has not stated being the db person. The ruling of the db person is still to be confirmed, as in `plans_finished/fact_schema/`.
+- Ending with the decision alone delays the first schema change of `plans/schema_revision/`. That change waits for the setup and the configuration that applies schema changes, which come from a work package of `plans/mvp/`, and that plan is implemented only once it is closed. The user chose this knowing the cost.
 - The chosen environment is not tried on a machine of the team within this task. A wrong claim about it, for example a missing extension or a version too old for the required locale, surfaces only in the work package of `plans/mvp/`. AC-1 lowers this risk by requiring a checked source for every such claim, not a run.
 - Only the machine of the agent's session is known: Windows 11, a PostgreSQL 18 installation without PostGIS that does not answer, and a Docker client whose engine was not running on 2026-10-03. The machines of the other members are not known, so the operating systems of FR-1 have to be stated by the team in phase B.
 - On the hosted demo the account that applies schema changes needs superuser rights. If the PostgreSQL instance of the demo server also holds the databases of the other services of its owner, that account can read and drop them. FR-4 hands this over, and it is not decided here.

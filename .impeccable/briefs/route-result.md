@@ -1,6 +1,6 @@
 # Design brief: route result
 
-Document state: 2026-10-03, direction chosen by the user and the team, brought in line with version 6 of the specification, with the list of views and with the decisions taken with the mocks of the views
+Document state: 2026-10-03, direction chosen by the user and the team, brought in line with version 11 of the specification, with the list of views and with the decisions taken with the mocks of the views
 
 Product truth is in `PRODUCT.md` and `docs/product/specification.md`, and this brief does not repeat it. What the view shows and which states it has is in `docs/product/views.md`, V-5 for the route result, V-6 for the fact detail and V-9 for the legend. The approved look is in `.impeccable/briefs/route-result/`: `approved.png` (first viewport), `approved-full.png` (the whole screen) and `mock.html` (the same screen as HTML and CSS, with the exact values).
 

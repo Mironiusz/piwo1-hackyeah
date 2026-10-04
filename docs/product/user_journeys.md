@@ -4,9 +4,9 @@ Document state: 2026-10-03
 
 ## Why this document exists
 
-This document describes, step by step, what a person does in the app and what the app answers, for every mandatory feature M1 - M11 of `docs/product/specification.md`, version 6. It is derived from that specification and from `plans/mvp/MVP_PRD.md`, and it adds no product rule of its own: where the journeys needed behavior that no earlier version described, the rule was decided by the user on 2026-10-03 and entered version 6 of the specification. In case of a discrepancy the specification prevails.
+This document describes, step by step, what a person does in the app and what the app answers, for every mandatory feature M1 - M11 of `docs/product/specification.md`, version 11. It is derived from that specification and from `plans/mvp/MVP_PRD.md`, and it adds no product rule of its own: where the journeys needed behavior that no earlier version described, the rule was decided by the user on 2026-10-03 and entered the specification as version 11, written on the branch of the frontend person as version 6. In case of a discrepancy the specification prevails.
 
-The journeys are the input for two things: the list of views of the web frontend (`docs/product/views.md`), and the consultation of the frontend person on the contract of the programming interface (`plans/api_contract/API_CONTRACT_PLAN.md`, Q-1). They do not describe the layout or the look of a screen; the design direction is in `PRODUCT.md` and `.impeccable/briefs/`.
+The journeys are the input for two things: the list of views of the web frontend (`docs/product/views.md`), and the view of the frontend person on the contract of the programming interface, `docs/product/api_contract.md`. They do not describe the layout or the look of a screen; the design direction is in `PRODUCT.md` and `.impeccable/briefs/`.
 
 ## How to read it
 
@@ -310,7 +310,7 @@ For: anyone.
 Starts: any place of the app.
 
 1. The person opens the privacy information.
-2. The app states, in the language of the interface, what it keeps, for what purpose and for how long: the pseudonym and the password of an account, and the identifier of a vote without an account, for 30 days, which is pseudonymized personal data. It states what it does not keep: the needs, the current location, an email address and any information about a disability. In the hosted demo it also states that the demo and all its data are deleted on 4 October 2026, after the results are announced.
+2. The app states, in the language of the interface, what it keeps, for what purpose and for how long: the pseudonym and the password of an account, and the identifier of a vote without an account, until the demo and all its data are deleted on 4 October 2026, which is pseudonymized personal data. It states what it does not keep: the needs, the current location, an email address and any information about a disability. In the hosted demo it also states that the demo and all its data are deleted on 4 October 2026, after the results are announced.
 
 Ends: the person knows what the app knows about them.
 
@@ -352,14 +352,13 @@ The brief asks the demo to state the needs of the chosen group, check a route, s
 3. Source, date and status of the facts on the route: J-5 and the fact detail of J-8.
 4. Contradictory data: the branch of J-5 where a report contradicts OpenStreetMap, then one more confirmation in J-8, after which the route is planned again and avoids the place.
 5. Incomplete data: the segments in the states partial data and no data, the distance without data in the summary and the note of the list that some stretches have no data.
-6. An unavailable source: the branch of J-4 where routing does not answer.
-7. The accessibility check: J-14.
+6. The accessibility check: J-14.
 
-How the live demo makes routing unavailable is not decided yet; it belongs to the task `DEPLOYMENT` of `plans/demo_environment/`.
+Since version 10 of the specification the demo does not show routing that does not answer: the contradiction of step 4 is the case the brief asks for. The plain message stays a rule of M10 and a branch of J-4, checked outside the hosted demo. The hosted demo is served over plain HTTP, so a browser gives it no location, and there the start from the current location ends in the branch of the refused location (`MVP.md`, Known departures from the Kraków brief).
 
 ## Decisions behind the journeys
 
-Decided by the user, the frontend person of the team, on 2026-10-03, question by question, and part of version 6 of the specification:
+Decided by the user, the frontend person of the team, on 2026-10-03, question by question, and part of version 11 of the specification, written on the branch of the frontend person as version 6:
 
 1. The app opens on the map of facts, which shows the facts of the profile; facts can be opened, voted on and reported without a route (M4).
 2. A profile without any barrier is allowed; its route has no segment states and is drawn in a neutral style (M1, M7, M8).
@@ -371,12 +370,12 @@ Decided by the user, the frontend person of the team, on 2026-10-03, question by
 8. A report far from every way is saved and shown, and the summary does not mention it (M3).
 9. A geozone can carry an optional description; it has no check for existing geozones (M5).
 10. The app shows a person their own vote, and the vote controls are inactive for a day after it (M4). The vote is remembered on the device, decided on 2026-10-03, because the programming interface returns no vote of the person.
-11. The app says nothing about the weight of an account; a pseudonym has 3 to 30 characters of letters, digits, the underscore and the hyphen; deleting an account takes one confirmation, without the password (M9). On 2026-10-03 the user kept the rule of the characters against the wider one of `docs/product/api_contract.md` on the branch `dev`, and asks the owners of that contract to change it.
+11. The app says nothing about the weight of an account; a pseudonym has 3 to 30 characters of letters, digits, the underscore and the hyphen; deleting an account takes one confirmation, without the password (M9). On 2026-10-03 the user kept the rule of the characters against the wider one of `docs/product/api_contract.md`, and asks the owners of that contract to change it.
 12. A flag has no reason and takes one confirmation (M11).
 13. The map of facts has a switch between the facts of the profile and every fact (M4).
 14. The first opening shows the needs screen, which can be skipped (M1).
 15. Reporting has one entry, with the choice of a barrier, an amenity or an area (M3, M5).
-16. The user approved these rules alone and had them written into the specification as version 6.
+16. The user approved these rules alone and had them written into the specification as version 6 of the branch, which became version 11 when the branch was merged with `dev` on 2026-10-04.
 17. The journeys are written directly into this file, without the chain `plan-shape`.
 18. A vote or a report of the person, saved while a route is shown, plans the route again (M2).
 19. The list names no missing attributes: one plain note says that some stretches of the route have no data (M8). Decided with the mocks of the views.
@@ -386,7 +385,7 @@ Proposed by the agent and accepted with the journeys, not asked one by one:
 
 - With a profile without any item the map of facts shows every fact (M4).
 - The facts of the map of facts are also available as a list (M4, from M10).
-- After an account is created the person is logged in, and a failed login does not say whether the pseudonym or the password was wrong. Neither is in the specification; `docs/product/api_contract.md`, written on the branch `dev` on 2026-10-03, allows both: creating an account does not log in, so the app logs in right after it, and a failed login gives one answer for both causes.
+- After an account is created the person is logged in, and a failed login does not say whether the pseudonym or the password was wrong. Neither is in the specification; `docs/product/api_contract.md` allows both: creating an account does not log in, so the app logs in right after it, and a failed login gives one answer for both causes.
 - The chosen language is remembered on the device, and a planned route is not kept after the app is closed. Neither is in the specification.
 
 ## What stays open
@@ -396,4 +395,4 @@ Where the date of the OpenStreetMap copy stands and how a moderator reaches the 
 - the wording of the messages and of every label, in Polish and in English, and the Polish names of the terms of the specification, proposed in `docs/product/interface_texts.md` and not approved yet,
 - the name of the product.
 
-Two rules of version 6 still differ from `docs/product/api_contract.md`, written on the branch `dev` on 2026-10-03, and wait for its owners: the characters of a pseudonym, which the contract leaves open, and the street name of an item, for which the contract has no field and the stored data keeps no name of a way.
+Two rules of version 11 still differ from `docs/product/api_contract.md` and wait for its owners: the characters of a pseudonym, which the contract leaves open, and the street name of an item, for which the contract has no field and the stored data keeps no name of a way.

@@ -8,9 +8,9 @@ web
 
 ## Stack
 
-Backend: Python 3.13 with FastAPI, on PostgreSQL with PostGIS (`plans/mvp/MVP_PLAN.md` D-1). The demo runs on a hosted service reachable at a public link (`plans/demo_environment/`).
+Backend: Python 3.13 with FastAPI, on PostgreSQL with PostGIS (`plans/mvp/MVP_PLAN.md` D-1). The demo runs on a hosted service reachable at a public link (`plans_finished/demo_environment/`).
 
-Frontend: decided by the frontend person on 2026-10-03 in `plans_finished/frontend_stack/FRONTEND_STACK_PLAN.md`. It is a single-page application in TypeScript with React, built by Vite into static files and kept in `frontend/` as one code unit. The map is drawn by MapLibre GL JS from one archive of vector tiles of Kraków in the PMTiles format, cut from the daily Protomaps build of OpenStreetMap data and served by the project together with the map fonts and sprites. Four rules of that initiative bind all interface work: the programming interface has two clients from the start, the web frontend and a HarmonyOS port that is a separate client, not an embedding of the web app; the web frontend is chosen for the browser; the browser talks only to the server of the project; and frontend code follows the workflow core standards plus `docs/standards/standard_frontend.md`, which is written when the plan of that initiative is carried out. All frontend code is written as work packages of `plans/mvp/`.
+Frontend: decided by the frontend person on 2026-10-03 in `plans_finished/frontend_stack/FRONTEND_STACK_PLAN.md`. It is a single-page application in TypeScript with React, built by Vite into static files and kept in `frontend/` as one code unit. The map is drawn by MapLibre GL JS from one archive of vector tiles of Kraków in the PMTiles format, cut from the daily Protomaps build of OpenStreetMap data and served by the project together with the map fonts and sprites. Four rules of that initiative bind all interface work: the programming interface has two clients from the start, the web frontend and a HarmonyOS port that is a separate client, not an embedding of the web app; the web frontend is chosen for the browser; the browser talks only to the server of the project; and frontend code follows the workflow core standards plus `docs/standards/standard_frontend.md`, which is written when the plan of that initiative is carried out. All frontend code is written by the initiatives `frontend_app` and `map_tiles` of `MVP.md`.
 
 ## Users
 
@@ -40,9 +40,9 @@ The app presents facts and leaves the judgement to the person: no scores, no sta
 - The app is designed for a phone, because that is what people use on the way. On a desktop browser it must not break, but it is not tuned for it.
 - The interface is in Polish and English, with the default taken from the browser settings and a switch in the app. Repository content stays in English (`CLAUDE.md`).
 - Routes work in the whole of Kraków. The demo takes place in the district of the Tauron Arena, the venue of HackYeah, with sample reports and geozones marked as sample data.
-- The Kraków jury expects a live demo: state the needs of the chosen group, plan a route, show the concrete barriers and amenities with their source, date and status, show a contradiction between OpenStreetMap and a user report, and show what happens when a source is unavailable.
+- The Kraków jury expects a live demo: state the needs of the chosen group, plan a route, show the concrete barriers and amenities with their source, date and status, and show a contradiction between OpenStreetMap and a user report as the case of contradictory, incomplete or unavailable data the brief asks for.
 - Whether and in what form a HarmonyOS client is built is an open entry in `docs/standards/decision_registry.md`. The MVP must not prevent a second client from using the same data and rules. If the port is built, it is a second client of the same programming interface, native or in React Native for OpenHarmony, not an application embedding the web app. The web frontend is chosen for the browser and keeps nothing the port would need outside that interface (`plans_finished/frontend_stack/FRONTEND_STACK_SHAPE.md`, Domain rules).
-- Authority: `docs/product/specification.md`, version 6, is the source of truth for the product and prevails over this file. The steps of a person through every mandatory feature are in `docs/product/user_journeys.md`. The requirements and acceptance criteria of the MVP are in `plans/mvp/MVP_PRD.md`, the scenarios behind its rules in `plans/mvp/MVP_SHAPE.md`, and the constraints of both challenges in `docs/hackathon/challenge_requirements.md`. This file is the summary that interface work starts from.
+- Authority: `docs/product/specification.md`, version 11, is the source of truth for the product and prevails over this file. The steps of a person through every mandatory feature are in `docs/product/user_journeys.md`. The requirements and acceptance criteria of the MVP are in `plans/mvp/MVP_PRD.md`, the scenarios behind its rules in `plans/mvp/MVP_SHAPE.md`, and the constraints of both challenges in `docs/hackathon/challenge_requirements.md`. This file is the summary that interface work starts from.
 
 ## Capabilities and Constraints
 
@@ -67,12 +67,12 @@ Terms the interface uses:
 - Reliability statuses of a fact: unverified, confirmed, disputed, outdated.
 - Sources of a fact: OpenStreetMap or user report; city data once the optional feature O4 exists. The interface calls the first one map data, in the working Polish copy "dane mapy", and uses the name OpenStreetMap only in the attribution on the map and on the page about the data.
 
-The specification gives these terms in English. Their Polish wording, with every other text of the interface in both languages, is proposed in `docs/product/interface_texts.md` and waits for the approval of the frontend person.
+The specification gives these terms in English. Their Polish wording, with every other text of the interface in both languages, is in `docs/product/interface_texts.md`; the frontend person decided the rules of the wording on 2026-10-04, and the single texts are working copy until the views are built.
 
 Constraints:
 
 - The app never asks about a disability and never stores one. A preset only sets preferences.
-- Missing or unverified information is never presented as a confirmation of accessibility.
+- Missing or unverified information is never presented as a confirmation of accessibility, with the one deliberate exception of the public transport segment of the optional feature O9 below.
 - Nothing about the author of a report, a vote or a geozone is shown to other users - neither a pseudonym nor whether the author was logged in. The weights behind a status stay inside the system.
 - A status never changes with time alone. The date of the last confirmation is visible and the person judges it.
 - Dates are shown as a calendar day in the Europe/Warsaw zone, without the hour.
@@ -84,23 +84,24 @@ Constraints:
 
 Outside the MVP:
 
+- The optional feature O9 of the specification, routes with public transport of ZTP Kraków from its static GTFS, built first and in parallel with M1-M11, within a time box of 4.5 hours of work of the people of the team. Its public transport segment counts as accessible when the GTFS says nothing about it, a deliberate exception of the specification (M7, M10).
 - The optional features O1-O8 of the specification, built only after M1-M11 work: moving the profile with a QR code, photos in reports, points and a city ranking, open city data, geozone corrections, place cards, live alerts on the route, voice.
-- Out of scope altogether: turn-by-turn navigation, public transport routes, scores or stars for places, implemented rewards, routes that guarantee a rest place at a given distance, and a layout tuned for desktop.
+- Out of scope altogether: turn-by-turn navigation, real-time public transport data, scores or stars for places, implemented rewards, routes that guarantee a rest place at a given distance, and a layout tuned for desktop.
 
 Undecided:
 
 - The product name.
-- The Polish wording of the interface terms, proposed in `docs/product/interface_texts.md` and not approved yet.
-- The contract of the programming interface (`plans/api_contract/`).
+- The Polish wording of the interface terms: the texts are in `docs/product/interface_texts.md`, with the rules of the wording decided on 2026-10-04 and the single texts working copy until the views are built.
 - The form of the HarmonyOS client, and the licence of the repository.
 - Two ideas the user raised on 2026-10-03 that the specification does not contain: a venue card through which owners and event organizers describe their own place, also as the business model, and measuring slope and surface with the phone's sensors. The specification has only place cards, as the optional feature O6. Neither idea is designed until the specification includes it.
 
 ## Evidence on Hand
 
-- `docs/product/specification.md`, version 6: the target group, the features and their rules, personal data and the out-of-scope list.
+- `docs/product/specification.md`, version 11: the target group, the features and their rules, personal data and the out-of-scope list.
 - `docs/product/user_journeys.md`: fourteen journeys through the mandatory features, with their branches, and the path of the demo for the Kraków jury.
 - `docs/product/views.md`: the fourteen views of the web frontend - one map with modes, panels over it and pages - with their content, their states and what each needs from the programming interface.
-- `docs/product/interface_texts.md`: the texts of the interface in Polish and English, proposed and not approved yet.
+- `docs/product/interface_texts.md`: the texts of the interface in Polish and English, with the rules of the wording decided on 2026-10-04.
+- `docs/product/api_contract.md`: every operation between the clients and the service, with its request, responses and errors.
 - `plans/mvp/MVP_PRD.md`: twenty functional requirements with their acceptance criteria.
 - `plans/mvp/MVP_SHAPE.md`: twelve scenarios with concrete inputs and expected states, usable as realistic content for screens and for the demo.
 - The organizers' briefs, summarized in `docs/hackathon/challenge_requirements.md`.

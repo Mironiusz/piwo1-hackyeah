@@ -1,6 +1,6 @@
 # PRD: MVP of the accessibility app
 
-Document state: 2026-10-03
+Document state: 2026-10-04
 
 ## Business goal
 
@@ -14,7 +14,7 @@ Wheelchair users, parents with baby strollers and people with walking difficulti
 
 ## Scope
 
-- The mandatory features M1-M11 of the specification, version 5, with the rules decided in `plans/mvp/MVP_SHAPE.md`.
+- The mandatory features M1-M11 of the specification, version 10, with the rules decided in `plans/mvp/MVP_SHAPE.md`.
 - The interface requirements of the specification: Polish and English, designed for a phone.
 - Privacy information inside the app, required by the section Personal data of the specification.
 - Area: the whole of Kraków for routes; the demo in the district of the Tauron Arena, with sample data marked as such.
@@ -50,7 +50,7 @@ FR-11. List for the route (M8). After planning, the app shows a text list in thr
 
 FR-12. Accounts (M9). A user creates an account with a case-insensitive unique pseudonym and a password, logs in and out, and can delete the account. Passwords have a minimum length of 5 characters, accept printable ASCII characters, spaces and Unicode, allow a maximum length of at least 64 characters, and have no character-composition or periodic-change rules. Common or breached passwords are not rejected. There is no password recovery. After login, the session expires 24 hours after the last activity, including read-only requests, and survives closing and reopening the browser. Deleting the account removes it and the pseudonym; the person's reports and votes stay, detached, with their weight.
 
-FR-13. Contributions without an account (M9). Reports, confirmations and denials without an account have the lower weight of the section Domain rules. To tell one person without an account from another for the vote limit and the latest votes of five persons of the section Domain rules, such a vote keeps only an irreversible identifier derived from the IP address and browser characteristics, never the raw values, deleted after 30 days; the vote itself keeps its weight. Nothing about the author of any report, vote or geozone is shown to other users.
+FR-13. Contributions without an account (M9). Reports, confirmations and denials without an account have the lower weight of the section Domain rules. To tell one person without an account from another for the vote limit and the latest votes of five persons of the section Domain rules, such a vote keeps only an irreversible identifier derived from the IP address and browser characteristics, never the raw values, kept until the demo and all its data are deleted on 4 October 2026; the vote itself keeps its weight. Nothing about the author of any report, vote or geozone is shown to other users.
 
 FR-14. Flagging and moderation (M11). Any user flags a report, a geozone, a fact converted from OpenStreetMap, or a photo if optional feature O2 is implemented. A moderator, whose role the team assigns by hand, sees flagged content without information about its author and can hide it and restore it; hidden content disappears for everyone. Removing the moderator role revokes access on the account's next request, even when its session remains active.
 
@@ -64,7 +64,7 @@ FR-18. Sample data (M10). The demo district has sample reports and geozones prep
 
 FR-19. Interface. The interface is in Polish and English, with the default taken from the browser and a switch in the app. It is designed for a phone screen and touch; on a desktop browser it stays usable without being tuned.
 
-FR-20. Privacy information. The app has a page that states which personal data it keeps (the pseudonym and password of an account, the 30-day identifier of a vote without an account), for what purpose and for how long, and which data it does not keep (the profile, the current location, an email address, any information about a disability). In the hosted demo the page also states, in Polish and English, that the demo and all its data are deleted on 4 October 2026, after the results are announced.
+FR-20. Privacy information. The app has a page that states which personal data it keeps (the pseudonym and password of an account, the 30-day identifier of a vote without an account), for what purpose and for how long, and which data it does not keep (the profile, the current location, an email address, any information about a disability). It states that the identifier of a vote without an account is pseudonymized personal data, not anonymous data, and that the text of an address search is handed from the server of the project to an address search service outside the project without anything that identifies the person, while the project writes that text to no log and no database and never links it to the person. In the hosted demo the page also states, in Polish and English, that the demo and all its data are deleted on 4 October 2026, after the results are announced.
 
 ## Acceptance criteria
 
@@ -90,13 +90,13 @@ AC-10 (FR-11). For a planned route the list has the three groups; every item sho
 
 AC-11 (FR-12). An account is created with a case-insensitive unique pseudonym and a password of at least 5 characters, without an email address. Printable ASCII characters, spaces and Unicode are accepted; the maximum password length is at least 64 characters; and no character-composition, periodic-change, common-password or breached-password rules are applied. After login, read-only requests renew the session's 24-hour inactivity period, and the session survives closing and reopening the browser. After the account is deleted, its pseudonym cannot be found anywhere in the app, and the facts it confirmed keep their statuses.
 
-AC-12 (FR-13). Two votes without an account on the same fact from the same browser and network count once. No screen shows whether an author was logged in. The identifier of a vote without an account no longer exists 30 days after the vote.
+AC-12 (FR-13). Two votes without an account on the same fact from the same browser and network count once. No screen shows whether an author was logged in. The identifier of a vote without an account is kept until the demo is deleted on 4 October 2026, and no task of the app clears it.
 
 AC-13 (FR-14). A flagged report appears in the moderator view; after the moderator hides it, no other user sees it. A user without the moderator role cannot open the moderator view. After the team removes a moderator role, the next request to the view is denied even if the session remains active.
 
 AC-14 (FR-15). A fact confirmed at 00:30 Polish time on 4 October shows the date 4 October. An OpenStreetMap fact shows the date of its last OpenStreetMap edit.
 
-AC-15 (FR-16). The main scenario - preset, route, list, report, vote - is completed with a keyboard alone and with a screen reader on a phone, and the text and the segment styles meet the WCAG 2.2 AA contrast ratios. The list of what works and what does not, required by the brief, is recorded.
+AC-15 (FR-16). The main scenario - preset, route, list, report, vote - is completed with a keyboard alone and with a screen reader on a phone, and the text and the segment styles meet the WCAG 2.2 AA contrast ratios. The list of what works and what does not, required by the brief, is recorded, and it names the start from the current location as not working on the hosted link, which is served over plain HTTP (`plans/mvp/MVP_PLAN.md` D-10).
 
 AC-16 (FR-17). With the routing service unreachable, the app shows the plain message and no route.
 
@@ -104,11 +104,11 @@ AC-17 (FR-18). Every sample report and geozone in the demo district carries the 
 
 AC-18 (FR-19). With a browser set to English the interface starts in English, with a browser set to Polish in Polish, and the switch changes the language without losing the planned route. The main scenario works on a phone screen of 360 px width, and on a desktop browser no element is cut off or overlapping.
 
-AC-19 (FR-20). The privacy information page lists every kept item with its purpose and retention, and the not-kept items, in both languages, and in the hosted demo it states in both languages that the demo and all its data are deleted on 4 October 2026, after the results are announced.
+AC-19 (FR-20). The privacy information page lists every kept item with its purpose and retention, and the not-kept items, in both languages; it calls the identifier of a vote without an account pseudonymized personal data and says how the text of an address search leaves the project; and in the hosted demo it states in both languages that the demo and all its data are deleted on 4 October 2026, after the results are announced.
 
 ## Domain rules
 
-The rules are those of the specification, version 5, and the section Domain rules of `plans/mvp/MVP_SHAPE.md`. Where the two differ, the specification prevails: the shape stays the record of its interview and still carries rules that version 4 replaced, among them one vote per fact per person and an OpenStreetMap fact outdated by denials alone. In short, for reading the acceptance criteria:
+The rules are those of the specification, version 10, and the section Domain rules of `plans/mvp/MVP_SHAPE.md`. Where the two differ, the specification prevails: the shape stays the record of its interview and still carries rules that version 4 replaced, among them one vote per fact per person and an OpenStreetMap fact outdated by denials alone. In short, for reading the acceptance criteria:
 
 - Weights: a logged-in person counts 1, a person without an account 0.5, the author included.
 - A person votes on the same fact again only after a day, and only the latest vote of a person counts.
@@ -118,17 +118,20 @@ The rules are those of the specification, version 5, and the section Domain rule
 - Dates are calendar days in the Europe/Warsaw zone.
 - Missing information is never shown as accessible, and nothing about a disability is asked or stored.
 - Amenities from the profile count as near the route within 50 m of it. Agent decision at C:60, without asking - the shape says only "near the route"; confirmed by the user at the gate of this PRD on 2026-10-03, and part of the specification since version 4, M8.
-- Changed after the gate on 2026-10-03, to follow version 4 of the specification approved by the user that day (`plans_finished/consistency_check/`): Scope, FR-2, FR-6, FR-7, FR-13, FR-14, AC-6 and the items of this section on the version, the votes, the statuses and the OpenStreetMap facts. The status order settles the contradiction between version 3 of the specification and AC-6, which expected disputed at the fourth step of shape scenario 3. Scope and the first sentence of this section name version 5 since 2026-10-03, which adds the rules of `plans_finished/routing_engine/` and changes none of this PRD.
-- Changed after the gate on 2026-10-03, when `plans/account_sessions/` was merged: FR-12, FR-14, AC-11 and AC-13 carry the account rules added to version 4 of the specification after its approval - the passwords without recovery, the 24-hour session and the end of moderator access on the next request after the role is removed. The rules of that initiative on vote deduplication were rejected by the user on 2026-10-03 and are not part of this PRD.
-- Changed after the gate on 2026-10-03, from `plans/demo_environment/` (FR-4 of `plans/demo_environment/DEMO_ENVIRONMENT_PRD.md`): FR-20 and AC-19 require, in the hosted demo, the statement that the demo and all its data are deleted on 4 October 2026, after the results are announced. Confirmed by the user on 2026-10-03 (`plans/demo_environment/DEMO_ENVIRONMENT_PLAN.md` D-6).
+- Changed after the gate on 2026-10-03, to follow version 4 of the specification approved by the user that day (`plans_finished/consistency_check/`): Scope, FR-2, FR-6, FR-7, FR-13, FR-14, AC-6 and the items of this section on the version, the votes, the statuses and the OpenStreetMap facts. The status order settles the contradiction between version 3 of the specification and AC-6, which expected disputed at the fourth step of shape scenario 3. Scope and the first sentence of this section name version 5 since 2026-10-03, which adds the rules of `plans_finished/routing_engine/` and changes none of this PRD. Scope and the first sentence of this section name version 6 since 2026-10-03, which adds the target database schema of `plans_finished/fact_schema/` and changes none of this PRD. Scope and the first sentence of this section name version 7 since 2026-10-03, which adds the rules of `plans_finished/api_contract/` on a route request and an address search without an account, outdated facts on the map, the pseudonym and an expired session; a route request and an address search carry no account, so they are not requests of the session of FR-12 and AC-11, and nothing else of this PRD changes.
+- Changed after the gate on 2026-10-03, when `plans_finished/account_sessions/` was merged: FR-12, FR-14, AC-11 and AC-13 carry the account rules added to version 4 of the specification after its approval - the passwords without recovery, the 24-hour session and the end of moderator access on the next request after the role is removed. The rules of that initiative on vote deduplication were rejected by the user on 2026-10-03 and are not part of this PRD.
+- Changed after the gate on 2026-10-03, from `plans_finished/demo_environment/` (FR-4 of `plans_finished/demo_environment/DEMO_ENVIRONMENT_PRD.md`): FR-20 and AC-19 require, in the hosted demo, the statement that the demo and all its data are deleted on 4 October 2026, after the results are announced. Confirmed by the user on 2026-10-03 (`plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` D-6).
+- Changed after the gate on 2026-10-03, to align this PRD with the documents that followed it. FR-20 and AC-19 name the address search, which `plans_finished/geocoding/GEOCODING_SHAPE.md`, section Notes on data, performance and security, left to this PRD, and the pseudonymized identifier of a vote without an account, which section Risks and notes already asked of the privacy information; decided by the user on 2026-10-03. The items of Dependencies on external services and on the task `DEPLOYMENT` and the item of Risks and notes on the ODbL state what phase B of `plans/mvp/MVP_PLAN.md` and its initiatives settled, and change no requirement.
+- Changed after the gate on 2026-10-04, by the decisions of the user that day on the deployment of `plans_finished/deployment/` (`plans/mvp/MVP_PLAN.md` D-10). Scope and the first sentence of this section name version 10, which drops from M10 the requirement that the demo shows routing that does not answer and keeps the rule behind FR-17 and AC-16; it was written as version 8, numbered 9 at the merge of `dev` that brought version 8 of `plans/valhalla_routing/`, and 10 at the merge of `dev` that brought version 9 of `plans_finished/backend_architecture/`. AC-15 names the start from the current location among what does not work on the hosted link, served over plain HTTP. The items of Dependencies on the target environment and on the task `DEPLOYMENT` no longer name a secure connection or a way to make routing unavailable during the live demo.
 
 ## Dependencies and impact on other modules
 
 - No product code exists, so nothing in the repository is changed indirectly. Every module is new.
 - The technology stack was an open entry in `docs/standards/decision_registry.md`, to be chosen in phase B of this PRD, and with it the decision whether the Python profile of the standards stays. It was chosen on 2026-10-03: the backend with the Python profile kept in `plans/mvp/MVP_PLAN.md` D-1, the frontend in D-6 there; the entry stays open until the backend decision lands in code.
-- The target environment for the demo is an open entry in the same registry, decided in `plans/demo_environment/` (`plans/mvp/MVP_PLAN.md` Q-7).
+- The target environment for the demo was an open entry in the same registry. It was decided on 2026-10-03 in `plans_finished/demo_environment/` and changed the same day in `plans_finished/deployment/` (`plans/mvp/MVP_PLAN.md` D-10), and the entry is resolved.
 - The HarmonyOS port, an open entry in the same registry, is not part of this PRD; the solution must not prevent a second client from using the same data and rules.
-- External services: OpenStreetMap data under the ODbL, a routing service and map display; their terms, limits and costs are checked in phase B.
+- External services: OpenStreetMap data under the ODbL, and an address search service outside the project, which gets only the typed text, from the server of the project (specification, M2 and Personal data). Routes are computed and the map is served inside the project, so no routing or map service outside it is used (same places). Phase B checked their terms, limits and costs in `plans/mvp/MVP_PLAN.md` D-3, D-4, D-6 and D-9.
+- The hosted demo comes from `plans_finished/deployment/`: its written instructions, `docs/deployment/hosted_demo.md`, from the task `DEPLOYMENT`, and its deployment configuration from the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`. It is served over plain HTTP and does not make routing unavailable during the live demo, by the decisions of the user of 2026-10-04 (`plans/mvp/MVP_PLAN.md` D-10).
 - The optional features O1-O8 come later through their own pass of `plan-prd`; this PRD does not build them, and the solution must not block them.
 - The Kraków deliverables outside the app - presentation, video, business model, description of data sources and architecture - are not part of this PRD but are built on its result.
 
@@ -137,7 +140,8 @@ The rules are those of the specification, version 5, and the section Domain rule
 - Time: about 19 hours to the deadline for twenty requirements; the plan has to split the work into packages that several people build in parallel, and order them so that the main scenario works first.
 - Data coverage: if few Kraków segments have complete OpenStreetMap attributes, most of the route is partial data or no data. Honest, but the demo has to explain it; the sample data in the demo district softens it.
 - OpenStreetMap prevails over people until the threshold, so for a while a segment can follow OpenStreetMap although people reported a barrier there (shape scenario 4); the icon and the list are the chosen mitigation.
-- The identifier of votes without an account is pseudonymized personal data, not anonymous data in the sense of the GDPR; the privacy information must say so.
-- The ODbL may impose share-alike terms on a database that combines OpenStreetMap data with ours; to be checked in phase B, and nothing here is legal advice.
+- The identifier of votes without an account is pseudonymized personal data, not anonymous data in the sense of the GDPR; FR-20 requires the privacy information to say so.
+- The ODbL may impose share-alike terms on a database that combines OpenStreetMap data with ours. Phase B checked it in `plans_finished/osm_data_source/OSM_DATA_SOURCE_PLAN.md`, section Risks: share-alike may extend to the user facts once the demo is publicly used, and it was raised with the user there without being settled. Nothing here is legal advice.
 - Four segment states on a phone screen may be hard to read; AC-9 and AC-15 check it.
 - The district of the Tauron Arena is Czyżyny: OpenStreetMap gives the arena, at Stanisława Lema 7, the district Czyżyny (`plans_finished/geocoding/GEOCODING_PLAN.md` F-2), which settles the check this note asked for.
+- FR-13 and AC-12 were changed on 2026-10-04 by `plans_finished/backend_architecture/`, after version 9 of the specification.

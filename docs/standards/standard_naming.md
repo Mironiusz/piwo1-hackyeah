@@ -17,7 +17,7 @@ What is not here:
 - the registry of names actually present in the repository - that is `naming_registry.md`, which describes the actual state, not the target one;
 - what exactly a given code layer does and what it does not do - that is `standard_architecture.md`, section Layer boundary;
 - names in the database: tables, columns, indexes, constraints - that is `standard_database.md` and the product specification indicated in `CLAUDE.md`;
-- path names in the programming interface - those are settled by the product specification indicated in `CLAUDE.md`.
+- path names in the programming interface - those are settled by the programming interface contract `docs/product/api_contract.md`.
 
 ## Deviation rule
 

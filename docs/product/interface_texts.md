@@ -8,7 +8,7 @@ The interface is in Polish and English (`docs/product/specification.md`, M10). T
 
 The Polish texts come from the mocks in `.impeccable/briefs/views/`, which the user reviewed on 2026-10-03. The English texts and the texts of the states that have no mock were written by the agent. The Polish texts are an exception to the rule that the repository is in English: they are content of the product, not documentation.
 
-The keys are proposals for the names the frontend uses in its two dictionaries. Where a key ends with a code - a fact type, a status, a source, a segment state, an error - the code is the one of `docs/product/api_contract.md`, written on the branch `dev` on 2026-10-03.
+The keys are proposals for the names the frontend uses in its two dictionaries. Where a key ends with a code - a fact type, a status, a source, a segment state, an error - the code is the one of `docs/product/api_contract.md`.
 
 ## Rules of the wording
 
@@ -485,8 +485,8 @@ The radii of an area are written the same in both languages: `10 m`, `25 m`, `50
   - PL: Pseudonim i hasło konta. Po to, żeby rozpoznać Twoje konto. Do chwili, gdy je usuniesz.
   - EN: The pseudonym and the password of an account. To recognize your account. Until you delete it.
 - `privacy.kept.vote`
-  - PL: Identyfikator głosu bez konta. Nieodwracalny skrót adresu IP i cech przeglądarki, żeby odróżnić jedną osobę bez konta od drugiej. Przez 30 dni od głosu. To dane osobowe w postaci spseudonimizowanej, nie dane anonimowe.
-  - EN: The identifier of a vote without an account. An irreversible digest of the IP address and of browser characteristics, to tell one person without an account from another. For 30 days after the vote. It is pseudonymized personal data, not anonymous data.
+  - PL: Identyfikator głosu bez konta. Nieodwracalny skrót adresu IP i cech przeglądarki, żeby odróżnić jedną osobę bez konta od drugiej. Do usunięcia dema i wszystkich jego danych 4 października 2026. To dane osobowe w postaci spseudonimizowanej, nie dane anonimowe.
+  - EN: The identifier of a vote without an account. An irreversible digest of the IP address and of browser characteristics, to tell one person without an account from another. Until the demo and all its data are deleted on 4 October 2026. It is pseudonymized personal data, not anonymous data.
 - `privacy.not_kept.needs`
   - PL: Twoich potrzeb. Zostają tylko na Twoim urządzeniu i nie są częścią konta.
   - EN: Your needs. They stay only on your device and are not part of the account.

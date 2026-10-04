@@ -8,9 +8,11 @@ This file describes the permanent rules for working in this repository. Codex is
 
 piwo1-hackyeah (the repository name - the product name is not chosen yet) is a community app about the accessibility of places in Kraków, built at HackYeah 2026 (3-4 October 2026) for two partner challenges at once: "Kraków bez barier" (City of Kraków) and "Imagine What's Next" (Huawei, HarmonyOS). It combines information from open sources (OpenStreetMap, open city data) with reports from people, including photos, about places with good and with limited accessibility, and plans routes matched to the needs of people with different disabilities. We build a web app first and port it to HarmonyOS if time allows.
 
-Constraints that come from the challenge briefs, not from product decisions: the app does not rely on internal systems of the Kraków City Hall (UMK) or municipal units (MJO), never presents missing or unverified information as a confirmation of accessibility, and does not require users to disclose a disability when barrier and amenity preferences are enough to match results. What else the product deliberately does not do is decided by the specification.
+Constraints that come from the challenge briefs, not from product decisions: the app does not rely on internal systems of the Kraków City Hall (UMK) or municipal units (MJO), never presents missing or unverified information as a confirmation of accessibility, with one deliberate exception of the specification - a public transport segment of ZTP Kraków without accessibility data in its GTFS counts as accessible (O9) - and does not require users to disclose a disability when barrier and amenity preferences are enough to match results. What else the product deliberately does not do is decided by the specification.
 
 The source of truth for the product is `docs/product/specification.md`: what the product does, for whom, the scope of the prototype and what stays out of it. Since 2026-10-03 it settles the target group and the scope of the MVP; product behavior it does not describe is still undecided, and every question about it goes to the user. In case of a discrepancy between the specification and anything else in the repository, the specification prevails. The challenge requirements and judging criteria are summarized in `docs/hackathon/challenge_requirements.md` - they are external constraints the specification has to satisfy, so a conflict between the specification and a challenge requirement is raised with the user, never resolved silently. The same description in two sentences is in `agent_docs/session_context.md`, from which the SessionStart hook inserts it at the beginning of every session.
+
+How the MVP is built - the initiatives that implement it, their owners and order, and the requirements of the MVP each of them meets - is summarized in `MVP.md` in the repository root. It decides nothing of its own, and the specification prevails over it.
 
 ## Language and communication style
 
@@ -21,6 +23,7 @@ The source of truth for the product is `docs/product/specification.md`: what the
 - Talk to the user normally and explain your decisions.
 - When something is unclear, say so directly instead of guessing.
 - When you see a potential bug in the code, report it.
+- Name a member of the team by first name, never by role: Kuba, not the db person. Who holds which role is in `TEAM.md` in the repository root.
 
 ## Rules for working with code
 
@@ -55,7 +58,7 @@ This order follows directly from the rules above: the ban on fallbacks without c
 
 ## Target environment
 
-The target environment is the hosted demo of the MVP on a virtual private server of a member of the team, decided in `plans/demo_environment/`. The server also runs other services of its owner, so the hosted demo environment is only the services and the database of the demo on it, and their logs. The owner of the repository deletes the demo and all its data on 4 October 2026, after the results are announced. The permission levels of the agent:
+The target environment is the hosted demo of the MVP on a server of a member of the team in a data centre, decided in `plans_finished/deployment/`, which supersedes `plans_finished/demo_environment/` D-8. The demo is served over plain HTTP at the address of the server. What else runs on that server is not known, so the hosted demo environment is only the services and the database of the demo on it, and their logs. The owner of the repository deletes the demo and all its data on 4 October 2026, after the results are announced. The permission levels of the agent:
 
 - without asking: reading the repository, running local tools and tests, and reading the logs of the services of the hosted demo,
 - only on the user's explicit request: anything else in the hosted demo environment, reading personal data from the demo database included,

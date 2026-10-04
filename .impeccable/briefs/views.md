@@ -2,7 +2,7 @@
 
 Document state: 2026-10-03, mocks reviewed by the user and corrected after the review; the corrected mocks are in `.impeccable/briefs/views/`
 
-Product truth is in `PRODUCT.md` and `docs/product/specification.md`, version 6. What every view shows and which states it has is in `docs/product/views.md`; this brief does not repeat it. The visual world is the one approved for the route result in `.impeccable/briefs/route-result.md`, and no new direction was chosen here.
+Product truth is in `PRODUCT.md` and `docs/product/specification.md`, version 11. What every view shows and which states it has is in `docs/product/views.md`; this brief does not repeat it. The visual world is the one approved for the route result in `.impeccable/briefs/route-result.md`, and no new direction was chosen here.
 
 ## Job and audience
 
@@ -79,5 +79,5 @@ Still open:
 - The name of the product. The mocks show a placeholder.
 - The texts. They are kept in `docs/product/interface_texts.md`; on 2026-10-04 the mocks were brought in line with the choices decided there, and the single texts stay working copy until the views are built.
 - The rule for the labels of the route diagram when barriers are many or close together, as in the brief of the route result.
-- Since the review the user took four decisions against `docs/product/api_contract.md` and the specification of the branch `dev` (`docs/product/views.md`, decisions 11 - 14). An outdated fact stays on the map of facts: the system sheet and the page about the data show its status and its muted marker, and no other mock shows an outdated fact. The own vote of a person is remembered on the device, as the mock of the fact detail after a vote shows it. The street name stays in the list rows of the mocks and in the sample data of the demo; whether the programming interface carries it is deferred. The rule of a pseudonym in the mock of creating an account stays.
-- The optional public transport routes proposed in `plans/valhalla_routing/` on the branch `jmi/fixing-rafal-errors` have no mock.
+- Since the review the user took four decisions where the views met `docs/product/api_contract.md` and version 7 of the specification (`docs/product/views.md`, decisions 11 - 14). An outdated fact stays on the map of facts: the system sheet and the page about the data show its status and its muted marker, and no other mock shows an outdated fact. The own vote of a person is remembered on the device, as the mock of the fact detail after a vote shows it. The street name stays in the list rows of the mocks and in the sample data of the demo; whether the programming interface carries it is deferred. The rule of a pseudonym in the mock of creating an account stays.
+- The optional feature O9, routes with public transport, has no mock.
