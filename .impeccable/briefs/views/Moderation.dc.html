@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Moderacja</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow+Semi+Condensed:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="ph" style="width: 390px; height: 1100px">
+<header class="top"><span class="name">[Nazwa produktu]</span><span class="sp"></span><button type="button" class="icon-btn" aria-label="Menu"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button></header>
+<main class="page">
+<button type="button" class="back"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>Wróć</button>
+<h1>Moderacja</h1>
+<p class="lead">Treści zgłoszone przez użytkowników. Nie widać tu, kto dodał treść ani kto ją zgłosił.</p>
+<h2 style="margin-top: 4px">Zgłoszone do moderacji <span style="font-weight: 500; color: var(--muted)">2</span></h2>
+<article class="mod">
+<div class="t">Schody, 3 stopnie</div>
+<div class="pl">ul. Stanisława Lema</div>
+<p class="desc">Opis: Schody pod domem pana [nazwisko], zawsze zastawione jego autem.</p>
+<div class="meta"><span class="status unv"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"></circle><path d="M12 8v5M12 16.5v.01"></path></svg>niezweryfikowane</span><span class="src">zgłoszenie, 3.10.2026</span><span class="tag">dane przykładowe</span></div>
+<div class="actions" style="margin-top: 12px"><button type="button" class="btn small">Pokaż na mapie</button><button type="button" class="btn small primary">Ukryj</button></div>
+</article>
+<article class="mod">
+<div class="t">Obszar: wąskie przejście, 50 m</div>
+<div class="pl">al. Pokoju</div>
+<p class="desc">Opis: Rusztowanie na całej szerokości chodnika.</p>
+<div class="meta"><span class="status dis"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13M13 5l4 4-4 4M20 15H7M11 11l-4 4 4 4"></path></svg>sporne</span><span class="src">zgłoszenie, 2.10.2026</span><span class="tag">dane przykładowe</span></div>
+<div class="actions" style="margin-top: 12px"><button type="button" class="btn small">Pokaż na mapie</button><button type="button" class="btn small primary">Ukryj</button></div>
+</article>
+<p class="hint">Zgłoszenia do moderacji nie da się odrzucić. Treść, której nie ukryjesz, zostaje na tej liście.</p>
+<h2>Ukryte <span style="font-weight: 500; color: var(--muted)">1</span></h2>
+<article class="mod">
+<div class="t">Wysoki krawężnik</div>
+<div class="pl">ul. Stanisława Lema</div>
+<p class="desc">Opis: tekst z numerem telefonu, ukryty.</p>
+<div class="meta"><span class="src">zgłoszenie, 1.10.2026</span><span class="tag">ukryte dla wszystkich</span></div>
+<div class="actions one" style="margin-top: 12px"><button type="button" class="btn small">Przywróć</button></div>
+</article>
+<p class="hint">Ukryta treść znika z map, list i tras, nie bierze udziału w sprawdzaniu duplikatów i nie można na nią głosować. Po przywróceniu wraca z głosami, które ma.</p>
+</main>
+<nav class="tabbar" aria-label="Główna nawigacja">
+<button type="button" class="tab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Mapa</button>
+<button type="button" class="tab cta"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4M6 5h11l-2 4 2 4H6"></path></svg>Zgłoś</button>
+<button type="button" class="tab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"></path><circle cx="15" cy="7" r="2"></circle><circle cx="9" cy="17" r="2"></circle></svg>Potrzeby</button>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1100}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

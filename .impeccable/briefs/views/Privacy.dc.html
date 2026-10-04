@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Informacja o prywatności</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow+Semi+Condensed:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="ph" style="width: 390px; height: 1040px">
+<header class="top"><span class="name">[Nazwa produktu]</span><span class="sp"></span><button type="button" class="icon-btn" aria-label="Menu"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button></header>
+<main class="page">
+<button type="button" class="back"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>Wróć</button>
+<h1>Informacja o prywatności</h1>
+<p class="lead">Co o Tobie przechowujemy, po co i jak długo, oraz czego nie przechowujemy.</p>
+<h2 style="margin-top: 4px">Co przechowujemy</h2>
+<ul class="txt">
+<li><b>Pseudonim i hasło konta.</b> Po to, żeby rozpoznać Twoje konto. Do chwili, gdy je usuniesz.</li>
+<li><b>Identyfikator głosu bez konta.</b> Nieodwracalny skrót adresu IP i cech przeglądarki, żeby odróżnić jedną osobę bez konta od drugiej. Do usunięcia dema i wszystkich jego danych 4 października 2026. To dane osobowe w postaci spseudonimizowanej, nie dane anonimowe.</li>
+</ul>
+<h2>Czego nie przechowujemy</h2>
+<ul class="txt">
+<li><b>Twoich potrzeb.</b> Zostają tylko na Twoim urządzeniu i nie są częścią konta.</li>
+<li><b>Bieżącej lokalizacji.</b> Używamy jej tylko do wyznaczenia jednej trasy.</li>
+<li><b>Adresu e-mail.</b> Nie pytamy o niego.</li>
+<li><b>Informacji o niepełnosprawności.</b> Nie pytamy o nią.</li>
+</ul>
+<h2>Kto jeszcze widzi Twoje dane</h2>
+<ul class="txt">
+<li>Twoja przeglądarka rozmawia tylko z naszym serwerem. Mapa, kroje pisma i skrypty pochodzą od nas, więc żadna zewnętrzna usługa nie poznaje Twojego adresu IP ani miejsca, które oglądasz.</li>
+<li>Tekst wyszukiwania adresu przekazujemy zewnętrznej wyszukiwarce z naszego serwera, bez niczego, co Cię identyfikuje.</li>
+<li>Inni użytkownicy nie widzą, kto dodał zgłoszenie albo głos.</li>
+</ul>
+<h2>To demo</h2>
+<p class="note strong">Demo i wszystkie jego dane zostaną usunięte 4 października 2026, po ogłoszeniu wyników.</p>
+</main>
+<nav class="tabbar" aria-label="Główna nawigacja">
+<button type="button" class="tab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Mapa</button>
+<button type="button" class="tab cta"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4M6 5h11l-2 4 2 4H6"></path></svg>Zgłoś</button>
+<button type="button" class="tab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"></path><circle cx="15" cy="7" r="2"></circle><circle cx="9" cy="17" r="2"></circle></svg>Potrzeby</button>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1040}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

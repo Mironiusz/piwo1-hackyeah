@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>O danych</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow+Semi+Condensed:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="ph" style="width: 390px; height: 1270px">
+<header class="top"><span class="name">[Nazwa produktu]</span><span class="sp"></span><button type="button" class="icon-btn" aria-label="Menu"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button></header>
+<main class="page">
+<button type="button" class="back"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>Wróć</button>
+<h1>O danych</h1>
+<p class="lead">Skąd wiemy o barierach i udogodnieniach i na ile można temu ufać.</p>
+<h2 style="margin-top: 4px">Skąd są informacje</h2>
+<ul class="txt">
+<li><b>Dane mapy.</b> Pochodzą z OpenStreetMap, otwartej mapy tworzonej przez wolontariuszy. Korzystamy z kopii z dnia 2.10.2026, a przy każdym fakcie podajemy datę jego ostatniej zmiany na mapie.</li>
+<li><b>Zgłoszenia ludzi.</b> Każdy może zgłosić barierę, udogodnienie albo obszar. Przy zgłoszeniu podajemy datę ostatniego potwierdzenia.</li>
+</ul>
+<h2>Co znaczą statusy</h2>
+<ul class="txt">
+<li><span class="status unv"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"></circle><path d="M12 8v5M12 16.5v.01"></path></svg>niezweryfikowane</span>: nikt jeszcze tego nie potwierdził albo potwierdzeń jest za mało.</li>
+<li><span class="status ok"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>potwierdzone</span>: inne osoby potwierdziły, że to nadal tu jest.</li>
+<li><span class="status dis"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13M13 5l4 4-4 4M20 15H7M11 11l-4 4 4 4"></path></svg>sporne</span>: jedne osoby potwierdzają, inne zgłaszają, że tego już nie ma.</li>
+<li><span class="status out"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M6.5 17.5 17.5 6.5"></path></svg>nieaktualne</span>: przeważają zgłoszenia, że tego już nie ma. Fakt zostaje na mapie, żeby można go było potwierdzić ponownie, ale trasa go nie uwzględnia.</li>
+</ul>
+<p class="t" style="margin-top: 8px">Status nie zmienia się sam z upływem czasu. Datę widzisz przy każdym fakcie i oceniasz ją samodzielnie.</p>
+<h2>Co znaczą odcinki trasy</h2>
+<ul class="txt">
+<li><b>Bariera z potrzeb.</b> Na odcinku jest bariera, której unikasz.</li>
+<li><b>Bez barier, dane pełne.</b> Znamy wszystko, co ważne dla Twoich potrzeb, i żadna z tych rzeczy nie jest barierą.</li>
+<li><b>Dane niepełne.</b> To, co wiemy, nie jest barierą, ale części informacji brakuje.</li>
+<li><b>Brak danych.</b> Nie wiemy o odcinku nic, co ważne dla Twoich potrzeb.</li>
+</ul>
+<p class="note strong" style="margin-top: 8px">Brak informacji nigdy nie oznacza u nas, że miejsce jest dostępne.</p>
+<h2>Dane przykładowe</h2>
+<p class="t">W okolicy Tauron Areny dodaliśmy zgłoszenia i obszary na potrzeby pokazu. Każde ma znak <span class="tag">dane przykładowe</span>.</p>
+<h2>Jak poprawić błąd</h2>
+<p class="t">Otwórz fakt i odpowiedz, czy nadal jest, albo dodaj własne zgłoszenie. Zapisanego zgłoszenia nikt nie edytuje.</p>
+<h2>Licencja mapy</h2>
+<p class="t">Mapa i dane: © OpenStreetMap contributors, licencja ODbL.</p>
+</main>
+<nav class="tabbar" aria-label="Główna nawigacja">
+<button type="button" class="tab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Mapa</button>
+<button type="button" class="tab cta"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4M6 5h11l-2 4 2 4H6"></path></svg>Zgłoś</button>
+<button type="button" class="tab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"></path><circle cx="15" cy="7" r="2"></circle><circle cx="9" cy="17" r="2"></circle></svg>Potrzeby</button>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1270}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

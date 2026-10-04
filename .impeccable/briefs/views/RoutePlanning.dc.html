@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Planowanie trasy</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Barlow+Semi+Condensed:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="ph" style="width: 390px; height: 800px">
+<header class="top"><span class="name">[Nazwa produktu]</span><span class="sp"></span><button type="button" class="icon-btn" aria-label="Menu"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button></header>
+<section class="map" style="height: 262px" aria-label="Mapa">
+<svg class="base" viewBox="0 0 390 250" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Mapa z zaznaczonym startem i celem">
+<rect class="g" width="390" height="250"></rect>
+<path class="park" d="M228 0h170v118c-48 26-104 20-140-8s-46-70-30-110z"></path>
+<g class="blk"><rect x="18" y="16" width="86" height="58" rx="4"></rect><rect x="118" y="16" width="86" height="58" rx="4"></rect><rect x="18" y="88" width="86" height="52" rx="4"></rect><rect x="118" y="88" width="62" height="52" rx="4"></rect><rect x="210" y="170" width="74" height="62" rx="4"></rect><rect x="298" y="150" width="78" height="82" rx="4"></rect></g>
+<path class="st" d="M0 190h200M150 250V150M150 190 L360 60M0 82h210"></path>
+<text class="lbl" x="14" y="181">ul. Stanisława Lema</text><text class="lbl" x="228" y="150" transform="rotate(-31 228 150)">al. Pokoju</text><text class="lbl" x="296" y="34">Park Lotników</text>
+<g class="pin" transform="translate(34 224)"><circle r="10"></circle><text y="4">A</text></g>
+<g class="pin" transform="translate(358 34)"><circle r="10"></circle><text y="4">B</text></g>
+</svg>
+<span class="attr">© OpenStreetMap contributors</span>
+</section>
+<div class="sheet fill">
+<div class="panel">
+<h2>Zaplanuj trasę</h2>
+<div class="set" style="border-top: 0">
+<span class="dot" aria-hidden="true">A</span>
+<div><div class="k">Start</div><div class="v">Tauron Arena Kraków, Stanisława Lema 7</div></div>
+<button type="button" class="link">Zmień</button>
+</div>
+<div style="display: flex; gap: 8px; flex-wrap: wrap; padding: 0 0 12px 36px">
+<button type="button" class="btn small"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"></circle><path d="M12 2v4M12 18v4M2 12h4M18 12h4"></path></svg>Moja lokalizacja</button>
+<button type="button" class="btn small">Adres</button>
+<button type="button" class="btn small">Punkt na mapie</button>
+</div>
+<div class="set">
+<span class="dot" aria-hidden="true">B</span>
+<div><div class="k">Cel</div><div class="v">Ogród Doświadczeń, al. Pokoju 68</div></div>
+<button type="button" class="link">Zmień</button>
+</div>
+<div style="display: flex; gap: 8px; flex-wrap: wrap; padding: 0 0 12px 36px">
+<button type="button" class="btn small">Adres</button>
+<button type="button" class="btn small">Punkt na mapie</button>
+</div>
+<p class="note">Trasa dla Twoich potrzeb: 4 bariery, 3 udogodnienia. <a href="#potrzeby">Zmień potrzeby</a></p>
+<div class="actions one"><button type="button" class="btn primary">Wyznacz trasę</button></div>
+</div>
+</div>
+<nav class="tabbar" aria-label="Główna nawigacja">
+<button type="button" class="tab on"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Mapa</button>
+<button type="button" class="tab cta"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V4M6 5h11l-2 4 2 4H6"></path></svg>Zgłoś</button>
+<button type="button" class="tab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"></path><circle cx="15" cy="7" r="2"></circle><circle cx="9" cy="17" r="2"></circle></svg>Potrzeby</button>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":800}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
