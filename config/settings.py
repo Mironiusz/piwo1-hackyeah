@@ -25,6 +25,8 @@ ENVIRONMENT_ENTRY_FILES = {
     "TILE_ARCHIVE_DIR": ".env.local",
     "DB_SERVICE_ACCOUNT_PASSWORD": ".env",
     "SESSION_SIGNING_KEY": ".env",
+    "VOTER_HASH_KEY": ".env",
+    "API_TRUSTED_PROXY_ADDRESSES": ".env.local",
     "DB_SERVICE_ACCOUNT_NAME": ".env.local",
     "DB_NAME": ".env.local",
     "DB_HOST": "launch environment",
@@ -32,6 +34,7 @@ ENVIRONMENT_ENTRY_FILES = {
 }
 DEFAULT_LOG_LEVEL: Final = "INFO"
 SESSION_SIGNING_KEY_MIN_LENGTH: Final = 32
+VOTER_HASH_KEY_MIN_LENGTH: Final = 32
 
 
 class ConfigurationError(ValueError):
@@ -40,8 +43,9 @@ class ConfigurationError(ValueError):
 
 class Settings(BaseModel):
     """
-    Hold the validated application contract, the service-account entries of db/, the key that signs session tokens,
-    the routing service and its data, the optional import path, the switch of public transport and the two optional places of the tile archive.
+    Hold the validated application contract, the service-account entries of db/, the key that signs session tokens, the key of the
+    identity of a person without an account, the addresses of the trusted proxy, the routing service and its data, the optional import
+    path, the switch of public transport and the two optional places of the tile archive.
     """
 
     model_config = ConfigDict(extra="ignore", hide_input_in_errors=True)
@@ -56,6 +60,8 @@ class Settings(BaseModel):
     DB_SERVICE_ACCOUNT_NAME: str = Field(min_length=1)
     DB_SERVICE_ACCOUNT_PASSWORD: SecretStr
     SESSION_SIGNING_KEY: SecretStr = Field(min_length=SESSION_SIGNING_KEY_MIN_LENGTH)
+    VOTER_HASH_KEY: SecretStr = Field(min_length=VOTER_HASH_KEY_MIN_LENGTH)
+    API_TRUSTED_PROXY_ADDRESSES: tuple[str, ...]
     IMPORT_WORKSPACE_ROOT: Path | None = None
     ROUTING_SERVICE_URL: str
     ROUTING_DATA_DIR: Path
@@ -142,4 +148,31 @@ class Settings(BaseModel):
         parts = urlsplit(value)
         if parts.scheme not in ("http", "https") or not parts.hostname:
             raise ValueError("invalid_routing_service_url")
+        return value
+
+    @field_validator("API_TRUSTED_PROXY_ADDRESSES", mode="before")
+    @classmethod
+    def build_trusted_proxy_entries(cls, value: Any) -> Any:
+        """Split the comma-separated text of the trusted proxy into its trimmed entries, the empty text being no entry at all."""
+        if not isinstance(value, str):
+            return value
+        return () if value.strip() == "" else tuple(entry.strip() for entry in value.split(","))
+
+    @field_validator("API_TRUSTED_PROXY_ADDRESSES")
+    @classmethod
+    def apply_trusted_proxy_validation(cls, value: tuple[str, ...]) -> tuple[str, ...]:
+        """
+        Accept only IP addresses and CIDR networks of the proxy whose X-Forwarded-For the API trusts.
+
+        The asterisk, which would trust every peer, and any other entry are refused, because uvicorn keeps a malformed
+        entry silently as a literal; an entry with a slash has to be a network without host bits, as uvicorn reads it.
+        """
+        for entry in value:
+            try:
+                if "/" in entry:
+                    ipaddress.ip_network(entry)
+                else:
+                    ipaddress.ip_address(entry)
+            except ValueError:
+                raise ValueError("invalid_trusted_proxy_address") from None
         return value

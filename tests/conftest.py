@@ -3,9 +3,11 @@
 from collections.abc import Iterator
 
 import pytest
-from sqlalchemy import Engine
+from sqlalchemy import Engine, make_url
 
 from tests.common_database_fixtures import DatabaseFixtureRegistry
+
+SCRATCH_OWNER_STATEMENT_TIMEOUT_MS = 30000
 
 
 def pytest_collection_finish(session: pytest.Session) -> None:
@@ -55,8 +57,23 @@ def pytest_addoption(parser):
 
 
 @pytest.fixture
+def schema_owner_engine(request: pytest.FixtureRequest) -> Iterator[Engine]:
+    """Give an unpooled engine of the local schema owner of db/ from --scratch-database-url, disposed after the fixtures that use it."""
+    from data.engine import apply_engine_construction
+
+    address = request.config.getoption("--scratch-database-url")
+    if address is None:
+        pytest.fail("Pass --scratch-database-url with a local schema-owner URL for database acceptance")
+    owner = apply_engine_construction(make_url(address), SCRATCH_OWNER_STATEMENT_TIMEOUT_MS, True)
+    try:
+        yield owner
+    finally:
+        owner.dispose()
+
+
+@pytest.fixture
 def database_cleanup_registry(schema_owner_engine: Engine) -> Iterator[DatabaseFixtureRegistry]:
-    """Shares exact cleanup through the local schema-owner engine of tests/data/conftest.py, so only tests under tests/data can request it."""
+    """Shares exact cleanup through the local schema-owner engine, for the critical tests of every layer directory."""
     registry = DatabaseFixtureRegistry(schema_owner_engine)
     try:
         yield registry

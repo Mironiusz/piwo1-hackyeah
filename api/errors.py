@@ -1,6 +1,7 @@
 """Translate framework failures into the existing safe error envelope."""
 
 from collections.abc import Sequence
+from datetime import datetime
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -10,13 +11,20 @@ from starlette.responses import JSONResponse
 from config.logging import apply_log_scope, fetch_logger
 
 
-def build_error_response(code: str, status: int, fields: Sequence[str] = (), points: Sequence[str] = ()) -> JSONResponse:
-    """Build a contracted failure without protected input or exception text; fields belong only to invalid_request and points only to point_outside_krakow."""
+def build_error_response(code: str, status: int, fields: Sequence[str] = (), points: Sequence[str] = (), repeat_allowed_at: datetime | None = None) -> JSONResponse:
+    """
+    Build a contracted failure without protected input or exception text.
+
+    Fields belong only to invalid_request, points only to point_outside_krakow, and the instant of the next accepted vote only
+    to vote_too_soon, written in ISO 8601 with milliseconds and the offset of the business zone at that instant.
+    """
     error: dict[str, object] = {"code": code}
     if code == "invalid_request":
         error["fields"] = list(fields)
     if code == "point_outside_krakow":
         error["points"] = list(points)
+    if code == "vote_too_soon" and repeat_allowed_at is not None:
+        error["repeat_allowed_at"] = repeat_allowed_at.isoformat(timespec="milliseconds")
     return JSONResponse({"error": error}, status_code=status)
 
 

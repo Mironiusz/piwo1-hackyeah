@@ -15,9 +15,9 @@ from common_time import build_business_day
 from config.logging import fetch_logger
 from data.engine import fetch_api_engine, fetch_read_only_snapshot
 from data.osm_copy import fetch_current_osm_copy
-from data.route_facts import REPORT_STRETCH_DISTANCE_M, StoredVote, fetch_fact_votes, fetch_geozone_ways, fetch_route_facts
+from data.route_facts import REPORT_STRETCH_DISTANCE_M, fetch_fact_votes, fetch_geozone_ways, fetch_route_facts
 from data.valhalla import RoutingServiceError, RoutingServiceNoRouteError, RoutingServiceTraceError, ValhallaRoute, ValhallaTrace, fetch_served_copy_instant, fetch_valhalla_route, fetch_valhalla_trace
-from service.fact_status import FactStatus, FactView, resolve_fact_status
+from service.fact_status import FactStatus, build_fact_views
 from service.route_boundary import resolve_points_outside_krakow
 from service.route_graph import RouteGraph, RoutePoint, build_node_stretch_ids, build_stretch_coordinates, build_way_stretch_ids, fetch_route_graph, resolve_fewest_barriers_path
 from service.route_requests import (
@@ -132,10 +132,7 @@ def fetch_placed_facts(connection: Connection, graph: RouteGraph, area_wkt: str 
     if not fact_types:
         return RouteFacts((), {})
     stored = fetch_route_facts(connection, area_wkt, distance_m, fact_types, way_ids)
-    votes_by_fact: dict[int, list[StoredVote]] = defaultdict(list)
-    for vote in fetch_fact_votes(connection, [fact.id for fact in stored]):
-        votes_by_fact[vote.fact_id].append(vote)
-    return build_route_facts(graph, (FactView(fact, resolve_fact_status(votes_by_fact[fact.id], fact.is_removed_from_osm)) for fact in stored))
+    return build_route_facts(graph, build_fact_views(stored, fetch_fact_votes(connection, [fact.id for fact in stored])))
 
 
 def fetch_traced_route(route: ValhallaRoute) -> ValhallaTrace:

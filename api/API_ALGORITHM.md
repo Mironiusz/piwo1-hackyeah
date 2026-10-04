@@ -57,3 +57,23 @@ request -> operation without a token: answer, no Session-Token
 - A response to a request that carried a valid token carries the renewed token, on success and on a refusal the operation names, such as `moderator_role_required` or `invalid_request` of its body. A refusal as `session_expired` carries none, because the client deletes its token on it. A successful `delete_own_account` answers 204 with none, because its account no longer exists. `log_in` gives the token of its new session the same way. A failure the contract does not name, `internal_error`, carries no renewed token, and the token the client keeps stays valid until its own expiry.
 - A body of `create_account` or `log_in` with another field, a missing field or a value that is not a string is refused as `invalid_request` with its paths before any rule of accounts runs; a pseudonym or a password outside its rules is refused as `invalid_request` with its field by the service layer.
 - No pseudonym, password, token, header or account identifier of an account operation reaches a log entry or a response other than the one the contract names.
+
+## Community facts
+
+The boundary of the nine operations of the community facts turns a request into one call of `service/community_facts.py` and its answer or refusal into the body of `docs/product/api_contract.md`, sections Facts and Moderation (`plans/community_facts_api/COMMUNITY_FACTS_API_PLAN.md` D-2, D-3, D-7, D-8).
+
+```text
+request -> session: a bad token -> session_expired, nothing read or written
+        -> moderator operation: no token -> authentication_required, no role now -> moderator_role_required
+        -> body and path against the strict model -> invalid_request with the paths
+        -> save or vote without an account: read the client address and User-Agent
+        -> service -> its refusal -> its code, or the answer -> 200, 201 or 204
+```
+
+1. The session is resolved first. A token that does not resolve is refused as `session_expired` and is never turned into a person without an account, so a save or a vote with an expired token writes nothing.
+2. The body and the identifier of the path are checked against the model of the operation; a refusal names the paths and the service is not called.
+3. A save or a vote of a person without an account reads the client address uvicorn resolved and the User-Agent, and passes them to the service, which hashes them; an account passes its `AccountActor`. No other operation reads either input, and no log entry holds them.
+4. The service decides. `list_facts_in_area` answers the facts and `is_truncated`, `read_fact` the fact, `find_nearby_facts` each fact with its distance, `create_fact` 201 for a first save and 200 for a repeated one with the same fact, `cast_vote` 201 with the fact after the vote, `flag_fact` 204 without a body, `list_flagged_facts` every moderator item and `hide_fact` and `restore_fact` the moderator item of the fact.
+5. A refusal of the service becomes its code: `invalid_request` with the paths, `fact_not_found`, `idempotency_key_reused`, `vote_too_soon` with the next midnight, `fact_not_flaggable` or `fact_not_flagged`. A response to a valid session carries the renewed token on success and on these refusals alike.
+
+No body, coordinate, description, address, User-Agent, token or hash reaches a log entry; the request log names the operation, the status and the duration only.

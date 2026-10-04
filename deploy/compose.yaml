@@ -1,0 +1,95 @@
+name: enableme
+
+x-container-paths: &container-paths
+  APP_ENVIRONMENT: target
+  API_BIND_HOST: 0.0.0.0
+  API_PORT: "8000"
+  DB_HOST: database
+  DB_PORT: "5432"
+  ROUTING_SERVICE_URL: http://routing:8002
+  ROUTING_DATA_DIR: /srv/routing
+  VALHALLA_TOOL_DIR: /usr/local/bin
+  VALHALLA_CONFIG_TEMPLATE: /opt/enableme/valhalla_config_template.json
+  IMPORT_WORKSPACE_ROOT: /srv/import
+  TILE_ARCHIVE_DIR: /srv/tiles
+  TILE_ARCHIVE_SOURCE: /srv/tile_source/krakow.pmtiles
+
+services:
+  proxy:
+    build:
+      context: ..
+      dockerfile: deploy/proxy.Dockerfile
+    image: enableme-proxy:local
+    ports:
+      - "${DEMO_HTTP_PORT:?Set DEMO_HTTP_PORT}:80"
+    volumes:
+      - tile_archive:/srv/tiles:ro
+    networks: [edge]
+    depends_on: [backend]
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ..
+      dockerfile: deploy/backend.Dockerfile
+      additional_contexts:
+        routing: docker-image://enableme-routing:local
+    image: enableme-backend:local
+    env_file: ../.env.demo
+    environment: *container-paths
+    volumes:
+      - routing_data:/srv/routing:ro
+    networks: [internal, edge]
+    depends_on:
+      database:
+        condition: service_healthy
+      routing:
+        condition: service_started
+    restart: unless-stopped
+
+  routing:
+    build:
+      context: ../valhalla
+    image: enableme-routing:local
+    volumes:
+      - routing_data:/data:ro
+    networks: [internal]
+    restart: unless-stopped
+
+  database:
+    extends:
+      file: ../db/compose.deploy.yaml
+      service: database
+    networks: [internal]
+
+  migrate:
+    extends:
+      file: ../db/compose.deploy.yaml
+      service: migrate
+    networks: [internal]
+
+  loader:
+    image: enableme-backend:local
+    profiles: [load]
+    env_file: ../.env.demo
+    environment: *container-paths
+    volumes:
+      - routing_data:/srv/routing
+      - import_workspace:/srv/import
+      - tile_archive:/srv/tiles
+    networks: [internal, edge]
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: "no"
+
+networks:
+  internal:
+    internal: true
+  edge: {}
+
+volumes:
+  database_data:
+  routing_data:
+  import_workspace:
+  tile_archive:

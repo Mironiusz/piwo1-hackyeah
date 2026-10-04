@@ -31,7 +31,7 @@ def apply_osm_import_report(result: OsmImportResult, duration_seconds: float) ->
     level = logging.ERROR if OSM_IMPORT_EXIT_CODES[result.outcome] == 1 else logging.INFO
     fetch_logger(__name__).log(
         level,
-        "OSM import outcome=%s state_at=%s duration_s=%.1f nodes=%s ways=%s memberships=%s facts=%s",
+        "OSM import outcome=%s state_at=%s duration_s=%.1f nodes=%s ways=%s memberships=%s facts=%s invalid_areas=%s",
         result.outcome,
         "-" if result.state_at is None else result.state_at.isoformat(),
         duration_seconds,
@@ -39,6 +39,7 @@ def apply_osm_import_report(result: OsmImportResult, duration_seconds: float) ->
         "-" if counts is None else counts.ways,
         "-" if counts is None else counts.memberships,
         "-" if counts is None else counts.facts,
+        "-" if result.invalid_area_count is None else result.invalid_area_count,
     )
     return OSM_IMPORT_EXIT_CODES[result.outcome]
 

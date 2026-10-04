@@ -18,6 +18,8 @@ VALID = {
     "DB_SERVICE_ACCOUNT_NAME": "invented",
     "DB_SERVICE_ACCOUNT_PASSWORD": "invented-private",
     "SESSION_SIGNING_KEY": "invented-private-session-signing-key",
+    "VOTER_HASH_KEY": "invented-private-voter-hash-key-of-32",
+    "API_TRUSTED_PROXY_ADDRESSES": "",
     "ROUTING_SERVICE_URL": "http://routing:8002",
     "ROUTING_DATA_DIR": ABSOLUTE_ROUTING_DATA_DIR,
 }
@@ -53,6 +55,13 @@ def test_required_entry_has_safe_named_failure(key: str) -> None:
         ("ROUTING_SERVICE_URL", "ftp://routing"),
         ("ROUTING_SERVICE_URL", "routing:8002"),
         ("ROUTING_DATA_DIR", "routing_data"),
+        ("API_TRUSTED_PROXY_ADDRESSES", "*"),
+        ("API_TRUSTED_PROXY_ADDRESSES", "10.0.0.1, *"),
+        ("API_TRUSTED_PROXY_ADDRESSES", "proxy.internal"),
+        ("API_TRUSTED_PROXY_ADDRESSES", "10.0.0.1/8"),
+        ("API_TRUSTED_PROXY_ADDRESSES", "10.0.0.0/33"),
+        ("API_TRUSTED_PROXY_ADDRESSES", "10.0.0.1,,10.0.0.2"),
+        ("API_TRUSTED_PROXY_ADDRESSES", "999.0.0.1"),
     ],
 )
 def test_invalid_entries_do_not_leak_values(key: str, value: str) -> None:
@@ -77,6 +86,7 @@ def test_invalid_entries_do_not_leak_values(key: str, value: str) -> None:
         "DB_SERVICE_ACCOUNT_NAME",
         "DB_SERVICE_ACCOUNT_PASSWORD",
         "SESSION_SIGNING_KEY",
+        "VOTER_HASH_KEY",
         "ROUTING_SERVICE_URL",
         "ROUTING_DATA_DIR",
     ],
@@ -161,3 +171,39 @@ def test_session_signing_key_of_32_characters_is_accepted_and_kept_secret() -> N
     settings = Settings(**{**VALID, "SESSION_SIGNING_KEY": key})
     assert settings.SESSION_SIGNING_KEY.get_secret_value() == key
     assert key not in repr(settings)
+
+
+def test_voter_hash_key_shorter_than_32_characters_is_refused_by_name() -> None:
+    """Refuse a key of the anonymous identity of 31 characters, naming the entry and its file without the key."""
+    key = "private" + "v" * 24
+    with pytest.raises(ConfigurationError) as caught:
+        Settings(**{**VALID, "VOTER_HASH_KEY": key})
+    assert "VOTER_HASH_KEY (.env)" in str(caught.value)
+    assert key not in str(caught.value)
+
+
+def test_voter_hash_key_of_32_characters_is_accepted_and_kept_secret() -> None:
+    """Accept a key of the anonymous identity of exactly 32 characters and keep it out of the text of the settings."""
+    key = "private" + "v" * 25
+    settings = Settings(**{**VALID, "VOTER_HASH_KEY": key})
+    assert settings.VOTER_HASH_KEY.get_secret_value() == key
+    assert key not in repr(settings)
+
+
+def test_empty_trusted_proxy_entry_trusts_no_proxy() -> None:
+    """Read the empty marker of the trusted proxy as no trusted address, the local case in which the peer is the person."""
+    assert Settings(**VALID).API_TRUSTED_PROXY_ADDRESSES == ()
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("172.18.0.5", ("172.18.0.5",)),
+        ("172.18.0.0/16", ("172.18.0.0/16",)),
+        (" 172.18.0.5 , fd00::/8 ,::1", ("172.18.0.5", "fd00::/8", "::1")),
+    ],
+)
+def test_trusted_proxy_entry_accepts_addresses_and_networks(value: str, expected: tuple[str, ...]) -> None:
+    """Accept single addresses and networks without host bits, trimmed of the spaces around each entry."""
+    entries = Settings(**{**VALID, "API_TRUSTED_PROXY_ADDRESSES": value}).API_TRUSTED_PROXY_ADDRESSES
+    assert entries == expected

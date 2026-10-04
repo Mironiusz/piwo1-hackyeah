@@ -16,10 +16,12 @@ The repository was created on 2026-10-03 from a pre-existing project template, "
 - `agent_docs/` - the project description for the hook, the methodology of the chain and the durable memory convention.
 - `docs/standards/` - the standards map, six standards of the workflow core, twelve standards of the Python profile, one standard of the frontend profile and two registries.
 - `docs/product/` - the product specification with the target database schema, the contract of the programming interface, the user journeys, the views of the web frontend and the texts of the interface.
-- `docs/hackathon/` - the summary of the challenge rules; `docs/official/` - the official PDFs of the organizers it summarizes; `docs/deployment/` - the instructions for the hosted demo; `docs/setup/` - the setup of the OpenHarmony emulator.
+- `docs/hackathon/` - the summary of the challenge rules; `docs/official/` - the official PDFs of the organizers it summarizes; `docs/deployment/` - the instructions for the hosted demo; `docs/setup/` - the setup of the backend, the map tiles and the OpenHarmony emulator, and the GitHub Actions.
 - `MVP.md`, `PRODUCT.md`, `TEAM.md`, `AI_WORKFLOW.md` - the summary of the MVP, the product summary that interface work starts from, the team, and how AI tools are used here.
 - `.impeccable/briefs/` - the design briefs and the mocks of the views made with the `impeccable` skill.
 - `valhalla/` - the build of the routing engine Valhalla with two accessibility patches, and `.github/workflows/valhalla-image.yml`, which publishes its image when a person starts it.
+- `.github/workflows/` - next to the Valhalla image, `ci.yml`, the gates of the Definition of Done on every pull request to `dev` and `main`, and `demo-images.yml`, which builds the images of the hosted demo on such a pull request and publishes them for every commit of `main`; both are described in `docs/setup/github_actions.md`.
+- `deploy/` - the Compose project of the hosted demo, with the override `compose.ghcr.yaml` that pulls the published images instead of building them (`docs/deployment/hosted_demo.md`).
 - `db/` - the shared database package and separate local setup, migration and schema checks, described in `db/README.md`.
 - `tests/architecture/` - the core gates: Claude Code and Codex parity, the list of third-party content, hooks, prose style, plan document contract, conflict markers.
 - `plans/` and `plans_finished/` - the initiatives in progress and their archive.

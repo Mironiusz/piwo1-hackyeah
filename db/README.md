@@ -55,4 +55,4 @@ docker compose --env-file <environment file of the demo> -f db/compose.deploy.ya
 docker compose --env-file <environment file of the demo> -f db/compose.deploy.yaml --profile migrate run --rm -e DB_REVISION_CONSENT=apply migrate
 ```
 
-Without `DB_REVISION_CONSENT=apply` the step refuses to change the database. How the demo joins this database to its other services is completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/` (`docs/deployment/hosted_demo.md`).
+Without `DB_REVISION_CONSENT=apply` the step refuses to change the database. The whole demo takes these two services with `extends` into `deploy/compose.yaml`, which joins them to its other services on its internal network, as the project `enableme` with the volume `enableme_database_data`; its commands are in `docs/deployment/hosted_demo.md`.

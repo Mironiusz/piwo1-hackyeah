@@ -92,6 +92,7 @@ Every object the first revision `db/accessibility_db/migrations/versions/0001_ta
 - `db/accessibility_db/<responsibility>.py` - a module of the shared model, first `closed_lists.py` and `tables.py`.
 - `db/tests/common_<topic>.py` - a helper shared by the tests of `db/tests/`, first `common_target_schema.py`, `common_stored_rows.py` and `common_critical_guard.py`.
 - `db/compose.yaml` and `db/compose.deploy.yaml` - the Compose files of the local database and of the database of the hosted demo.
+- `deploy/compose.yaml`, `deploy/backend.Dockerfile`, `deploy/proxy.Dockerfile` and `deploy/nginx.conf` - the Compose project `enableme` of the hosted demo, the images of the backend and of the proxy, and the configuration of the proxy, from `plans/deployment_config/`.
 - `service/<responsibility>.py` - a module of the rules layer, first `account_rules.py`, `passwords.py` and `session_tokens.py` of `plans_finished/accounts/`.
 - `tests/common_<topic>.py` - data or a helper shared by the tests of `tests/`, for example `common_osm_source.py`, `common_runtime_settings.py` and `common_nominatim_answers.py`.
 
@@ -119,7 +120,7 @@ Every object the first revision `db/accessibility_db/migrations/versions/0001_ta
 - `test_<what it checks>` in a file `db/tests/test_<subject>.py`; a file that touches the database carries `pytestmark = pytest.mark.critical`.
 - `service_engine`, `service_connection`, `stored_fact_id` - the fixtures of `db/tests/conftest.py`.
 - `test_<what it checks>` in a file `tests/service/test_<subject>_cases.py` - the scenario tests of the rules layer, first `test_account_rules_cases.py`, `test_passwords_cases.py` and `test_session_tokens_cases.py`.
-- `schema_owner_engine` - the unpooled local schema-owner engine of `tests/data/conftest.py`, built from `--scratch-database-url` and required by `database_cleanup_registry` and `scratch_database`; its contract is `plans/sample_data/SAMPLE_DATA_BACKEND_HANDOFF.md`.
+- `schema_owner_engine` - the unpooled local schema-owner engine of `tests/conftest.py`, with `SCRATCH_OWNER_STATEMENT_TIMEOUT_MS`, built from `--scratch-database-url` and required by `database_cleanup_registry` and `scratch_database`, reached by the critical tests of every layer directory since `plans/community_facts_api/` moved it from `tests/data/conftest.py`; its contract is `plans/sample_data/SAMPLE_DATA_BACKEND_HANDOFF.md`.
 - `database_cleanup_registry` - the shared exact-key cleanup fixture in `tests/conftest.py`.
 - `sample_critical_dataset` - the invented sample-network fixture in `tests/data/conftest.py`.
 
@@ -197,7 +198,7 @@ The names of `plans_finished/tile_loading/`, the tile step of the loading progra
 
 The names of `plans_finished/route_planning/`, the operation `plan_route` and the status rule of M4.
 
-- `service/fact_status.py`: `FactStatus`, `FactVoteRecord`, `FactStatusResult`, `FactView`, `resolve_fact_status`, `resolve_status_from_sums`, `build_vote_person`, `build_vote_weight` and the constants `ACCOUNT_VOTE_WEIGHT`, `ANONYMOUS_VOTE_WEIGHT`, `STATUS_PERSON_COUNT` and `STATUS_WEIGHT_THRESHOLD`.
+- `service/fact_status.py`: `FactStatus`, `FactVoteRecord`, `FactStatusResult`, `FactView`, `resolve_fact_status`, `build_fact_views`, `resolve_status_from_sums`, `build_vote_person`, `build_vote_weight` and the constants `ACCOUNT_VOTE_WEIGHT`, `ANONYMOUS_VOTE_WEIGHT`, `STATUS_PERSON_COUNT` and `STATUS_WEIGHT_THRESHOLD`.
 - `common_time.py`: `build_business_day`, the calendar day of an instant in the business zone.
 - `data/engine.py`: `fetch_api_engine`, `fetch_read_only_snapshot`, `apply_statement_timeout`, `API_STATEMENT_TIMEOUT_MS` and the query constant `APPLY_STATEMENT_TIMEOUT_SQL`.
 - `data/route_network.py`: `RouteNetworkArrays`, `fetch_route_network`, the query constants `FETCH_ROUTE_WAYS_SQL`, `FETCH_ROUTE_WAY_NODES_SQL` and `FETCH_ROUTE_NODES_SQL`, and `NETWORK_PARTITION_ROWS`, `WAY_BARRIER_STATES`, `WAY_BARRIER_COLUMNS`, `KERB_POINT_STATES` and `NO_KERB_POINT`.
@@ -209,7 +210,7 @@ The names of `plans_finished/route_planning/`, the operation `plan_route` and th
 - `service/route_segments.py`: `RoutingUnavailableError`, `SegmentState`, `MissingAttribute`, `TracedSegment`, `PlacedFact`, `RouteFacts`, `SegmentAssessment`, `RouteFactView`, `RouteLists`, `build_route_facts`, `build_route_segments`, `resolve_segment_state`, `resolve_route_lists`, `resolve_crossed_barriers`, `resolve_fact_on_segment` and the constants `KERB_CONTRADICTION_DISTANCE_M`, `AMENITY_DISTANCE_M` and `REPORT_REPLACEMENT_CONFIRMATIONS`.
 - `service/route_boundary.py`: `RouteBoundaryCache`, `ROUTE_BOUNDARY_CACHE`, `fetch_krakow_boundary` and `resolve_points_outside_krakow`.
 - `service/route_planning.py`: `PointOutsideKrakowError`, `RouteAnswer`, `PlannedRoute`, `PlannedAlternative`, `RouteSegment`, `RouteRequest`, `CheckedRoute` and `resolve_route`.
-- `api/route.py`: `PointBody`, `RouteRequestBody` with the validator `apply_unique_type_validation`, `plan_route`, the route named `plan_route`, `apply_route_routes` and `apply_route_lifespan`; `api/fact_body.py`: `build_fact_body`.
+- `api/point_body.py`: `PointBody`, the one point object of the contract; `api/route.py`: `RouteRequestBody` with the validator `apply_unique_type_validation`, `plan_route`, the route named `plan_route`, `apply_route_routes` and `apply_route_lifespan`; `api/fact_body.py`: `build_fact_body`.
 - `valhalla/start_routing_service.py`: `build_merged_config`, `build_routing_service_config`, `fetch_default_config`, `fetch_overrides`, `fetch_current_copy_name` and `main`; `valhalla/valhalla_overrides.json` holds the settings of the routing service the project sets.
 - `tests/common_route_network.py` builds the invented networks of the route tests, `tests/common_runtime_settings.py` holds the invented settings shared by the tests that load the facade, and the fixture `service_transaction` of `tests/data/conftest.py` gives a rolled-back connection of the service account.
 
@@ -224,6 +225,30 @@ The names of `plans_finished/accounts/`, the four account operations and the one
 - `data/accounts.py`: `StoredAccount`, `apply_account_insert`, `fetch_account_by_id`, `fetch_account_by_pseudonym`, `apply_account_delete`, `build_stored_account` and the statements `APPLY_ACCOUNT_INSERT_SQL`, `FETCH_ACCOUNT_SQL`, `FETCH_ACCOUNT_BY_ID_SQL`, `FETCH_ACCOUNT_BY_PSEUDONYM_SQL` and `APPLY_ACCOUNT_DELETE_SQL`.
 - `tests/conftest.py`: the fixture `stored_account_cleanup`, which deletes the accounts a critical test registered before committing them.
 - `SESSION_SIGNING_KEY`: the environment entry of the key that signs session tokens, with `SESSION_SIGNING_KEY_MIN_LENGTH` in `config/settings.py`.
+
+## Community fact names
+
+The names of `plans/community_facts/`, the data layer of the nine operations of the community facts.
+
+- `data/community_facts.py`, records and errors: `StoredCommunityFact`, `StoredNearbyFact`, `FactContent`, `AccountVoter`, `AnonymousVoter`, `Voter`, `FactInsertOutcome`, `StoredVoteInsert`, `VoteDayTaken`, `VoteInsertOutcome` and `VoteAccountMissingError`.
+- `data/community_facts.py`, functions: `fetch_stored_facts_in_area`, `fetch_stored_fact`, `fetch_stored_nearby_facts`, `fetch_stored_flagged_facts`, `fetch_stored_fact_for_vote`, `fetch_stored_fact_for_change`, `fetch_taken_vote_day`, `apply_fact_insert`, `apply_vote_insert`, `apply_vote_row`, `apply_fact_flag`, `apply_fact_hiding`, `apply_fact_restoration`, `build_stored_community_fact`, `build_optional_stored_community_fact` and `build_vote_voter_columns`.
+- `data/community_facts.py`, constants: `UNHIDDEN_FACT_CONDITION`, `WGS84_SRID`, `VOTE_ACCOUNT_CONSTRAINT_NAME`, `VOTE_ACCOUNT_MISSING_MESSAGE` and the query constants `FETCH_STORED_FACTS_IN_AREA_SQL`, `FETCH_STORED_FACT_SQL`, `FETCH_STORED_NEARBY_FACTS_SQL`, `FETCH_STORED_FLAGGED_FACTS_SQL`, `FETCH_STORED_FACT_FOR_VOTE_SQL`, `FETCH_STORED_FACT_FOR_CHANGE_SQL`, `FETCH_FACT_BY_IDEMPOTENCY_KEY_SQL`, `FETCH_ACCOUNT_VOTE_DAY_SQL`, `FETCH_HASH_VOTE_DAY_SQL`, `APPLY_FACT_INSERT_SQL`, `APPLY_VOTE_INSERT_SQL`, `APPLY_FACT_FLAG_SQL`, `APPLY_FACT_HIDING_SQL` and `APPLY_FACT_RESTORATION_SQL`.
+- `tests/data/test_community_facts_cases.py` and `tests/data/test_community_facts_critical.py`: the tests without and with the local database; the critical ones use the fixtures `service_transaction`, `stored_account_cleanup` and `database_cleanup_registry`, and no fixture of their own.
+
+## Community fact API and service names
+
+The names of `plans/community_facts_api/`, the API and service layers of the nine operations of the community facts.
+
+- `service/fact_rules.py`: `InvalidFactInputError` with `fields`, `FactCreationInput`, `FactArea`, `resolve_fact_creation_input`, `resolve_description`, `resolve_fact_area`, `build_fact_idempotency_key`, `build_repeat_allowed_at` and the constants `DESCRIPTION_MAX_LENGTH`, `STEP_COUNT_MIN`, `STEP_COUNT_MAX`, `GEOZONE_RADII_M`, `AREA_FACT_LIMIT`, `NEARBY_FACT_DISTANCE_M` and `FACT_IDEMPOTENCY_KEY_PREFIX`.
+- `service/anonymous_voters.py`: `AnonymousVoterInput`, `InvalidAnonymousVoterInputError`, `build_anonymous_voter_input`, `build_canonical_address`, `build_hash_field`, `build_anonymous_voter_hash`, `fetch_voter_hash_key` and the constants `ANONYMOUS_VOTER_HASH_DOMAIN` and `FIELD_LENGTH_BYTES`.
+- `service/community_facts.py`: `FactActor`, `FactNotFoundError`, `IdempotencyKeyReusedError`, `VoteTooSoonError`, `FactNotFlaggableError`, `FactNotFlaggedError`, `AreaFacts`, `NearbyFactView`, `FlaggedFactView`, `FactCreationResult`, `fetch_facts_in_area`, `fetch_fact`, `fetch_nearby_facts`, `fetch_flagged_facts`, `apply_fact_creation`, `apply_fact_vote`, `apply_fact_flag`, `apply_fact_hiding`, `apply_fact_restoration`, `fetch_fact_views`, `build_fact_voter`, `build_saved_content`, `build_flagged_fact_view`, `resolve_repeated_save`, `resolve_moderated_fact` and the constant `VOTE_LOCK_WAIT_MS`; the data functions `apply_fact_flag`, `apply_fact_hiding` and `apply_fact_restoration` are imported as `apply_stored_fact_flag`, `apply_stored_fact_hiding` and `apply_stored_fact_restoration`, because the service functions carry the names of the plan.
+- `api/facts.py`: `FACTS_ROUTER` with the routes named `list_facts_in_area`, `read_fact`, `find_nearby_facts`, `create_fact`, `cast_vote` and `flag_fact`, `fetch_fact_actor` and `apply_fact_routes`.
+- `api/moderation.py`: `MODERATION_ROUTER` with the routes named `list_flagged_facts`, `hide_fact` and `restore_fact`, and `apply_moderation_routes`.
+- `api/fact_models.py`: `FactAreaRequest`, `NearbyFactsRequest`, `CreateFactRequest`, `CastVoteRequest`, the path type `FactIdPath` and the constants `UUID_PATTERN`, `FACT_ID_MIN` and `FACT_ID_MAX`.
+- `api/fact_body.py`: `build_fact_item_body`, `build_area_facts_body`, `build_nearby_facts_body`, `build_flagged_fact_body` and `build_flagged_facts_body`; `api/fact_errors.py`: `apply_fact_error_handlers`; `api/fact_identity.py`: `fetch_anonymous_voter_input` and the constant `USER_AGENT_SEPARATOR`.
+- `api/errors.py`: the keyword `repeat_allowed_at` of `build_error_response`, written only for `vote_too_soon`.
+- `VOTER_HASH_KEY` with `VOTER_HASH_KEY_MIN_LENGTH`, and `API_TRUSTED_PROXY_ADDRESSES` with the validators `build_trusted_proxy_entries` and `apply_trusted_proxy_validation` of `config/settings.py`: the two environment entries of the anonymous identity and of the trusted proxy.
+- `tests/service/common_community_fact_store.py`: `InventedFactStore`, `InventedEngine`, `InventedConnection` and `apply_invented_fact_store`, the invented data seam the fixture `fact_store` of `tests/service/conftest.py` installs; `tests/service/common_community_fact_seeds.py`: the invented points, accounts, facts of OpenStreetMap from 9300100001 and the exact owner cleanup of the critical tests of the service.
 
 ## Sample-loading interface
 

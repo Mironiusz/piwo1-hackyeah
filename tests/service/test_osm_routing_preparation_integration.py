@@ -14,13 +14,20 @@ from data.import_workspace import apply_workspace_exclusion, apply_workspace_rec
 from data.osm_reader import fetch_osm_elements
 from data.osm_valhalla import OsmTileBuildError
 from data.routing_data import ROUTING_COPIES_NAME, apply_osm_routing_manifest, fetch_osm_boundary, fetch_osm_routing_manifest, fetch_routing_preparations
+from service.osm_geometry import OsmGeometryError
 from service.osm_routing_preparation import apply_osm_routing_preparation, build_osm_valhalla_config, fetch_osm_prepared_copy
 from service.osm_routing_recovery import OsmRoutingIntegrityError
-from tests.common_osm_source import apply_invented_osm_source
+from tests.common_osm_source import INVENTED_NODES_XML, INVENTED_RELATIONS_XML, INVENTED_TIMESTAMP, INVENTED_WAYS_XML, apply_invented_osm_source
 
 STATE_AT = datetime(2026, 10, 3, tzinfo=UTC)
 ZONE = ZoneInfo("Europe/Warsaw")
 NAME = "1790985600"
+EXPECTED_FACT_KEYS = {
+    (OsmElementType.WAY, 10, FactType.STAIRS),
+    (OsmElementType.WAY, 11, FactType.POOR_SURFACE),
+    (OsmElementType.NODE, 7, FactType.LOWERED_KERB),
+    (OsmElementType.NODE, 8, FactType.REST_PLACE),
+}
 
 pytestmark = pytest.mark.integration
 
@@ -50,12 +57,8 @@ def test_source_gives_network_facts_and_motor_membership(tmp_path):
     assert [node.element_id for node in prepared.network.nodes] == [5, 6, 7]
     assert prepared.motor_traffic_node_ids == frozenset({6, 7})
     keys = {(fact.identity.element_type, fact.identity.element_id, fact.identity.fact_type) for fact in prepared.facts}
-    assert keys == {
-        (OsmElementType.WAY, 10, FactType.STAIRS),
-        (OsmElementType.WAY, 11, FactType.POOR_SURFACE),
-        (OsmElementType.NODE, 7, FactType.LOWERED_KERB),
-        (OsmElementType.NODE, 8, FactType.REST_PLACE),
-    }
+    assert keys == EXPECTED_FACT_KEYS
+    assert prepared.invalid_area_count == 0
     assert next(fact for fact in prepared.facts if fact.identity.fact_type == FactType.STAIRS).step_count == 4
 
 
@@ -142,3 +145,33 @@ def test_failed_tiles_leave_no_copy_and_no_preparation(tmp_path, monkeypatch):
             apply_osm_routing_preparation(lease, routing_root, prepared.network, prepared.boundary, STATE_AT, frozenset(), {"mjolnir": {}}, tmp_path / "tools", build_test_deadline())
     assert not (routing_root / ROUTING_COPIES_NAME / NAME).exists()
     assert fetch_routing_preparations(routing_root) == ()
+
+
+def build_open_ring_multipolygon_xml(relation_id: int, way_id: int, node_ids: tuple[int, ...], tags: str) -> tuple[str, str]:
+    """Give an open way and a multipolygon whose only outer ring it is, which native assembly leaves without an outer ring."""
+    way = f'<way id="{way_id}" {INVENTED_TIMESTAMP}>' + "".join(f'<nd ref="{node_id}"/>' for node_id in node_ids) + "</way>"
+    relation = f'<relation id="{relation_id}" {INVENTED_TIMESTAMP}><member type="way" ref="{way_id}" role="outer"/><tag k="type" v="multipolygon"/>{tags}</relation>'
+    return way, relation
+
+
+def test_an_invalid_area_without_a_fact_is_counted_and_changes_nothing_else(tmp_path):
+    way, relation = build_open_ring_multipolygon_xml(30, 20, (1, 2, 3), '<tag k="landuse" v="grass"/>')
+    source = apply_invented_osm_source(tmp_path, INVENTED_NODES_XML + INVENTED_WAYS_XML + way + INVENTED_RELATIONS_XML + relation)
+    prepared = fetch_osm_prepared_copy(source, build_test_deadline(), ZONE)
+    assert prepared.invalid_area_count == 1
+    assert {(fact.identity.element_type, fact.identity.element_id, fact.identity.fact_type) for fact in prepared.facts} == EXPECTED_FACT_KEYS
+    assert [element.element_id for element in prepared.network.ways] == [10, 11]
+
+
+def test_an_invalid_boundary_of_krakow_still_fails_the_preparation(tmp_path):
+    open_boundary_ways = INVENTED_WAYS_XML.replace('<nd ref="4"/><nd ref="1"/></way>', '<nd ref="4"/></way>', 1)
+    source = apply_invented_osm_source(tmp_path, INVENTED_NODES_XML + open_boundary_ways + INVENTED_RELATIONS_XML)
+    with pytest.raises(OsmGeometryError, match="Missing complete administrative boundary"):
+        fetch_osm_prepared_copy(source, build_test_deadline(), ZONE)
+
+
+def test_an_invalid_area_relation_with_an_amenity_in_the_copy_still_fails_the_preparation(tmp_path):
+    way, relation = build_open_ring_multipolygon_xml(31, 21, (5, 6), '<tag k="amenity" v="toilets"/><tag k="wheelchair" v="designated"/>')
+    source = apply_invented_osm_source(tmp_path, INVENTED_NODES_XML + INVENTED_WAYS_XML + way + INVENTED_RELATIONS_XML + relation)
+    with pytest.raises(OsmGeometryError, match="Non-area relation fact has no approved location"):
+        fetch_osm_prepared_copy(source, build_test_deadline(), ZONE)

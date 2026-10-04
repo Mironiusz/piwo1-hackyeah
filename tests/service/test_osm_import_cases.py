@@ -28,6 +28,7 @@ from service.osm_source_validation import OsmSourceError
 OLD_STATE = datetime(2026, 10, 2, tzinfo=UTC)
 NEW_STATE = datetime(2026, 10, 3, tzinfo=UTC)
 COUNTS = OsmPublicationCounts(3, 2, 4, 5)
+INVALID_AREA_COUNT = 2
 INVENTED_BOUNDARY = Polygon(((19.9, 50.0), (20.0, 50.0), (20.0, 50.1), (19.9, 50.0)))
 
 
@@ -77,7 +78,8 @@ class InventedRun:
         monkeypatch.setattr("service.osm_import.fetch_osm_copy_history", lambda connection: snapshots)
         monkeypatch.setattr("service.osm_import.fetch_osm_extract", fetch_extract)
         monkeypatch.setattr(
-            "service.osm_import.fetch_osm_prepared_copy", lambda path, deadline, zone: self.apply_step("preparation", OsmPreparedCopy(OsmPreparedNetwork((), ()), frozenset(), (), INVENTED_BOUNDARY))
+            "service.osm_import.fetch_osm_prepared_copy",
+            lambda path, deadline, zone: self.apply_step("preparation", OsmPreparedCopy(OsmPreparedNetwork((), ()), frozenset(), (), INVENTED_BOUNDARY, INVALID_AREA_COUNT)),
         )
         monkeypatch.setattr("service.osm_import.apply_osm_routing_preparation", apply_routing_preparation)
         monkeypatch.setattr("service.osm_import.apply_publication", apply_publication)
@@ -110,7 +112,7 @@ class InventedRun:
 def test_first_import_publishes_then_points_at_the_new_copy(tmp_path, monkeypatch):
     run = InventedRun(tmp_path, monkeypatch)
     result = run.apply_run()
-    assert (result.outcome, result.state_at, result.counts) == ("updated", NEW_STATE, COUNTS)
+    assert (result.outcome, result.state_at, result.counts, result.invalid_area_count) == ("updated", NEW_STATE, COUNTS, INVALID_AREA_COUNT)
     assert run.steps == ["exclusion", "acquisition", "preparation", "routing", "publication", "release"]
     assert fetch_routing_pointer(run.routing_root) == build_routing_copy_name(NEW_STATE)
 
@@ -137,7 +139,7 @@ def test_the_current_state_is_unchanged_and_nothing_is_prepared(tmp_path, monkey
     run = InventedRun(tmp_path, monkeypatch, history=(NEW_STATE,))
     (run.routing_root / "current").write_text(build_routing_copy_name(NEW_STATE) + "\n")
     result = run.apply_run()
-    assert (result.outcome, result.state_at) == ("unchanged", NEW_STATE)
+    assert (result.outcome, result.state_at, result.invalid_area_count) == ("unchanged", NEW_STATE, None)
     assert run.steps == ["exclusion", "acquisition", "release"]
 
 
@@ -232,7 +234,7 @@ def test_a_pointer_failure_after_commit_reports_incomplete_routing_not_a_rollbac
 
     monkeypatch.setattr("service.osm_import.apply_routing_pointer", apply_failed_pointer)
     result = run.apply_run()
-    assert (result.outcome, result.counts) == ("routing_incomplete", COUNTS)
+    assert (result.outcome, result.counts, result.invalid_area_count) == ("routing_incomplete", COUNTS, INVALID_AREA_COUNT)
 
 
 def test_server_stamp_is_cut_to_the_stored_millisecond():

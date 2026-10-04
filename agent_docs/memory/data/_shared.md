@@ -33,6 +33,13 @@
 - Reusable pattern: a primary-key conflict does not overwrite; only returned new identifiers receive author votes. A failed or invalidated connection is insufficient rollback evidence, and failure around a sent commit remains unknown unless the server explicitly rejects it.
 - Risk / notes: use the sole shared engine factory; no runtime delete or DDL belongs in this provider. `data/DATA.md` and `data/DATA_ALGORITHM.md` do not describe `data/sample_data.py` yet; its storage contract lives in `service/SERVICE.md`, `service/SERVICE_ALGORITHM.md` and `docs/data/sample_data.md`.
 
+## 2026-10-04 - Locks of the community facts, the vote day and the area rectangle (community_facts)
+
+- What changed: `data/community_facts.py` holds every read and write of facts and votes of the nine community operations. A vote locks its fact with `FOR SHARE`, a flag, a hiding or a restoration with `FOR NO KEY UPDATE`; the day a vote refused is read back from the database after `ON CONFLICT DO NOTHING`; a rectangle is compared as geometry.
+- Why: `FOR SHARE` conflicts with the `FOR UPDATE` of the publication in `data/osm_copy.py` and with the moderation lock, but not with another vote, and a vote holds only its own fact, so it adds no cycle to the ascending lock order of the importer. The day of a vote is the generated column `cast_on`, so computing it again in Python would be a second copy of that rule. A geography envelope has geodesic edges that bulge north of the parallels, so a point near the southern edge of the rectangle the client sent would fall outside it.
+- Reusable pattern: take the weakest row lock that still conflicts with the writer a caller must wait for. After an insert that did nothing on a unique constraint, read the winning row by the person, not the day computed again. Compare a rectangle with `ST_Intersects` on `geometry(geog)` and a distance with `ST_DWithin` on the geography.
+- Risk / notes: the read after an idempotency-key conflict sees the committed fact only in READ COMMITTED. The vote day is the latest vote of the person on the fact by instant, so a clock running backwards between two of their votes would name a wrong day. The geometry comparison does not use `IX_fact_geog` and scans the facts; no query time was measured when this was written.
+
 ## 2026-10-04 - A file another process serves needs an explicit mode (tile_loading)
 
 - What changed: `apply_tile_file_copy` of `data/tile_archive.py` gives its temporary copy the mode `TILE_FILE_MODE`, 0644, with `os.fchmod` before `os.fsync`, so `krakow.pmtiles` placed by `os.replace` stays readable by the proxy.
