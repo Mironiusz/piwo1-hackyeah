@@ -25,6 +25,18 @@ ROOT_DIR = Path(__file__).resolve().parents[2]
 
 SCANNED_FILE_SUFFIXES: frozenset[str] = frozenset({".py", ".md"})
 
+FRONTEND_DIRECTORY_NAME = "frontend"
+
+FRONTEND_SCANNED_FILE_SUFFIXES: frozenset[str] = frozenset({".ts", ".tsx", ".css", ".html", ".json"})
+"""
+The suffixes the character scan also takes, only under `FRONTEND_DIRECTORY_NAME`: the code, the styles, the page and
+the data files of the frontend, the texts of the interface in both languages included (`standard_frontend.md`,
+sections Formatting and Gates).
+
+The scan was extended to the frontend alone. A file with such a suffix elsewhere in the repository - a configuration
+file of a tool, a mock of a view - is not covered by that rule and stays outside the scan.
+"""
+
 EXCLUDED_DIRECTORY_NAMES: frozenset[str] = frozenset({".venv", "venv", ".git", ".cache", "__pycache__", "build", "dist", "node_modules", "temp"})
 EXCLUDED_DIRECTORY_PREFIXES: tuple[str, ...] = ("pytest_tmp",)
 """
@@ -170,12 +182,19 @@ def fetch_scanned_files(root: Path) -> list[Path]:
     """
     Returns a sorted list of .py and .md files under `root`, skipping the tool directories and the third-party
     content listed in `common_vendored_content.py`, which is written in someone else's style, just like `node_modules`.
+
+    Under `root / FRONTEND_DIRECTORY_NAME`, and nowhere else, it also returns a file whose suffix is one of
+    `FRONTEND_SCANNED_FILE_SUFFIXES`. The tool directories are skipped there as everywhere, so the installed packages
+    and the build output of the frontend stay outside the scan.
     """
     scanned_files: list[Path] = []
+    frontend_directory = root / FRONTEND_DIRECTORY_NAME
 
     for directory, directory_names, file_names in root.walk(on_error=lambda _: None):
         directory_names[:] = [name for name in directory_names if name not in EXCLUDED_DIRECTORY_NAMES and not name.startswith(EXCLUDED_DIRECTORY_PREFIXES)]
-        candidate_files = (directory / name for name in file_names if Path(name).suffix in SCANNED_FILE_SUFFIXES)
+        is_frontend_directory = directory.is_relative_to(frontend_directory)
+        scanned_suffixes = SCANNED_FILE_SUFFIXES | FRONTEND_SCANNED_FILE_SUFFIXES if is_frontend_directory else SCANNED_FILE_SUFFIXES
+        candidate_files = (directory / name for name in file_names if Path(name).suffix in scanned_suffixes)
         scanned_files.extend(path for path in candidate_files if not is_vendored_path(path.relative_to(root).as_posix()))
 
     return sorted(scanned_files)
@@ -292,8 +311,8 @@ def repository_scan() -> ProseStyleScanSummary:
 
 def test_repository_has_no_forbidden_characters(repository_scan: ProseStyleScanSummary) -> None:
     """
-    Ensures that no .py or .md file in the repository contains a character from the forbidden list
-    or an emoji.
+    Ensures that no .py or .md file in the repository, and no scanned file of the frontend, contains a character
+    from the forbidden list or an emoji.
 
     The test has no list of exceptions other than `RULE_DEFINING_PATHS` and is to stay that way: adding to it
     an exception for a document nobody bothered to fix turns the gate into a wish list. Third-party content
@@ -472,13 +491,62 @@ def test_fetch_scanned_files_skips_vendored_content(tmp_path: Path) -> None:
 
 
 def test_fetch_scanned_files_finds_only_python_and_markdown_files(tmp_path: Path) -> None:
-    """Ensures that files other than .py and .md (e.g. .txt) do not get into the scan."""
+    """Ensures that outside the frontend directory files other than .py and .md (e.g. .txt) do not get into the scan."""
     (tmp_path / "note.txt").write_text("content\n", encoding="utf-8")
     (tmp_path / "document.md").write_text("# title\n", encoding="utf-8")
 
     scanned = fetch_scanned_files(tmp_path)
 
     assert scanned == [tmp_path / "document.md"]
+
+
+def test_fetch_scanned_files_finds_frontend_files_only_under_frontend(tmp_path: Path) -> None:
+    """
+    Ensures that a .ts file gets into the scan under `frontend/` and nowhere else, and that the installed packages
+    and the build output of the frontend stay outside the scan.
+
+    The same file outside `frontend/` is the refusal case: without it the test would also pass for a scan that takes
+    every .ts file of the repository, which the rule of `standard_frontend.md` does not ask for.
+    """
+    (tmp_path / "frontend" / "src").mkdir(parents=True)
+    (tmp_path / "frontend" / "src" / "format.ts").write_text("export const metres = 400;\n", encoding="utf-8")
+    (tmp_path / "src").mkdir()
+    (tmp_path / "src" / "format.ts").write_text("export const metres = 400;\n", encoding="utf-8")
+    (tmp_path / "frontend" / "node_modules" / "package").mkdir(parents=True)
+    (tmp_path / "frontend" / "node_modules" / "package" / "index.ts").write_text("export const metres = 400;\n", encoding="utf-8")
+    (tmp_path / "frontend" / "dist" / "assets").mkdir(parents=True)
+    (tmp_path / "frontend" / "dist" / "index.html").write_text("<!doctype html>\n", encoding="utf-8")
+    (tmp_path / "frontend" / "dist" / "assets" / "index.css").write_text("body {}\n", encoding="utf-8")
+
+    scanned = fetch_scanned_files(tmp_path)
+
+    assert scanned == [tmp_path / "frontend" / "src" / "format.ts"]
+
+
+def test_fetch_scanned_files_finds_every_frontend_suffix_and_skips_a_binary_file(tmp_path: Path) -> None:
+    """
+    Ensures that under `frontend/` the scan takes a file of each suffix from `FRONTEND_SCANNED_FILE_SUFFIXES`, next to
+    the .md files it takes everywhere, and leaves a file of another kind.
+
+    The file of another kind is a font of the map: it is not text, so a scan that took it would fail on reading it.
+    """
+    frontend_files = [
+        tmp_path / "frontend" / "FRONTEND.md",
+        tmp_path / "frontend" / "index.html",
+        tmp_path / "frontend" / "package.json",
+        tmp_path / "frontend" / "src" / "App.tsx",
+        tmp_path / "frontend" / "src" / "format.ts",
+        tmp_path / "frontend" / "src" / "index.css",
+    ]
+    (tmp_path / "frontend" / "src").mkdir(parents=True)
+    for path in frontend_files:
+        path.write_text("content\n", encoding="utf-8")
+    (tmp_path / "frontend" / "public").mkdir()
+    (tmp_path / "frontend" / "public" / "0-255.pbf").write_bytes(b"\x0a\xff\xfe")
+
+    scanned = fetch_scanned_files(tmp_path)
+
+    assert scanned == sorted(frontend_files)
 
 
 def test_fetch_prose_style_summary_excludes_the_files_that_define_the_forbidden_character_list(tmp_path: Path) -> None:

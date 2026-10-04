@@ -1,0 +1,29 @@
+/* Styles of the slide demo: The four scenes of the live demo in a two by two grid. */
+
+.reveal .demo-steps {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px 60px;
+  margin: 80px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reveal .demo-steps li {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.reveal .demo-steps h3 {
+  margin: 4px 0 8px;
+}
+
+.reveal .demo-steps p {
+  margin: 0;
+  font-size: 40px;
+}
+
+.reveal .demo-steps + .footnote {
+  margin-top: 70px;
+}

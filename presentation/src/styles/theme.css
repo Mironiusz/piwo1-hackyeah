@@ -1,0 +1,89 @@
+/*
+ * Theme of the deck: the light EnableMe brand, with the tokens of the HarmonyOS app
+ * (mobile_app/accessway/entry/src/main/ets/components/Theme.ets, class Palette).
+ * Slides and components use only these tokens, never raw hex values. What each color means
+ * is fixed in MODULE.md, section Main records and contracts.
+ */
+
+:root {
+  --bg: #f4f5f2;
+  --surface: #ffffff;
+  --line: #d5d8dc;
+  --line-strong: #4b5058;
+
+  --text: #111418;
+  --text-dim: #4b5058;
+
+  --primary: #12306b;
+  --on-primary: #ffffff;
+  --accent: #ffd400;
+  --on-accent: #111418;
+
+  --state-barrier: #c8321e;
+  --state-clear: #1e7a46;
+  --state-partial: #e0a100;
+  --state-nodata: #6f7480;
+
+  --font-sans: 'Barlow Semi Condensed', system-ui, sans-serif;
+  --font-title: 'Barlow Condensed', system-ui, sans-serif;
+
+  --pad-x: 80px;
+  --pad-top: 56px;
+}
+
+html,
+body {
+  background: var(--bg);
+}
+
+.reveal {
+  font-family: var(--font-sans);
+  font-size: 30px;
+  font-weight: 400;
+  color: var(--text);
+  background: var(--bg);
+}
+
+.reveal .slides {
+  text-align: left;
+}
+
+.reveal .slides > section {
+  height: 100%;
+}
+
+.reveal .slide-frame {
+  position: relative;
+  box-sizing: border-box;
+  width: 1600px;
+  height: 900px;
+  padding: var(--pad-top) var(--pad-x) 40px;
+}
+
+.reveal ::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.reveal .progress {
+  color: var(--accent);
+  background: var(--line);
+  height: 6px;
+}
+
+/* Slide number in the bottom right corner. */
+
+.reveal .slide-number {
+  right: 28px;
+  bottom: 18px;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+
+.reveal .slide-number a {
+  color: inherit;
+  text-decoration: none;
+}

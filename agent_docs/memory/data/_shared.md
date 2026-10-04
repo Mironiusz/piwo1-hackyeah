@@ -1,0 +1,13 @@
+## 2026-10-04 - Crash-safe import ownership (backend skeleton)
+
+- What changed: Dedicated service sessions, a persistent private workspace journal and local OS exclusion protect import admission through cleanup.
+- Why: Session-bound database locks alone cannot protect file cleanup after every database session disappears.
+- Reusable pattern: Keep apply_import_exclusion open through all work; execute mutating tools through apply_import_process; use one publication deadline and distinguish unknown commit acknowledgement from confirmed rollback.
+- Risk / notes: One database uses one machine and one persistent local filesystem root. Linux tools must preserve inherited descriptors and stay in the supervised group; Windows uses a non-breakaway Job Object. Consumer pointer reconciliation is not a foundation contract. There is no product domain rule yet; create DATA.md and DATA_ALGORITHM.md when product access is implemented.
+
+## 2026-10-04 - Owner-crash semantics differ by platform (backend skeleton, Windows acceptance)
+
+- What changed: The owner-crash acceptance of the import exclusion has a Linux and a Windows variant, and the Linux-only functions of `data/import_process.py` refuse other platforms in a form mypy narrows.
+- Why: On Linux a contained writer can outlive its killed owner and keeps exclusion through the inherited descriptor; on Windows the kill-on-close job ends the whole tree with its owner, so the next launch recovers at once. One cross-platform expectation was wrong on one of the two systems.
+- Reusable pattern: Write a crash or process test per platform with its own expectation, and guard platform-only code with `if sys.platform != "<platform>": raise ...` so mypy checks the module on both Windows and Linux.
+- Risk / notes: A Windows run never proves the Linux orphan path and a Linux run never proves the Job Object path; check `mypy --platform linux` next to the native run.

@@ -8,7 +8,7 @@ ENV := source scripts/env.sh
 .PHONY: tiles tiles-sample mock props uninstall osm sample aw-osm aw-sample aw-build aw-run aw-test aw-logs aw-screenshot aw-reset emulator-fast crash-logs test help setup setup-deps doctor emulator emulator-headless emulator-stop sign build install launch run apply lint logs screenshot layout clean
 
 help:
-	@echo "AccessWay - Krakow bez barier (HarmonyOS app in accessway/)"
+	@echo "EnableMe - Krakow bez barier (HarmonyOS app in accessway/)"
 	@echo ""
 	@echo "make setup-deps      apt-install qemu + JDK 17, then full setup (sudo)"
 	@echo "make setup           install oniro-app CLI, SDK (API 20), cmdtools, emulator; sign the app"

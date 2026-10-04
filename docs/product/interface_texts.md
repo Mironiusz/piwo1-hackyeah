@@ -23,7 +23,7 @@ The keys are proposals for the names the frontend uses in its two dictionaries. 
 
 - A date is a calendar day. Polish: `3.10.2026`. English: `3 Oct 2026`.
 - A distance under 1000 m is in metres: `400 m`. From 1000 m it is in kilometres with one decimal place: Polish `1,3 km`, English `1.3 km`.
-- The moment from which the next vote is accepted shows the day and the hour: Polish `4.10.2026 o 9:12`, English `4 Oct 2026 at 9:12`.
+- The day from which the next vote is accepted is a calendar day, in the format of a date: Polish `5.10.2026`, English `5 Oct 2026`.
 - A placeholder is written in braces, for example `{date}`.
 - Polish has three plural forms and English two. A text with a number names its forms in the order one, few, many for Polish and one, other for English.
 
@@ -87,6 +87,7 @@ A row of stairs with a known number of steps reads `Schody, {count.steps}` and `
 
 | Key                | Polish                      | English                  |
 | ------------------ | --------------------------- | ------------------------ |
+| `app.name`         | EnableMe                    | EnableMe                 |
 | `nav.map`          | Mapa                        | Map                      |
 | `nav.report`       | Zgłoś                       | Report                   |
 | `nav.needs`        | Potrzeby                    | Needs                    |
@@ -307,14 +308,14 @@ The names of the two languages are never translated: `Polski` and `English`. The
   - PL: Twój głos: już nie ma.
   - EN: Your vote: no longer here.
 - `vote.own.saved`
-  - PL: Zapisaliśmy go {date}. Kolejny głos na ten fakt będzie możliwy po upływie doby.
-  - EN: We saved it on {date}. You can vote on this fact again after a day has passed.
+  - PL: Zapisaliśmy go {date}. Kolejny głos na ten fakt będzie możliwy następnego dnia.
+  - EN: We saved it on {date}. You can vote on this fact again the next day.
 - `vote.saved`, announced after a vote
   - PL: Głos zapisany. Status: {status}.
   - EN: Vote saved. Status: {status}.
 - `vote.too_soon`, for the error `vote_too_soon`
-  - PL: Twój głos na ten fakt jest już zapisany. Kolejny będzie możliwy {moment}.
-  - EN: Your vote on this fact is already saved. The next one is possible on {moment}.
+  - PL: Twój głos na ten fakt jest już zapisany. Kolejny będzie możliwy od {day}.
+  - EN: Your vote on this fact is already saved. The next one is possible from {day}.
 - `fact.outdated`
   - PL: Ten fakt jest nieaktualny: przeważają zgłoszenia, że tego już nie ma. Jeśli nadal jest, potwierdź go.
   - EN: This fact is outdated: reports that it is gone prevail. If it is still here, confirm it.
@@ -487,12 +488,15 @@ The radii of an area are written the same in both languages: `10 m`, `25 m`, `50
 - `privacy.kept.vote`
   - PL: Identyfikator głosu bez konta. Nieodwracalny skrót adresu IP i cech przeglądarki, żeby odróżnić jedną osobę bez konta od drugiej. Do usunięcia dema i wszystkich jego danych 4 października 2026. To dane osobowe w postaci spseudonimizowanej, nie dane anonimowe.
   - EN: The identifier of a vote without an account. An irreversible digest of the IP address and of browser characteristics, to tell one person without an account from another. Until the demo and all its data are deleted on 4 October 2026. It is pseudonymized personal data, not anonymous data.
+- `privacy.kept.route_log`
+  - PL: Punkty zapytań o trasę, także Twojej bieżącej lokalizacji, w dzienniku usługi wyznaczania tras. Żeby w wersji demonstracyjnej dało się sprawdzić, jak działa wyznaczanie tras. Do usunięcia dema i wszystkich jego danych 4 października 2026.
+  - EN: The points of route requests, your current location among them, in the log of the route planning service. To check how route planning works in this demo. Until the demo and all its data are deleted on 4 October 2026.
 - `privacy.not_kept.needs`
   - PL: Twoich potrzeb. Zostają tylko na Twoim urządzeniu i nie są częścią konta.
   - EN: Your needs. They stay only on your device and are not part of the account.
 - `privacy.not_kept.location`
-  - PL: Bieżącej lokalizacji. Używamy jej tylko do wyznaczenia jednej trasy.
-  - EN: Your current location. We use it only to plan one route.
+  - PL: Bieżącej lokalizacji poza dziennikiem usługi wyznaczania tras. Używamy jej tylko do wyznaczenia jednej trasy.
+  - EN: Your current location, apart from the log of the route planning service. We use it only to plan one route.
 - `privacy.not_kept.email`
   - PL: Adresu e-mail. Nie pytamy o niego.
   - EN: An email address. We do not ask for one.
@@ -631,6 +635,75 @@ The radii of an area are written the same in both languages: `10 m`, `25 m`, `50
 
 The summary line of the route result has a text description of its stretches in order, built from the names of the segment states and the distances, for example `Start, 40 m brak danych, 600 m bez barier, dane pełne, bariera z potrzeb: wysoki krawężnik` and its English counterpart. It is the text form of the states (`docs/product/views.md`, V-5).
 
+## Texts added while the views were built
+
+The texts below did not stand in the mocks. They were written by the agents that built the views on 2026-10-04, by the rules of the wording above, for the states and the names the build needed, and they were not approved one by one. A key that ends with `_one`, `_few`, `_many` or `_other` is one plural form of a text with a number.
+
+| Key                          | Polish                                                                                                                              | English                                                                                                            |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `account.created`            | Konto jest założone. Zaloguj się.                                                                                                   | The account is created. Log in.                                                                                    |
+| `account.logged_out`         | Wylogowano na tym urządzeniu. Możesz zalogować się ponownie.                                                                        | You are logged out on this device. You can log in again.                                                           |
+| `action.close`               | Zamknij                                                                                                                             | Close                                                                                                              |
+| `data.sources.map.no_date`   | Dane mapy. Pochodzą z otwartej mapy tworzonej przez wolontariuszy. Przy każdym fakcie podajemy datę jego ostatniej zmiany na mapie. | Map data. They come from an open map made by volunteers. Every fact shows the date it was last changed on the map. |
+| `fact.area_row`              | Obszar: {type}, {radius} m                                                                                                          | Area: {type}, {radius} m                                                                                           |
+| `fact.marker`                | {name}, {status}                                                                                                                    | {name}, {status}                                                                                                   |
+| `fact.removed`               | Tego nie ma już w danych mapy.                                                                                                      | This is no longer in the map data.                                                                                 |
+| `fact.stairs_with_steps`     | Schody, {steps}                                                                                                                     | Stairs, {steps}                                                                                                    |
+| `fact.title`                 | Szczegóły faktu                                                                                                                     | Details of the fact                                                                                                |
+| `facts.failed`               | Nie udało się wczytać faktów. Mapa działa dalej.                                                                                    | The facts could not be loaded. The map still works.                                                                |
+| `facts.zoom_in`              | Przybliż mapę, żeby zobaczyć bariery i udogodnienia w okolicy.                                                                      | Zoom the map in to see the barriers and amenities of the area.                                                     |
+| `flag.failed`                | Nie udało się zgłosić treści do moderacji. Spróbuj ponownie.                                                                        | The content could not be passed to moderation. Try again.                                                          |
+| `flag.yes`                   | Tak, zgłoś                                                                                                                          | Yes, flag it                                                                                                       |
+| `language.en`                | English                                                                                                                             | English                                                                                                            |
+| `language.pl`                | Polski                                                                                                                              | Polski                                                                                                             |
+| `legend.markers`             | Legenda znaczników                                                                                                                  | Legend of the markers                                                                                              |
+| `legend.outdated`            | fakt nieaktualny                                                                                                                    | outdated fact                                                                                                      |
+| `legend.overruled`           | zgłoszenie sprzeczne z danymi mapy                                                                                                  | report the map data contradict                                                                                     |
+| `map.zoom_in`                | Przybliż mapę                                                                                                                       | Zoom the map in                                                                                                    |
+| `map.zoom_out`               | Oddal mapę                                                                                                                          | Zoom the map out                                                                                                   |
+| `moderation.hide.done`       | Ukryto: {title}. Możesz to przywrócić na liście ukrytych.                                                                           | Hidden: {title}. You can restore it in the list of hidden content.                                                 |
+| `moderation.restore.done`    | Przywrócono: {title}. Jest znowu widoczne dla wszystkich.                                                                           | Restored: {title}. Everyone can see it again.                                                                      |
+| `needs.empty`                | Bez żadnej zaznaczonej pozycji mapa pokaże wszystkie fakty.                                                                         | With no item marked the map shows every fact.                                                                      |
+| `needs.preset.applied`       | Ustawiono zestaw: {barriers}, {amenities}.                                                                                          | The set was applied: {barriers}, {amenities}.                                                                      |
+| `notfound.title`             | Nie ma takiej strony.                                                                                                               | There is no such page.                                                                                             |
+| `pick.title.destination`     | Cel: wskaż punkt na mapie                                                                                                           | Destination: pick a point on the map                                                                               |
+| `pick.title.start`           | Start: wskaż punkt na mapie                                                                                                         | Start: pick a point on the map                                                                                     |
+| `plan.clear`                 | Usuń punkt                                                                                                                          | Clear the point                                                                                                    |
+| `plan.locating`              | Czekamy na lokalizację z urządzenia.                                                                                                | Waiting for the location of the device.                                                                            |
+| `plan.not_set`               | nie ustawiono                                                                                                                       | not set                                                                                                            |
+| `report.area.radius.missing` | Wybierz promień obszaru.                                                                                                            | Choose the radius of the area.                                                                                     |
+| `report.existing.checking`   | Sprawdzamy, czy to jest już zgłoszone.                                                                                              | Checking whether this is already reported.                                                                         |
+| `report.map.existing`        | Mapa z punktem zgłoszenia i faktami w pobliżu                                                                                       | Map with the point of the report and the facts nearby                                                              |
+| `report.map.plain`           | Mapa okolicy                                                                                                                        | Map of the area                                                                                                    |
+| `report.map.point`           | Mapa z punktem zgłoszenia                                                                                                           | Map with the point of the report                                                                                   |
+| `report.map.saved`           | Mapa z nowym zgłoszeniem                                                                                                            | Map with the new report                                                                                            |
+| `report.marker.point`        | Punkt zgłoszenia                                                                                                                    | Point of the report                                                                                                |
+| `report.point.located`       | Mapa pokazuje teraz okolicę urządzenia. Ustaw znacznik na zgłaszanym miejscu i wybierz Ustaw ten punkt.                             | The map now shows the area around the device. Put the marker on the place you report and choose Set this point.    |
+| `report.point.no_map`        | Nie możemy odczytać punktu z mapy. Odśwież stronę i spróbuj ponownie.                                                               | We cannot read the point from the map. Reload the page and try again.                                              |
+| `report.point.no_map.area`   | Nie możemy odczytać punktu z mapy. Wyszukaj adres i wybierz wynik z listy.                                                          | We cannot read the point from the map. Search for an address and pick a result from the list.                      |
+| `report.point.to_map`        | Przejdź do mapy                                                                                                                     | Go to the map                                                                                                      |
+| `report.saving`              | Zapisujemy zgłoszenie.                                                                                                              | Saving the report.                                                                                                 |
+| `report.search.picked`       | Wybrane miejsce: {label}. Żeby przejść dalej, wybierz Ustaw ten punkt.                                                              | Picked place: {label}. To go on, choose Set this point.                                                            |
+| `report.steps.invalid`       | Wpisz liczbę stopni od 1 do 999 albo zostaw pole puste.                                                                             | Enter a number of steps from 1 to 999 or leave the field empty.                                                    |
+| `report.type.missing`        | Wybierz typ z listy.                                                                                                                | Choose a type from the list.                                                                                       |
+| `route.end.destination`      | Cel trasy                                                                                                                           | Destination of the route                                                                                           |
+| `route.end.start`            | Start trasy                                                                                                                         | Start of the route                                                                                                 |
+| `route.failed`               | Nie udało się wyznaczyć trasy ponownie.                                                                                             | The route could not be planned again.                                                                              |
+| `route.no_route`             | Nie ma jeszcze trasy. Ustaw start i cel.                                                                                            | There is no route yet. Set the start and the destination.                                                          |
+| `route.summary.destination`  | Cel                                                                                                                                 | Destination                                                                                                        |
+| `route.summary.not_assessed` | Trasa bez oceny odcinków, {distance}.                                                                                               | A route whose stretches are not assessed, {distance}.                                                              |
+| `route.summary.start`        | Start                                                                                                                               | Start                                                                                                              |
+| `route.summary.stretch`      | {distance} {state}                                                                                                                  | {distance} {state}                                                                                                 |
+| `route.summary.text`         | Odcinki trasy po kolei: {stretches}.                                                                                                | The stretches of the route in order: {stretches}.                                                                  |
+| `route.title`                | Trasa                                                                                                                               | Route                                                                                                              |
+| `search.searching`           | Szukamy.                                                                                                                            | Searching.                                                                                                         |
+| `segment.short.barrier`      | bariera                                                                                                                             | barrier                                                                                                            |
+| `segment.short.no_barrier`   | bez barier                                                                                                                          | no barriers                                                                                                        |
+| `segment.short.no_data`      | brak danych                                                                                                                         | no data                                                                                                            |
+| `segment.short.partial_data` | dane niepełne                                                                                                                       | partial data                                                                                                       |
+| `vote.failed`                | Nie udało się zapisać głosu. Nic się nie zmieniło. Spróbuj ponownie.                                                                | The vote could not be saved. Nothing changed. Try again.                                                           |
+| `vote.saving`                | Zapisujemy głos.                                                                                                                    | We are saving your vote.                                                                                           |
+
 ## Decisions behind the texts
 
 Decided by the user, the frontend person of the team, on 2026-10-04:
@@ -640,10 +713,10 @@ Decided by the user, the frontend person of the team, on 2026-10-04:
 3. The check for existing facts asks one general question for every type, in place of a question that names the type.
 4. A user fact shows one date, labelled as its last confirmation, because the programming interface gives one date for it. The label of a day of reporting is not used.
 5. An English date is written as `3 Oct 2026`, and the amenity is called an elevator, as in the specification.
+6. The name of the product is EnableMe, written the same in both languages. Decided by the team, as Adrian reported on 2026-10-04.
 
 The mocks in `.impeccable/briefs/views/` were brought in line with these decisions on the same day.
 
 ## What stays open
 
 - The single texts are working copy until the views are built: the frontend person decided the rules and the choices above and did not approve the texts one by one.
-- The name of the product, which the header shows.

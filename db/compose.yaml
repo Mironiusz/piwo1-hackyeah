@@ -1,0 +1,64 @@
+name: accessibility-db-local
+
+services:
+  database:
+    build:
+      context: ./image
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_USER: ${DB_BOOTSTRAP_NAME:?Set DB_BOOTSTRAP_NAME}
+      POSTGRES_PASSWORD: ${DB_BOOTSTRAP_PASSWORD:?Set DB_BOOTSTRAP_PASSWORD}
+      DB_NAME: ${DB_NAME:?Set DB_NAME}
+      DB_SCHEMA_OWNER_NAME: ${DB_SCHEMA_OWNER_NAME:?Set DB_SCHEMA_OWNER_NAME}
+      DB_SCHEMA_OWNER_PASSWORD: ${DB_SCHEMA_OWNER_PASSWORD:?Set DB_SCHEMA_OWNER_PASSWORD}
+      DB_SERVICE_ACCOUNT_NAME: ${DB_SERVICE_ACCOUNT_NAME:?Set DB_SERVICE_ACCOUNT_NAME}
+      DB_SERVICE_ACCOUNT_PASSWORD: ${DB_SERVICE_ACCOUNT_PASSWORD:?Set DB_SERVICE_ACCOUNT_PASSWORD}
+    ports:
+      - "127.0.0.1:${DB_HOST_PORT:?Set DB_HOST_PORT}:5432"
+    tmpfs:
+      - /var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --username \"$$POSTGRES_USER\" --dbname \"$$DB_NAME\""]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  migrate:
+    profiles: ["migrate"]
+    build:
+      context: .
+      dockerfile: image/Dockerfile.tools
+    environment:
+      DB_ENVIRONMENT: local
+      DB_HOST: database
+      DB_PORT: "5432"
+      DB_NAME: ${DB_NAME:?Set DB_NAME}
+      DB_SCHEMA_OWNER_NAME: ${DB_SCHEMA_OWNER_NAME:?Set DB_SCHEMA_OWNER_NAME}
+      DB_SCHEMA_OWNER_PASSWORD: ${DB_SCHEMA_OWNER_PASSWORD:?Set DB_SCHEMA_OWNER_PASSWORD}
+      DB_SERVICE_ACCOUNT_NAME: ${DB_SERVICE_ACCOUNT_NAME:?Set DB_SERVICE_ACCOUNT_NAME}
+    volumes:
+      - ./:/repo/db:ro
+    depends_on:
+      database:
+        condition: service_healthy
+    command: ["alembic", "-c", "/repo/db/alembic.ini", "upgrade", "head"]
+
+  test:
+    profiles: ["test"]
+    build:
+      context: .
+      dockerfile: image/Dockerfile.tools
+    environment:
+      DB_ENVIRONMENT: local
+      DB_HOST: database
+      DB_PORT: "5432"
+      DB_NAME: ${DB_NAME:?Set DB_NAME}
+      DB_SERVICE_ACCOUNT_NAME: ${DB_SERVICE_ACCOUNT_NAME:?Set DB_SERVICE_ACCOUNT_NAME}
+      DB_SERVICE_ACCOUNT_PASSWORD: ${DB_SERVICE_ACCOUNT_PASSWORD:?Set DB_SERVICE_ACCOUNT_PASSWORD}
+    volumes:
+      - ./:/repo/db:ro
+      - ../docs/product/schema.md:/repo/docs/product/schema.md:ro
+    depends_on:
+      database:
+        condition: service_healthy
+    command: ["pytest", "/repo/db/tests"]

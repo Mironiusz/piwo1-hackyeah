@@ -1,5 +1,5 @@
 """
-Mock of the host of the project for AccessWay, standard library only: the programming interface and the map.
+Mock of the host of the project for EnableMe, standard library only: the programming interface and the map.
 
 The documents of the project decide one host that serves the programming interface of
 `docs/product/api_contract.md` under `/api` and one PMTiles archive of Kraków read by every client in byte ranges

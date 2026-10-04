@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Agent rules for this repository. HackYeah 2026, challenge "Kraków bez barier": **AccessWay** (walking routes in Kraków rated against the user's needs, facts about barriers and amenities, community reports and votes; see README.md and docs/ARCHITECTURE.md) - an OpenHarmony app (ArkTS + ArkUI, Stage model) in `accessway/`, API 20, built and run on Linux with the Oniro toolchain. The screens follow the team mock-ups "Widoki MVP: makiety"; product rules come from the piwo1-hackyeah repository.
+Agent rules for this repository. HackYeah 2026, challenge "Kraków bez barier": **EnableMe** (walking routes in Kraków rated against the user's needs, facts about barriers and amenities, community reports and votes; see README.md and docs/ARCHITECTURE.md) - an OpenHarmony app (ArkTS + ArkUI, Stage model) in `accessway/`, API 20, built and run on Linux with the Oniro toolchain. The screens follow the team mock-ups "Widoki MVP: makiety"; product rules come from the piwo1-hackyeah repository.
 
 ## Communication
 
@@ -37,4 +37,4 @@ Agent rules for this repository. HackYeah 2026, challenge "Kraków bez barier": 
 3. Short recorded demo (emulator is fine).
 4. `docs/ARCHITECTURE.md` - concise architecture and implementation description.
 5. `AI_WORKFLOW.md` - update it whenever an AI tool, important prompt or decision is used.
-6. If the app gets AI features: model, inference flow, data handling, limitations, validation, privacy (AccessWay has none today).
+6. If the app gets AI features: model, inference flow, data handling, limitations, validation, privacy (EnableMe has none today).

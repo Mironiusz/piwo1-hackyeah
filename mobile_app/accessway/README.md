@@ -1,4 +1,4 @@
-# EnableMe (AccessWay) - Kraków bez barier (HarmonyOS app)
+# EnableMe - Kraków bez barier (HarmonyOS app)
 
 An app for the "Kraków bez barier" challenge (HackYeah 2026). For now it runs entirely on the device: the pedestrian network, routes, segment assessment, reports, votes and accounts are all computed locally, and the data layer is ready to be connected to the team's API.
 

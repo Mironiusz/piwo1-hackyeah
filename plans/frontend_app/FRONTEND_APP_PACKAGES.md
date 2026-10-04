@@ -39,14 +39,14 @@ Scope:
 - The gates: `frontend/.oxlintrc.json` with the rule groups `react`, `jsx-a11y` and `typescript`, the `make` targets of the three gates run from `frontend/`, and the extension of `tests/architecture/test_prose_style.py` to the files `.ts`, `.tsx`, `.css`, `.html` and `.json` under `frontend/`.
 - `frontend/src/styles/tokens.css`: the tokens of `.impeccable/briefs/views/app.css`, and the styles of the shared parts taken over from the same file.
 - `frontend/src/i18n/pl.ts`, `frontend/src/i18n/en.ts` and `frontend/src/i18n/index.ts`: the two dictionaries of `docs/product/interface_texts.md`, the language taken from the settings of the browser, the switch, the choice remembered on the device, and the plural forms of both languages.
-- `frontend/src/format/`: the formats of a day, a distance and the moment of the next vote.
+- `frontend/src/format/`: the formats of a day, a distance and the day of the next vote.
 - `frontend/src/api/types.ts`: the types of the contract, written by hand from `docs/product/api_contract.md` until the backend code exists and its OpenAPI description can generate them.
 - `frontend/src/api/client.ts`: one function for each operation of the contract, named after it: `planRoute`, `searchAddress`, `readOsmCopy`, `listFactsInArea`, `readFact`, `findNearbyFacts`, `createFact`, `castVote`, `flagFact`, `createAccount`, `logIn`, `readOwnAccount`, `deleteOwnAccount`, `listFlaggedFacts`, `hideFact`, `restoreFact`.
 - `frontend/src/api/http.ts`: the implementation over the service, on the origin of the page with the prefix `/api`, with the session token in the header, the renewed token of every answer and the error codes of the contract turned into one error type.
 - `frontend/src/api/fixtures.ts` with `frontend/src/api/fixtures/`: the implementation over sample data of the district of the Tauron Arena, in the shapes of the contract, used only by the tests and by a development run before the service exists. Every fact in it is marked as sample data, and it is never part of the build of the demo (`docs/product/views.md`, decision 16).
 - `frontend/src/state/session.ts`: the token in the storage of the browser, logging out, and the refusal `session_expired`, which logs the person out with a message.
 - `frontend/src/state/needs.ts`: the needs kept on the device, the three presets as actions, the first opening.
-- `frontend/src/state/ownVotes.ts`: the own vote of a person on a fact and the moment the next vote is possible, kept on the device.
+- `frontend/src/state/ownVotes.ts`: the own vote of a person on a fact and the day from which the next vote is possible, the next calendar day in Europe/Warsaw, kept on the device.
 - `frontend/src/shell/`: the header, the bottom bar with Map, Report and Needs, the menu, and the navigation between the views with React Router, through the address of the page, so that the back button of the browser works.
 - `frontend/src/parts/`: the shared parts of the system sheet - the list row, the status mark, the source with its date, the sample data mark, the note, the button, the field, the switch, the panel over the map and the legend.
 - `frontend/src/map/MapView.tsx` with `style.ts` and `layers.ts`: the one map, the tile archive read through the protocol of `pmtiles`, the style of the Protomaps package with the colors of the direction and the labels in the language of the interface, the attribution always open, the keyboard focus able to leave the map, the markers as buttons and one line layer with its own dash pattern for each segment state.
@@ -62,7 +62,7 @@ Package A1, the map of facts and the fact detail (V-3, V-6, V-9):
 
 - Views: `frontend/src/views/FactsMap.tsx` with the list of the visible area and the switch between the facts of the needs and all facts; `frontend/src/views/FactDetail.tsx` as a panel over the map.
 - Operations: `listFactsInArea`, `readFact`, `castVote`, `flagFact`, `readOsmCopy`.
-- States beyond the mocks: no fact in the area; more facts than the service returns, with the request to zoom in; the needs without any item, with the switch inactive; an outdated fact, with its status, its muted marker and both votes; a fact that is no longer available; a vote refused because a day has not passed; the flag unavailable for a fact from map data.
+- States beyond the mocks: no fact in the area; more facts than the service returns, with the request to zoom in; the needs without any item, with the switch inactive; an outdated fact, with its status, its muted marker and both votes; a fact that is no longer available; a vote refused because the person already voted on the same day; the flag unavailable for a fact from map data.
 - Mocks: `MapFacts`, `FactDetail`, `FactVoted`, `FactContradiction`.
 
 Package A2, route planning and the address search (V-4, V-8):

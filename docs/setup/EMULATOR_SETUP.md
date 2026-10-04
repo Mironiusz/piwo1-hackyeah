@@ -81,7 +81,7 @@ source scripts/env.sh && oniro devices          # should list one device
 # manual fallback: ~/command-line-tools/sdk/default/openharmony/toolchains/hdc tconn 127.0.0.1:55555
 ```
 
-### 4. Build, install and run AccessWay
+### 4. Build, install and run EnableMe
 
 ```bash
 make run         # build signed .hap, install, launch
@@ -194,7 +194,7 @@ against the contract.
 
 ## Known behaviour of the emulator
 
-- No GPU: rendering uses software OpenGL (llvmpipe; softpipe without KVM, see below). AccessWay draws its maps with Canvas for this reason;
+- No GPU: rendering uses software OpenGL (llvmpipe; softpipe without KVM, see below). EnableMe draws its maps with Canvas for this reason;
   ArkGraphics 3D scenes may crash on the emulator.
 - No GPS: "My location" ("Moja lokalizacja") shows an error message on the emulator. Use the address search or
   "Point on the map" ("Punkt na mapie") instead.

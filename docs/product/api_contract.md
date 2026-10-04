@@ -1,6 +1,6 @@
 # Programming interface contract
 
-Document state: 2026-10-04, approved by the user in place of Kuber and Adrian, whose confirmation is still to be obtained; the pseudonym rule is aligned with specification M9 by `plans/accounts/ACCOUNTS_SHAPE.md`
+Document state: 2026-10-04, approved by the user in place of Kuber and Adrian, whose confirmation is still to be obtained; the pseudonym rule is aligned with specification M9 by `plans/accounts/ACCOUNTS_SHAPE.md`, its letters made explicit and a lone surrogate refused by Kuba on 2026-10-04 for `plans/accounts/` (`ACCOUNTS_PLAN.md` D-3, `ACCOUNTS_REVIEW.md`), with the confirmation of Adrian still to be obtained, and `cast_vote` changed on 2026-10-04 with version 13 of `docs/product/specification.md`; `plan_route` changed on 2026-10-04 by `plans/route_planning/` with the state `not_assessed` and the refusal `point_outside_krakow`, to be confirmed by Kuber and Adrian
 
 ## Why this document exists
 
@@ -177,8 +177,8 @@ A route:
 ```
 
 - `segments` - the segments in order from the start, the straight stretches between a chosen point and the pedestrian network included (M2).
-- `state` - `barrier`, `no_barrier`, `partial_data` or `no_data`, the four states of M7, decided by the service. The client draws each with its own color and its own icon or line pattern.
-- `missing_attributes` - for a segment in `partial_data` or `no_data`, the attributes behind the barriers of the profile that are not known, from `kerbs`, `surface`, `incline`, `width` and `steps`, in this order; empty in the other states (M7, M8).
+- `state` - `barrier`, `no_barrier`, `partial_data` or `no_data`, the four states of M7, decided by the service; or `not_assessed` for every segment, the straight stretches included, when `avoid` is empty, and in no other case (M1, M7). The client draws each with its own color and its own icon or line pattern.
+- `missing_attributes` - for a segment in `partial_data` or `no_data`, the attributes behind the barriers of the profile that are not known, from `kerbs`, `surface`, `incline`, `width` and `steps`, in this order; empty in the other states, and empty for `not_assessed` (M7, M8).
 - `is_marked_wheelchair_no` - `true` when OpenStreetMap marks the way as not accessible for wheelchairs; the list then says so (M7, M8).
 - `profile_barriers`, `additional_barriers` and `amenities` - the three groups of the list for the route (M8), each in order along the route: the barriers of the profile on the route, the barriers outside the profile on the route, and the amenities of the profile within 50 m of the route. Only `profile_barriers` and `amenities` appear on the map (M7).
 
@@ -193,9 +193,14 @@ A route fact is a fact with two more fields:
 
 Errors:
 
-| Status | `code`                | When                                                                                              |
-| ------ | --------------------- | ------------------------------------------------------------------------------------------------- |
-| 503    | `routing_unavailable` | No route can be computed right now (M10). The response carries no route, and no route is guessed. |
+| Status | `code`                 | When                                                                                                                                                                                             |
+| ------ | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 422    | `point_outside_krakow` | The start or the destination lies outside the administrative boundary of Kraków of the copy in use (M2); `points` lists `start`, `destination` or both, in this order, and no route is computed. |
+| 503    | `routing_unavailable`  | No route can be computed right now (M10). The response carries no route, and no route is guessed.                                                                                                |
+
+```json
+{ "error": { "code": "point_outside_krakow", "points": ["start"] } }
+```
 
 ## Address search
 
@@ -351,15 +356,15 @@ The fact with its status after the vote.
 
 Errors:
 
-| Status | `code`          | When                                                                                                                                    |
-| ------ | --------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| 409    | `vote_too_soon` | The same person voted on this fact less than a day ago (M4); `repeat_allowed_at` is the instant from which their next vote is accepted. |
+| Status | `code`          | When                                                                                                                                                                                                      |
+| ------ | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 409    | `vote_too_soon` | The same person already voted on this fact on the same calendar day in Europe/Warsaw (M4); `repeat_allowed_at` is the start of the next calendar day, the instant from which their next vote is accepted. |
 
 ```json
-{ "error": { "code": "vote_too_soon", "repeat_allowed_at": "2026-10-04T09:12:44.120+02:00" } }
+{ "error": { "code": "vote_too_soon", "repeat_allowed_at": "2026-10-05T00:00:00.000+02:00" } }
 ```
 
-A vote repeated because its response was lost is refused in the same way, so a vote never counts twice. A hidden fact cannot be voted on and answers `fact_not_found` (M11).
+A vote repeated because its response was lost is refused in the same way when it arrives on the same calendar day; repeated after midnight it is accepted as a new vote, which adds no weight, because only the latest vote of a person counts. A hidden fact cannot be voted on and answers `fact_not_found` (M11).
 
 ### flag_fact
 
@@ -385,9 +390,9 @@ Request:
 { "pseudonym": "Wózek_KRK", "password": "five or more characters" }
 ```
 
-- `pseudonym` - leading and trailing spaces are removed, then it has 3 to 30 characters: letters, the Polish ones included, digits, the underscore and the hyphen; it is kept as it is after the trim, and it is unique without regard to letter case (M9).
+- `pseudonym` - leading and trailing spaces are removed, then it has 3 to 30 characters: letters, the Polish ones included, digits, the underscore and the hyphen; it is kept as it is after the trim, and it is unique without regard to letter case (M9). The letters are the 26 Latin letters and the nine Polish letters `ąćęłńóśźż`, each in both cases, and the digits are `0` - `9`; any other character, a letter of another alphabet or a decomposed Polish letter included, is refused.
 - `password` - 5 to 128 characters, all accepted: printable ASCII, spaces and Unicode, with no rule of composition (M9).
-- A character is a Unicode code point.
+- A character is a Unicode code point. A pseudonym or a password holding a lone surrogate, which no text in UTF-8 can carry, is refused with `invalid_request` and its field.
 
 Response `201`:
 
