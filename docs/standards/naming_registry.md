@@ -119,6 +119,9 @@ Every object the first revision `db/accessibility_db/migrations/versions/0001_ta
 - `test_<what it checks>` in a file `db/tests/test_<subject>.py`; a file that touches the database carries `pytestmark = pytest.mark.critical`.
 - `service_engine`, `service_connection`, `stored_fact_id` - the fixtures of `db/tests/conftest.py`.
 - `test_<what it checks>` in a file `tests/service/test_<subject>_cases.py` - the scenario tests of the rules layer, first `test_account_rules_cases.py`, `test_passwords_cases.py` and `test_session_tokens_cases.py`.
+- `schema_owner_engine` - the backend-owned local owner fixture required by `tests/conftest.py`; its delivery contract is `plans/sample_data/SAMPLE_DATA_BACKEND_HANDOFF.md`.
+- `database_cleanup_registry` - the shared exact-key cleanup fixture in `tests/conftest.py`.
+- `sample_critical_dataset` - the invented sample-network fixture in `tests/data/conftest.py`.
 
 ## Names of the backend foundation
 
@@ -212,3 +215,9 @@ The names of `plans_finished/accounts/`, the four account operations and the one
 - `data/accounts.py`: `StoredAccount`, `apply_account_insert`, `fetch_account_by_id`, `fetch_account_by_pseudonym`, `apply_account_delete`, `build_stored_account` and the statements `APPLY_ACCOUNT_INSERT_SQL`, `FETCH_ACCOUNT_SQL`, `FETCH_ACCOUNT_BY_ID_SQL`, `FETCH_ACCOUNT_BY_PSEUDONYM_SQL` and `APPLY_ACCOUNT_DELETE_SQL`.
 - `tests/conftest.py`: the fixture `stored_account_cleanup`, which deletes the accounts a critical test registered before committing them.
 - `SESSION_SIGNING_KEY`: the environment entry of the key that signs session tokens, with `SESSION_SIGNING_KEY_MIN_LENGTH` in `config/settings.py`.
+
+## Sample-loading interface
+
+`service.sample_data.apply_sample_data` is the no-argument administrative provider. Its shared records live in `common_sample_data.py`. `SampleDataFailure` is the public alias of `SampleDataError`; the alias preserves the approved provider contract while the class follows exception naming conventions.
+
+The sample definitions reserve `fact.id` -1 through -4. Ordinary facts keep generated identifiers, and sample retries never reallocate or overwrite these identifiers. This convention is documented in `docs/data/sample_data.md`.

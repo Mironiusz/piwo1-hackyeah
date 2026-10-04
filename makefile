@@ -66,13 +66,13 @@ security:
 	python -m bandit -r config -x config/settings.py --confidence-level medium
 # Settings B105 reports environment filenames as passwords, not credential literals.
 	python -m bandit config/settings.py -s B105 --confidence-level medium
-	python -m bandit -r api worker common_time.py --confidence-level medium
+	python -m bandit -r api worker common_time.py common_sample_data.py --confidence-level medium
 	python -m bandit -r data -x data/import_process.py,data/windows_job.py --confidence-level medium
 # The process supervisor accepts an absolute executable from the trusted administrative caller, with shell=False and suppressed output.
 	python -m bandit data/import_process.py -s B404,B603 --confidence-level medium
 # The Windows supervisor uses subprocess only to encode argv for CreateProcessW; no shell is involved.
 	python -m bandit data/windows_job.py -s B404 --confidence-level medium
-	python -m bandit -r config api data worker common_time.py -t B608
+	python -m bandit -r config api data worker common_time.py common_sample_data.py -t B608
 # The start script of the routing service runs in its own container: it reads the defaults of valhalla_build_config through
 # subprocess and replaces itself with valhalla_service, both with an argument list of constants, without a shell, by the name
 # from PATH of the routing image.
