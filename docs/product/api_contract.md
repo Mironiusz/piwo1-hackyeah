@@ -1,6 +1,6 @@
 # Programming interface contract
 
-Document state: 2026-10-04, approved by the user in place of Kuber and Adrian, whose confirmation is still to be obtained; the pseudonym rule is aligned with specification M9 by `plans/accounts/ACCOUNTS_SHAPE.md`, its letters made explicit and a lone surrogate refused by Kuba on 2026-10-04 for `plans/accounts/` (`ACCOUNTS_PLAN.md` D-3, `ACCOUNTS_REVIEW.md`), with the confirmation of Adrian still to be obtained, and `cast_vote` changed on 2026-10-04 with version 13 of `docs/product/specification.md`; `plan_route` changed on 2026-10-04 by `plans/route_planning/` with the state `not_assessed` and the refusal `point_outside_krakow`, to be confirmed by Kuber and Adrian
+Document state: 2026-10-04, approved by the user in place of Kuber and Adrian, whose confirmation is still to be obtained; the pseudonym rule is aligned with specification M9 by `plans/accounts/ACCOUNTS_SHAPE.md`, its letters made explicit and a lone surrogate refused by Kuba on 2026-10-04 for `plans/accounts/` (`ACCOUNTS_PLAN.md` D-3, `ACCOUNTS_REVIEW.md`), with the confirmation of Adrian still to be obtained, and `cast_vote` changed on 2026-10-04 with version 13 of `docs/product/specification.md`; `plan_route` changed on 2026-10-04 by `plans/route_planning/` with the state `not_assessed` and the refusal `point_outside_krakow`, to be confirmed by Kuber and Adrian; `find_nearby_facts` changed on 2026-10-04 with version 17 of the specification to exclude facts removed in OpenStreetMap, approved by the user with Kuber and Adrian's confirmation still outstanding; the identifying inputs for anonymous votes and reports are aligned with version 18 of the specification, with Kuber and Adrian's confirmation still outstanding
 
 ## Why this document exists
 
@@ -31,7 +31,7 @@ The behavior behind the operations is that of `docs/product/specification.md`, w
 - A request whose token is malformed, wrongly signed, expired or of an account that no longer exists is refused with `session_expired` and is never handled as a request of a person without an account (M9). The client then deletes its token, tells the person they are logged out and lets them repeat the action.
 - `plan_route`, `search_address`, `create_account` and `log_in` take no token: the client does not send the header `Authorization` with them, and the service ignores it there and renews nothing (M2, M9).
 - A moderator operation needs a valid token of an account that holds the moderator role at the moment of the request; the role is read again on every such request (M11).
-- For a vote or a report without an account the service derives the identifier of the person from the request itself (M9). The client sends nothing for it, and no response carries it.
+- For a vote or a report without an account the service derives the identifier from the IP address and User-Agent header of the request only (M9). Identical pairs share the daily vote limit and one identity for the latest-vote status rule. The client sends no additional identifier, and no response carries it.
 
 ## Request logs and failures
 
@@ -296,7 +296,7 @@ Response `200`:
 { "facts": [{ "fact": { "...": "a fact" }, "distance_m": 8 }] }
 ```
 
-The facts of the same type within 15 m of the point, OpenStreetMap facts included and hidden ones left out, nearest first (M3). The client asks whether the report is one of them: yes is `cast_vote` with `confirm` on that fact, no is `create_fact`. The service merges nothing.
+The facts of the same type within 15 m of the point, OpenStreetMap facts and ordinary outdated facts included, hidden facts and facts outdated because they were removed in OpenStreetMap left out, nearest first (M3). The client asks whether the report is one of them: yes is `cast_vote` with `confirm` on that fact, no is `create_fact`. The service merges nothing.
 
 ### create_fact
 
