@@ -53,7 +53,7 @@ FROM fact
 WHERE id = ANY(CAST(:sample_ids AS bigint[]))
 """
 
-SELECT_SAMPLE_VOTES_SQL = """
+SELECT_INITIAL_SAMPLE_VOTES_SQL = """
 SELECT v.fact_id, v.verdict, v.is_cast_with_account, v.account_id, v.voter_hash,
        v.cast_at, v.cast_at_utc_offset_minutes
 FROM vote AS v
@@ -84,7 +84,7 @@ ON CONFLICT (id) DO NOTHING
 RETURNING id
 """
 
-INSERT_SAMPLE_VOTES_SQL = """
+INSERT_INITIAL_SAMPLE_VOTES_SQL = """
 INSERT INTO vote (fact_id, verdict, is_cast_with_account, account_id, voter_hash, cast_at, cast_at_utc_offset_minutes)
 SELECT v.fact_id, CAST(v.verdict AS vote_verdict), false, NULL, decode(v.voter_hash_hex, 'hex'), v.cast_at, v.cast_at_utc_offset_minutes
 FROM jsonb_to_recordset(CAST(:votes AS jsonb))
@@ -146,7 +146,7 @@ def build_sample_voters(definitions: Sequence[SampleDefinition]) -> str:
 
 def fetch_sample_votes(connection: Connection, definitions: Sequence[SampleDefinition]) -> dict[int, tuple[StoredSampleVote, ...]]:
     """Reads every stored vote cast under a defined fictional voter identity, and no other vote."""
-    rows = connection.execute(text(SELECT_SAMPLE_VOTES_SQL), {"voters": build_sample_voters(definitions)}).mappings()
+    rows = connection.execute(text(SELECT_INITIAL_SAMPLE_VOTES_SQL), {"voters": build_sample_voters(definitions)}).mappings()
     votes: dict[int, tuple[StoredSampleVote, ...]] = {}
     for row in rows:
         vote = StoredSampleVote(
@@ -200,7 +200,7 @@ def apply_sample_inserts(connection: Connection, fact_rows: Sequence[SampleFactR
     inserted_ids = tuple(row.definition.fact_id for row in fact_rows if row.definition.fact_id in returned_ids)
     inserted_votes = [row for row in vote_rows if row.fact_id in returned_ids]
     if inserted_votes:
-        voted_ids: list[int] = list(connection.execute(text(INSERT_SAMPLE_VOTES_SQL), {"votes": build_sample_vote_payload(inserted_votes)}).scalars())
+        voted_ids: list[int] = list(connection.execute(text(INSERT_INITIAL_SAMPLE_VOTES_SQL), {"votes": build_sample_vote_payload(inserted_votes)}).scalars())
         if len(voted_ids) != len(inserted_votes):
             raise SampleDataFailure(SampleFailureReason.INITIAL_VOTE_INVALID)
     return inserted_ids

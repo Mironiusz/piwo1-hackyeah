@@ -17,15 +17,15 @@ Document state: 2026-10-04
 
 An initiative waits for another when one of its checks waits for a check of the other; its stage is one more than the highest stage of the initiatives it waits for, and 1 when it waits for none, so the initiatives of one stage never wait for each other and can be carried out in parallel. Each initiative holds its stage in its `STAGE.md`.
 
-| Stage | Initiatives                                                                                     | Waits for, at the stage below                                        |
-| ----- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| 1     | `backend_skeleton`, `schema_first_revision`, `stage1_clarifications`, `final_checklist`         | Nothing.                                                             |
-| 2     | `address_search`, `accounts`, `osm_importer`, `community_facts`                                 | `backend_skeleton`, `schema_first_revision`.                         |
-| 3     | `osm_import`, `route_planning`, `community_facts_api`                                           | `osm_importer`, `accounts`, `community_facts`.                       |
-| 4     | `sample_data`, `map_tiles`, `frontend_app`, `public_transport_routing`, `stage5_harmonyos_port` | `osm_import`, `route_planning`, `community_facts_api`.               |
-| 5     | `deployment_config`, `stage6_official_requirements`                                             | `sample_data`, `map_tiles`, `frontend_app`, `stage5_harmonyos_port`. |
-| 6     | `stage7_demo_scenario`, `repository_consistency`                                                | `deployment_config`, `stage6_official_requirements`.                 |
-| 7     | `stage8_materials_and_pitch`                                                                    | `stage7_demo_scenario`.                                              |
+| Stage | Initiatives                                                                                                     | Waits for, at the stage below                                                        |
+| ----- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| 1     | `backend_skeleton`, `schema_first_revision`, `stage1_clarifications`, `final_checklist`                         | Nothing.                                                                             |
+| 2     | `address_search`, `accounts`, `osm_importer`, `community_facts`                                                 | `backend_skeleton`, `schema_first_revision`.                                         |
+| 3     | `osm_import`, `route_planning`, `community_facts_api`                                                           | `osm_importer`, `accounts`, `community_facts`.                                       |
+| 4     | `sample_data`, `map_tiles`, `tile_loading`, `frontend_app`, `public_transport_routing`, `stage5_harmonyos_port` | `osm_import`, `route_planning`, `community_facts_api`.                               |
+| 5     | `deployment_config`, `stage6_official_requirements`                                                             | `sample_data`, `map_tiles`, `tile_loading`, `frontend_app`, `stage5_harmonyos_port`. |
+| 6     | `stage7_demo_scenario`, `repository_consistency`                                                                | `deployment_config`, `stage6_official_requirements`.                                 |
+| 7     | `stage8_materials_and_pitch`                                                                                    | `stage7_demo_scenario`.                                                              |
 
 ## Set 1. Clarifications and housekeeping
 
@@ -79,7 +79,7 @@ Initiatives: `backend_skeleton`, `schema_first_revision`, `accounts`, `address_s
 
 ## Set 3. Open data
 
-Initiatives: `osm_importer`, `osm_import`, `sample_data`, and the loading step of `map_tiles`.
+Initiatives: `osm_importer`, `osm_import`, `sample_data` and `tile_loading`.
 
 - [ ] 3.1 `osm_importer`
   - Done when: The copy of the OpenStreetMap data of Kraków is imported with the barriers and amenities of D-5, and the walking data of the routing engine are prepared from it, as `plans_finished/osm_importer/` decides.
@@ -93,7 +93,7 @@ Initiatives: `osm_importer`, `osm_import`, `sample_data`, and the loading step o
   - Done when: The sample reports and geozones of the demo district Czyżyny, marked as sample data, are loaded by the loading program, including the contradiction between OpenStreetMap and a user report that the demo scenario needs (MVP AC-17).
   - Waits for: 3.2.
   - Before that: The data written from `docs/product/schema.md` and from the demo scenario of check 7.2.
-- [ ] 3.4 `map_tiles`, the loading step
+- [ ] 3.4 `tile_loading`
   - Done when: The loading program loads the tile archive.
   - Waits for: 3.2.
   - Before that: The archive, the style, the fonts and the sprites of check 6.4 exist.

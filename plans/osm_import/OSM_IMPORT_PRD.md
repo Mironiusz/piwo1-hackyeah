@@ -1,6 +1,6 @@
 # PRD: OpenStreetMap copy read and common demo loading
 
-Document state: 2026-10-04, approved by the user; technical planning authorized
+Document state: 2026-10-04, approved by the user; technical planning authorized; on 2026-10-04 the user moved the tile step from `map_tiles` to `tile_loading` (`plans/tile_loading/TILE_LOADING_PRD.md` FR-7)
 
 ## Business goal
 
@@ -28,7 +28,7 @@ Loading can fail after an earlier step has committed its effects. A retry that d
 ## Out of scope
 
 - Building a second importer or changing the selected source, coverage, tag mapping, reconciliation rules or walking-routing data preparation.
-- Producing the tile archive or the sample dataset and implementing their loading steps; `map_tiles` and `sample_data` own those steps.
+- Producing the tile archive or the sample dataset and implementing their loading steps; `map_tiles` produced the archive, and `tile_loading` and `sample_data` own the loading steps.
 - Delivering shared backend foundations, changing shared storage or introducing new authentication, voting or fact-status rules.
 - Computing routes, starting or restarting the routing service, or changing deployment configuration.
 - Loading at service startup, scheduled refreshes, automatic retries, selective resumption of unfinished steps or deleting demo data.
@@ -43,7 +43,7 @@ FR-2. Manual loading. A member of the team can manually start one common loading
 
 FR-3. All required effects. Complete loading includes the OpenStreetMap copy with its matching prepared walking-routing data, the map tile archive and the sample reports and geozones marked as sample data. Complete success requires every required effect to succeed. A missing, failed, unfinished or uncertain required effect must not be silently treated as complete success. Preparing routing data does not mean that the routing service has started serving them.
 
-FR-4. Step handoff. Before the tile and sample integrations are implemented, the initiative supplies a written common loading-step contract that identifies the required inputs, observable outcomes, failure reporting and repeat-safety obligations. Adrian adds the tile step through `map_tiles`, and Mateusz adds the sample step through `sample_data`. This initiative composes their delivered steps without taking ownership of their data production or loading rules.
+FR-4. Step handoff. Before the tile and sample integrations are implemented, the initiative supplies a written common loading-step contract that identifies the required inputs, observable outcomes, failure reporting and repeat-safety obligations. Rafał adds the tile step through `tile_loading`, and Mateusz adds the sample step through `sample_data`. This initiative composes their delivered steps without taking ownership of their data production or loading rules.
 
 FR-5. Truthful partial outcomes. When a loading attempt fails, the operator can distinguish full completion from incomplete loading and can identify required effects that succeeded, failed or were not completed. A copy that the importer already committed remains a committed copy even if preparing its activation or another loading step fails. An uncertain commit remains explicitly uncertain. The common program preserves these distinctions and never claims a proven rollback or complete success when the importer has not established it.
 
@@ -91,7 +91,7 @@ Sample reports and geozones remain marked as sample data. Loading and retry pres
 
 - `backend_skeleton`, owned by Marek, supplies the shared backend foundations. `schema_first_revision`, owned by Kuba, supplies the shared storage foundation. This initiative consumes their agreed contracts; the presence of a planning document does not prove that a runnable foundation exists.
 - `osm_importer`, owned by Mateusz, supplies the actual import, its complete-copy and unchanged-copy rules, prepared walking-routing data and truthful publication outcomes. Its open integration questions must be settled before this initiative's executable integration plan can close.
-- `map_tiles`, owned by Adrian, and `sample_data`, owned by Mateusz, supply their loading steps and consume the common step contract. Both must implement repeat safety required by FR-6. Their absence prevents verification of complete three-part loading.
+- `tile_loading`, owned by Rafał, and `sample_data`, owned by Mateusz, supply their loading steps and consume the common step contract; `map_tiles`, owned by Adrian, supplied the archive file the tile step loads. Both must implement repeat safety required by FR-6. Their absence prevents verification of complete three-part loading.
 - `deployment_config`, owned by Kuba since 2026-10-04, starts the common program through the existing manual deployment flow. Service startup and routing-service activation remain its separate responsibilities under the existing instructions.
 - Clients use the existing copy-date contract. This initiative changes no client interface. Source attribution and presentation remain with the frontend.
 - Check 3.2 of `FINAL_CHECKLIST.md` verifies this initiative's copy-date read and OpenStreetMap loading effect after check 3.1. Checks 3.3 and 3.4 verify the sample and tile steps through the same common program; complete loading requires those effects too.

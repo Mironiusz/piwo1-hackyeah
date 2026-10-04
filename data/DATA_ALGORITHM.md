@@ -69,3 +69,19 @@ The reads of one route request run inside one snapshot its caller opens, so the 
 The boundary of Kraków of a copy is the file `krakow_boundary.wkb` in the directory of that copy, `copies/<whole seconds of its instant>/`, written by the import from the boundary it assembles, before the manifest, so the manifest guards it with the network and the tiles. It is read only when the manifest of the directory names the same instant and every file matches it; otherwise the read is refused.
 
 A call to the routing service waits at most 2 seconds. Error 442 means no path and error 443 a shape that cannot be traced; every other failure, a timeout and a body that cannot be read are the same failure, an unavailable service. `/status` gives the instant of the tiles the service loaded, in whole seconds. A traced edge gives its way, the OpenStreetMap nodes it begins and ends at, and its part of the traced shape.
+
+## Sample data
+
+The sample step runs in one Repeatable Read transaction, so the copy, the network, the stored facts and their votes belong to one state of the database.
+
+- Each place is measured by one statement: the presence of a copy, of the reference way, the two ways nearest to the point within 15 m in the order of distance and identity, and the distance of the reference way.
+- The stored facts on the reserved identifiers and the votes of their defined fictional voters are read before any write and again after the inserts.
+- The missing facts are inserted in one batch; the votes follow in a second batch only for the identifiers the first returned, in the same transaction.
+
+The result is returned only after the commit is acknowledged. A failure before the commit rolls back, and the rollback counts as acknowledged only when the transaction was still active and the rollback itself succeeded. A serialization failure or deadlock reported by the commit is a rolled-back failure; any other loss of the commit answer stays unknown. Nothing is retried.
+
+## Tile archive
+
+Every read of the tile step - the served file, the source and the written copy - goes in chunks of 1 MiB, and the run deadline is checked before each chunk, so a slow disk ends the step with an expired deadline instead of holding it without end; a system call that blocks inside one chunk is not interrupted. A missing path, a directory and a link have no digest, so the step never reads or hashes through a link.
+
+The copy is written into a new `.tile-archive-*` file of the served directory itself, never of the source place, so that the replacement stays on one file system and is atomic. It is written chunk by chunk under the same deadline, given the mode 0644 and synced to disk; a failed write or an expired deadline removes the partial file before the failure passes on. After the service checked the copy, it is put under the served name with one `os.replace`, which replaces a file or a link there without following the link, and on Linux the directory is synced so the new name survives a crash. A temporary copy left by an interrupted run carries the prefix and is removed by the next run before anything else; no other file of the served directory is touched.
