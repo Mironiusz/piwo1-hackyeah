@@ -5,7 +5,7 @@ APP ?= accessway
 export APP
 ENV := source scripts/env.sh
 
-.PHONY: tiles tiles-sample mock props uninstall osm sample aw-osm aw-sample aw-build aw-run aw-test aw-logs aw-screenshot aw-reset emulator-fast crash-logs test help setup setup-deps doctor emulator emulator-headless emulator-stop sign build install launch run apply lint logs screenshot layout clean
+.PHONY: api-show api-emulator api-device api-offline api-set api-check run-device tiles tiles-sample mock props uninstall osm sample aw-osm aw-sample aw-build aw-run aw-test aw-logs aw-screenshot aw-reset emulator-fast crash-logs test help setup setup-deps doctor emulator emulator-headless emulator-stop sign build install launch run apply lint logs screenshot layout clean
 
 help:
 	@echo "EnableMe - Krakow bez barier (HarmonyOS app in accessway/)"
@@ -29,6 +29,15 @@ help:
 	@echo "make tiles           download the vector map of Krakow (tiles/krakow.pmtiles, ~35 MB, needs internet)"
 	@echo "make tiles-sample    build a small tile archive of the sample area (no internet)"
 	@echo "make mock            run the mock map tile server on port 8090 (the emulator sees it at 10.0.2.2:8090)"
+	@echo ""
+	@echo "API server the app talks to (config/api.json, built into the package - run make run afterwards):"
+	@echo "make api-show       print the current setting"
+	@echo "make api-emulator   real backend on this computer, seen from the emulator (API_PORT=$(API_PORT), tiles from make mock)"
+	@echo "make api-device     real backend on this computer, seen from a Huawei phone on the same Wi-Fi (LAN IP)"
+	@echo "make api-set API_URL=http://host:port [TILES_URL=...]   any server, e.g. the hosted demo"
+	@echo "make api-offline    no server, everything on the device"
+	@echo "make api-check      call the API operations the app uses from this computer"
+	@echo "make run-device     api-device + api-check + build + install + launch on the USB-connected phone"
 	@echo "make clean           remove build outputs"
 	@echo "Aliases kept for older notes: aw-run, aw-build, aw-test, aw-logs, aw-screenshot, aw-reset, aw-osm, aw-sample"
 
@@ -115,6 +124,32 @@ tiles-sample:
 	python3 tools/mock_backend/make_sample_tiles.py
 
 MOCK_PORT ?= 8090
+API_PORT ?= 8000
+API_HOST ?=
+TILES_URL ?=
+
+api-show:
+	python3 tools/api_target.py show
+
+api-emulator:
+	python3 tools/api_target.py emulator --api-port $(API_PORT) --tiles-port $(MOCK_PORT)
+
+api-device:
+	python3 tools/api_target.py device --api-port $(API_PORT) --tiles-port $(MOCK_PORT) --host "$(API_HOST)"
+
+api-set:
+	[ -n "$(API_URL)" ] || { echo "Give the address: make api-set API_URL=http://host:port"; exit 2; }
+	if [ -n "$(TILES_URL)" ]; then python3 tools/api_target.py set --base-url "$(API_URL)" --tiles-url "$(TILES_URL)"; else python3 tools/api_target.py set --base-url "$(API_URL)"; fi
+
+api-offline:
+	python3 tools/api_target.py offline
+
+api-check:
+	python3 tools/api_target.py check
+
+run-device: api-device
+	python3 tools/api_target.py check || echo "WARNING: the API does not answer yet - the app will show connection errors until it does"
+	$(MAKE) run
 
 mock:
 	python3 tools/mock_backend/server.py --port $(MOCK_PORT)

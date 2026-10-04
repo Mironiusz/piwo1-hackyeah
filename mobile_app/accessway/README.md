@@ -73,6 +73,24 @@ The server runs over plain HTTP, so `resources/base/profile/network_config.json`
 
 In the local version the moderator role goes to the account with the pseudonym `moderator`; with the API the server assigns the role. Accounts, votes and reports of the local version are stored only on the device; `make uninstall` clears them.
 
+### Real backend on a Huawei phone or the emulator
+
+The app talks to the team's backend (`python -m api`, `make backend` in the repository root), which implements every contract operation the app uses: routes, address search, accounts, facts in an area, nearby facts, reports, votes, flags and moderation. The backend has no `read_osm_copy`; the app then takes the OpenStreetMap copy date from the first route. The backend serves only `/api/...`; the map archive comes from the demo proxy or, locally, from `make mock` on port 8090.
+
+From `mobile_app/`:
+
+```bash
+make api-emulator                 # emulator: http://10.0.2.2:8000 (default in the repository)
+make run-device                   # Huawei phone on USB + same Wi-Fi: LAN IP of this computer, check, build, install, launch
+make api-set API_URL=http://<demo-host> TILES_URL=http://<demo-host>/tiles/krakow.pmtiles   # the hosted demo
+make api-check                    # calls the operations the app uses and says which answer as expected
+make api-offline                  # back to device-only data
+```
+
+`API_PORT=8787 make api-device` changes the port, `API_HOST=192.168.1.20` overrides the detected address. For a phone, start the backend with `API_BIND_HOST=0.0.0.0` in `.env.local` (with `127.0.0.1` only the computer and the emulator reach it) and allow the port in the firewall. The setting is built into the package, so every change needs `make run`. Never commit the address of the hosted demo (`docs/standards/standard_config.md`).
+
+A person without an account can report and vote: the backend tells people apart by the address and the User-Agent of the request, so two phones behind one Wi-Fi with the same app version count as one voter for the once-per-day vote limit.
+
 ### Mock of the project server (API and map)
 
 `make mock` runs `tools/mock_backend/server.py`: a single host as in the demo, with the API under `/api` and the map archive next to it. The mock keeps everything in memory (`tools/mock_backend/api_mock.py`) and implements all 16 contract operations with their errors, sessions (`Authorization`, renewed `Session-Token`), `X-Request-Id` and the specification rules: M4 statuses from the latest votes of five people with weights 1 and 0.5, the once-per-day vote limit, idempotent reports, M11 flagging and moderation, M2 routes with the four M7 segment states and the three M8 lists, and an alternative route around an unverified barrier.
