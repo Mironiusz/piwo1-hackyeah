@@ -13,7 +13,7 @@ export interface RouteFact {
   atM: number;
 }
 
-/** Odległość od startu trasy do każdego jej węzła, w metrach. */
+/** Distance from the route start to each of its nodes, in meters. */
 export function cumulativeM(ds: Dataset, r: RouteResult): number[] {
   const out: number[] = [0];
   for (let i = 1; i < r.nodes.length; i++) {
@@ -24,7 +24,7 @@ export function cumulativeM(ds: Dataset, r: RouteResult): number[] {
   return out;
 }
 
-/** Pozycja punktu na trasie: odległość od startu do najbliższego miejsca na odcinkach trasy, albo -1 poza zasięgiem. */
+/** Point position on the route: distance from the start to the nearest spot on the route, or -1 if too far. */
 export function positionOnRoute(ds: Dataset, r: RouteResult, cum: number[], lat: number, lon: number, reachM: number): number {
   let best = -1;
   let bestD = reachM;
@@ -42,8 +42,8 @@ export function positionOnRoute(ds: Dataset, r: RouteResult, cum: number[], lat:
 }
 
 /**
- * Fakty na trasie z odległością od startu: bariery i obszary w zasięgu 15 m (plus promień obszaru), udogodnienia
- * w zasięgu 50 m. Fakty nieaktualne i ukryte przez moderację nie trafiają tu wcale, bo nie ma ich na liście.
+ * Facts on the route with distance from the start: barriers and areas within 15 m (plus the area radius), amenities
+ * within 50 m. Facts that are outdated or hidden by moderation never get here, because they are not on the list.
  */
 export function factsOnRoute(ds: Dataset, r: RouteResult, facts: Fact[]): RouteFact[] {
   const out: RouteFact[] = [];
@@ -90,7 +90,7 @@ function missingName(k: IssueKind): string {
 const MISSING_ORDER: IssueKind[] = [IssueKind.KERB_UNKNOWN, IssueKind.SURFACE_UNKNOWN, IssueKind.INCLINE_UNKNOWN,
   IssueKind.WIDTH_UNKNOWN];
 
-/** Nazwy brakujących atrybutów w kolejności z makiety: krawężniki, nawierzchnia, nachylenie, szerokość. */
+/** Names of missing attributes in the order from the mockup: curbs, surface, slope, width. */
 export function missingNames(kinds: IssueKind[]): string[] {
   const out: string[] = [];
   for (const k of MISSING_ORDER) {
@@ -101,7 +101,7 @@ export function missingNames(kinds: IssueKind[]): string[] {
   return out;
 }
 
-/** Odcinki trasy z danymi niepełnymi albo bez danych, ze nazwą ulicy i brakującymi atrybutami. */
+/** Route segments with partial data or no data, with the street name and the missing attributes. */
 export function dataGaps(r: RouteResult): DataGap[] {
   const out: DataGap[] = [];
   for (const s of r.steps) {

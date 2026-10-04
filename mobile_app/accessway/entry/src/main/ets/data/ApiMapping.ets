@@ -5,8 +5,8 @@ import { ApiFact, ApiPlanRouteResponse, ApiRoute, ApiRouteFact } from './ApiType
 import { RouteAlternative, RouteFactItem, RouteGap, RoutePlan, RouteSegment } from './Repository';
 
 /**
- * Tłumaczenie między kształtami kontraktu API a typami aplikacji. Bez wywołań sieci i bez API platformy,
- * więc działa w testach jednostkowych na Node.
+ * Translation between the API contract shapes and the app types. No network calls and no platform API,
+ * so it works in unit tests on Node.
  */
 
 const KIND_CODES: string[][] = [
@@ -76,7 +76,7 @@ export function stateFromApi(code: string): EdgeState {
   return EdgeState.NO_DATA;
 }
 
-/** Dzień `YYYY-MM-DD` policzony przez serwer, jako chwila w południe tego dnia, żeby wyświetlić go bez przesunięć. */
+/** A `YYYY-MM-DD` day computed by the server, as the moment at noon of that day, so it displays without shifts. */
 export function dayToMs(day: string | null): number {
   if (day === null || day.length < 10) {
     return 0;
@@ -146,13 +146,13 @@ function missingLabel(code: string): string {
   return code;
 }
 
-/** Krótki odcinek bez danych na początku albo końcu trasy to dojście od wskazanego punktu do sieci chodników. */
+/** A short no-data segment at the start or end of a route is the walk from the chosen point to the sidewalks. */
 const CONNECTOR_MAX_M: number = 80;
 
 /**
- * Plan trasy z odpowiedzi `plan_route`. Stany odcinków, grupy faktów i brakujące atrybuty pochodzą z serwera;
- * aplikacja tylko liczy położenie odcinków od startu i prostokąt mapy. `rated` mówi, czy potrzeby mają jakąś
- * barierę, bo bez niej ekran wyniku pokazuje trasę bez oceny.
+ * Route plan from the `plan_route` response. Segment states, fact groups and missing attributes come from the
+ * server; the app only computes segment positions from the start and the map rectangle. `rated` says whether the
+ * needs have any barrier, because without one the result screen shows the route without a rating.
  */
 export function planFromApi(route: ApiRoute, barrierFree: boolean, rated: boolean,
   alternative: ApiPlanRouteResponse | null): RoutePlan {

@@ -7,9 +7,9 @@ import { FONT, FONT_B, FONT_TITLE, fs, P, RADIUS, RADIUS_CTRL, TOUCH } from './T
 
 @Component
 export struct Icon {
-  name: string = 'info';
-  iconSize: number = 24;
-  color: string = '#000000';
+  @Prop name: string = 'info';
+  @Prop iconSize: number = 24;
+  @Prop color: string = '#000000';
 
   build() {
     Image($rawfile(`icons/${this.name}.svg`))
@@ -29,15 +29,18 @@ export enum BtnKind {
   DANGER = 'danger'
 }
 
-/** Przyciski z artboardu systemu: Wyznacz trasę, Wróć, Nadal jest (szary), Zgłoś (żółty) i czerwony Usuń konto. */
+/**
+ * Buttons from the system artboard: Wyznacz trasę (Plan route), Wróć (Back), Nadal jest (Still there, gray),
+ * Zgłoś (Report, yellow) and the red Usuń konto (Delete account).
+ */
 @Component
 export struct Btn {
-  label: string = '';
-  kind: BtnKind = BtnKind.PRIMARY;
-  icon: string = '';
-  small: boolean = false;
-  enabledState: boolean = true;
-  a11y: string = '';
+  @Prop label: string = '';
+  @Prop kind: BtnKind = BtnKind.PRIMARY;
+  @Prop icon: string = '';
+  @Prop small: boolean = false;
+  @Prop enabledState: boolean = true;
+  @Prop a11y: string = '';
   action: () => void = () => {
   };
 
@@ -107,12 +110,12 @@ export struct Btn {
   }
 }
 
-/** Link z makiety: granatowy, pogrubiony i podkreślony; wariant czerwony dla usunięcia konta. */
+/** Link from the mockup: navy, bold and underlined; a red variant for account deletion. */
 @Component
 export struct LinkText {
-  label: string = '';
-  danger: boolean = false;
-  textSize: number = 14;
+  @Prop label: string = '';
+  @Prop danger: boolean = false;
+  @Prop textSize: number = 14;
   action: () => void = () => {
   };
 
@@ -181,7 +184,10 @@ export function statusColor(s: FactStatus): string {
   return P().text;
 }
 
-/** Źródło i data faktu jak w wierszach makiety: "zgłoszenie, 3.10.2026" albo "OpenStreetMap, edycja 12.05.2025". */
+/**
+ * Fact source and date as in the mockup rows: "zgłoszenie, 3.10.2026" (report, 3.10.2026) or
+ * "OpenStreetMap, edycja 12.05.2025" (OpenStreetMap, edit 12.05.2025).
+ */
 export function sourceLine(f: Fact): string {
   if (f.source === FactSource.OSM) {
     return f.date > 0 ? tr(`OpenStreetMap, edycja ${formatDate(f.date)}`, `OpenStreetMap, edited ${formatDate(f.date)}`) :
@@ -192,7 +198,7 @@ export function sourceLine(f: Fact): string {
 
 @Component
 export struct StatusBadge {
-  status: FactStatus = FactStatus.UNVERIFIED;
+  @Prop status: FactStatus = FactStatus.UNVERIFIED;
 
   build() {
     Row({ space: 4 }) {
@@ -202,7 +208,7 @@ export struct StatusBadge {
   }
 }
 
-/** Status, źródło z datą i znak danych przykładowych w jednym zawijanym wierszu. */
+/** Status, source with date and the sample data mark in a single wrapping row. */
 @Component
 export struct StatusLine {
   fact: Fact | null = null;
@@ -221,7 +227,7 @@ export struct StatusLine {
   }
 }
 
-/** Wiersz listy faktów: znak rodzaju, tytuł, odległość, ulica i wiersz statusu. */
+/** Fact list row: kind glyph, title, distance, street and status row. */
 @Component
 export struct FactRow {
   fact: Fact | null = null;
@@ -267,11 +273,11 @@ export struct FactRow {
   }
 }
 
-/** Nagłówek grupy z licznikiem: "Z Twoich potrzeb 2". */
+/** Group header with a counter: "Z Twoich potrzeb 2" (From your needs 2). */
 @Component
 export struct GroupHeader {
-  title: string = '';
-  count: string = '';
+  @Prop title: string = '';
+  @Prop count: string = '';
 
   build() {
     Row({ space: 8 }) {
@@ -293,12 +299,12 @@ export enum BoxKind {
   INFO = 'info'
 }
 
-/** Komunikaty z makiety: błąd z czarną ramką, luka w danych z przerywaną ramką i informacja z jasną ramką. */
+/** Messages from the mockup: error with a black border, data gap with a dashed border and info with a light border. */
 @Component
 export struct MessageBox {
-  lead: string = '';
-  text: string = '';
-  kind: BoxKind = BoxKind.INFO;
+  @Prop lead: string = '';
+  @Prop text: string = '';
+  @Prop kind: BoxKind = BoxKind.INFO;
 
   build() {
     Text() {
@@ -322,11 +328,11 @@ export struct MessageBox {
   }
 }
 
-/** Przełącznik segmentowy: zaznaczona część granatowa, pozostałe białe z granatowym tekstem. */
+/** Segmented switch: the selected part is navy, the others are white with navy text. */
 @Component
 export struct Segmented {
-  options: string[] = [];
-  selected: number = 0;
+  @Prop options: string[] = [];
+  @Prop selected: number = 0;
   onSelect: (i: number) => void = () => {
   };
 
@@ -356,13 +362,13 @@ export struct Segmented {
   }
 }
 
-/** Para opis i wartość w szczegółach faktu i w podsumowaniu zgłoszenia. */
+/** Label and value pair in fact details and in the report summary. */
 @Component
 export struct KeyValue {
-  name: string = '';
-  value: string = '';
-  keyWidth: number = 132;
-  valueColor: string = '';
+  @Prop name: string = '';
+  @Prop value: string = '';
+  @Prop keyWidth: number = 132;
+  @Prop valueColor: string = '';
 
   build() {
     Row() {
@@ -376,11 +382,11 @@ export struct KeyValue {
   }
 }
 
-/** Tytuł strony 23 px i opis pod nim. */
+/** 23 px page title and the description below it. */
 @Component
 export struct PageTitle {
-  title: string = '';
-  intro: string = '';
+  @Prop title: string = '';
+  @Prop intro: string = '';
 
   build() {
     Column({ space: 6 }) {
@@ -394,12 +400,12 @@ export struct PageTitle {
   }
 }
 
-/** Nagłówek arkusza z przyciskiem zamknięcia: "Krok 1 z 5" nad tytułem panelu. */
+/** Sheet header with a close button: "Krok 1 z 5" (Step 1 of 5) above the panel title. */
 @Component
 export struct SheetTitle {
-  title: string = '';
-  step: string = '';
-  showClose: boolean = true;
+  @Prop title: string = '';
+  @Prop step: string = '';
+  @Prop showClose: boolean = true;
   onClose: () => void = () => {
   };
 
@@ -427,7 +433,7 @@ export struct SheetTitle {
   }
 }
 
-/** Uchwyt arkusza nad mapą. */
+/** Sheet handle above the map. */
 @Component
 export struct SheetHandle {
   build() {
@@ -441,11 +447,11 @@ export struct SheetHandle {
   }
 }
 
-/** Wypunktowanie z kreską, jak na stronach prywatności i danych. */
+/** Bullet list with a dash, as on the privacy and data pages. */
 @Component
 export struct Bullet {
-  lead: string = '';
-  text: string = '';
+  @Prop lead: string = '';
+  @Prop text: string = '';
 
   build() {
     Row({ space: 10 }) {
@@ -468,7 +474,7 @@ export struct Bullet {
 
 @Component
 export struct SubTitle {
-  text: string = '';
+  @Prop text: string = '';
 
   build() {
     Text(this.text).fontFamily(FONT_B).fontSize(fs(14.5)).fontColor(P().text).margin({ top: 14 })
@@ -482,10 +488,10 @@ export const RADIUS_BTN: number = RADIUS;
 function noContent() {
 }
 
-/** Biały arkusz z zaokrąglonymi górnymi rogami, nachodzący na dolną krawędź mapy. */
+/** White sheet with rounded top corners, overlapping the bottom edge of the map. */
 @Component
 export struct SheetBox {
-  minHeight: number = 320;
+  @Prop minHeight: number = 320;
   @BuilderParam content: () => void = noContent;
 
   build() {
@@ -504,7 +510,7 @@ export struct SheetBox {
   }
 }
 
-/** Strona bez mapy: link Wróć, treść i dolny margines. */
+/** Page without a map: Wróć (Back) link, content and bottom margin. */
 @Component
 export struct PageBox {
   @BuilderParam content: () => void = noContent;

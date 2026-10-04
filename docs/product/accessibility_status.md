@@ -4,7 +4,7 @@ Document state: 2026-10-04
 
 ## Why this document exists
 
-The Kraków brief asks for an app whose main scenario works with a keyboard and a screen reader, and `plans/frontend_app/FRONTEND_APP_PRD.md`, FR-14, asks for a written list of what works and what does not. This is that list for the web frontend in `frontend/`, as it stood on 2026-10-04. It records what was checked, how, and by whom, so that the team and the jury read facts and not a claim of conformance. Nothing here says that the frontend conforms to WCAG 2.2; only the checks named below were made.
+The Kraków brief asks for an app whose main scenario works with a keyboard and a screen reader, and `plans_finished/frontend_app/FRONTEND_APP_PRD.md`, FR-14, asks for a written list of what works and what does not. This is that list for the web frontend in `frontend/`, as it stood on 2026-10-04. It records what was checked, how, and by whom, so that the team and the jury read facts and not a claim of conformance. Nothing here says that the frontend conforms to WCAG 2.2; only the checks named below were made.
 
 ## What was checked and how
 

@@ -87,7 +87,7 @@ export class SearchResult {
   prevEdge: number[] = [];
 }
 
-/** Dijkstra po sieci pieszej z wagą `długość x (1 + kara)`; w trybie dostępnym odcinki blokujące są wyłączone. */
+/** Dijkstra on the walking network, weight `length x (1 + penalty)`; accessible mode excludes blocking segments. */
 export function dijkstra(ds: Dataset, as: Assessment, start: number, target: number, mode: WeightMode,
   maxCost: number): SearchResult {
   const n = ds.nodes.length;
@@ -241,10 +241,10 @@ function edgeBearing(ds: Dataset, ei: number, fromNode: number): number {
 
 const EMPTY: Barrier[] = [];
 
-/** Kolejność stanów od najlepszego do najgorszego; krok trasy przyjmuje najgorszy stan swoich odcinków. */
+/** Order of states from best to worst; a route step takes the worst state of its segments. */
 const SEVERITY: EdgeState[] = [EdgeState.CLEAR, EdgeState.PARTIAL, EdgeState.NO_DATA, EdgeState.BARRIER];
 
-/** Trasa dla ograniczeń zgodnie z sekcją Trasa specyfikacji, z listą barier ominiętych względem najkrótszej drogi. */
+/** Route for the constraints per the spec's Route section, with the barriers avoided compared to the shortest path. */
 export function findRoute(ds: Dataset, as: Assessment, c: Constraints, barrierIndex: Map<number, Barrier[]>,
   from: LatLon, to: LatLon): RouteResult {
   const r = new RouteResult();
@@ -403,7 +403,7 @@ export interface Reachable {
   distanceM: number;
 }
 
-/** Miejsca osiągalne bez odcinków blokujących w limicie minut, posortowane po czasie dojścia. */
+/** Places reachable without blocking segments within the minute limit, sorted by walking time. */
 export function reachability(ds: Dataset, as: Assessment, from: LatLon, minutes: number): Reachable[] {
   const start = ds.nearestNode(from.lat, from.lon, SNAP_MAX_M);
   if (start < 0) {

@@ -72,3 +72,16 @@ def test_two_ways_sharing_a_node_are_read_in_order_with_their_states_flags_and_c
         expected_kerb = NO_KERB_POINT if kerb is None else [state.value for state in KERB_POINT_STATES].index(kerb)
         assert network.node_kerb[row] == expected_kerb
         assert (bool(network.node_is_crossing[row]), bool(network.node_is_on_motor_traffic_way[row])) == (crossing, motor)
+
+
+def test_reading_the_network_leaves_the_connection_able_to_write(service_transaction):
+    """Read the network and then write on the same connection, which fails when the streaming of the reads leaks into the options of the connection."""
+    node_id, (lon, lat, kerb, crossing, motor) = next(iter(NODES.items()))
+
+    fetch_route_network(service_transaction)
+
+    assert "yield_per" not in service_transaction.get_execution_options()
+    written = service_transaction.execute(
+        text(INSERT_NODE_SQL.text + " RETURNING id"), {"id": node_id, "point": f"SRID=4326;POINT({lon} {lat})", "kerb_point": kerb, "is_crossing": crossing, "is_on_motor_traffic_way": motor}
+    ).scalar_one()
+    assert written == node_id

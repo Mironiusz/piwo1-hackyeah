@@ -1,116 +1,137 @@
-# EnableMe - Kraków bez barier (aplikacja HarmonyOS)
+# EnableMe - Kraków bez barier (HarmonyOS app)
 
-Aplikacja na wyzwanie "Kraków bez barier" (HackYeah 2026). Na razie działa w całości na urządzeniu: sieć piesza, trasy, ocena odcinków, zgłoszenia, głosy i konta liczą się lokalnie, a warstwa danych jest gotowa na podłączenie API zespołu.
+An app for the "Kraków bez barier" challenge (HackYeah 2026). For now it runs entirely on the device: the pedestrian network, routes, segment assessment, reports, votes and accounts are all computed locally, and the data layer is ready to be connected to the team's API.
 
-## Uruchomienie na emulatorze (z katalogu `hujawei`)
+## Running on the emulator (from `mobile_app/`)
 
-Instalacja emulatora i narzędzi od zera (Linux i Windows): `docs/EMULATOR_SETUP.md`.
+Installing the emulator and tools from scratch (Linux and Windows): `docs/setup/EMULATOR_SETUP.md` in the root of the repository.
 
 ```bash
-make emulator-fast        # albo make emulator, jeśli emulator jeszcze nie działa
-make osm                  # opcjonalnie: prawdziwe dane OSM centrum Krakowa (wymaga internetu)
-make run                  # build + podpis + instalacja + uruchomienie
-make logs                 # logi aplikacji przez 60 s
-make uninstall           # odinstalowanie (czyści zapisane zgłoszenia i ustawienia)
-make test                 # testy logiki domenowej na Node
+make emulator-fast        # or make emulator, if the emulator is not running yet
+make osm                  # optional: real OSM data for central Kraków (requires internet)
+make run                  # build + sign + install + launch
+make logs                 # app logs for 60 s
+make uninstall           # uninstall (clears saved reports and settings)
+make test                 # domain logic tests on Node
 ```
 
-Bez `make osm` aplikacja używa schematycznej próbki okolic Tauron Areny (`tools/accessway_sample.py`), oznaczonej w aplikacji jako dane przykładowe.
+Without `make osm` the app uses a schematic sample of the area around Tauron Arena (`tools/accessway_sample.py`), marked in the app as sample data.
 
-## Co jest w aplikacji
+## What is in the app
 
-Ekrany odwzorowują makiety zespołu "Widoki MVP: makiety" (artboardy System i V-2 do V-14):
+The screens follow the team's mockups "Widoki MVP: makiety" (MVP views: mockups; artboards System and V-2 to V-14):
 
-- V-2 Potrzeby: trzy gotowe zestawy, listy "Unikam" i "Potrzebuję", przyciski Pomiń i Gotowe; potrzeby zostają tylko na urządzeniu.
-- V-3 Mapa faktów: wyszukiwanie celu, przełącznik "Z moich potrzeb / Wszystkie", fakty w widocznym miejscu ze statusem, źródłem i datą.
-- V-4 i V-8 Planowanie trasy i wyszukiwanie adresu: start i cel z wyszukiwarki (dopiero po Enter albo przycisku), z mapy albo z lokalizacji; błąd usługi tras bez trasy zgadywanej.
-- V-5 Wynik trasy: schemat trasy, kafelki, mapa w czterech stanach odcinków, grupy "Z Twoich potrzeb", "Dodatkowe bariery", "Udogodnienia na trasie", "Czego nie wiemy", trasa alternatywna dla niezweryfikowanej bariery; warianty bez oceny i bez trasy wolnej od barier.
-- V-6 Szczegóły faktu: głos "Nadal jest" albo "Już nie ma" raz na dobę, sprzeczność ze stanem w OpenStreetMap, zgłoszenie do moderacji.
-- V-7 Zgłaszanie bariery, udogodnienia albo obszaru krok po kroku, ze sprawdzeniem faktów tego samego rodzaju w promieniu 15 m.
-- V-10 do V-14: menu, konto z pseudonimem i hasłem, informacja o prywatności, o danych, moderacja.
+- V-2 Needs: three ready-made presets, the lists "I avoid" ("Unikam") and "I need" ("Potrzebuję"), the buttons Skip ("Pomiń") and Done ("Gotowe"); needs stay on the device only.
+- V-3 Fact map: destination search, the switch "From my needs / All" ("Z moich potrzeb / Wszystkie"), facts in the visible area with status, source and date.
+- V-4 and V-8 Route planning and address search: start and destination from the search (only after Enter or the button), from the map or from the current location; a routing service error shows no guessed route.
+- V-5 Route result: route diagram, tiles, a map with four segment states, the groups "From your needs" ("Z Twoich potrzeb"), "Other barriers" ("Dodatkowe bariery"), "Amenities on the route" ("Udogodnienia na trasie"), "What we do not know" ("Czego nie wiemy"), an alternative route for an unverified barrier; variants without assessment and without a barrier-free route.
+- V-6 Fact details: a vote "Still there" ("Nadal jest") or "Gone" ("Już nie ma") once per day, a conflict with the state in OpenStreetMap, a report to moderation.
+- V-7 Reporting a barrier, an amenity or an area step by step, with a check for facts of the same kind within a 15 m radius.
+- V-10 to V-14: menu, account with pseudonym and password, privacy information, about the data, moderation.
 
-Nagłówek pokazuje nazwę produktu EnableMe, wybraną przez zespół 2026-10-04 (stała `PRODUCT_NAME` w `data/AppModel.ets`).
+The product name is "EnableMe": the header and the start screen take it from the constant `PRODUCT_NAME` in `data/AppModel.ets`, and the icon label from the `string.json` resources.
 
-## Dane i podłączenie API
+## Data and API connection
 
-Ekrany korzystają wyłącznie z interfejsu `Repository` (`entry/src/main/ets/data/Repository.ets`). Są dwie implementacje:
+The screens use only the `Repository` interface (`entry/src/main/ets/data/Repository.ets`). There are two implementations:
 
-- `LocalRepository`: wszystko na urządzeniu, z danych dołączonych do aplikacji (domyślnie);
-- `ApiRepository`: API zespołu według `docs/product/api_contract.md` w repozytorium piwo1-hackyeah.
+- `LocalRepository`: everything on the device, from data bundled with the app (default);
+- `ApiRepository`: the team's API according to `docs/product/api_contract.md` in the piwo1-hackyeah repository.
 
-Wybór zależy od jednego pliku: `entry/src/main/resources/rawfile/config/api.json`.
+The choice depends on a single file: `entry/src/main/resources/rawfile/config/api.json`.
 
 ```json
 { "base_url": "http://203.0.113.10", "timeout_ms": 15000 }
 ```
 
-- `base_url` pusty: praca bez serwera.
-- `base_url` z adresem: adres serwera bez `/api` i bez ukośnika na końcu; ścieżki operacji dokleja aplikacja.
-- Serwer na komputerze, na którym działa emulator: `http://10.0.2.2:<port>` (adres hosta widziany z QEMU).
-- Po zmianie pliku: `make run` (plik jest wbudowany w pakiet).
+- `base_url` empty: works without a server.
+- `base_url` with an address: the server address without `/api` and without a trailing slash; the app appends the operation paths.
+- Server on the computer where the emulator runs: `http://10.0.2.2:<port>` (the host address as seen from QEMU).
+- After changing the file: `make run` (the file is built into the package).
 
-Co gdzie jest:
+What is where:
 
-| Plik | Rola |
+| File | Role |
 |---|---|
-| `data/ApiConfig.ets` | odczyt `config/api.json` |
-| `data/ApiClient.ets` | HTTP, nagłówek `Authorization: Bearer`, odnowiony token z `Session-Token`, kody błędów na komunikaty |
-| `data/ApiTypes.ets` | kształty JSON z kontraktu, jeden do jednego |
-| `data/ApiMapping.ets` | tłumaczenie kontraktu na typy aplikacji (testy w `entry/src/test/ApiMapping.test.ets`) |
-| `data/ApiRepository.ets` | operacje kontraktu, każda opisana nazwą i ścieżką |
+| `data/ApiConfig.ets` | reads `config/api.json` |
+| `data/ApiClient.ets` | HTTP, the `Authorization: Bearer` header, renewed token from `Session-Token`, error codes to messages |
+| `data/ApiTypes.ets` | JSON shapes from the contract, one to one |
+| `data/ApiMapping.ets` | translates the contract into app types (tests in `entry/src/test/ApiMapping.test.ets`) |
+| `data/ApiRepository.ets` | contract operations, each described by name and path |
 
-Operacje kontraktu i ich miejsce w aplikacji: `plan_route` (wynik trasy), `search_address` (wyszukiwanie), `read_osm_copy` (data danych), `list_facts_in_area` (mapa faktów, pobierana na nowo po przesunięciu mapy), `read_fact`, `cast_vote`, `flag_fact` (szczegóły faktu), `find_nearby_facts`, `create_fact` (zgłaszanie), `create_account`, `log_in`, `read_own_account`, `delete_own_account` (konto), `list_flagged_facts`, `hide_fact`, `restore_fact` (moderacja).
+Contract operations and where they are used in the app: `plan_route` (route result), `search_address` (search), `read_osm_copy` (data date), `list_facts_in_area` (fact map, fetched again after the map is moved), `read_fact`, `cast_vote`, `flag_fact` (fact details), `find_nearby_facts`, `create_fact` (reporting), `create_account`, `log_in`, `read_own_account`, `delete_own_account` (account), `list_flagged_facts`, `hide_fact`, `restore_fact` (moderation).
 
-Różnice między kontraktem a makietami, rozwiązane w aplikacji:
+Differences between the contract and the mockups, resolved in the app:
 
-- Kontrakt nie zwraca własnego głosu, więc aplikacja pamięta głosy z tego urządzenia z ostatniej doby (`api_my_votes.json`).
-- Kontrakt nie ma odwrotnego wyszukiwania i nie podaje ulicy faktu, więc z API wiersze faktów nie mają nazwy ulicy, a punkt z mapy nazywa się "Punkt wskazany na mapie".
-- `list_facts_in_area` zwraca też fakty nieaktualne; makieta System mówi, że fakt nieaktualny nie jest nigdzie pokazywany, więc aplikacja je pomija.
-- Trasa alternatywna pochodzi z pola `alternative` tej samej odpowiedzi; "Pokaż" nie wysyła drugiego żądania.
-- Mapa bazowa (ulice, budynki) nadal pochodzi z danych w aplikacji; `make osm` dołącza prawdziwe dane centrum Krakowa.
+- The contract does not return the user's own vote, so the app remembers the votes cast from this device in the last 24 hours (`api_my_votes.json`).
+- The contract has no reverse geocoding and does not give a fact's street, so fact rows from the API have no street name, and a point from the map is called "Point picked on the map" ("Punkt wskazany na mapie").
+- `list_facts_in_area` also returns outdated facts; the System mockup says an outdated fact is not shown anywhere, so the app skips them.
+- The alternative route comes from the `alternative` field of the same response; "Show" ("Pokaż") does not send a second request.
+- The base map comes from the PMTiles archive given in the `tiles_url` field (section below); without it, from the data in the app.
 
-Serwer działa po zwykłym HTTP, więc `resources/base/profile/network_config.json` zezwala na ruch bez TLS.
+The server runs over plain HTTP, so `resources/base/profile/network_config.json` allows traffic without TLS.
 
-W wersji lokalnej rolę moderatora dostaje konto o pseudonimie `moderator`; z API rolę nadaje serwer. Konta, głosy i zgłoszenia wersji lokalnej są zapisane tylko na urządzeniu; `make uninstall` je czyści.
+In the local version the moderator role goes to the account with the pseudonym `moderator`; with the API the server assigns the role. Accounts, votes and reports of the local version are stored only on the device; `make uninstall` clears them.
 
-## Mapa z kafelków wektorowych (mock serwera)
+### Mock of the project server (API and map)
 
-Podkład mapy może pochodzić z kafelków wektorowych Krakowa, tak jak w decyzji D-5 `plans_finished/frontend_stack/` w piwo1-hackyeah (archiwum PMTiles z buildu Protomaps). Do czasu serwera projektu kafelki podaje mock:
+`make mock` runs `tools/mock_backend/server.py`: a single host as in the demo, with the API under `/api` and the map archive next to it. The mock keeps everything in memory (`tools/mock_backend/api_mock.py`) and implements all 16 contract operations with their errors, sessions (`Authorization`, renewed `Session-Token`), `X-Request-Id` and the specification rules: M4 statuses from the latest votes of five people with weights 1 and 0.5, the once-per-day vote limit, idempotent reports, M11 flagging and moderation, M2 routes with the four M7 segment states and the three M8 lists, and an alternative route around an unverified barrier.
+
+What the mock makes up (marked in the code):
+
+- the pedestrian network is built from the `roads` layer of the archive at zoom level 15, so routes follow the real streets of Kraków; on the first start building takes about 40 s, after that the network sits in the cache `tiles/krakow.pmtiles.network.pickle`;
+- the OSM attributes of segments (kerbs, surface, incline, width, steps) are drawn randomly from a seed for each street block, so segment states are stable between runs;
+- 6000 sample facts (`--facts`), most within a 1.5 km radius of well-known places, with votes chosen so that every status occurs;
+- address search knows a dozen or so places in Kraków and the named streets of the network;
+- the OSM copy date is the build date of the archive (`tiles/krakow.pmtiles.build`).
+
+Account with the moderator role: pseudonym `moderator`, password from `--moderator-password` (default `moderator`, for the local mock only). Every restart begins with a clean state.
+
+`api.json` for the emulator: `base_url` `http://10.0.2.2:8090`, `tiles_url` `http://10.0.2.2:8090/krakow.pmtiles` (the mock prints both at startup). `python3 tools/mock_backend/contract_check.py` checks a running server against the contract (50 checks: every operation, its errors and conventions, token renewal also on errors, the M7 state rules). The mock also passed an independent review against the contract; fixed: token in error responses, default "no steps" ("bez schodów") on roads (M7), `wheelchair=no` never green, reports overruled by OSM (`is_overruled_by_osm`), newest flag first, JSON 404 for unknown methods, strict validation of the idempotency key, the geofence radius and the pseudonym.
+
+Known gap in the contract: for needs without any barrier (M7: segments "without assessment" ("bez oceny")) the contract has no separate state, so the mock returns `no_barrier`, and the app draws such a route neutrally based on its own flag.
+
+Tested on the QEMU emulator with the mock (4 October 2026): needs from a ready-made preset, the map with archive tiles and facts from the API, address search, the route Rynek Główny - Tauron Arena with states and lists, the fact card, voting and the daily limit, a report (with duplicate detection), creating an account, logging out, logging in as moderator, hiding and restoring a fact. Fixes from the test: the idempotency key is created once for the confirmed summary, outdated facts stay on the map (M4), component buttons and fields refresh after a state change (previously, for example, "Sign in" ("Zaloguj się") stayed greyed out).
+
+## Map from vector tiles
+
+The map background comes from a single PMTiles archive of Kraków, just as in the web app: the archive sits on the project host next to the API and every client reads it with byte ranges (piwo1-hackyeah, `plans_finished/frontend_stack/` D-3 and D-5, `docs/standards/standard_frontend.md`). The app needs no additional endpoint. Until the project host is available, the mock serves the archive:
 
 ```bash
-make tiles          # pobiera mapę Krakowa do tiles/krakow.pmtiles (około 35 MB, wymaga internetu)
-make tiles-sample   # albo mała mapa schematycznej próbki, bez internetu
-make mock           # serwer kafelków na porcie 8090
-make run            # aplikacja; emulator widzi komputer pod 10.0.2.2
+make tiles          # downloads the Kraków map to tiles/krakow.pmtiles (about 35 MB, requires internet)
+make tiles-sample   # or a small map of the schematic sample, without internet
+make mock           # API and archive on port 8090 (Range for the archive)
+make run            # the app; the emulator sees the computer at 10.0.2.2
 ```
 
-Adres serwera kafelków to pole `tiles_url` w `entry/src/main/resources/rawfile/config/api.json` (domyślnie `http://10.0.2.2:8090`). Gdy serwer nie odpowiada albo pole jest puste, mapa rysuje podkład z danych w aplikacji, jak wcześniej.
+The full archive address is the `tiles_url` field in `entry/src/main/resources/rawfile/config/api.json` (default `http://10.0.2.2:8090/krakow.pmtiles`; the mock prints the correct address at startup, for the sample `.../sample.pmtiles`). When the archive does not respond or the field is empty, the map draws the background from the data in the app.
 
-Mock (`tools/mock_backend/server.py`, sama biblioteka standardowa Pythona) udostępnia:
+The mock (`tools/mock_backend/server.py`, Python standard library only) serves the archive at `GET /<archive name>` with `Range` support (206), next to the API from the section above and `GET /health`.
 
-| Ścieżka | Dla kogo |
-|---|---|
-| `GET /tiles/info.json` | zakres powiększeń, granice, atrybucja, data buildu |
-| `GET /tiles/{z}/{x}/{y}.json` | aplikacja HarmonyOS: kafelek gotowy do rysowania (format `render-v2`): geometria pogrupowana na zieleń, wodę, budynki i trzy rangi ulic, uproszczona do około jednego punktu ekranu, w całkowitych punktach kafelka 0..512 |
-| `GET /tiles/krakow.pmtiles` | aplikacja webowa (MapLibre): całe archiwum z obsługą nagłówka `Range` |
+How the app reads the archive (`data/Tiles.ets`, `data/Pmtiles.ets`, `data/Inflate.ets`, `data/Mvt.ets`):
 
-Aplikacja wybiera poziom kafelków do skali mapy, pobiera je w tle (najwyżej 4 naraz, pamięć 96 kafelków), a brakujący zastępuje kafelkiem nadrzędnym. Rysuje zieleń, wodę, budynki (od poziomu 14), ulice w trzech szerokościach i ich nazwy, w kolorach z makiet.
+- once: the first 16 KB of the archive, that is the header and the root directory (decompressed from gzip);
+- for each visible tile: the Hilbert ID, a leaf directory if needed (cached), then one request for the tile bytes;
+- gzip decompression and MVT decoding in a separate thread (`taskpool`), without blocking the UI; from the Protomaps layers it keeps greenery, water, buildings (from zoom 14) and streets in three ranks (paths from 14, residential streets from 13) with names, simplified to about one screen point;
+- at most 4 downloads at once, a cache of 96 tiles, a missing tile is replaced by its parent.
 
-Wydajność: kafelek ma na ekranie 512-1024 punktów, więc przy oddaleniu jest ich mniej, a serwer pomija to, czego na danym poziomie nie widać (ścieżki poniżej 14, ulice osiedlowe poniżej 13). Podkład rysuje się raz do bitmapy większej od ekranu o 40% z każdej strony; przesuwanie i szczypanie tylko przesuwa i skaluje tę bitmapę, a od nowa rysuje się ona dopiero po wyjściu poza margines, zmianie skali o ponad 25% (w trakcie szczypania dwukrotnej) albo po nadejściu nowych kafelków (zbieranych w paczki co 90 ms). Na archiwum Krakowa kafelek JSON jest 5-11 razy mniejszy niż w pierwszej wersji (np. poziom 12: 916 KB do 113 KB).
+The ArkTS decoder gives results identical to the Python reference implementation on 57 tiles of the Kraków archive; unit tests (`make test`) check it on the sample archive.
 
-Uwaga: lokalna trasa i fakty przykładowe leżą na schematycznej sieci próbki, która nie pokrywa się z prawdziwymi ulicami. Na prawdziwej mapie Krakowa (`make tiles`) trasa z `LocalRepository` jest więc przesunięta względem ulic; z API trasy przychodzą z prawdziwej sieci i pasują do kafelków. Do pokazu bez API pasuje `make tiles-sample`.
+Performance: a tile is 512-1024 points on screen, so there are fewer of them when zoomed out. The background is drawn once into a bitmap 40% larger than the screen on each side; panning and pinching only move and scale this bitmap, and it is redrawn only after going beyond the margin, after a zoom change of more than 25% (twice that during pinching) or after new tiles arrive (collected in batches every 90 ms).
 
-## Scenariusz demonstracji (próbka okolic Tauron Areny)
+Note: the local route and sample facts lie on the schematic sample network, which does not match the real streets. On the real Kraków map (`make tiles`) the route from `LocalRepository` is therefore offset from the streets; with the API, routes come from the real network and match the tiles. For a demo without the API, `make tiles-sample` is the right fit.
 
-1. Potrzeby: "Poruszam się na wózku", Gotowe.
-2. Mapa: "Dokąd idziesz?", wpisz "ogród", Szukaj, wybierz Ogród Doświadczeń. Start: Adres, "tauron", Szukaj, wybierz Tauron Arena Kraków. Wyznacz trasę.
-3. Wynik: potwierdzony wysoki krawężnik na ul. Stanisława Lema i niezweryfikowane schody przy al. Pokoju z trasą alternatywną; "Czego nie wiemy" pokazuje odcinki bez danych.
-4. Cel "Park Lotników Polskich": jedyna droga prowadzi przez schody z OpenStreetMap, więc aplikacja mówi, że trasy bez barier nie ma.
-5. Potrzeby bez żadnej bariery: trasa bez oceny odcinków.
-6. Fakt "Wysoki krawężnik" przy ul. Medweckiego: OpenStreetMap podaje tu obniżony krawężnik.
+## Demo scenario (sample of the Tauron Arena area)
 
-## Źródła i licencje
+1. Needs: "I use a wheelchair" ("Poruszam się na wózku"), Done.
+2. Map: "Where are you going?" ("Dokąd idziesz?"), type "ogród", Search ("Szukaj"), choose Ogród Doświadczeń. Start: Address ("Adres"), "tauron", Search, choose Tauron Arena Kraków. Plan the route ("Wyznacz trasę").
+3. Result: a confirmed high kerb on ul. Stanisława Lema and unverified steps at al. Pokoju with an alternative route; "What we do not know" shows segments without data.
+4. Destination "Park Lotników Polskich": the only way leads through steps from OpenStreetMap, so the app says there is no barrier-free route.
+5. Needs without any barrier: a route without segment assessment.
+6. The fact "High kerb" ("Wysoki krawężnik") at ul. Medweckiego: OpenStreetMap reports a lowered kerb here.
 
-- Dane mapy: OpenStreetMap, licencja ODbL, (c) współtwórcy OpenStreetMap, pobierane przez Overpass API.
-- Krój pisma: Barlow Semi Condensed (Regular, SemiBold, Bold) i Barlow Condensed Bold, SIL Open Font License (`rawfile/fonts/OFL-Barlow.txt`).
-- Ikony: Material Symbols, Apache License 2.0 (`rawfile/icons/LICENSE.txt`), oraz proste ikony konturowe narysowane dla tej aplikacji.
+## Sources and licences
+
+- Map data: OpenStreetMap, ODbL licence, (c) OpenStreetMap contributors, fetched via the Overpass API.
+- Typeface: Barlow Semi Condensed (Regular, SemiBold, Bold) and Barlow Condensed Bold, SIL Open Font License (`rawfile/fonts/OFL-Barlow.txt`).
+- Icons: Material Symbols, Apache License 2.0 (`rawfile/icons/LICENSE.txt`), and simple outline icons drawn for this app.

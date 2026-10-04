@@ -8,8 +8,9 @@ export interface DiagramStop {
 }
 
 /**
- * Schemat trasy z nagłówka wyniku: wyprostowana linia w stanach odcinków, przystanek dla każdej bariery
- * z potrzeb i nazwy startu i celu pod końcami. Trasa bez oceny to granatowy kontur z białym środkiem.
+ * Route diagram from the result header: a straightened line in the segment states, a stop for each barrier
+ * matching the needs, and the start and destination names under the ends. An unrated route is a navy outline
+ * with a white center.
  */
 @Component
 export struct RouteDiagram {

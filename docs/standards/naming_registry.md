@@ -14,7 +14,7 @@ Before you invent a name for a new file, function or constant, check whether the
 
 ## Current state
 
-The first entries came on 2026-10-04 with the package `db/` of `plans/schema_first_revision/`, the first code of the project. The names the template brought with it - the `makefile` targets and the architecture tests - have not been entered. The target rule is in `standard_naming.md`; the actual state goes here.
+The first entries came on 2026-10-04 with the package `db/` of `plans_finished/schema_first_revision/`, the first code of the project. The names the template brought with it - the `makefile` targets and the architecture tests - have not been entered. The target rule is in `standard_naming.md`; the actual state goes here.
 
 ## Names in the database
 
@@ -119,7 +119,7 @@ Every object the first revision `db/accessibility_db/migrations/versions/0001_ta
 - `test_<what it checks>` in a file `db/tests/test_<subject>.py`; a file that touches the database carries `pytestmark = pytest.mark.critical`.
 - `service_engine`, `service_connection`, `stored_fact_id` - the fixtures of `db/tests/conftest.py`.
 - `test_<what it checks>` in a file `tests/service/test_<subject>_cases.py` - the scenario tests of the rules layer, first `test_account_rules_cases.py`, `test_passwords_cases.py` and `test_session_tokens_cases.py`.
-- `schema_owner_engine` - the backend-owned local owner fixture required by `tests/conftest.py`; its delivery contract is `plans/sample_data/SAMPLE_DATA_BACKEND_HANDOFF.md`.
+- `schema_owner_engine` - the unpooled local schema-owner engine of `tests/data/conftest.py`, built from `--scratch-database-url` and required by `database_cleanup_registry` and `scratch_database`; its contract is `plans/sample_data/SAMPLE_DATA_BACKEND_HANDOFF.md`.
 - `database_cleanup_registry` - the shared exact-key cleanup fixture in `tests/conftest.py`.
 - `sample_critical_dataset` - the invented sample-network fixture in `tests/data/conftest.py`.
 
@@ -184,6 +184,15 @@ The names of `plans/public_transport_routing/`, the GTFS step of the routing dat
 - `tests/common_gtfs_feed.py`: `INVENTED_GTFS_TABLES` and `apply_invented_gtfs_feed`, the invented feeds of the tests.
 - `PUBLIC_TRANSPORT_ENABLED`: the environment entry of the switch of public transport in `config/settings.py`.
 
+## Tile archive names
+
+The names of `plans/tile_loading/`, the tile step of the loading program.
+
+- `data/tile_archive.py`: `TileFileError`, `fetch_tile_directory_presence`, `fetch_tile_file_digest`, `apply_tile_file_copy`, `apply_tile_file_placement`, `apply_tile_file_removal`, `apply_tile_leftover_removal` and the constants `TILE_FILE_CHUNK_BYTES`, `TILE_TEMPORARY_PREFIX` and `TILE_FILE_MODE`.
+- `service/tile_archive.py`: `TileArchiveSettings`, `TileArchiveResult`, `TileArchiveError`, `TILE_ARCHIVE_NAMED_ERRORS`, `resolve_tile_places_overlap`, `apply_tile_archive_command`, `apply_tile_archive`, `apply_tile_archive_run`, `apply_tile_failure_reason`, `apply_tile_temporary_cleanup`, the types `TileArchiveOutcome` and `TileArchiveFailureReason` and the constants `TILE_ARCHIVE_NAME`, `TILE_ARCHIVE_SHA256`, `TILE_ARCHIVE_RUN_SECONDS` and `TILE_ARCHIVE_GUARD_STATEMENT_TIMEOUT_MS`; its outcomes are `loaded`, `unchanged` and `skipped`, and its failure reasons `places_overlap`, `served_directory_missing`, `served_unreadable`, `source_missing`, `source_unreadable`, `source_mismatch`, `copy_failed`, `copy_mismatch` and `deadline_expired`.
+- `worker/tile_archive.py`: the manual entry point `python -m worker.tile_archive`, with `build_required_paths`, `build_tile_archive_settings`, `build_tile_archive_workspace_root`, `apply_tile_archive_report`, `apply_tile_archive_action` and the constant `TILE_ARCHIVE_EXIT_CODES`.
+- `TILE_ARCHIVE_SOURCE` and `TILE_ARCHIVE_DIR`: the environment entries of the source place and of the served directory of the tile archive in `config/settings.py`.
+
 ## Walking route names
 
 The names of `plans_finished/route_planning/`, the operation `plan_route` and the status rule of M4.
@@ -220,4 +229,10 @@ The names of `plans_finished/accounts/`, the four account operations and the one
 
 `service.sample_data.apply_sample_data` is the no-argument administrative provider. Its shared records live in `common_sample_data.py`. `SampleDataFailure` is the public alias of `SampleDataError`; the alias preserves the approved provider contract while the class follows exception naming conventions.
 
-The sample definitions reserve `fact.id` -1 through -4. Ordinary facts keep generated identifiers, and sample retries never reallocate or overwrite these identifiers. This convention is documented in `docs/data/sample_data.md`.
+The sample definitions reserve `fact.id` -1 through -8 for S-1 - S-8. Ordinary facts keep generated identifiers, and sample retries never reallocate or overwrite these identifiers. This convention is documented in `docs/product/schema.md`, section Facts, and in `docs/data/sample_data.md`.
+
+- `common_sample_data.py`: `SampleDefinition`, `SampleVoteDefinition`, `SampleNearbyWay`, `SampleNetworkPrerequisites`, `SampleFactRow`, `SampleVoteRow`, `StoredSample`, `StoredSampleVote`, `SampleDataResult`, `build_sample_voter_hash` and the constant `SAMPLE_POINT_ASSOCIATION_DISTANCE_M`; the types `SampleDataOutcome`, `SampleCommitState` and `SampleFailureReason`, whose failure reasons are `copy_missing`, `site_invalid`, `contradiction_missing`, `identity_collision`, `content_mismatch`, `initial_vote_invalid`, `database_failed` and `commit_unknown`.
+- `service/sample_data.py`: `SAMPLE_DEFINITIONS`, `apply_sample_data`, `apply_sample_contents`, `build_sample_votes`, `build_shifted_instant`, `build_sample_instant`, `build_expected_sample_votes`, `build_sample_insert_rows`, `fetch_sample_kerb_contradiction`, `fetch_sample_network_prerequisites`, `resolve_sample_prerequisites`, `resolve_sample_point_association` and `resolve_existing_sample`.
+- `data/sample_data.py`: `fetch_sample_prerequisites`, `fetch_stored_samples`, `fetch_sample_votes`, `apply_sample_inserts`, `apply_sample_rollback`, `apply_sample_connection`, `apply_sample_transaction`, the serializers `build_stored_sample`, `build_sample_voters`, `build_pair_payload`, `build_sample_fact_payload` and `build_sample_vote_payload`, and the query constants `SELECT_SAMPLE_PREREQUISITES_SQL`, `SELECT_STORED_SAMPLES_SQL`, `SELECT_INITIAL_SAMPLE_VOTES_SQL`, `INSERT_SAMPLE_FACTS_SQL` and `INSERT_INITIAL_SAMPLE_VOTES_SQL`.
+- `common_time.py`: `build_business_datetime`, the wall-clock time of an instant in the business zone with the offset in force at it, which `build_business_day` and `fetch_business_now` reuse.
+- `tests/data/common_sample_data_fixtures.py`: `SampleCriticalDataset`, `build_sample_critical_dataset`, `apply_sample_network_fixture` and the invented network `SAMPLE_FIXTURE_NODES`, `SAMPLE_FIXTURE_WAYS` and `SAMPLE_FIXTURE_LOWERED_KERB_NODE_ID`.

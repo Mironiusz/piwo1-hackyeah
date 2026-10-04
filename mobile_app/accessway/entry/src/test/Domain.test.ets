@@ -36,8 +36,8 @@ function way(id: number, nodes: number[], tags: Record<string, string>): Overpas
 }
 
 /**
- * Siatka testowa: 1-2-3 to krótka droga przez schody (2-3), 1-4-5-3 to objazd po asfalcie, 3-6 nie ma danych
- * o nawierzchni, 3-7-8 to stroma ścieżka z wysokim krawężnikiem w 7, jedyna droga do 8.
+ * Test graph: 1-2-3 is a short path over stairs (2-3), 1-4-5-3 is a detour on asphalt, 3-6 has no surface
+ * data, 3-7-8 is a steep path with a high curb at 7, the only way to 8.
  */
 function grid(): OverpassResponse {
   return {

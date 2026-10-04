@@ -10,7 +10,7 @@ export function voteWeight(loggedIn: boolean): number {
   return loggedIn ? WEIGHT_ACCOUNT : WEIGHT_ANON;
 }
 
-/** Ostatni głos każdej osoby; późniejszy głos tej samej osoby zastępuje wcześniejszy. */
+/** The latest vote of each person; a later vote by the same person replaces the earlier one. */
 export function latestVotes(votes: Vote[]): Vote[] {
   const byVoter: Map<string, Vote> = new Map<string, Vote>();
   for (const v of votes) {
@@ -23,9 +23,9 @@ export function latestVotes(votes: Vote[]): Vote[] {
 }
 
 /**
- * Status faktu z głosów. Nieaktualny, gdy głosy "już nie ma" przeważają o próg; sporny, gdy są głosy obu
- * rodzajów; potwierdzony, gdy głosy "nadal jest" osiągają próg; w pozostałych przypadkach niezweryfikowany.
- * Status nie zmienia się sam z upływem czasu.
+ * Fact status from votes. Outdated when "już nie ma" (no longer there) votes outweigh by the threshold; disputed
+ * when there are votes of both kinds; confirmed when "nadal jest" (still there) votes reach the threshold;
+ * otherwise unverified. The status does not change by itself over time.
  */
 export function factStatus(votes: Vote[]): FactStatus {
   let yes = 0;
@@ -59,7 +59,7 @@ export function lastConfirmation(createdAt: number, votes: Vote[]): number {
   return t;
 }
 
-/** Głos tej osoby oddany w ciągu ostatniej doby albo null. */
+/** This person's vote cast within the last 24 hours, or null. */
 export function recentVote(votes: Vote[], voterId: string, now: number): Vote | null {
   let found: Vote | null = null;
   for (const v of votes) {

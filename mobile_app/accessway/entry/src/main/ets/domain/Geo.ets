@@ -11,7 +11,7 @@ export function distanceM(lat1: number, lon1: number, lat2: number, lon2: number
   return 2 * EARTH_R * Math.asin(Math.min(1, Math.sqrt(s)));
 }
 
-/** Odległość punktu od odcinka w metrach, w lokalnym rzucie równoodległościowym. */
+/** Distance from a point to a segment in meters, in a local equirectangular projection. */
 export function pointSegmentDistanceM(pLat: number, pLon: number, aLat: number, aLon: number,
   bLat: number, bLon: number): number {
   const kx = Math.cos(pLat * DEG) * DEG * EARTH_R;
@@ -32,7 +32,7 @@ export function pointSegmentDistanceM(pLat: number, pLon: number, aLat: number, 
   return Math.sqrt(cx * cx + cy * cy);
 }
 
-/** Azymut w stopniach od północy, zgodnie z ruchem wskazówek zegara. */
+/** Bearing in degrees from north, clockwise. */
 export function bearingDeg(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const y = Math.sin((lon2 - lon1) * DEG) * Math.cos(lat2 * DEG);
   const x = Math.cos(lat1 * DEG) * Math.sin(lat2 * DEG) -
@@ -65,12 +65,12 @@ export function walkMinutes(m: number): number {
   return Math.max(1, Math.round(m / WALK_SPEED_MPS / 60));
 }
 
-/** Położenie na trasie zawsze w kilometrach z jednym miejscem po przecinku, jak na makietach: "0,4 km". */
+/** Position on the route, always in kilometers with one decimal place, as in the mockups: "0,4 km". */
 export function formatKm(m: number): string {
   return `${decimal(m / 1000, 1)} km`;
 }
 
-/** Przedział na trasie: "0,6-0,8 km". */
+/** Range on the route: "0,6-0,8 km". */
 export function formatKmRange(a: number, b: number): string {
   const d = b - a < 150 ? 2 : 1;
   return `${decimal(a / 1000, d)}-${decimal(b / 1000, d)} km`;

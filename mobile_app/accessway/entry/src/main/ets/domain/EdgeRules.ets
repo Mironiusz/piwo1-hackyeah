@@ -24,7 +24,7 @@ export const PENALTY_INFO: number = 0.1;
 export const PENALTY_BLOCKING_FALLBACK: number = 50;
 export const EXTRA_INCLINE_PCT: number = 4;
 
-/** Typy dróg, dla których szerokość ma znaczenie dla przejazdu; szerokość jezdni ulicy nie mówi nic o chodniku. */
+/** Way types where width matters for passage; the width of a street's roadway says nothing about the sidewalk. */
 const WIDTH_RELEVANT: string[] = ['footway', 'path', 'steps', 'corridor', 'cycleway', 'track'];
 
 function osmIssue(kind: IssueKind, value: number, cls: IssueClass, text: string, date: number): EdgeIssue {
@@ -42,7 +42,7 @@ function osmIssue(kind: IssueKind, value: number, cls: IssueClass, text: string,
   };
 }
 
-/** Czy bariera danego rodzaju należy do potrzeb, czyli narusza wynikające z nich ograniczenia. */
+/** Whether a barrier of the given kind belongs to the needs, that is, violates the constraints derived from them. */
 export function barrierViolates(kind: FactKind, c: Constraints): boolean {
   if (kind === FactKind.STEPS) {
     return c.avoidSteps;
@@ -63,8 +63,8 @@ export function barrierViolates(kind: FactKind, c: Constraints): boolean {
 }
 
 /**
- * Wpływ zgłoszenia na odcinek. Potwierdzone zgłoszenie bariery z potrzeb blokuje odcinek; niepotwierdzone albo
- * sporne jest tylko informacją i nie zmienia trasy, która do tego czasu idzie za OpenStreetMap.
+ * Effect of a report on a segment. A confirmed report of a barrier from the needs blocks the segment; an unconfirmed
+ * or disputed one is only information and does not change the route, which until then follows OpenStreetMap.
  */
 export function barrierIssue(b: Barrier, c: Constraints): EdgeIssue | null {
   if (isAmenity(b.kind) || b.hidden) {
@@ -110,7 +110,7 @@ function kerbRelevant(e: WalkEdge, c: Constraints): boolean {
   return c.maxKerbCm !== NO_LIMIT && (e.crossing || e.kerbUnknown || e.kerbCm >= 0);
 }
 
-/** Liczba atrybutów istotnych dla profilu, które są znane na odcinku. */
+/** Number of profile-relevant attributes that are known on the segment. */
 export function knownRelevant(e: WalkEdge, c: Constraints): number {
   let n = 0;
   if (surfaceRelevant(c) && e.roughness >= 0) {
@@ -129,8 +129,8 @@ export function knownRelevant(e: WalkEdge, c: Constraints): number {
 }
 
 /**
- * Lista problemów odcinka względem ograniczeń. Klasa blocking to bariera profilu, extra to utrudnienie spoza
- * profilu, info to brakujący atrybut istotny dla profilu.
+ * List of the segment's issues against the constraints. Class blocking is a profile barrier, extra is an obstacle
+ * outside the profile, info is a missing profile-relevant attribute.
  */
 export function edgeIssues(e: WalkEdge, c: Constraints, date: number, barriers: Barrier[]): EdgeIssue[] {
   const out: EdgeIssue[] = [];
@@ -192,9 +192,9 @@ export function edgeIssues(e: WalkEdge, c: Constraints, date: number, barriers: 
 }
 
 /**
- * Stan odcinka: bariera profilu, brak bariery (wszystkie istotne atrybuty znane), dane częściowe albo brak danych.
- * Utrudnienia spoza profilu i niepotwierdzone zgłoszenia nie zmieniają stanu, więc odcinek bez kompletnych
- * danych nigdy nie jest oznaczony jako wolny od barier.
+ * Segment state: profile barrier, no barrier (all relevant attributes known), partial data or no data.
+ * Obstacles outside the profile and unconfirmed reports do not change the state, so a segment without complete
+ * data is never marked as barrier-free.
  */
 export function stateOf(issues: EdgeIssue[], known: number): EdgeState {
   let missing = 0;
@@ -225,7 +225,7 @@ export function hasBlocking(issues: EdgeIssue[]): boolean {
   return false;
 }
 
-/** Kara wagi odcinka; zgłoszenie niepotwierdzone nie wpływa na trasę. */
+/** Segment weight penalty; an unconfirmed report does not affect the route. */
 export function penaltyOf(issues: EdgeIssue[]): number {
   let p = 0;
   for (const i of issues) {
@@ -238,7 +238,7 @@ export function penaltyOf(issues: EdgeIssue[]): number {
   return p;
 }
 
-/** Bariery przypisane do odcinków, które przechodzą w zasięgu promienia bariery powiększonego o 15 m. */
+/** Barriers assigned to the segments that pass within the barrier's radius plus 15 m. */
 export function indexBarriers(ds: Dataset, barriers: Barrier[]): Map<number, Barrier[]> {
   const out: Map<number, Barrier[]> = new Map<number, Barrier[]>();
   for (const b of barriers) {

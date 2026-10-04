@@ -10,7 +10,7 @@ Success is a route with a tram in Kraków on the running service, shown to the p
 
 ## Problem and its consequences
 
-- The route operation of `docs/product/api_contract.md` knows only walking routes, and a field it does not name is refused. Until the interface of O9 is written there, neither the web frontend nor the service can build anything of the feature, and `MVP.md` lets `plans/frontend_app/` start its views of O9 only after that (shape, Current state).
+- The route operation of `docs/product/api_contract.md` knows only walking routes, and a field it does not name is refused. Until the interface of O9 is written there, neither the web frontend nor the service can build anything of the feature, and `MVP.md` lets `plans_finished/frontend_app/` start its views of O9 only after that (shape, Current state).
 - No copy of the GTFS is fetched by anything: `plans_finished/osm_importer/` leaves public transport out (`plans_finished/osm_importer/OSM_IMPORTER_PRD.md`, Out of scope), and the loading program of the demo loads three other things (`docs/deployment/hosted_demo.md`, section Loading the data). Without it, every route with public transport ends in the walking route.
 - M7 of the specification names only "the ride and the boarding at the stop" of a segment whose GTFS gives no accessibility information, so the state of the alighting and of a segment the GTFS marks as accessible does not follow from its text (`docs/standards/decision_registry.md`, entry Wording of the public transport segment of O9).
 - The specification says nothing of what a public transport segment shows besides its state and its source. A ride without a line, stops and a time gives the person no route they can follow, and no text form, which M8 and M10 require of everything on the map.
@@ -28,7 +28,7 @@ Success is a route with a tram in Kraków on the running service, shown to the p
 
 ## Out of scope
 
-- The switch, the public transport segment, the statement, the days of the feeds and the exception of O9 on the page about the data in the views of the web frontend: `plans/frontend_app/` builds them from the interface of item 1 (`MVP.md`, section Initiatives).
+- The switch, the public transport segment, the statement, the days of the feeds and the exception of O9 on the page about the data in the views of the web frontend: `plans_finished/frontend_app/` builds them from the interface of item 1 (`MVP.md`, section Initiatives).
 - The views of O9 in the HarmonyOS client: `plans/stage5_harmonyos_port/` decides them, and the interface serves that client as it serves the web frontend (shape, Out of scope, agent decision at C:40).
 - The walking route and what a route with public transport reuses of it - the walking legs, the alternative, the route with the fewest barriers and the plain message when routing does not answer: `plans_finished/route_planning/` (`MVP.md`, section Initiatives).
 - The importer, the network of the pedestrian ways and the walking data of the routing engine: `plans_finished/osm_importer/` (`plans_finished/osm_importer/OSM_IMPORTER_PLAN.md` D-20).
@@ -105,8 +105,8 @@ AC-14 (FR-3). With a profile that avoids no barrier, the route of AC-1 shows the
 ## Dependencies and impact on other modules
 
 - `plans_finished/route_planning/`, owned by Marek: the walking legs, the walking route of FR-4, the route with the fewest barriers and the plain message when routing does not answer are its code; this initiative joins them once they exist, and the parts the two share are agreed by Marek (shape, question 1).
-- `plans_finished/osm_importer/` and `plans/osm_import/`, owned by Mateusz: the data of routes with public transport is built from the same copy of OpenStreetMap as the walking data of `osm_importer`, and the step of FR-5 joins the one loading run of `osm_import` in the form of a step it writes down, as `plans/map_tiles/` and `plans/sample_data/` do (`MVP.md`, section Initiatives).
-- `plans/frontend_app/`, owned by Adrian: the switch, the segment, the statement and the days of the feeds in the views, the exception of O9 on the page about the data next to its sentence that missing data is never shown as accessible, and the texts of the interface for them (`docs/product/views.md`, section V-13 and the item on O9 under what no view covers).
+- `plans_finished/osm_importer/` and `plans/osm_import/`, owned by Mateusz: the data of routes with public transport is built from the same copy of OpenStreetMap as the walking data of `osm_importer`, and the step of FR-5 joins the one loading run of `osm_import` in the form of a step it writes down, as `plans_finished/map_tiles/` and `plans/sample_data/` do (`MVP.md`, section Initiatives).
+- `plans_finished/frontend_app/`, owned by Adrian: the switch, the segment, the statement and the days of the feeds in the views, the exception of O9 on the page about the data next to its sentence that missing data is never shown as accessible, and the texts of the interface for them (`docs/product/views.md`, section V-13 and the item on O9 under what no view covers).
 - `plans/stage5_harmonyos_port/`, owned by Kuber: told of the interface of FR-7.
 - `plans/deployment_config/`, owned by Kuba since 2026-10-04: the hosted demo runs the loading run with the step of FR-5 and restarts the routing service after it (`docs/deployment/hosted_demo.md`, section Loading the data).
 - `FINAL_CHECKLIST.md`: check 1.4 gets the confirmations of FR-7 and of the rulings for Marek, check 1.5 is met for the two entries of O9, and check 4.2 is the check of this initiative.

@@ -21,6 +21,8 @@ ENVIRONMENT_ENTRY_FILES = {
     "VALHALLA_TOOL_DIR": ".env.local",
     "VALHALLA_CONFIG_TEMPLATE": ".env.local",
     "PUBLIC_TRANSPORT_ENABLED": ".env.local",
+    "TILE_ARCHIVE_SOURCE": ".env.local",
+    "TILE_ARCHIVE_DIR": ".env.local",
     "DB_SERVICE_ACCOUNT_PASSWORD": ".env",
     "SESSION_SIGNING_KEY": ".env",
     "DB_SERVICE_ACCOUNT_NAME": ".env.local",
@@ -39,7 +41,7 @@ class ConfigurationError(ValueError):
 class Settings(BaseModel):
     """
     Hold the validated application contract, the service-account entries of db/, the key that signs session tokens,
-    the routing service and its data, the optional import path and the switch of public transport.
+    the routing service and its data, the optional import path, the switch of public transport and the two optional places of the tile archive.
     """
 
     model_config = ConfigDict(extra="ignore", hide_input_in_errors=True)
@@ -60,6 +62,8 @@ class Settings(BaseModel):
     VALHALLA_TOOL_DIR: Path | None = None
     VALHALLA_CONFIG_TEMPLATE: Path | None = None
     PUBLIC_TRANSPORT_ENABLED: bool = False
+    TILE_ARCHIVE_SOURCE: Path | None = None
+    TILE_ARCHIVE_DIR: Path | None = None
 
     def __init__(self, **data: Any) -> None:
         """Replace library validation details with safe key-only failures."""
@@ -117,13 +121,13 @@ class Settings(BaseModel):
                 raise ValueError("invalid_host") from None
         return value
 
-    @field_validator("IMPORT_WORKSPACE_ROOT", "ROUTING_DATA_DIR", "VALHALLA_TOOL_DIR", "VALHALLA_CONFIG_TEMPLATE", mode="before")
+    @field_validator("IMPORT_WORKSPACE_ROOT", "ROUTING_DATA_DIR", "VALHALLA_TOOL_DIR", "VALHALLA_CONFIG_TEMPLATE", "TILE_ARCHIVE_SOURCE", "TILE_ARCHIVE_DIR", mode="before")
     @classmethod
     def build_path_entry(cls, value: Any) -> Any:
         """Treat an empty path entry as unset, so a required one is refused by name and an optional one stays None."""
         return None if value == "" else value
 
-    @field_validator("IMPORT_WORKSPACE_ROOT", "ROUTING_DATA_DIR", "VALHALLA_TOOL_DIR", "VALHALLA_CONFIG_TEMPLATE")
+    @field_validator("IMPORT_WORKSPACE_ROOT", "ROUTING_DATA_DIR", "VALHALLA_TOOL_DIR", "VALHALLA_CONFIG_TEMPLATE", "TILE_ARCHIVE_SOURCE", "TILE_ARCHIVE_DIR")
     @classmethod
     def apply_absolute_path_validation(cls, value: Path | None) -> Path | None:
         """Require an absolute path without probing its existence."""

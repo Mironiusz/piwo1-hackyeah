@@ -62,7 +62,7 @@ export function osmFactView(o: OsmFact, votes: Vote[], isSample: boolean): Fact 
   };
 }
 
-/** Rodzaj, który zaprzecza danemu, jeśli leży w tym samym miejscu: wysoki krawężnik i obniżony, schody i rampa. */
+/** The kind that contradicts the given one in the same place: high curb and lowered curb, stairs and ramp. */
 export function opposite(k: FactKind): string {
   if (k === FactKind.KERB) {
     return FactKind.LOWERED_KERB;
@@ -74,8 +74,8 @@ export function opposite(k: FactKind): string {
 }
 
 /**
- * Wszystkie fakty do pokazania: zgłoszenia i elementy OpenStreetMap. Pomija fakty nieaktualne i ukryte przez
- * moderację. Zgłoszenie sprzeczne z OpenStreetMap w promieniu 15 m dostaje rodzaj i datę faktu z OSM.
+ * All facts to show: reports and OpenStreetMap elements. Skips facts that are outdated or hidden by
+ * moderation. A report that contradicts OpenStreetMap within 15 m gets the kind and date of the OSM fact.
  */
 export function buildFacts(ds: Dataset, reports: Barrier[], osmVotes: Map<string, Vote[]>): Fact[] {
   const out: Fact[] = [];
@@ -110,7 +110,7 @@ export interface NearbyFact {
   distanceM: number;
 }
 
-/** Fakty tego samego rodzaju w promieniu 15 m od wskazanego punktu, najbliższe pierwsze. */
+/** Facts of the same kind within 15 m of the given point, nearest first. */
 export function sameKindNearby(facts: Fact[], kind: FactKind, isArea: boolean, lat: number, lon: number): NearbyFact[] {
   const out: NearbyFact[] = [];
   for (const f of facts) {
@@ -126,7 +126,7 @@ export function sameKindNearby(facts: Fact[], kind: FactKind, isArea: boolean, l
   return out;
 }
 
-/** Fakty w prostokącie widocznej mapy, posortowane od najbliższego środka. */
+/** Facts in the visible map rectangle, sorted with those nearest the center first. */
 export function factsInView(facts: Fact[], lat: number, lon: number, halfLat: number, halfLon: number): Fact[] {
   const out: NearbyFact[] = [];
   for (const f of facts) {
