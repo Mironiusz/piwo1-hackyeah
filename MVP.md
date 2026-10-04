@@ -29,6 +29,8 @@ Each initiative of the section Initiatives is a directory `plans/<name>/` holdin
 
 Where a decision below or a document it points to names a builder, the builder is the initiative of this file. Each operation of `docs/product/api_contract.md` is implemented by exactly one initiative, and an acceptance criterion of `plans_finished/mvp/MVP_PRD.md` is checked by the first initiative the section Requirements and initiatives lists for it.
 
+Import ownership handoff on 2026-10-04: `osm_importer` now supplies the importer and Valhalla walking-data preparation. `osm_import` retains the copy-read operation and common demo-loading program. Shared backend and schema delivery stay with their existing initiatives (`plans_finished/mvp/MVP_PLAN.md` D-20). No seed is rewritten.
+
 ## Technical decisions
 
 The numbers are those of `plans_finished/mvp/MVP_PLAN.md`; D-13 is the layout of the section How the MVP is built.
@@ -36,7 +38,7 @@ The numbers are those of `plans_finished/mvp/MVP_PLAN.md`; D-13 is the layout of
 - D-1. Backend: Python 3.13 with FastAPI, on PostgreSQL with PostGIS, with the Python profile of the standards kept in full. Decided by the user on 2026-10-03 in phase B of `plans_finished/mvp/`.
 - D-2. Every other technical direction is decided in its own initiative by the role of the team responsible for it. Decided by the user on 2026-10-03 in phase B of `plans_finished/mvp/`.
 - D-3. Address search: the public Nominatim instance, called only by the server, with the text of the search only in the body of a POST request. Decided in `plans_finished/geocoding/GEOCODING_PLAN.md` D-1 - D-16, corrected by `plans_finished/nominatim_client/`.
-- D-4. OpenStreetMap data: the Geofabrik extract of Małopolska cut to the boundary of Kraków, read with pyosmium, fetched once before the demo and refreshed only by hand; a fresh copy, its reconciliation with the stored facts and its date become visible together or not at all. Decided in `plans_finished/osm_data_source/OSM_DATA_SOURCE_PLAN.md` D-1 - D-22.
+- D-4. OpenStreetMap data: the Geofabrik extract of Małopolska cut to the boundary of Kraków, read with pyosmium, fetched once before the demo and refreshed only by hand; a fresh copy, its reconciliation with the stored facts and its date become visible together or not at all. Decided in `plans_finished/osm_data_source/OSM_DATA_SOURCE_PLAN.md` D-1 - D-22. Current timeout amendments are `plans/osm_importer/OSM_IMPORTER_PLAN.md` D-16 - D-18: 120 seconds for database publication, 60 minutes for the whole run, 30-second connection and read-inactivity timeouts and no separate 15-minute PBF download ceiling.
 - D-5. OpenStreetMap tags to barriers and amenities: the rules of M6 - M8 of the specification, applied once per element, with the states present, absent, absent by default and unknown for every barrier of a way. Decided in `plans_finished/osm_barrier_mapping/OSM_BARRIER_MAPPING_PLAN.md` D-6 - D-17.
 - D-6. Frontend: a single-page application in TypeScript with React, built by Vite into `frontend/`, with the map drawn by MapLibre GL JS from one archive of vector tiles of Kraków served by the project; the browser talks only to the server of the project. Decided in `plans_finished/frontend_stack/FRONTEND_STACK_PLAN.md` D-1 - D-13.
 - D-7. Local database: PostgreSQL 18.6 with PostGIS 3.6.4 and the files of pgRouting 4.0.1 in a project image built from `postgres:18.6-trixie` and started by Docker Compose, with a schema owner that applies the revisions and a service account that gets its rights only from them. Decided in `plans_finished/local_database/LOCAL_DATABASE_PLAN.md` D-1 - D-8.
@@ -45,7 +47,7 @@ The numbers are those of `plans_finished/mvp/MVP_PLAN.md`; D-13 is the layout of
 - D-10. Where the demo runs: a server of the user in a data centre, with 16 GB of memory and 16 cores, reached at its IP address over plain HTTP, with every part of the demo in Docker containers started by Docker Compose. Decided in `plans_finished/deployment/`, superseding `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` D-8.
 - D-11. Domain model and database schema of facts and votes: the target schema `docs/product/schema.md`, with the status of a fact derived from its votes on every read and the database refusing the states the rules forbid; since version 12 of the specification `fact` keeps the idempotency key of a report or a geozone saved through `create_fact` as the column `idempotency_key`, the SHA-256 hash of the operation and the key of the request, with the constraints `UX_fact_idempotency_key`, `CK_fact_saved_report_has_idempotency_key` and `CK_fact_idempotency_key_sha256`. Decided in `plans_finished/fact_schema/FACT_SCHEMA_PLAN.md` D-1 - D-21, with what the first schema revision has to meet carried in from FR-2 and FR-3 of `plans_finished/schema_revision/SCHEMA_REVISION_PRD.md` and the idempotency key from `plans_finished/schema_revision/SCHEMA_REVISION_PLAN.md` D-1 - D-4.
 - D-12. Programming interface contract: the sixteen operations of `docs/product/api_contract.md`, with the session token in the header `Authorization: Bearer` and renewed in `Session-Token`. Decided in `plans_finished/api_contract/API_CONTRACT_PLAN.md` D-1 - D-18.
-- D-14. Backend architecture with the worker: one process started with `python -m api`, the import and refresh run as `python -m worker import-osm` in a one-off container of the backend image, the copy the routing service serves read from `tileset_last_modified` of its `/status`, the backend image built on the image of `valhalla/Dockerfile`, every operation in the layers `api`, `service` and `data`, and no periodic task. Decided in `plans_finished/backend_architecture/BACKEND_ARCHITECTURE_PLAN.md` D-1 - D-16.
+- D-14. Backend architecture with the worker: one process started with `python -m api`, the import and refresh use `python -m worker.osm_import` locally or in a one-off container of the backend image, the copy the routing service serves read from `tileset_last_modified` of its `/status`, the backend image built on the image of `valhalla/Dockerfile`, every operation in the layers `api`, `service` and `data`, and no periodic task. Decided in `plans_finished/backend_architecture/BACKEND_ARCHITECTURE_PLAN.md` D-1 - D-16. The command and execution locations follow the explicit later decisions of `plans/osm_importer/OSM_IMPORTER_PLAN.md` D-14 and D-20, recorded by `plans_finished/mvp/MVP_PLAN.md` D-20.
 
 ## Initiatives
 
@@ -69,30 +71,30 @@ The deployment configuration of the hosted demo is written by the task `DEPLOYME
 
 The first initiative of a row checks its acceptance criteria. The requirements are those of `plans_finished/mvp/MVP_PRD.md`, and the last two rows those of `plans_finished/valhalla_routing/VALHALLA_ROUTING_PRD.md`.
 
-| Requirement                                                     | Acceptance criteria    | Initiatives                                                |
-| --------------------------------------------------------------- | ---------------------- | ---------------------------------------------------------- |
-| FR-1. Preference profile (M1)                                   | AC-1                   | `frontend_app`                                             |
-| FR-2. Planning a route (M2)                                     | AC-2                   | `route_planning`, `address_search`, `frontend_app`         |
-| FR-3. Alternative route around unverified barriers (M2)         | AC-3                   | `route_planning`, `frontend_app`                           |
-| FR-4. No route without barriers (M2)                            | AC-4                   | `route_planning`, `frontend_app`                           |
-| FR-5. Point report (M3)                                         | AC-5                   | `community_facts`, `frontend_app`                          |
-| FR-6. Confirmations and denials (M4)                            | AC-6                   | `community_facts`, `frontend_app`                          |
-| FR-7. Reliability statuses (M4)                                 | AC-6                   | `community_facts`, `schema_first_revision`, `frontend_app` |
-| FR-8. Simple geozones (M5)                                      | AC-7                   | `community_facts`, `address_search`, `frontend_app`        |
-| FR-9. Open data at start (M6)                                   | AC-8                   | `osm_import`, `frontend_app`                               |
-| FR-10. Route segment states (M7)                                | AC-9                   | `route_planning`, `frontend_app`                           |
-| FR-11. List for the route (M8)                                  | AC-10                  | `route_planning`, `frontend_app`                           |
-| FR-12. Accounts (M9)                                            | AC-11                  | `accounts`, `frontend_app`                                 |
-| FR-13. Contributions without an account (M9)                    | AC-12                  | `community_facts`                                          |
-| FR-14. Flagging and moderation (M11)                            | AC-13                  | `community_facts`, `accounts`, `frontend_app`              |
-| FR-15. Source, date and status (M10)                            | AC-14                  | `community_facts`, `osm_import`, `frontend_app`            |
-| FR-16. Accessibility of the main scenario (M10)                 | AC-15                  | `frontend_app`                                             |
-| FR-17. Unavailable sources (M10)                                | AC-16                  | `route_planning`, `frontend_app`                           |
-| FR-18. Sample data (M10)                                        | AC-17                  | `sample_data`, `frontend_app`                              |
-| FR-19. Interface                                                | AC-18                  | `frontend_app`                                             |
-| FR-20. Privacy information                                      | AC-19                  | `frontend_app`                                             |
-| Valhalla FR-1 - FR-4 and FR-10, walking routes by the engine    | AC-1 - AC-7 and AC-12  | `route_planning`, `osm_import`                             |
-| Valhalla FR-5 - FR-9 and FR-11, routes with public transport O9 | AC-8 - AC-11 and AC-13 | `public_transport_routing`, `frontend_app`                 |
+| Requirement                                                     | Acceptance criteria    | Initiatives                                                     |
+| --------------------------------------------------------------- | ---------------------- | --------------------------------------------------------------- |
+| FR-1. Preference profile (M1)                                   | AC-1                   | `frontend_app`                                                  |
+| FR-2. Planning a route (M2)                                     | AC-2                   | `route_planning`, `address_search`, `frontend_app`              |
+| FR-3. Alternative route around unverified barriers (M2)         | AC-3                   | `route_planning`, `frontend_app`                                |
+| FR-4. No route without barriers (M2)                            | AC-4                   | `route_planning`, `frontend_app`                                |
+| FR-5. Point report (M3)                                         | AC-5                   | `community_facts`, `frontend_app`                               |
+| FR-6. Confirmations and denials (M4)                            | AC-6                   | `community_facts`, `frontend_app`                               |
+| FR-7. Reliability statuses (M4)                                 | AC-6                   | `community_facts`, `schema_first_revision`, `frontend_app`      |
+| FR-8. Simple geozones (M5)                                      | AC-7                   | `community_facts`, `address_search`, `frontend_app`             |
+| FR-9. Open data at start (M6)                                   | AC-8                   | `osm_importer`, `osm_import`, `frontend_app`                    |
+| FR-10. Route segment states (M7)                                | AC-9                   | `route_planning`, `frontend_app`                                |
+| FR-11. List for the route (M8)                                  | AC-10                  | `route_planning`, `frontend_app`                                |
+| FR-12. Accounts (M9)                                            | AC-11                  | `accounts`, `frontend_app`                                      |
+| FR-13. Contributions without an account (M9)                    | AC-12                  | `community_facts`                                               |
+| FR-14. Flagging and moderation (M11)                            | AC-13                  | `community_facts`, `accounts`, `frontend_app`                   |
+| FR-15. Source, date and status (M10)                            | AC-14                  | `community_facts`, `osm_importer`, `osm_import`, `frontend_app` |
+| FR-16. Accessibility of the main scenario (M10)                 | AC-15                  | `frontend_app`                                                  |
+| FR-17. Unavailable sources (M10)                                | AC-16                  | `route_planning`, `frontend_app`                                |
+| FR-18. Sample data (M10)                                        | AC-17                  | `sample_data`, `frontend_app`                                   |
+| FR-19. Interface                                                | AC-18                  | `frontend_app`                                                  |
+| FR-20. Privacy information                                      | AC-19                  | `frontend_app`                                                  |
+| Valhalla FR-1 - FR-4 and FR-10, walking routes by the engine    | AC-1 - AC-7 and AC-12  | `route_planning`, `osm_importer`                                |
+| Valhalla FR-5 - FR-9 and FR-11, routes with public transport O9 | AC-8 - AC-11 and AC-13 | `public_transport_routing`, `frontend_app`                      |
 
 FR-20 of `plans_finished/mvp/MVP_PRD.md` still calls the identifier of a vote without an account a 30-day one. Version 9 of the specification keeps it until the demo and all its data are deleted on 4 October 2026 (section Personal data), as FR-13 and AC-12 of the PRD already say, and the specification prevails, so the privacy information of FR-20 states that retention.
 
@@ -116,7 +118,7 @@ The critical path runs through `backend_skeleton` and `schema_first_revision`, b
 - Initiatives outside this file that build parts of the MVP on branches not merged yet, recorded in `docs/standards/decision_registry.md`, entry Initiatives outside MVP.md that overlap its initiatives.
 - Whether `public_transport_routing` waits for `route_planning` and `osm_import` or starts in parallel with them, as the specification says of O9, recorded in `docs/standards/decision_registry.md`, entry When the initiative of O9 starts its code.
 - How the exception of O9 in M7 of the specification names a public transport segment the GTFS marks as accessible and the alighting at a stop, recorded in `docs/standards/decision_registry.md`, entry Wording of the public transport segment of O9.
-- The narrower rule of a pseudonym of version 11 of the specification (M9) - letters, digits, the underscore and the hyphen - which `docs/product/api_contract.md` does not carry yet; the user asks the owners of the contract to bring it in (`docs/product/views.md`, decision 12), and until then the specification prevails over the contract for `accounts`.
+- The account pseudonym rule in `docs/product/api_contract.md` was aligned with specification M9 on 2026-10-04 through `plans/accounts/ACCOUNTS_SHAPE.md`, as approved by the user. Kuber and Adrian's confirmation remains part of the outstanding contract confirmation of D-12 above.
 - Whether an item of a list names its street, deferred until Marek tests the programming interface, recorded in `docs/standards/decision_registry.md`, entry Street name of an item of a list.
 
 ## Known departures from the Kraków brief

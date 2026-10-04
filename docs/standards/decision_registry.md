@@ -20,6 +20,13 @@ A deferral needs a reason. "We did not want to think about it" is not a reason; 
 
 ## Open decisions
 
+### Hash length reported by Kuba
+
+- Affects: the hash representation and length constraints consumed by the database and backend. On 2026-10-04 the user relayed Kuba's requirement that the hash should be 32 bytes and requested recording it here. This records the reported size, not an instruction to change the schema in the backend-skeleton initiative.
+- Variants: apply the 32-byte requirement to the anonymous voter identifier, to the fact-save idempotency digest, or to both, once Kuba identifies the intended fields. A 32-byte binary digest and its 64-character hexadecimal encoding represent the same digest but are different storage representations; do not apply this requirement to password hashes without an explicit contract.
+- Blocks: the report does not identify which hash Kuba meant or its storage representation. The current target schema has binary voter and fact-save idempotency hashes and a separate text password hash. No algorithm, constraint or column change is inferred from the report.
+- Condition: Kuba names the affected hash fields and confirms the binary representation; the agreed requirement then lands in the target schema and the responsible database/backend implementation with a length check before this entry moves to Resolved decisions.
+
 ### Technology stack and the Python profile of the standards
 
 - Affects: whether the twelve Python profile standards stay in force (`docs/standards/README.md`), the tools in `pyproject.toml` and `makefile`, the gates that check code, and the shape of every plan.
@@ -50,15 +57,15 @@ A deferral needs a reason. "We did not want to think about it" is not a reason; 
 
 ### Initiatives outside MVP.md that overlap its initiatives
 
-- Affects: the initiative `osm_import` of `MVP.md`, which builds the import of OpenStreetMap data, the rule of `plans_finished/mvp/MVP_PLAN.md` D-14 that no periodic task exists, and the optional features O4 and O9 of `docs/product/specification.md`, open city data and routes with public transport.
-- Variants: for the import, the seed of `plans/osm_import/` goes through the chain and takes what `plans/osm_importer/` settled, or `plans/osm_importer/` replaces `osm_import` in `MVP.md` once it is merged; for the stops of buses and trams from the MSIP service of Kraków with a daily import, `plans/bus_station_api_integration/` enters the MVP, which needs a decision against D-14 and against O4 being outside the MVP, or it stays outside the MVP as part of O4 or O9.
-- Blocks: on 2026-10-04 both initiatives stand only on branches not merged into the line of `plans_finished/mvp/`, each with a plan in progress: `plans/osm_importer/` on `md/fast-setup`, whose plan records that Rafał confirmed he would handle the handoff of the import, and `plans/bus_station_api_integration/` on `mw`. The user decided on 2026-10-04 that an initiative not finished does not stop `plans_finished/mvp/`, adds its content to `MVP.md` later, and that no question is asked while `plans_finished/mvp/` is carried out, so the overlap was recorded here instead of being decided by the agent.
-- Condition: either branch is merged, or Rafał and the owner of the initiative decide which initiative builds the import and whether the stops of MSIP enter the MVP. `MVP.md`, sections Initiatives and Requirements and initiatives, follows in the same change.
+- Affects: the stops of buses and trams from the MSIP service of Kraków with a daily import in `plans/bus_station_api_integration/`, the no-periodic-task rule of `plans_finished/mvp/MVP_PLAN.md` D-14, and optional features O4 and O9 of `docs/product/specification.md`. The importer ownership overlap formerly tracked here is resolved below.
+- Variants: `bus_station_api_integration` enters the MVP, requiring a decision against D-14 and O4 being outside the MVP, or remains outside it as part of O4 or O9.
+- Blocks: on 2026-10-04 the initiative stood on branch mw, not merged into the line of plans_finished/mvp, with a plan in progress. The user decided that an unfinished initiative does not stop plans_finished/mvp and adds its content to MVP.md later. The importer handoff of osm_importer does not settle this independent MSIP scope decision.
+- Condition: the branch is merged, or Rafał and the initiative owner decide whether the stops of MSIP enter the MVP. MVP.md follows in the same change.
 
 ### When the initiative of O9 starts its code
 
 - Affects: the initiative `public_transport_routing` of `MVP.md`, its time box of 4.5 hours of work of the people of the team, and the order of the section Order and critical path of `MVP.md`.
-- Variants: `public_transport_routing` waits for `route_planning` and `osm_import`, as `plans_finished/mvp/MVP_PLAN.md` D-15 and `MVP.md` record; or it starts at once, in parallel with them, as the section Optional features of `docs/product/specification.md` says of O9 - built first and in parallel with the mandatory features - with the parts it shares with `route_planning` and `osm_import` agreed between their owners.
+- Variants: `public_transport_routing` waits for `route_planning` and `osm_importer`, as `plans_finished/mvp/MVP_PLAN.md` D-15, amended by D-20, and `MVP.md` record; or it starts at once, in parallel with them, as the section Optional features of `docs/product/specification.md` says of O9 - built first and in parallel with the mandatory features - with the parts it shares with `route_planning` and `osm_importer` agreed between their owners.
 - Blocks: the specification prevails over the plan, but the waits of D-15 were approved by the user on 2026-10-04, and the user decided that no question is asked while `plans_finished/mvp/` is carried out. Both `route_planning` and `public_transport_routing` are owned by Marek.
 - Condition: Rafał and Marek decide the start of `public_transport_routing`, at the latest when its seed goes into `plan-shape`; `MVP.md` follows in the same change.
 
@@ -84,6 +91,10 @@ A deferral needs a reason. "We did not want to think about it" is not a reason; 
 - Condition: the organizers have answered, before a licence file is added to the repository.
 
 ## Resolved decisions
+
+### OpenStreetMap importer ownership and Valhalla data preparation
+
+Resolved on 2026-10-04: the user authorized modifying MVP and approved including network PBF preparation, Valhalla walking-data construction and post-commit routing-pointer publication in osm_importer. The importer and its tests are assigned there; osm_import retains read_osm_copy and the common demo-loading program, consuming the importer. The decisions live in plans/osm_importer/OSM_IMPORTER_PLAN.md D-19 - D-21 and plans_finished/mvp/MVP_PLAN.md D-20, and MVP.md records the ownership, requirements and dependencies. Shared backend, schema delivery and the vote-lock integration remain outstanding prerequisites.
 
 ### Language of the repository
 
