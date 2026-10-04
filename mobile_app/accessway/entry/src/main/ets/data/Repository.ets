@@ -3,9 +3,9 @@ import { Needs } from '../domain/Needs';
 import { EdgeState, Fact, FactKind, LatLon } from '../model/Types';
 
 /**
- * Granica między interfejsem a danymi. Ekrany korzystają tylko z tych typów i metod; dziś odpowiada na nie
- * LocalRepository (dane na urządzeniu), a po podłączeniu API zespołu wystarczy druga implementacja tego samego
- * interfejsu. Wszystkie metody są asynchroniczne, a błąd jest zgłaszany jako RepoError z kodem.
+ * Boundary between the UI and the data. Screens use only these types and methods; today LocalRepository answers
+ * them (data on the device), and once the team's API is connected a second implementation of the same interface
+ * is enough. All methods are asynchronous, and an error is reported as a RepoError with a code.
  */
 
 export enum ErrorCode {
@@ -46,6 +46,8 @@ export interface MyVote {
 }
 
 export interface NewReport {
+  /** UUID generated once when the person approves the summary and sent unchanged with every attempt. */
+  idempotencyKey: string;
   kind: FactKind;
   isArea: boolean;
   lat: number;
@@ -63,7 +65,7 @@ export interface GeocodeResult {
   lon: number;
 }
 
-/** Fragment trasy w jednym stanie, z geometrią do narysowania na mapie. */
+/** A part of the route in one state, with geometry to draw on the map. */
 export interface RouteSegment {
   pts: number[];
   state: EdgeState;
@@ -86,7 +88,7 @@ export interface RouteGap {
   isEnd: boolean;
 }
 
-/** Trasa omijająca jeden niezweryfikowany albo sporny fakt z potrzeb, liczona tak, jakby był potwierdzony. */
+/** A route that avoids one unverified or disputed fact from the needs, computed as if it were confirmed. */
 export interface RouteAlternative {
   factId: string;
   extraM: number;
@@ -119,7 +121,7 @@ export interface Account {
   moderator: boolean;
 }
 
-/** Prostokąt mapy, z którego bierzemy fakty. */
+/** Map rectangle from which we take facts. */
 export interface Area {
   south: number;
   west: number;
@@ -180,7 +182,7 @@ export const PSEUDONYM_MIN: number = 3;
 export const PSEUDONYM_MAX: number = 30;
 export const PASSWORD_MIN: number = 5;
 
-/** Pseudonim z makiety: 3 do 30 znaków, litery, cyfry, podkreślenie i myślnik. */
+/** Nickname as in the mockup: 3 to 30 characters, letters, digits, underscore and hyphen. */
 export function pseudonymValid(p: string): boolean {
   return p.length >= PSEUDONYM_MIN && p.length <= PSEUDONYM_MAX && /^[A-Za-z0-9_ąćęłńóśźżĄĆĘŁŃÓŚŹŻ-]+$/.test(p);
 }

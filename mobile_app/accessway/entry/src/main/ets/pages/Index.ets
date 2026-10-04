@@ -147,7 +147,7 @@ struct Index {
     .height('100%')
   }
 
-  /** Powłoka jest budowana od nowa po zmianie danych, bo język i dane nie są stanem komponentów. */
+  /** The shell is rebuilt after a data change, because language and data are not component state. */
   @Builder
   shell() {
     Column() {
@@ -270,7 +270,7 @@ struct Index {
     .onClick(action)
   }
 
-  /** Menu z makiety V-10: konto, język, prywatność, dane i moderacja dla konta z rolą moderatora. */
+  /** Menu from mockup V-10: account, language, privacy, data, and moderation for an account with moderator role. */
   @Builder
   menu() {
     Column() {
@@ -338,7 +338,7 @@ struct Index {
     .onClick(action)
   }
 
-  /** Dolny pasek z makiety: Mapa, żółta akcja Zgłoś pośrodku i Potrzeby. */
+  /** Bottom bar from the mockup: Mapa (Map), the yellow Zgłoś (Report) action in the middle, and Potrzeby (Needs). */
   @Builder
   bottomBar() {
     Row({ space: 8 }) {

@@ -47,7 +47,7 @@ The third layer: local configuration. Constants belonging to one piece of code a
 
 ## Environment entries
 
-Every entry of the three templates has a record in this section, added together with the entry in the template. The record gives the entry's name, its meaning, whether the entry is required or has a default value, and how the process behaves when it is missing. The first entries came on 2026-10-04 with the database of `db/` (`plans/schema_first_revision/`); every one of them is required and has no default value, and an empty or missing entry stops the Compose files of `db/`, `db/accessibility_db/migrations/env.py` or the critical tests of `db/tests/` with its name.
+Every entry of the three templates has a record in this section, added together with the entry in the template. The record gives the entry's name, its meaning, whether the entry is required or has a default value, and how the process behaves when it is missing. The first entries came on 2026-10-04 with the database of `db/` (`plans_finished/schema_first_revision/`); every one of them is required and has no default value, and an empty or missing entry stops the Compose files of `db/`, `db/accessibility_db/migrations/env.py` or the critical tests of `db/tests/` with its name.
 
 | Entry                         | Template             | Meaning                                                                                                                                                                                            |
 | ----------------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

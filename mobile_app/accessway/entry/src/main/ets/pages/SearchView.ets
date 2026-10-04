@@ -8,8 +8,8 @@ import { Btn, BoxKind, Icon, LinkText, MessageBox, SheetBox, SheetTitle } from '
 import { Nav, AppScreen } from './Nav';
 
 /**
- * V-8: wyszukiwanie adresu. Szukamy dopiero po Enter albo przycisku i niczego nie podpowiadamy w trakcie pisania;
- * wynik trzeba wybrać z listy, także gdy jest jeden.
+ * V-8: address search. We search only after Enter or the button and suggest nothing while typing;
+ * a result must be picked from the list, even when there is only one.
  */
 @Component
 export struct SearchView {

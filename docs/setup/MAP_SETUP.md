@@ -6,7 +6,7 @@ Document state: 2026-10-04
 
 The frontend draws one map of Kraków, and the browser takes every file of that map from the host of the page. This document says which files those are, where each of them comes from, how a member of the team gets a working map, and how the tile archive is handed to the persons who load it on the server. It also keeps the record of the archive, by which a copy of it is checked.
 
-It was written by `plans/map_tiles/`; the decisions and their reasons are in `plans/map_tiles/MAP_TILES_PLAN.md`.
+It was written by `plans_finished/map_tiles/`; the decisions and their reasons are in `plans_finished/map_tiles/MAP_TILES_PLAN.md`.
 
 ## What the map needs
 
@@ -55,7 +55,7 @@ The bounding box is the one of the administrative boundary of Kraków (`plans_fi
 3. Put the file at `frontend/public/tiles/krakow.pmtiles`. Git ignores that directory.
 4. The fonts and the two style files are already in the repository, so nothing else is fetched.
 
-The application that draws the map is the frontend in `frontend/`, built by `plans/frontend_app/`. To see the map, install its packages once and start its two development programs, each in its own terminal, then open the address the second one prints:
+The application that draws the map is the frontend in `frontend/`, built by `plans_finished/frontend_app/`. To see the map, install its packages once and start its two development programs, each in its own terminal, then open the address the second one prints:
 
 ```bash
 npm --prefix frontend install
@@ -67,7 +67,7 @@ The first program is the temporary mock of the service, which the frontend runs 
 
 ## Handing the archive to the server
 
-The archive is not in the repository, so it reaches the server of the demo as a file. Adrian hands it to the backend persons, who load it on the server; this initiative builds no step of the loading program (`plans/map_tiles/MAP_TILES_PLAN.md`, D-1). The backend persons have not confirmed this yet.
+The archive is not in the repository, so it reaches the server of the demo as a file. Adrian hands it to the backend persons, who load it on the server; this initiative builds no step of the loading program (`plans_finished/map_tiles/MAP_TILES_PLAN.md`, D-1). The backend persons have not confirmed this yet.
 
 What the server has to provide:
 
@@ -135,7 +135,7 @@ The rules the script keeps and its check verifies:
 - The file with Polish labels shows the Polish name of a place, and the file with English labels the English name where the archive has one and the local name otherwise.
 - The files hold none of the characters `docs/standards/standard_formatting.md` forbids, and they are formatted with the prettier configuration of the repository.
 
-The look of the style on a drawn map was not checked when these files were written, because no application existed yet. It was checked on 2026-10-04, when `plans/frontend_app/` built the map: the result is in `plans/map_tiles/MAP_TILES_REVIEW.md`, section Acceptance criteria checked on the drawn map.
+The look of the style on a drawn map was not checked when these files were written, because no application existed yet. It was checked on 2026-10-04, when `plans_finished/frontend_app/` built the map: the result is in `plans_finished/map_tiles/MAP_TILES_REVIEW.md`, section Acceptance criteria checked on the drawn map.
 
 ## Licences
 

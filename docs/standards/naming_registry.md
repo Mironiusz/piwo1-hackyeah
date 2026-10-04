@@ -14,7 +14,7 @@ Before you invent a name for a new file, function or constant, check whether the
 
 ## Current state
 
-The first entries came on 2026-10-04 with the package `db/` of `plans/schema_first_revision/`, the first code of the project. The names the template brought with it - the `makefile` targets and the architecture tests - have not been entered. The target rule is in `standard_naming.md`; the actual state goes here.
+The first entries came on 2026-10-04 with the package `db/` of `plans_finished/schema_first_revision/`, the first code of the project. The names the template brought with it - the `makefile` targets and the architecture tests - have not been entered. The target rule is in `standard_naming.md`; the actual state goes here.
 
 ## Names in the database
 

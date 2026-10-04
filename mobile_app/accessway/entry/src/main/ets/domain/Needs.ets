@@ -1,7 +1,7 @@
 import { tr } from '../model/I18n';
 import { AMENITY_KINDS, BARRIER_KINDS, Constraints, FactKind, NO_LIMIT, Roughness } from '../model/Types';
 
-/** Potrzeby z ekranu "Twoje potrzeby": czego unikam i czego potrzebuję. Zostają tylko na urządzeniu. */
+/** Needs from the "Twoje potrzeby" (Your needs) screen: what I avoid and what I need. They stay on the device only. */
 export interface Needs {
   avoid: FactKind[];
   need: FactKind[];
@@ -39,7 +39,7 @@ export function presetIcon(p: Preset): string {
   return 'elderly';
 }
 
-/** Gotowy zestaw zaznacza pola na liście; osoba może je potem zmienić. */
+/** A preset checks boxes on the list; the person can change them afterwards. */
 export function presetNeeds(p: Preset): Needs {
   if (p === Preset.WHEELCHAIR) {
     return {
@@ -67,7 +67,7 @@ export function copyNeeds(n: Needs): Needs {
   return { avoid: n.avoid.slice(), need: n.need.slice() };
 }
 
-/** Zachowuje kolejność z list rodzajów, żeby zapis i porównania były stabilne. */
+/** Keeps the order of the kind lists so that saving and comparisons are stable. */
 export function toggleKind(list: FactKind[], k: FactKind): FactKind[] {
   const on = list.indexOf(k) < 0;
   const order = BARRIER_KINDS.indexOf(k) >= 0 ? BARRIER_KINDS : AMENITY_KINDS;
@@ -84,7 +84,7 @@ export function hasBarriers(n: Needs): boolean {
   return n.avoid.length > 0;
 }
 
-/** Ograniczenia trasy z listy barier, których osoba unika. Bez żadnej bariery odcinki nie są oceniane. */
+/** Route constraints from the list of barriers the person avoids. Without any barrier, segments are not assessed. */
 export function needsConstraints(n: Needs): Constraints {
   const has = (k: FactKind): boolean => n.avoid.indexOf(k) >= 0;
   return {

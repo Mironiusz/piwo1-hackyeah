@@ -1,8 +1,8 @@
 import { FactCategory, FactKind } from '../model/Types';
 
 /**
- * Liniowe znaki rodzajów faktów z makiet, rysowane na Canvas w polu 24 x 24 przeskalowanym do `size`.
- * Ten sam rysunek służy w wierszach list, w zgłaszaniu i w znacznikach na mapie.
+ * Line glyphs for fact kinds from the mockups, drawn on a Canvas in a 24 x 24 box scaled to `size`.
+ * The same drawing is used in list rows, in reporting and in map markers.
  */
 export function drawKind(c: CanvasRenderingContext2D, kind: FactKind, category: FactCategory, cx: number, cy: number,
   size: number, color: string): void {
@@ -90,7 +90,7 @@ export function drawKind(c: CanvasRenderingContext2D, kind: FactKind, category: 
   c.restore();
 }
 
-/** Znak rodzaju jako mały element interfejsu, na przykład w wierszu listy. */
+/** Kind glyph as a small UI element, for example in a list row. */
 @Component
 export struct KindIcon {
   kind: FactKind = FactKind.STEPS;

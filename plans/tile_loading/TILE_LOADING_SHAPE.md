@@ -1,0 +1,96 @@
+# Shape: Tile-archive step of the common demo-loading program
+
+Document state: 2026-10-04, interview closed
+Regulator: C:40
+
+The seed carries no regulator value, so the default C:40 applies.
+
+## Problem
+
+The approved PRD of `plans/osm_import/` makes the map tile archive one of the three required effects of the common loading program `python -m worker.load_demo`: complete loading needs the archive, and a missing tile integration means the program cannot report complete loading (`plans/osm_import/OSM_IMPORT_PRD.md` FR-3, FR-4, AC-4, AC-6, AC-9, AC-10). `plans_finished/map_tiles/` delivered the archive as a file handed over by hand and built no step of the loading program (`plans_finished/map_tiles/MAP_TILES_PLAN.md` D-1), so no step exists for the program to compose. `plans/osm_import/` is held until this initiative settles how the tile requirements are met (`plans/osm_import/OSM_IMPORT_PLAN.md` D-21).
+
+The user was offered three variants - no tile step at all, a step that verifies a file placed by hand, and a step that copies the file into the served place - and did not pick the recommended variant without tiles. The user asked for an initiative that meets the tile requirements (seed).
+
+## Recipient and trigger
+
+- The common loading program of `plans/osm_import/`, which composes the tile step between the OpenStreetMap step and the sample step (`plans/osm_import/OSM_IMPORT_PLAN.md` D-7) and reports its outcome in the line `Tiles:` of its summary (D-17 there).
+- The person who runs the loading program by hand on the server of the hosted demo: Rafał, the owner of the server (`TEAM.md`).
+- The browser of a person looking at the map of the hosted demo, which reads the archive at `/tiles/krakow.pmtiles` in byte ranges (`docs/setup/MAP_SETUP.md`, section Handing the archive to the server).
+- The owner of this initiative is Rafał, who said in the seed that he would do it himself.
+- Trigger: a manual run of the loading program after the schema revisions, and a manual full-flow retry after a fix (`docs/deployment/hosted_demo.md`, section Loading the data; `plans/osm_import/OSM_IMPORT_PRD.md` FR-6).
+- Deadline: the map of Kraków shows at the public link before 10:00 on 4 October 2026 (`docs/deployment/hosted_demo.md`, section Check before the link goes into the submission). This shape was opened at 09:05 on that day.
+
+## Current state
+
+Checked on 2026-10-04 at 09:02, on the branch `rm/requirements-preparation`.
+
+- The tile requirements of the loading program: complete loading includes the tile archive (FR-3); the tile step has a written contract with inputs, observable outcomes, failure reporting and repeat-safety obligations (FR-4); a loading attempt with all steps available completes the archive effect (AC-4); with the tile integration absent the program cannot report complete loading (AC-6); a failed tile step after a committed OpenStreetMap step gives incomplete loading and a manual retry repeats every step (AC-9); the tile step can safely repeat (AC-10) (`plans/osm_import/OSM_IMPORT_PRD.md`).
+- Decided for every step by `plans/osm_import/OSM_IMPORT_PLAN.md`: the order OpenStreetMap, tiles, samples, stopping at the first unsuccessful step (D-7); the exclusion of the loading program held through the tile step (D-10, D-11); a finite whole-step execution budget of its own for the tile step, whose value and enforcement are still open (D-13); one plain-text summary line per step (D-17). The proposed common result records name the effect `tile_archive` as a filesystem-only effect without database commit evidence (D-18, not yet approved; `docs/deployment/loading_program.md`, section Proposed common result contract). The same contract lists as still open "the tile callable, outcome and failure records, repeat safety and execution budget" (section Remaining integration requirements).
+- The archive of the hosted demo is the file Adrian produced on 2026-10-03 from the Protomaps build `20261003`, handed over as a file and not cut again on the server, so the server needs neither the cutting tool nor a connection to Protomaps (`plans_finished/map_tiles/MAP_TILES_SHAPE.md`, Domain rules). Its record: 34 785 215 bytes, SHA-256 `21cc383fd4b33a55e25c900ac8aded3f672c8bcb4758a30dcd3c813d7d7ab8b1` (`docs/setup/MAP_SETUP.md`, section The tile archive).
+- What the server has to provide for the archive: the file answers at `/tiles/krakow.pmtiles` on the host of the page, byte range requests are answered, and after the copy the SHA-256 value of the file on the server equals the recorded one (`docs/setup/MAP_SETUP.md`, section Handing the archive to the server).
+- The sources disagree on how the archive reaches the server. `plans_finished/map_tiles/MAP_TILES_PLAN.md` D-1: by hand, without a step; the backend persons have not confirmed it. Check 3.4 of `FINAL_CHECKLIST.md` ("The loading program loads the tile archive."), the row of `plans/osm_import/` in `MVP.md`, section Initiatives, `docs/deployment/hosted_demo.md`, section Loading the data, and `plans_finished/backend_architecture/BACKEND_ARCHITECTURE_PLAN.md` D-10 ("The tile archive lies on a volume the proxy reads and the loading command of the map work package writes."): a step of the loading program. `MVP.md`, section Open decisions and confirmations, records it as unconfirmed.
+- No code loads the archive: `worker/` holds only `osm_import.py` and `gtfs_import.py`, no `load_demo` exists, and `service/` has no tile module.
+- No configuration of the proxy or of the application services exists; the only Compose file of the demo is `db/compose.deploy.yaml`, with the database alone. The proxy, its volumes and the commands belong to `plans/deployment_config/` (Kuba), whose shape is in its interview and holds this very question as its open question 3, "How the tile archive reaches the server: copied by hand, or written by a step of the loading program." Its Out of scope says the loading program is built by other initiatives and that task only starts it in the hosted environment (`plans/deployment_config/DEPLOYMENT_CONFIG_SHAPE.md`).
+- The precedent of a provider step: the sample step is a synchronous service-level callable without arguments, returning its own result record, raising a named failure with safe reason codes and adding no worker command (`plans/sample_data/SAMPLE_DATA_LOADING_HANDOFF.md`, sections Callable and records and Failure contract).
+
+## Smallest meaningful scope
+
+A tile step that meets the tile requirements of `plans/osm_import/OSM_IMPORT_PRD.md` FR-3, FR-4, AC-4, AC-6, AC-9 and AC-10, in a form the common loading program composes: it takes the archive from a source place where a person put it by hand, checks it against the recorded SHA-256 value, and puts it into the place the proxy serves, so that the proxy never serves a partly written or unchecked file. Chosen by the user on 2026-10-04 in the interview, against a step that only checks an archive put by hand straight into the served place. The copying step matches check 3.4 of `FINAL_CHECKLIST.md`, `docs/deployment/hosted_demo.md`, section Loading the data, and `plans_finished/backend_architecture/BACKEND_ARCHITECTURE_PLAN.md` D-10, and keeps `plans_finished/map_tiles/MAP_TILES_PLAN.md` D-1, in which Adrian hands the file over and a person puts it on the server; the cost is a second configuration entry, for the source place, next to the served place.
+
+## Out of scope
+
+- Producing or cutting the archive, the style and the fonts: `plans_finished/map_tiles/`, with the server using the file Adrian produced (`plans_finished/map_tiles/MAP_TILES_SHAPE.md`, Domain rules).
+- The common loading program, its exclusion, its summary and the composition of the tile step into it: `plans/osm_import/`, which composes the delivered steps without taking ownership of their loading rules (`plans/osm_import/OSM_IMPORT_PRD.md` FR-4).
+- The proxy that serves the archive, the volumes of the services and the commands of the hosted demo: `plans/deployment_config/`.
+
+## Functional requirements
+
+1. Loading. The step takes the archive from the source place, checks that its SHA-256 value equals the recorded one, writes it into the served place under a temporary name, checks the written copy again and only then puts it under the served name in one atomic replacement. Under the served name the proxy never finds a partly written or unchecked file.
+2. Repeat. When the file under the served name already has the recorded SHA-256 value, the step writes nothing and reports the effect as unchanged, which completes it; the source place is not needed then. When the file under the served name is missing or has another value, the step loads the archive as requirement 1 says, replacing the other file. Chosen by the user on 2026-10-04 in the interview, against copying again on every run, which fails a retry once the source file is removed, and against refusing to replace another file, which leaves its removal to a person. The reason for replacing: the archive of the hosted demo is only the file Adrian produced (Domain rules), so a file with another value is not the archive of the demo.
+3. Failure. A missing source file, a source file with another SHA-256 value, a copy that fails or a written copy with another value end the step as failed, with a reason the loading program can show, and leave the file under the served name as it was.
+4. Own command. Besides the step the common loading program composes, the step can be run on its own by a command of its own, usable on the server before `python -m worker.load_demo` exists; the common program later calls the same step, not the command. Chosen by the user on 2026-10-04 in the interview, against a step without a command of its own, as the sample step has. The name of the command is set in phase B.
+5. Exclusion. The command of requirement 4 and the common loading program exclude each other in the way a standalone OpenStreetMap import and the common program do: a run started while the other one is active refuses at once and writes nothing. Agent decision at C:40, without asking: it follows from `plans/osm_import/OSM_IMPORT_PLAN.md` D-10 and D-11, by which the exclusion of the common program covers the whole flow, the tile step included; the mechanism is set in phase B.
+6. The contract of the step. The inputs (the source place and the served place), the outcomes (loaded, unchanged), the failure reasons, the repeat behavior of requirement 2 and a finite whole-step execution budget are written down for `plans/osm_import/` to compose, as `plans/osm_import/OSM_IMPORT_PRD.md` FR-4 and `plans/osm_import/OSM_IMPORT_PLAN.md` D-13 ask. The failure reasons are fixed codes and show no path, as D-17 there asks. Agent decision at C:40, without asking: a consequence of those decisions; the value of the budget is set in phase B.
+7. Corrected documents. This initiative corrects in the same change every document that names `plans_finished/map_tiles/` or Adrian as the supplier of the tile step, or says that no step exists: in `MVP.md` the row of `plans/osm_import/`, a new row of this initiative and the item on the loading of the tile archive in Open decisions and confirmations; in `FINAL_CHECKLIST.md` check 3.4 and the list of initiatives of stage 3; `docs/setup/MAP_SETUP.md`, section Handing the archive to the server; in `docs/deployment/loading_program.md` the supplier of the tile step and its open contract; in `plans/osm_import/` the PRD (FR-4, Out of scope, Dependencies), the plan (D-21 and the open questions that name the tile provider) and `OSM_IMPORT_HANDOFF.md`; and open question 3 of `plans/deployment_config/DEPLOYMENT_CONFIG_SHAPE.md`. Chosen by the user on 2026-10-04 in the interview, against leaving the artifacts of `plans/osm_import/` to its resumption and the shape of `plans/deployment_config/` to Kuba, and against correcting `MVP.md` alone. The answer was given by Rafał, the lead; it settles the scope of this initiative and does not replace the ruling of Mateusz on the PRD of `plans/osm_import/`, of Kuba on his shape or of Adrian on `docs/setup/MAP_SETUP.md`.
+
+## Scenarios: input, flow, expected state after the run
+
+1. First load on the server. Input: the file of Adrian in the source place, nothing in the served place. Flow: the common loading program reaches the tile step after a complete OpenStreetMap step, or the command of requirement 4 runs. State after: the served place holds the archive under the served name with the recorded SHA-256 value and no temporary file; the step reports loaded; in the common program the line `Tiles:` reads complete and the sample step starts.
+2. Retry after the source file was removed. Input: the archive under the served name with the recorded value, the source place empty. Flow: a manual full-flow retry. State after: nothing was written; the step reports unchanged, which completes the tile effect; the next step starts.
+3. Another file in the served place. Input: under the served name a file with another SHA-256 value, the file of Adrian in the source place. Flow: a run of the step. State after: the served name holds the file of Adrian, put there in one atomic replacement after both checks; the step reports loaded.
+4. A broken source. Input: in the source place a file with another value, for example cut short by an interrupted upload; under the served name either nothing or the archive of an earlier run. Flow: the common program reaches the tile step. State after: the file under the served name is as it was, the step reports failed with a reason, the common program reports incomplete loading, keeps the committed OpenStreetMap effect and does not start the sample step (`plans/osm_import/OSM_IMPORT_PLAN.md` D-7).
+5. Nothing anywhere. Input: no file in the source place and none under the served name. Flow: a run of the step. State after: the step reports failed; the common program cannot report complete loading (`plans/osm_import/OSM_IMPORT_PRD.md` AC-6).
+6. Competing runs. Input: the common program is running its sample step. Flow: a person starts the command of requirement 4. State after: the command refuses at once, writes nothing, and the running program goes on.
+
+## Challenging own assumptions
+
+- Is a step worth building when the map at 10:00 will most likely come from a file put on the server by hand? The user asked for an initiative that meets the tile requirements of the PRD (seed), and the step is also the repeatable way of a manual full-flow retry. The deadline of the demo does not depend on this initiative, and the shape says so instead of promising it.
+- Does accepting only one SHA-256 value make the step too rigid? The archive of the hosted demo is the file of Adrian by his own decision, and the demo is deleted on 4 October 2026. A new cut would need a new record in `docs/setup/MAP_SETUP.md` and a change of the step, which is the right cost of changing the archive of the demo.
+- Can the atomic replacement of requirement 1 hold? Only when the temporary copy lies on the same file system as the served name, which is why it is written into the served place and not into the source place. Whether the proxy sees the replaced file at once depends on the proxy of `plans/deployment_config/`, and is checked in phase B.
+- Is it right that the source is not needed when the served file is already correct? The effect the program needs is the archive under the served name; the source is only a way to get it there, so a correct served file completes the effect on its own.
+- Does the step meet AC-6 by itself? Only together with the common program: the step reports failed whenever the archive cannot be put in place, and the composition into the program belongs to `plans/osm_import/`.
+- Does this initiative take the step away from Adrian? No: `plans_finished/map_tiles/MAP_TILES_PLAN.md` D-1 stays true, because `map_tiles` builds no step, and the file still comes from Adrian. What changes is that a step of another initiative puts it on the server.
+- Can the served place be verified on the server now? No: the proxy, the volumes and the one-off container of the hosted demo do not exist yet (Current state), so the step is verified on a machine of the team with both places as directories, and on the server only after `plans/deployment_config/` delivers them.
+
+## Domain rules or explicit TODO
+
+- The archive of the hosted demo is the file Adrian produced on 2026-10-03 from the build `20261003`, identified by its recorded SHA-256 value; it is not cut again on the server (`plans_finished/map_tiles/MAP_TILES_SHAPE.md`, Domain rules; `docs/setup/MAP_SETUP.md`, section The tile archive). The step accepts no other file.
+- The browser takes the archive from the host of the page and from nowhere else (`docs/product/specification.md`, Personal data).
+- The archive is never committed (`plans_finished/frontend_stack/FRONTEND_STACK_PLAN.md` D-5).
+- No address, host, login or secret of the server enters the repository (`docs/standards/standard_config.md`; `CLAUDE.md`, section Target environment).
+- The source place lies outside the served place, so that the proxy never serves a file the step has not checked. Agent decision at C:40, without asking: a consequence of requirement 1.
+- The step only puts a file in place. It does not start, restart or configure the proxy, and the archive is not a source of facts and carries no date in the interface (`plans_finished/map_tiles/MAP_TILES_SHAPE.md`, Domain rules).
+- Dependencies: `plans/deployment_config/` (Kuba) gives the one-off container of the loading program the source place to read and the served place to write, and serves the served place at `/tiles/krakow.pmtiles` with byte ranges; `plans/osm_import/` (Mateusz) composes the step into the common program; Adrian hands the file to Rafał. None of them has confirmed it yet.
+
+## Notes on data, performance and security
+
+- Personal data: none. The step reads and writes one file and touches no database.
+- Size: the archive has 34 785 215 bytes. A run reads it up to three times for the SHA-256 checks and writes it once, a matter of seconds on a local disk; during a replacement the served place briefly holds the archive and its temporary copy, about 70 MB.
+- Configuration: the two places are environment entries whose values live in the environment file on the server; their names enter the templates as `docs/standards/standard_config.md` asks. The summary of the common program and the failure reasons show no path (`plans/osm_import/OSM_IMPORT_PLAN.md` D-17).
+- Security: the step accepts only the file with the recorded SHA-256 value, so a wrong or tampered file never reaches the served name.
+
+## Open questions
+
+None. The four questions of the interview - what the step does, its repeat behavior (`Block: yes`, idempotency and deduplication), its own command and the documents it corrects - are answered in Smallest meaningful scope and Functional requirements 2, 4 and 7.
+
+Left to phase B of `plan-prd`, because they choose a solution, not the scope: the names of the callable, the command and the two environment entries, the value and enforcement of the whole-step budget, the mechanism of the exclusion of requirement 5, the failure reason codes and the form of the written contract of requirement 6.

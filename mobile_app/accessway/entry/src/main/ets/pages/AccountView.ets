@@ -5,7 +5,7 @@ import { FONT, FONT_B, fs, P, RADIUS } from '../components/Theme';
 import { BackLink, Btn, BtnKind, BoxKind, Bullet, LinkText, MessageBox, PageBox, PageTitle, SubTitle } from '../components/Ui';
 import { Nav, AppScreen } from './Nav';
 
-/** V-11: konto z pseudonimem i hasłem, bez adresu e-mail; logowanie, zakładanie, wylogowanie i usunięcie. */
+/** V-11: account with a nickname and password, no email address; sign-in, sign-up, sign-out and deletion. */
 @Component
 export struct AccountView {
   nav: Nav = new Nav();

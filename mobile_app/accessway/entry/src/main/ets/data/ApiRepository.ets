@@ -1,7 +1,6 @@
 import { common } from '@kit.AbilityKit';
-import { util } from '@kit.ArkTS';
 import { NearbyFact } from '../domain/Facts';
-import { Fact, FactKind, FactStatus } from '../model/Types';
+import { Fact, FactKind } from '../model/Types';
 import { ApiSettings } from './ApiConfig';
 import { ApiClient, Auth } from './ApiClient';
 import { dayToMs, factFromApi, kindToApi, knownKind, planFromApi } from './ApiMapping';
@@ -55,7 +54,7 @@ interface StoredVote {
   at: number;
 }
 
-/** Stan wspólny klienta API: połączenie, ostatnia data kopii OSM i własne głosy z ostatniej doby. */
+/** Shared state of the API client: the connection, the latest OSM copy date and own votes from the last day. */
 class ApiCore {
   client: ApiClient;
   ctx: common.Context;
@@ -102,16 +101,16 @@ function factId(id: string): number {
   return n;
 }
 
-/** Fakt nieaktualny nie jest nigdzie pokazywany (makieta System), więc lista go pomija. */
+/**
+ * Facts of the types the app knows. An outdated fact stays on the map with its status, so that people can judge
+ * it and confirm it again (specification M4, version 7; `list_facts_in_area`); the service already leaves out the
+ * facts removed in OpenStreetMap and the hidden ones.
+ */
 function visible(list: ApiFact[]): Fact[] {
   const out: Fact[] = [];
   for (const a of list) {
-    if (!knownKind(a.type)) {
-      continue;
-    }
-    const f = factFromApi(a);
-    if (f.status !== FactStatus.OUTDATED) {
-      out.push(f);
+    if (knownKind(a.type)) {
+      out.push(factFromApi(a));
     }
   }
   return out;
@@ -151,7 +150,7 @@ class ApiFacts implements FactsRepository {
     return { facts: facts, truncated: r.is_truncated };
   }
 
-  /** `find_nearby_facts`: `POST /api/facts/nearby`. Geostref serwer nie porównuje, więc dla obszaru lista jest pusta. */
+  /** `find_nearby_facts`: `POST /api/facts/nearby`. The server skips geozones, so an area gets an empty list. */
   async findNearby(kind: FactKind, isArea: boolean, lat: number, lon: number): Promise<NearbyFact[]> {
     if (isArea) {
       return [];
@@ -173,7 +172,7 @@ class ApiFacts implements FactsRepository {
     return factFromApi(r.fact);
   }
 
-  /** Kontrakt nie zwraca własnego głosu, więc aplikacja pamięta głosy oddane z tego urządzenia w ostatniej dobie. */
+  /** The contract does not return one's own vote, so the app remembers votes cast from this device in the last day. */
   async myVote(id: string): Promise<MyVote | null> {
     const now = Date.now();
     for (const v of this.core.votes) {
@@ -184,7 +183,7 @@ class ApiFacts implements FactsRepository {
     return null;
   }
 
-  /** `cast_vote`: `POST /api/facts/{id}/votes` z `confirm` albo `deny`. */
+  /** `cast_vote`: `POST /api/facts/{id}/votes` with `confirm` or `deny`. */
   async vote(id: string, stillThere: boolean): Promise<MyVote> {
     const body: ApiVoteRequest = { verdict: stillThere ? 'confirm' : 'deny' };
     await this.core.json<ApiFactResponse>('POST', `/api/facts/${factId(id)}/votes`, JSON.stringify(body), Auth.OPTIONAL);
@@ -193,11 +192,14 @@ class ApiFacts implements FactsRepository {
     return { stillThere: stillThere, at: at };
   }
 
-  /** `create_fact`: `POST /api/facts`, z kluczem idempotencji tworzonym raz na zatwierdzone podsumowanie. */
+  /**
+   * `create_fact`: `POST /api/facts` with the idempotency key of the approved summary, the same on every attempt
+   * of the same save, so a retry after a lost response returns the first saved fact instead of a duplicate.
+   */
   async report(input: NewReport): Promise<Fact> {
     const desc = input.description.trim();
     const body: ApiCreateFactRequest = {
-      idempotency_key: util.generateRandomUUID(true),
+      idempotency_key: input.idempotencyKey,
       type: kindToApi(input.kind),
       point: { lat: input.lat, lon: input.lon },
       description: desc.length > 0 ? desc : null,
@@ -222,8 +224,8 @@ class ApiRouting implements RoutingRepository {
   }
 
   /**
-   * `plan_route`: `POST /api/routes`, bez tokenu. Gdy osoba wybiera trasę alternatywną, aplikacja nie pyta
-   * serwera drugi raz, tylko pokazuje alternatywę z ostatniej odpowiedzi dla tych samych punktów i potrzeb.
+   * `plan_route`: `POST /api/routes`, without a token. When the person picks the alternative route, the app does not
+   * ask the server again, but shows the alternative from the last response for the same points and needs.
    */
   async route(req: RouteRequest): Promise<RoutePlan> {
     const body: ApiPlanRouteRequest = {
@@ -255,7 +257,7 @@ class ApiGeocoding implements GeocodingRepository {
     this.core = core;
   }
 
-  /** `search_address`: `POST /api/address-search`; tekst idzie tylko w treści żądania. */
+  /** `search_address`: `POST /api/address-search`; the text goes only in the request body. */
   async search(text: string): Promise<GeocodeResult[]> {
     const body: ApiSearchRequest = { text: text };
     const r = await this.core.json<ApiSearchResponse>('POST', '/api/address-search', JSON.stringify(body), Auth.NONE);
@@ -274,7 +276,7 @@ class ApiGeocoding implements GeocodingRepository {
     return out;
   }
 
-  /** Kontrakt nie ma odwrotnego wyszukiwania, więc punkt z mapy zostaje bez nazwy ulicy. */
+  /** The contract has no reverse search, so a point from the map stays without a street name. */
   async streetAt(lat: number, lon: number): Promise<string> {
     return '';
   }
@@ -291,7 +293,7 @@ class ApiAccounts implements AccountRepository {
     return { pseudonym: r.account.pseudonym, moderator: r.account.is_moderator };
   }
 
-  /** `read_own_account`: `GET /api/accounts/me`; wygasła sesja kończy się wylogowaniem bez błędu. */
+  /** `read_own_account`: `GET /api/accounts/me`; an expired session ends in a sign-out without an error. */
   async current(): Promise<Account | null> {
     if (!this.core.client.hasToken()) {
       return null;
@@ -306,20 +308,20 @@ class ApiAccounts implements AccountRepository {
     }
   }
 
-  /** `log_in`: `POST /api/sessions`; token przychodzi w nagłówku `Session-Token`. */
+  /** `log_in`: `POST /api/sessions`; the token comes in the `Session-Token` header. */
   async login(pseudonym: string, password: string): Promise<Account> {
     const body: ApiCredentials = { pseudonym: pseudonym, password: password };
     return this.view(await this.core.json<ApiAccountResponse>('POST', '/api/sessions', JSON.stringify(body), Auth.NONE));
   }
 
-  /** `create_account`: `POST /api/accounts`, a po nim `log_in`, bo założenie konta nie loguje. */
+  /** `create_account`: `POST /api/accounts`, then `log_in`, because creating an account does not sign in. */
   async signup(pseudonym: string, password: string): Promise<Account> {
     const body: ApiCredentials = { pseudonym: pseudonym, password: password };
     await this.core.json<ApiAccountResponse>('POST', '/api/accounts', JSON.stringify(body), Auth.NONE);
     return this.login(pseudonym, password);
   }
 
-  /** Wylogowanie to usunięcie tokenu z urządzenia; kontrakt nie ma do tego operacji. */
+  /** Signing out means removing the token from the device; the contract has no operation for it. */
   async logout(): Promise<void> {
     this.core.client.clearToken();
   }
@@ -350,7 +352,7 @@ class ApiModeration implements ModerationRepository {
     return f;
   }
 
-  /** `list_flagged_facts`: `GET /api/moderation/flagged-facts`, bez ukrytych. */
+  /** `list_flagged_facts`: `GET /api/moderation/flagged-facts`, without hidden ones. */
   async flagged(): Promise<Fact[]> {
     return (await this.items()).filter((it: ApiFlaggedItem) => !it.is_hidden).map((it: ApiFlaggedItem): Fact => this.toFact(it));
   }
@@ -370,7 +372,7 @@ class ApiModeration implements ModerationRepository {
   }
 }
 
-/** Repozytorium nad API zespołu (`docs/product/api_contract.md`), używane, gdy `config/api.json` podaje adres. */
+/** Repository over the team's API (`docs/product/api_contract.md`), used when `config/api.json` gives an address. */
 export class ApiRepository implements Repository {
   facts: FactsRepository;
   routing: RoutingRepository;

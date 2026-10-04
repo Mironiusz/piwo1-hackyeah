@@ -20,7 +20,7 @@ import {
 } from '../components/Ui';
 import { Nav } from './Nav';
 
-/** V-6: szczegóły faktu z głosem "Nadal jest" albo "Już nie ma", sprzecznością z OSM i zgłoszeniem do moderacji. */
+/** V-6: fact details with "Nadal jest" (Still there) / "Już nie ma" (Gone) vote, OSM conflict and moderation flag. */
 @Component
 export struct FactView {
   nav: Nav = new Nav();

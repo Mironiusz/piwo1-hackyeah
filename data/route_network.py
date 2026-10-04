@@ -18,16 +18,24 @@ _way = cast(Table, OsmWay.__table__)
 _node = cast(Table, OsmNode.__table__)
 _membership = cast(Table, OsmWayNode.__table__)
 
-FETCH_ROUTE_WAYS_SQL = select(_way.c.id, *(_way.c[name] for name in WAY_BARRIER_COLUMNS), _way.c.is_marked_wheelchair_no, _way.c.is_motor_traffic, _way.c.is_crossing).order_by(_way.c.id)
-FETCH_ROUTE_WAY_NODES_SQL = select(_membership.c.way_id, _membership.c.node_id).order_by(_membership.c.way_id, _membership.c.sequence_index)
-FETCH_ROUTE_NODES_SQL = select(
-    _node.c.id,
-    func.ST_X(func.geometry(_node.c.geog), type_=Float).label("lon"),
-    func.ST_Y(func.geometry(_node.c.geog), type_=Float).label("lat"),
-    _node.c.kerb_point,
-    _node.c.is_crossing,
-    _node.c.is_on_motor_traffic_way,
-).order_by(_node.c.id)
+FETCH_ROUTE_WAYS_SQL = (
+    select(_way.c.id, *(_way.c[name] for name in WAY_BARRIER_COLUMNS), _way.c.is_marked_wheelchair_no, _way.c.is_motor_traffic, _way.c.is_crossing)
+    .order_by(_way.c.id)
+    .execution_options(yield_per=NETWORK_PARTITION_ROWS)
+)
+FETCH_ROUTE_WAY_NODES_SQL = select(_membership.c.way_id, _membership.c.node_id).order_by(_membership.c.way_id, _membership.c.sequence_index).execution_options(yield_per=NETWORK_PARTITION_ROWS)
+FETCH_ROUTE_NODES_SQL = (
+    select(
+        _node.c.id,
+        func.ST_X(func.geometry(_node.c.geog), type_=Float).label("lon"),
+        func.ST_Y(func.geometry(_node.c.geog), type_=Float).label("lat"),
+        _node.c.kerb_point,
+        _node.c.is_crossing,
+        _node.c.is_on_motor_traffic_way,
+    )
+    .order_by(_node.c.id)
+    .execution_options(yield_per=NETWORK_PARTITION_ROWS)
+)
 
 
 @dataclass(frozen=True)
@@ -56,19 +64,19 @@ class RouteNetworkArrays:
 
 
 def fetch_route_network(connection: Connection) -> RouteNetworkArrays:
-    """Read every way, its nodes in order and every node of the copy in partitions, inside the transaction of the caller."""
+    """Read every way, its nodes in order and every node of the copy in partitions, inside the transaction of the caller; only these three reads stream, so the options of the connection stay as the caller set them."""
     way_ids: list[int] = []
     way_states: list[tuple[int, int, int, int]] = []
     way_flags: list[tuple[bool, bool, bool]] = []
     state_index = {state.value: index for index, state in enumerate(WAY_BARRIER_STATES)}
-    for partition in connection.execution_options(yield_per=NETWORK_PARTITION_ROWS).execute(FETCH_ROUTE_WAYS_SQL).mappings().partitions():
+    for partition in connection.execute(FETCH_ROUTE_WAYS_SQL).mappings().partitions():
         for row in partition:
             way_ids.append(row["id"])
             way_states.append(cast(tuple[int, int, int, int], tuple(state_index[WayBarrierState(row[name]).value] for name in WAY_BARRIER_COLUMNS)))
             way_flags.append((row["is_marked_wheelchair_no"], row["is_motor_traffic"], row["is_crossing"]))
     membership_way_ids: list[int] = []
     membership_node_ids: list[int] = []
-    for partition in connection.execution_options(yield_per=NETWORK_PARTITION_ROWS).execute(FETCH_ROUTE_WAY_NODES_SQL).mappings().partitions():
+    for partition in connection.execute(FETCH_ROUTE_WAY_NODES_SQL).mappings().partitions():
         for row in partition:
             membership_way_ids.append(row["way_id"])
             membership_node_ids.append(row["node_id"])
@@ -79,7 +87,7 @@ def fetch_route_network(connection: Connection) -> RouteNetworkArrays:
     node_is_crossing: list[bool] = []
     node_is_on_motor_traffic_way: list[bool] = []
     kerb_index = {state.value: index for index, state in enumerate(KERB_POINT_STATES)}
-    for partition in connection.execution_options(yield_per=NETWORK_PARTITION_ROWS).execute(FETCH_ROUTE_NODES_SQL).mappings().partitions():
+    for partition in connection.execute(FETCH_ROUTE_NODES_SQL).mappings().partitions():
         for row in partition:
             node_ids.append(row["id"])
             node_lon.append(row["lon"])
