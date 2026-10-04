@@ -1,6 +1,6 @@
 # Plan: Tile-archive step of the common demo-loading program
 
-Document state: 2026-10-04, plan closed
+Document state: 2026-10-04, plan closed; implementation in progress, Rollout order step 1
 
 ## Goal
 

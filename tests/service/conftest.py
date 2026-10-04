@@ -23,9 +23,7 @@ def runtime_settings(monkeypatch: pytest.MonkeyPatch):
 @pytest.fixture
 def sample_prerequisites() -> tuple[SampleNetworkPrerequisites, ...]:
     """Builds valid measured-place snapshots for the eight fixed definitions, with the kerb contradiction where one is required."""
-    return tuple(
-        SampleNetworkPrerequisites(item.fact_id, True, True, (SampleNearbyWay(item.reference_way_id, 0.0),), 0.0, item.requires_kerb_contradiction) for item in SAMPLE_DEFINITIONS
-    )
+    return tuple(SampleNetworkPrerequisites(item.fact_id, True, True, (SampleNearbyWay(item.reference_way_id, 0.0),), 0.0, item.requires_kerb_contradiction) for item in SAMPLE_DEFINITIONS)
 
 
 @pytest.fixture

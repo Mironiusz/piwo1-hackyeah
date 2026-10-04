@@ -9,6 +9,8 @@ from sqlalchemy.exc import DBAPIError, SQLAlchemyError
 from common_sample_data import SampleCommitState, SampleDataFailure, SampleDataOutcome, SampleDataResult, SampleFailureReason
 from data.sample_data import apply_sample_connection
 
+SAMPLE_IDS = (-1, -2, -3, -4, -5, -6, -7, -8)
+
 
 @pytest.fixture
 def sample_connection() -> Mock:
@@ -22,7 +24,7 @@ def sample_connection() -> Mock:
 
 def test_success_is_returned_only_after_commit_acknowledgement(sample_connection: Mock) -> None:
     """Requires the single stable-snapshot transaction to finish before returning."""
-    result = SampleDataResult(SampleDataOutcome.CREATED, 4, 0, 4, (-1, -2, -3, -4))
+    result = SampleDataResult(SampleDataOutcome.CREATED, 8, 0, 25, SAMPLE_IDS)
     action = Mock(return_value=result)
     assert apply_sample_connection(sample_connection, action) is result
     sample_connection.execution_options.assert_called_once_with(isolation_level="REPEATABLE READ")
@@ -59,7 +61,7 @@ def test_lost_commit_evidence_remains_unknown(commit_error: Exception, sample_co
     """Does not turn a later cleanup action into proof that a sent commit failed."""
     sample_connection.commit.side_effect = commit_error
     with pytest.raises(SampleDataFailure) as raised:
-        apply_sample_connection(sample_connection, Mock(return_value=SampleDataResult(SampleDataOutcome.UNCHANGED, 0, 4, 0, (-1, -2, -3, -4))))
+        apply_sample_connection(sample_connection, Mock(return_value=SampleDataResult(SampleDataOutcome.UNCHANGED, 0, 8, 0, SAMPLE_IDS)))
     assert raised.value.reason == SampleFailureReason.COMMIT_UNKNOWN
     assert raised.value.commit_state == SampleCommitState.UNKNOWN
     sample_connection.rollback.assert_not_called()
@@ -71,7 +73,7 @@ def test_server_serialization_refusal_is_an_explicit_failure(sample_connection: 
     driver_error.sqlstate = "40001"
     sample_connection.commit.side_effect = DBAPIError(None, None, driver_error, connection_invalidated=False)
     with pytest.raises(SampleDataFailure) as raised:
-        apply_sample_connection(sample_connection, Mock(return_value=SampleDataResult(SampleDataOutcome.CREATED, 4, 0, 4, (-1, -2, -3, -4))))
+        apply_sample_connection(sample_connection, Mock(return_value=SampleDataResult(SampleDataOutcome.CREATED, 8, 0, 25, SAMPLE_IDS)))
     assert raised.value.reason == SampleFailureReason.DATABASE_FAILED
     assert raised.value.commit_state == SampleCommitState.ROLLED_BACK
     sample_connection.rollback.assert_called_once_with()
@@ -92,7 +94,7 @@ def test_commit_cancellation_is_not_proof_of_rollback(sample_connection: Mock) -
     driver_error.sqlstate = "57014"
     sample_connection.commit.side_effect = DBAPIError(None, None, driver_error, connection_invalidated=False)
     with pytest.raises(SampleDataFailure) as raised:
-        apply_sample_connection(sample_connection, Mock(return_value=SampleDataResult(SampleDataOutcome.CREATED, 4, 0, 4, (-1, -2, -3, -4))))
+        apply_sample_connection(sample_connection, Mock(return_value=SampleDataResult(SampleDataOutcome.CREATED, 8, 0, 25, SAMPLE_IDS)))
     assert raised.value.reason == SampleFailureReason.COMMIT_UNKNOWN
     assert raised.value.commit_state == SampleCommitState.UNKNOWN
     sample_connection.rollback.assert_not_called()

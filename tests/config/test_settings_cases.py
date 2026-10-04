@@ -48,6 +48,8 @@ def test_required_entry_has_safe_named_failure(key: str) -> None:
         ("IMPORT_WORKSPACE_ROOT", "relative"),
         ("VALHALLA_TOOL_DIR", "relative"),
         ("VALHALLA_CONFIG_TEMPLATE", "relative/valhalla.json"),
+        ("TILE_ARCHIVE_SOURCE", "relative/krakow.pmtiles"),
+        ("TILE_ARCHIVE_DIR", "relative"),
         ("ROUTING_SERVICE_URL", "ftp://routing"),
         ("ROUTING_SERVICE_URL", "routing:8002"),
         ("ROUTING_DATA_DIR", "routing_data"),
@@ -115,6 +117,13 @@ def test_optional_valhalla_paths_do_not_block_api_configuration() -> None:
     settings = Settings(**VALID, VALHALLA_TOOL_DIR="", VALHALLA_CONFIG_TEMPLATE="")
     assert settings.VALHALLA_TOOL_DIR is None
     assert settings.VALHALLA_CONFIG_TEMPLATE is None
+
+
+def test_optional_tile_places_do_not_block_api_configuration() -> None:
+    """Permit API settings before the source and the served directory of the tile archive are configured."""
+    settings = Settings(**VALID, TILE_ARCHIVE_SOURCE="", TILE_ARCHIVE_DIR="")
+    assert settings.TILE_ARCHIVE_SOURCE is None
+    assert settings.TILE_ARCHIVE_DIR is None
 
 
 def test_absent_public_transport_switch_keeps_walking_routes_only() -> None:
