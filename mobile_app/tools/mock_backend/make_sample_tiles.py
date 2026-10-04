@@ -74,7 +74,7 @@ def main():
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     center = ((bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2, 15)
     write_pmtiles(OUT, tiles, MIN_Z, MAX_Z, bounds, center,
-                  {"attribution": "Schematyczna próbka AccessWay, nie są to dane OpenStreetMap",
+                  {"attribution": "Schematyczna próbka EnableMe, nie są to dane OpenStreetMap",
                    "accessway_build": "sample"})
     print("%s: %d tiles, %d bytes" % (OUT, len(tiles), os.path.getsize(OUT)))
 

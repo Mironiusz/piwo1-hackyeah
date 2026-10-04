@@ -1,6 +1,6 @@
 # Programming interface contract
 
-Document state: 2026-10-04, approved by the user in place of Kuber and Adrian, whose confirmation is still to be obtained; the pseudonym rule is aligned with specification M9 by `plans/accounts/ACCOUNTS_SHAPE.md`, its letters made explicit and a lone surrogate refused by Kuba on 2026-10-04 for `plans/accounts/` (`ACCOUNTS_PLAN.md` D-3, `ACCOUNTS_REVIEW.md`), with the confirmation of Adrian still to be obtained, and `cast_vote` changed on 2026-10-04 with version 13 of `docs/product/specification.md`
+Document state: 2026-10-04, approved by the user in place of Kuber and Adrian, whose confirmation is still to be obtained; the pseudonym rule is aligned with specification M9 by `plans/accounts/ACCOUNTS_SHAPE.md`, its letters made explicit and a lone surrogate refused by Kuba on 2026-10-04 for `plans/accounts/` (`ACCOUNTS_PLAN.md` D-3, `ACCOUNTS_REVIEW.md`), with the confirmation of Adrian still to be obtained, and `cast_vote` changed on 2026-10-04 with version 13 of `docs/product/specification.md`; `plan_route` changed on 2026-10-04 by `plans/route_planning/` with the state `not_assessed` and the refusal `point_outside_krakow`, to be confirmed by Kuber and Adrian
 
 ## Why this document exists
 
@@ -177,8 +177,8 @@ A route:
 ```
 
 - `segments` - the segments in order from the start, the straight stretches between a chosen point and the pedestrian network included (M2).
-- `state` - `barrier`, `no_barrier`, `partial_data` or `no_data`, the four states of M7, decided by the service. The client draws each with its own color and its own icon or line pattern.
-- `missing_attributes` - for a segment in `partial_data` or `no_data`, the attributes behind the barriers of the profile that are not known, from `kerbs`, `surface`, `incline`, `width` and `steps`, in this order; empty in the other states (M7, M8).
+- `state` - `barrier`, `no_barrier`, `partial_data` or `no_data`, the four states of M7, decided by the service; or `not_assessed` for every segment, the straight stretches included, when `avoid` is empty, and in no other case (M1, M7). The client draws each with its own color and its own icon or line pattern.
+- `missing_attributes` - for a segment in `partial_data` or `no_data`, the attributes behind the barriers of the profile that are not known, from `kerbs`, `surface`, `incline`, `width` and `steps`, in this order; empty in the other states, and empty for `not_assessed` (M7, M8).
 - `is_marked_wheelchair_no` - `true` when OpenStreetMap marks the way as not accessible for wheelchairs; the list then says so (M7, M8).
 - `profile_barriers`, `additional_barriers` and `amenities` - the three groups of the list for the route (M8), each in order along the route: the barriers of the profile on the route, the barriers outside the profile on the route, and the amenities of the profile within 50 m of the route. Only `profile_barriers` and `amenities` appear on the map (M7).
 
@@ -193,9 +193,14 @@ A route fact is a fact with two more fields:
 
 Errors:
 
-| Status | `code`                | When                                                                                              |
-| ------ | --------------------- | ------------------------------------------------------------------------------------------------- |
-| 503    | `routing_unavailable` | No route can be computed right now (M10). The response carries no route, and no route is guessed. |
+| Status | `code`                 | When                                                                                                                                                                                             |
+| ------ | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 422    | `point_outside_krakow` | The start or the destination lies outside the administrative boundary of Kraków of the copy in use (M2); `points` lists `start`, `destination` or both, in this order, and no route is computed. |
+| 503    | `routing_unavailable`  | No route can be computed right now (M10). The response carries no route, and no route is guessed.                                                                                                |
+
+```json
+{ "error": { "code": "point_outside_krakow", "points": ["start"] } }
+```
 
 ## Address search
 

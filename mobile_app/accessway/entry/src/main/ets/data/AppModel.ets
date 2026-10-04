@@ -13,8 +13,8 @@ import { readFileText, writeFileText } from './Storage';
 
 const PREFS_FILE: string = 'ui_prefs.json';
 
-/** Nazwa produktu nie jest jeszcze wybrana; makiety pokazują w nagłówku ten znacznik. */
-export const PRODUCT_NAME: string = '[Nazwa produktu]';
+/** Nazwa produktu pokazywana w nagłówku, taka sama po polsku i po angielsku. */
+export const PRODUCT_NAME: string = 'EnableMe';
 
 interface Prefs {
   lang?: string;

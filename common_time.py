@@ -3,7 +3,7 @@
 import math
 import time
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from zoneinfo import ZoneInfo
 
 
@@ -28,6 +28,15 @@ def fetch_business_now() -> datetime:
     from config.config import BUSINESS_TIMEZONE
 
     return fetch_utc_now().astimezone(ZoneInfo(BUSINESS_TIMEZONE))
+
+
+def build_business_day(instant: datetime) -> date:
+    """Give the calendar day of an aware instant in the configured business zone; a naive value is refused."""
+    from config.config import BUSINESS_TIMEZONE
+
+    if instant.utcoffset() is None:
+        raise ValueError("A business day needs an aware instant")
+    return instant.astimezone(ZoneInfo(BUSINESS_TIMEZONE)).date()
 
 
 def fetch_monotonic_seconds() -> float:

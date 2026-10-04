@@ -9,7 +9,7 @@ from sqlalchemy.dialects import postgresql
 from data.osm_copy import (
     APPLY_OSM_PRESENT_FACTS_SQL,
     FETCH_OSM_FACT_HISTORY_SQL,
-    FETCH_OSM_FACTS_FOR_UPDATE_SQL,
+    FETCH_OSM_FACTS_SQL,
     OsmFactIdentity,
     OsmPresentFact,
     apply_osm_present_facts,
@@ -56,12 +56,12 @@ def test_present_fact_batches_keep_source_and_do_not_commit():
     assert "created_at" in str(compiled)
 
 
-def test_lock_order_is_explicit():
-    """Fact and vote locks have the stable ordering required by reconciliation."""
+def test_fact_read_takes_no_lock_and_vote_locks_keep_their_order():
+    """Facts are read without row locks; vote locks keep the stable ordering required by reconciliation."""
     dialect = postgresql.dialect()
-    facts = str(FETCH_OSM_FACTS_FOR_UPDATE_SQL.compile(dialect=dialect))
+    facts = str(FETCH_OSM_FACTS_SQL.compile(dialect=dialect))
     votes = str(FETCH_OSM_FACT_HISTORY_SQL.compile(dialect=dialect))
-    assert "ORDER BY fact.id FOR UPDATE" in facts
+    assert facts.endswith("ORDER BY fact.id")
     assert "ORDER BY vote.fact_id, vote.id FOR UPDATE" in votes
 
 

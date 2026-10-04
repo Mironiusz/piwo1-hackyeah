@@ -13,7 +13,7 @@ echo "hdc: $HDC" > "$OUT/info.txt"
 "$HDC" list targets >> "$OUT/info.txt" 2>&1
 
 "$HDC" shell "hilog -x" > "$OUT/hilog_all.txt" 2>&1
-grep -a -i -E "accessway|AccessWay|JsCrash|crash|exception|Error" "$OUT/hilog_all.txt" | tail -400 > "$OUT/hilog_filtered.txt"
+grep -a -i -E "accessway|EnableMe|JsCrash|crash|exception|Error" "$OUT/hilog_all.txt" | tail -400 > "$OUT/hilog_filtered.txt"
 
 "$HDC" shell "ls -lt /data/log/faultlog/faultlogger/ 2>/dev/null; ls -lt /data/log/faultlog/temp/ 2>/dev/null" > "$OUT/faultlog_list.txt" 2>&1
 for f in $("$HDC" shell "ls -t /data/log/faultlog/faultlogger/ 2>/dev/null" | tr -d '\r' | head -5); do

@@ -146,11 +146,10 @@ FETCH_OSM_COPY_HISTORY_SQL = select(_copy.c.id, _copy.c._state_at.label("state_a
     _copy.c._state_at.desc()
 )
 FETCH_CURRENT_OSM_COPY_SQL = FETCH_OSM_COPY_HISTORY_SQL.limit(1)
-FETCH_OSM_FACTS_FOR_UPDATE_SQL = (
+FETCH_OSM_FACTS_SQL = (
     select(_fact.c.id, _fact.c.osm_element_type, _fact.c.osm_element_id, _fact.c.fact_type, _fact.c.source, _fact.c.is_removed_from_osm)
     .where(_fact.c.osm_element_id.is_not(None))
     .order_by(_fact.c.id)
-    .with_for_update()
 )
 FETCH_OSM_FACT_HISTORY_SQL = (
     select(
@@ -258,11 +257,11 @@ def fetch_osm_copy_history(connection: Connection) -> tuple[OsmCopySnapshot, ...
     return tuple(OsmCopySnapshot(row["id"], OffsetInstant(row["state_at"], row["state_at_utc_offset_minutes"]), row["file_name"]) for row in connection.execute(FETCH_OSM_COPY_HISTORY_SQL).mappings())
 
 
-def fetch_osm_facts_for_update(connection: Connection) -> tuple[OsmStoredFact, ...]:
-    """Lock source-identified facts in ascending identity order before reconciliation."""
+def fetch_osm_facts(connection: Connection) -> tuple[OsmStoredFact, ...]:
+    """Read source-identified facts in ascending identity order without row locks, which only facts under reconciliation take."""
     return tuple(
         OsmStoredFact(row["id"], OsmFactIdentity(OsmElementType(row["osm_element_type"]), row["osm_element_id"], FactType(row["fact_type"])), FactSource(row["source"]), row["is_removed_from_osm"])
-        for row in connection.execute(FETCH_OSM_FACTS_FOR_UPDATE_SQL).mappings()
+        for row in connection.execute(FETCH_OSM_FACTS_SQL).mappings()
     )
 
 

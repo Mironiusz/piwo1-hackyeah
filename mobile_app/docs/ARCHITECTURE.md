@@ -1,4 +1,4 @@
-# AccessWay - architecture
+# EnableMe - architecture
 
 ## Layers
 

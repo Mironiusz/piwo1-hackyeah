@@ -83,20 +83,6 @@ A deferral needs a reason. "We did not want to think about it" is not a reason; 
 - Blocks: the user chose on 2026-10-04, in the plan of `osm_importer`, to freeze the votes of the facts being reconciled during the final publication instead of reconciling against a snapshot, and that choice rests on the code of another initiative. `community_facts` has only its seed, and its owner has not agreed to the lock; R-8 of the importer plan pointed to this entry before it existed. Recorded on 2026-10-04 by `plans/repository_consistency/` at the request of the user. On 2026-10-04 Kuba, who builds the vote write in the data layer of `community_facts`, agreed to the first variant in `plans/community_facts/COMMUNITY_FACTS_SHAPE.md`, question 3; the rule has not reached the plan of `community_facts` yet.
 - Condition: the owner of `community_facts` and Mateusz agree on the lock at the latest when `cast_vote` is planned in the shape of `community_facts`; the agreed rule lands in the plans of both initiatives, and this entry moves to Resolved decisions.
 
-### Refusal of a point outside Kraków in the contract
-
-- Affects: M2 of `docs/product/specification.md`, which refuses a start or a destination outside the administrative boundary of Kraków and says so before the point is set, the operation `plan_route` of `docs/product/api_contract.md`, the section The views read against the contract of the team of `docs/product/views.md`, and the initiatives `route_planning` and `frontend_app` of `MVP.md`.
-- Variants: `plan_route` refuses such a point with an error code of its own, which the client turns into the message of M2; or the project serves the administrative boundary to the client, which checks a point before it is set; or both.
-- Blocks: the contract names no such refusal - the only error of `plan_route` is `routing_unavailable` - and gives the client no boundary, while `docs/product/views.md` records the proposal of the agent to check a point against the bounds of the map of Kraków, a rectangle that accepts points outside the administrative boundary. Version 11 of the specification added the rule without a change of the contract. Found on 2026-10-04 by `plans/repository_consistency/` and recorded at the request of the user.
-- Condition: Marek, with Kuber and Adrian, decides before the route screens of `frontend_app` and `plan_route` of `route_planning` are built; the result lands in `docs/product/api_contract.md` and `docs/product/views.md`, and this entry moves to Resolved decisions.
-
-### Route without assessment in the contract
-
-- Affects: M1 and M7 of `docs/product/specification.md`, by which with a profile that names no barrier no segment has a state and the route is never presented as free of barriers, the field `state` of a segment in `plan_route` of `docs/product/api_contract.md`, the need N-3 and the view V-5. Route result of `docs/product/views.md`, the text key `segment.not_assessed` of `docs/product/interface_texts.md`, and the initiatives `route_planning` and `frontend_app` of `MVP.md`.
-- Variants: the contract carries an explicit mark that the segments of a route are not assessed, as a field of the route or as a value of `state` outside the four states of M7; or the client derives it from the empty list of barriers in its own request, which needs a recorded exception to the rule of `docs/product/views.md`, section What the views need from the programming interface, that the frontend applies no product rule.
-- Blocks: the contract says that `state` is always one of the four states of M7, decided by the service, and gives no value for a profile without barriers, so a service could answer such a route with `no_barrier`, which shows missing assessment as accessibility. Found on 2026-10-04 by `plans/repository_consistency/` and recorded at the request of the user.
-- Condition: Marek, with Kuber and Adrian, decides before the route screens of `frontend_app` and `plan_route` of `route_planning` are built; the result lands in `docs/product/api_contract.md` and `docs/product/views.md`, and this entry moves to Resolved decisions.
-
 ### Intellectual property between the two challenges and the repository licence
 
 - Affects: whether both prizes can be accepted, and which licence, if any, the public repository carries.
@@ -112,6 +98,14 @@ A deferral needs a reason. "We did not want to think about it" is not a reason; 
 - Condition: Rafał and Marek name the executor before the work of check 5.1 of `FINAL_CHECKLIST.md` starts on the service. The executor settles the identifier of a person without an account in its own shape, the column Owner of `MVP.md`, section Initiatives, follows in the same change, and this entry moves to Resolved decisions.
 
 ## Resolved decisions
+
+### Route without assessment in the contract
+
+Resolved on 2026-10-04 by Rafał in place of Marek in `plans/route_planning/`: with a profile that names no barrier, every segment of a route and of its alternative, the straight stretches to the network included, carries the state `not_assessed` of `plan_route`, a value of `state` outside the four states of M7 that appears in no other case, so the client derives nothing from its own request. It lives in `docs/product/api_contract.md`, section plan_route, and in `docs/product/views.md`, section The views read against the contract of the team, still to be confirmed by Kuber and Adrian.
+
+### Refusal of a point outside Kraków in the contract
+
+Resolved on 2026-10-04 by Rafał in place of Marek in `plans/route_planning/`: `plan_route` refuses a start or a destination outside the administrative boundary of Kraków of the copy in use with `point_outside_krakow` and the status 422, whose field `points` names the point, and the client also checks a point against the bounds of the map of Kraków when it is set; a point inside the bounds but outside the boundary stays set until the route is requested, as M2 of `docs/product/specification.md` says since version 15. It lives in `docs/product/api_contract.md`, section plan_route, and in `docs/product/views.md`, section The views read against the contract of the team and V-4, still to be confirmed by Kuber and Adrian.
 
 ### Hash length reported by Kuba
 
@@ -143,4 +137,4 @@ Resolved on 2026-10-03 by the user, answering for the db person, and changed on 
 
 ### Technology stack and the Python profile of the standards
 
-Resolved on 2026-10-04 in the backend foundation: `api/`, `config/`, `data/`, `service/` and `worker/` implement the Python/FastAPI/PostgreSQL stack chosen in `plans_finished/mvp/MVP_PLAN.md` D-1. The standards map keeps the Python profile explicitly; frontend remains governed by its separate profile. Platform acceptance is still recorded in `plans/backend_skeleton/BACKEND_SKELETON_REVIEW.md`.
+Resolved on 2026-10-04 in the backend foundation: `api/`, `config/`, `data/`, `service/` and `worker/` implement the Python/FastAPI/PostgreSQL stack chosen in `plans_finished/mvp/MVP_PLAN.md` D-1. The standards map keeps the Python profile explicitly; frontend remains governed by its separate profile. Platform acceptance is recorded in `plans_finished/backend_skeleton/BACKEND_SKELETON_REVIEW.md`.
