@@ -1,6 +1,6 @@
 # PRD: Demo scenario and its run on the hosted demo
 
-Document state: 2026-10-04, awaiting user confirmation before the implementation plan
+Document state: 2026-10-04, approved by the user; planning and execution authorized in the same reply
 
 This PRD carries the closed interview of `STAGE7_DEMO_SCENARIO_SHAPE.md`, at C:40, into the requirements of checks 7.2 and 7.3 of `FINAL_CHECKLIST.md`. The draft is supporting material; the decisions of the shape and the current `docs/product/specification.md` prevail over it. This document defines the scenario and its verification, and is not evidence that the application has passed a run.
 
