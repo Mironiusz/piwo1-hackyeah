@@ -64,7 +64,7 @@ Initiatives: `backend_skeleton`, `schema_first_revision`, `accounts`, `address_s
   - Done when: The backend of D-1 and D-14 starts locally with the local database of D-7 and its revision tooling, and the critical tests of the local database that do not check the first revision pass.
   - Waits for: Nothing.
   - Before that: Everything, from its plan.
-- [ ] 2.2 `schema_first_revision`
+- [x] 2.2 `schema_first_revision`
   - Done when: The first revision builds the target schema of `docs/product/schema.md` on an empty local database, and its tests and the critical tests that check it pass.
   - Waits for: Nothing.
   - Before that: The revision and its tests written from `docs/product/schema.md` and D-11.
@@ -144,7 +144,7 @@ Initiatives: `frontend_app` together with `map_tiles`.
   - Done when: The account, the moderation, the privacy information and the Polish and English interface work in the browser against the running service (MVP AC-11, AC-13, AC-18, AC-19).
   - Waits for: 2.3, 5.3.
   - Before that: The same documents as check 6.1.
-- [ ] 6.4 The map (`frontend_app`, `map_tiles`)
+- [x] 6.4 The map (`frontend_app`, `map_tiles`)
   - Done when: The map of Kraków is drawn in the app from the tile archive, the style, the fonts and the sprites served by the project, and nothing is fetched from outside during the demo (D-6).
   - Waits for: Nothing.
   - Before that: Everything; the archive, the fonts and the sprites were produced on 2026-10-03.
