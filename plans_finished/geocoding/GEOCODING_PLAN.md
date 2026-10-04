@@ -4,7 +4,7 @@ Document state: 2026-10-03, plan closed
 
 ## Goal
 
-Decide how the MVP answers the search of addresses and places defined by `plans_finished/geocoding/GEOCODING_PRD.md` (FR-1 - FR-9, AC-1 - AC-9), and hand the decision to `plans/mvp/` so that it settles `plans/mvp/MVP_PLAN.md` Q-5, together with the constraints it puts on `plans_finished/api_contract/`, `plans_finished/frontend_stack/` and `plans_finished/demo_environment/`. No product code is written here: the search is built as a work package of `plans/mvp/` (PRD, Out of scope).
+Decide how the MVP answers the search of addresses and places defined by `plans_finished/geocoding/GEOCODING_PRD.md` (FR-1 - FR-9, AC-1 - AC-9), and hand the decision to `plans_finished/mvp/` so that it settles `plans_finished/mvp/MVP_PLAN.md` Q-5, together with the constraints it puts on `plans_finished/api_contract/`, `plans_finished/frontend_stack/` and `plans_finished/demo_environment/`. No product code is written here: the search is built as a work package of `plans_finished/mvp/` (PRD, Out of scope).
 
 ## Facts
 
@@ -28,14 +28,14 @@ F-17. A value that is constant across all environments, not a secret and used in
 F-18. Unit tests run without the network, and integration tests use neither the real network nor a real database. | doc:`docs/standards/standard_tests.md:30`; doc:`docs/standards/standard_tests.md:36` | 2026-10-03
 F-19. The demo runs on a hosted service at a public link, is deleted with its database after the results on 4 October 2026, and the agent reads the logs of the hosted service without asking. | doc:`plans_finished/demo_environment/DEMO_ENVIRONMENT_SHAPE.md:28`; doc:`plans_finished/demo_environment/DEMO_ENVIRONMENT_SHAPE.md:64`; doc:`plans_finished/demo_environment/DEMO_ENVIRONMENT_SHAPE.md:66` | 2026-10-03
 F-20. The contract initiative waits for this one to know whether the address search goes through the backend. | doc:`plans_finished/api_contract/API_CONTRACT_SHAPE.md:21` | 2026-10-03
-F-21. The MVP plan holds the address search as open question Q-5 and decides the backend architecture itself once Q-1 - Q-9 are settled. | doc:`plans/mvp/MVP_PLAN.md:46`; doc:`plans/mvp/MVP_PLAN.md:51` | 2026-10-03
-F-22. The MVP already requires the OpenStreetMap attribution on the map, and the list for a route shows the place of every item. | doc:`plans/mvp/MVP_PRD.md:45` FR-9; doc:`plans/mvp/MVP_PRD.md:49` FR-11 | 2026-10-03
+F-21. The MVP plan holds the address search as open question Q-5 and decides the backend architecture itself once Q-1 - Q-9 are settled. | doc:`plans_finished/mvp/MVP_PLAN.md:46`; doc:`plans_finished/mvp/MVP_PLAN.md:51` | 2026-10-03
+F-22. The MVP already requires the OpenStreetMap attribution on the map, and the list for a route shows the place of every item. | doc:`plans_finished/mvp/MVP_PRD.md:45` FR-9; doc:`plans_finished/mvp/MVP_PRD.md:49` FR-11 | 2026-10-03
 
 ## Decisions
 
 D-1. The search is answered by the public Nominatim instance of the OpenStreetMap Foundation at `https://nominatim.openstreetmap.org/search`. Decided by the user with the external API person on 2026-10-03, against the public Photon instance, a commercial provider with an API key and an own Nominatim instance (F-9, F-10).
 
-D-2. The search is a read from an external system during request handling, so it is recorded as the explicit exception of `docs/standards/standard_architecture.md`, section Calls to external systems (F-14): without the outside answer the search request cannot be handled at all. It has one call site in the data layer and one seam in the rules layer, which the input layer calls, and the blocking outgoing call runs from request handling through a thread pool, as that section requires. The names of these modules and functions are decided in `plans/mvp/MVP_PLAN.md` together with the backend architecture (Q-11, F-21), following `docs/standards/standard_naming.md`, because naming them here would guess that architecture. Agent decision at C:40, without asking: it follows from the scope of the PRD and from the standard.
+D-2. The search is a read from an external system during request handling, so it is recorded as the explicit exception of `docs/standards/standard_architecture.md`, section Calls to external systems (F-14): without the outside answer the search request cannot be handled at all. It has one call site in the data layer and one seam in the rules layer, which the input layer calls, and the blocking outgoing call runs from request handling through a thread pool, as that section requires. The names of these modules and functions are decided in `plans_finished/mvp/MVP_PLAN.md` together with the backend architecture (Q-11, F-21), following `docs/standards/standard_naming.md`, because naming them here would guess that architecture. Agent decision at C:40, without asking: it follows from the scope of the PRD and from the standard.
 
 D-3. The text travels from the browser to the server only in the body of a POST request, never in the path or the query string of a URL, and the frontend never puts it into the address of the page. An access log of the HTTP server or of the hosting records the URL but not the body, so this keeps the text out of every such log (PRD FR-7). The path and the JSON shape of the request and the response are decided by `plans_finished/api_contract/` under this constraint. Agent decision at C:40, without asking: the URL is the part of a request that every access log records.
 
@@ -59,7 +59,7 @@ D-12. No log entry contains the text, the normalized text, the URL of the outgoi
 
 D-13. The base address of the service, the User-Agent, the viewbox, the timeout and the limits of D-4, D-8 and D-9 are constants of the third configuration layer, next to the code of the integration: they are the same in every environment, used in one place, and none of them is a secret (F-17). No environment entry is added. Agent decision at C:40, without asking.
 
-D-14. The results are OpenStreetMap data under the ODbL, which the response itself states in `licence` (F-2), so the OpenStreetMap attribution that `plans/mvp/MVP_PRD.md` FR-9 already requires on the map (F-22) also covers the search (PRD FR-9). Agent decision at C:40, without asking.
+D-14. The results are OpenStreetMap data under the ODbL, which the response itself states in `licence` (F-2), so the OpenStreetMap attribution that `plans_finished/mvp/MVP_PRD.md` FR-9 already requires on the map (F-22) also covers the search (PRD FR-9). Agent decision at C:40, without asking.
 
 D-15. The cache of D-8 and the gate of D-9 live in the memory of one process, so the backend that answers the search runs as exactly one process in the demo environment. With N processes the outgoing rate could reach N requests per second, against the policy (F-10). This is handed to `plans_finished/demo_environment/` as a constraint. Agent decision at C:40, without asking: it follows from the cache in memory decided in the shape and from the policy.
 
@@ -67,16 +67,16 @@ D-16. The MVP work package adds these tests under `docs/standards/standard_tests
 
 ## Scope of changes
 
-1. `plans/mvp/MVP_PLAN.md`, section Decisions: after D-2 add the item "D-3. Address search, settling the former Q-5. The search is answered by the public Nominatim instance, called only by the server, with the rules, parameters and tests of `plans_finished/geocoding/GEOCODING_PLAN.md` D-1 - D-16. Constraints for the rest of this plan: the search is the explicit exception of a read from an external system during request handling (D-2 there), its text travels only in the body of a POST request (D-3 there), the backend runs as exactly one process (D-15 there), and the work package of the search includes the tests of D-16 there. Decided by the user with the external API person on 2026-10-03 in `plans_finished/geocoding/`."
-2. `plans/mvp/MVP_PLAN.md`, section Open questions: remove the item "Q-5. Address search - `plans_finished/geocoding/`, owner: external API, consulted: import." The other identifiers stay unchanged, because the shapes of the sibling initiatives refer to them.
-3. `plans/mvp/MVP_PLAN.md`, section Supplementary files: add the item "`plans_finished/geocoding/GEOCODING_PLAN.md`, the decision behind D-3."
+1. `plans_finished/mvp/MVP_PLAN.md`, section Decisions: after D-2 add the item "D-3. Address search, settling the former Q-5. The search is answered by the public Nominatim instance, called only by the server, with the rules, parameters and tests of `plans_finished/geocoding/GEOCODING_PLAN.md` D-1 - D-16. Constraints for the rest of this plan: the search is the explicit exception of a read from an external system during request handling (D-2 there), its text travels only in the body of a POST request (D-3 there), the backend runs as exactly one process (D-15 there), and the work package of the search includes the tests of D-16 there. Decided by the user with the external API person on 2026-10-03 in `plans_finished/geocoding/`."
+2. `plans_finished/mvp/MVP_PLAN.md`, section Open questions: remove the item "Q-5. Address search - `plans_finished/geocoding/`, owner: external API, consulted: import." The other identifiers stay unchanged, because the shapes of the sibling initiatives refer to them.
+3. `plans_finished/mvp/MVP_PLAN.md`, section Supplementary files: add the item "`plans_finished/geocoding/GEOCODING_PLAN.md`, the decision behind D-3."
 4. `plans_finished/api_contract/API_CONTRACT_SHAPE.md`, section Current state: after the item that ends with "`plans_finished/geocoding/` (whether address search goes through the backend)." add the item "`plans_finished/geocoding/` decided on 2026-10-03 (`plans_finished/geocoding/GEOCODING_PLAN.md` D-3, D-4, D-7, D-11) that the address search goes through the backend. The search text travels only in the body of a POST request, never in a URL. The answer is a list of matches with a label, a latitude and a longitude, an empty list when nothing is found, a response distinct from both when the search is unavailable, and a caller error for a text longer than 200 characters as received or empty after normalization."
 5. `plans_finished/frontend_stack/FRONTEND_STACK_SHAPE.md`, section Current state: add as the last item "`plans_finished/geocoding/` decided on 2026-10-03 (`plans_finished/geocoding/GEOCODING_PRD.md` FR-1 - FR-5, `plans_finished/geocoding/GEOCODING_PLAN.md` D-3) that the search runs only on submission, shows a list the user always picks from with a keyboard and a screen reader, has two distinct messages for nothing found and search unavailable, and never puts the search text into the address of the page. It also recorded a risk for this initiative: map tiles loaded by the browser straight from `tile.openstreetmap.org` reveal the IP address of the person and the area they look at to that service."
 6. `plans_finished/demo_environment/DEMO_ENVIRONMENT_SHAPE.md`, section Current state: add as the last item "`plans_finished/geocoding/` decided on 2026-10-03 (`plans_finished/geocoding/GEOCODING_PLAN.md` D-1, D-15, D-16) that the backend calls the public Nominatim instance from the hosted service and runs as exactly one process, and that after the first deployment one search from the hosted service is checked to return a list, because a hosting address shared with other customers may be blocked by that instance."
 
 ## Rollout order
 
-1. Steps 1 - 3 in `plans/mvp/MVP_PLAN.md`.
+1. Steps 1 - 3 in `plans_finished/mvp/MVP_PLAN.md`.
 2. Steps 4 - 6 in the shapes of the three sibling initiatives, in any order.
 3. Checks of the Definition of Done.
 
@@ -84,9 +84,9 @@ Steps for a human: the commit and the Merge Request of the changed files.
 
 ## Definition of Done
 
-- `plans/mvp/MVP_PLAN.md` has D-3 as in step 1, no item Q-5 under Open questions, and the item of step 3 under Supplementary files.
+- `plans_finished/mvp/MVP_PLAN.md` has D-3 as in step 1, no item Q-5 under Open questions, and the item of step 3 under Supplementary files.
 - The three sibling shapes carry the items of steps 4 - 6, and nothing else in them is changed.
-- `npx prettier --check` passes on `plans/mvp/MVP_PLAN.md`, the three sibling shapes and the four files of `plans_finished/geocoding/`.
+- `npx prettier --check` passes on `plans_finished/mvp/MVP_PLAN.md`, the three sibling shapes and the four files of `plans_finished/geocoding/`.
 - The changed files contain none of the characters forbidden by `docs/standards/standard_formatting.md` and no bold in prose.
 - `venv\Scripts\python.exe -m pytest tests/architecture` passes, the check of this closed plan by `tests/architecture/test_plan_document_contract.py` included.
 - The review of `plan-implement` finds no blocking issue.
@@ -100,7 +100,7 @@ Steps for a human: the commit and the Merge Request of the changed files.
 - A house number unknown to OpenStreetMap falls back to the street (F-7). The label then has no number, so the person sees that the match is the street, not the house.
 - The OpenStreetMap Foundation keeps the requests for an unknown time (F-11). The text reaches it without anything identifying the person (D-5), which the shape accepted.
 - The description of the data sources in the Kraków submission has to name the public Nominatim instance next to OpenStreetMap; no such document exists in the repository yet.
-- If `plans/mvp/` decides to show the place of an item in the list for a route (F-22) as a street address, it needs the opposite direction of the search for every item, which multiplies the requests against the limit of 1 per second; the PRD leaves it out and it needs its own decision.
+- If `plans_finished/mvp/` decides to show the place of an item in the list for a route (F-22) as a street address, it needs the opposite direction of the search for every item, which multiplies the requests against the limit of 1 per second; the PRD leaves it out and it needs its own decision.
 
 ## Open questions
 

@@ -12,7 +12,7 @@ F-1. No product code and no deployment file exist: the tree holds no `api/`, `se
 F-2. `CLAUDE.md`, section Target environment, describes "a virtual private server of a member of the team, decided in `plans_finished/demo_environment/`", which "also runs other services of its owner". | doc:`CLAUDE.md` line 58 | 2026-10-04
 F-3. `AGENTS.md` carries the same paragraph, and the parity test requires both files to be identical except for the tool name. | doc:`AGENTS.md` line 58; code:`tests/architecture/test_agent_docs_parity.py:165` | 2026-10-04
 F-4. The resolved entry Target environment for the demo of the decision registry says the demo is "reached at its IP address over a secure connection" and points to D-8 and D-10. | doc:`docs/standards/decision_registry.md` line 78 | 2026-10-04
-F-5. D-10 of the MVP plan names the virtual private server of the db person, "over a secure connection", and says "the secure connection and the unreachable routing of the live demo are built by the task `DEPLOYMENT`". | doc:`plans/mvp/MVP_PLAN.md` line 43 | 2026-10-04
+F-5. D-10 of the MVP plan names the virtual private server of the db person, "over a secure connection", and says "the secure connection and the unreachable routing of the live demo are built by the task `DEPLOYMENT`". | doc:`plans_finished/mvp/MVP_PLAN.md` line 43 | 2026-10-04
 F-6. D-8 of the archived demo environment plan chooses the virtual private server of the db person. | doc:`plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` line 42 | 2026-10-04
 F-7. The `_PLAN.md` of an archived initiative changes only in the location of references, never in the content of its findings. | doc:`docs/standards/standard_agentic_workflow.md` ch. 4.6, paragraph Protecting history | 2026-10-04
 F-8. `AI_WORKFLOW.md` keeps a dated log under `## Log`. Each entry is a `###` heading with the date and a title, followed by the items Tools, Request, What was done, Why and an optional Note. The entry of 2026-10-03 on the agent permissions describes the old server. | doc:`AI_WORKFLOW.md` lines 59, 95-101 | 2026-10-04
@@ -37,13 +37,13 @@ D-3. The instructions name no branch or commit. They speak of "the version of th
 
 D-4. Applying the schema revisions is a step of its own, between the start and the loading of the data. It is run by hand, with the consent given at call time, and the start command never applies revisions (F-12). Agent decision at C:40, without asking: the standard already requires consent at call time for the target environment, so folding the revisions into the start would bypass that gate.
 
-D-5. The archived `plans_finished/demo_environment/` is not changed. D-10 of `plans/mvp/MVP_PLAN.md`, the decision registry and `CLAUDE.md` with `AGENTS.md` say that D-8 there is superseded (F-7). Decided by the user on 2026-10-04 in phase B.
+D-5. The archived `plans_finished/demo_environment/` is not changed. D-10 of `plans_finished/mvp/MVP_PLAN.md`, the decision registry and `CLAUDE.md` with `AGENTS.md` say that D-8 there is superseded (F-7). Decided by the user on 2026-10-04 in phase B.
 
 D-6. The existing entries of `AI_WORKFLOW.md` and `agent_docs/memory/_cross_cutting.md` stay as they are. Each file gets a new entry that names the entry of 2026-10-03 it supersedes (F-8, F-9). Agent decision at C:40, without asking: both files are dated logs, and rewriting an old entry would erase the history they exist to keep.
 
 D-7. `CLAUDE.md` and `AGENTS.md` change only in the first paragraph of the section Target environment. The three permission levels, the paragraph on access outside the demo and the paragraph on the ban of addresses stay word for word (AC-5). Agent decision at C:40, without asking: FR-5 says the permission levels do not change.
 
-D-8. Other sessions edit `plans/mvp/MVP_PLAN.md`, `plans_finished/backend_architecture/` and `plans_finished/valhalla_routing/` in parallel (F-17). Before each edit, step 2 of Rollout order checks `git status` and the modification time of the file, according to `docs/standards/standard_agentic_workflow.md` ch. 4.7. Only D-10 of the MVP plan is changed. The other two initiatives are not touched. Agent decision at C:40, without asking: on 2026-10-04 the user decided that this task rewrites D-10 and that `plans_finished/backend_architecture/` only refers to it.
+D-8. Other sessions edit `plans_finished/mvp/MVP_PLAN.md`, `plans_finished/backend_architecture/` and `plans_finished/valhalla_routing/` in parallel (F-17). Before each edit, step 2 of Rollout order checks `git status` and the modification time of the file, according to `docs/standards/standard_agentic_workflow.md` ch. 4.7. Only D-10 of the MVP plan is changed. The other two initiatives are not touched. Agent decision at C:40, without asking: on 2026-10-04 the user decided that this task rewrites D-10 and that `plans_finished/backend_architecture/` only refers to it.
 
 ## Scope of changes
 
@@ -53,16 +53,16 @@ D-8. Other sessions edit `plans/mvp/MVP_PLAN.md`, `plans_finished/backend_archit
 
 2. `docs/standards/decision_registry.md`, section Target environment for the demo (F-4). The entry becomes:
 
-   "Resolved on 2026-10-03 by the user, answering for the db person, and changed on 2026-10-04 by the user in `plans_finished/deployment/`. The demo runs on a server of the user in a data centre, reached at its IP address over plain HTTP, and is deleted with all its data on 4 October 2026. The virtual private server of the db person, chosen in `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` D-8, is superseded. The choice lives in `plans_finished/deployment/DEPLOYMENT_PRD.md` FR-5 and `plans/mvp/MVP_PLAN.md` D-10, the permission levels of the agent in `CLAUDE.md` and `AGENTS.md`, section Target environment."
+   "Resolved on 2026-10-03 by the user, answering for the db person, and changed on 2026-10-04 by the user in `plans_finished/deployment/`. The demo runs on a server of the user in a data centre, reached at its IP address over plain HTTP, and is deleted with all its data on 4 October 2026. The virtual private server of the db person, chosen in `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` D-8, is superseded. The choice lives in `plans_finished/deployment/DEPLOYMENT_PRD.md` FR-5 and `plans_finished/mvp/MVP_PLAN.md` D-10, the permission levels of the agent in `CLAUDE.md` and `AGENTS.md`, section Target environment."
 
-3. `plans/mvp/MVP_PLAN.md`, D-10 only (F-5, D-8). The item becomes:
+3. `plans_finished/mvp/MVP_PLAN.md`, D-10 only (F-5, D-8). The item becomes:
 
    "D-10. Where the demo runs, settling the former Q-7. The demo runs on a server of the user in a data centre, with 16 GB of memory and 16 cores, reached at its IP address over plain HTTP. Everything of the demo on the server runs in Docker containers orchestrated by Docker Compose and is started with one command and an environment file kept on the server (`plans_finished/deployment/DEPLOYMENT_SHAPE.md`, sections Current state and Domain rules). It supersedes the virtual private server of `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` D-8.
 
    Constraints for the rest of this plan:
    - Q-11 places on that server the backend process, the worker, PostgreSQL with PostGIS in an instance of its own, the static frontend and the Valhalla routing service of `plans_finished/valhalla_routing/`, and decides whether the import runs there or on a team machine.
    - What else runs on the server is not known, so the demo uses only its own services, database and logs (`CLAUDE.md`, section Target environment).
-   - The demo has no secure connection, so the start from the current location of FR-2 of `plans/mvp/MVP_PRD.md` does not work on the hosted link. Nor does the hosted demo provide a way to take routing down (`plans_finished/deployment/DEPLOYMENT_SHAPE.md`, section Out of scope).
+   - The demo has no secure connection, so the start from the current location of FR-2 of `plans_finished/mvp/MVP_PRD.md` does not work on the hosted link. Nor does the hosted demo provide a way to take routing down (`plans_finished/deployment/DEPLOYMENT_SHAPE.md`, section Out of scope).
    - The deployment configuration is built by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/` once Q-11 and the backend skeleton exist. The written instructions are written by the task `DEPLOYMENT` of `plans_finished/deployment/`.
 
    Decided by the user, answering for the db person, on 2026-10-03 in `plans_finished/demo_environment/`, and changed by the user on 2026-10-03 and 2026-10-04 in `plans_finished/deployment/`."
@@ -99,7 +99,7 @@ D-8. Other sessions edit `plans/mvp/MVP_PLAN.md`, `plans_finished/backend_archit
 ## Rollout order
 
 1. Check that the facts still hold: `git log --since=2026-10-04 --name-only` intersected with the files cited in Facts, and the content under every hit.
-2. Before each edit of `CLAUDE.md`, `AGENTS.md` and `plans/mvp/MVP_PLAN.md`, check `git status` and the modification time of the file (D-8).
+2. Before each edit of `CLAUDE.md`, `AGENTS.md` and `plans_finished/mvp/MVP_PLAN.md`, check `git status` and the modification time of the file (D-8).
 3. Steps 1 - 4 of Scope of changes (FR-5). `CLAUDE.md` and `AGENTS.md` are edited in one step, so the parity test never sees them apart.
 4. Steps 5 and 6 of Scope of changes (FR-1 - FR-4).
 5. Step 7 of Scope of changes, at the end of `plan-implement`.
@@ -131,7 +131,7 @@ Steps for a human:
 
 - The instructions are written before the files they drive. If the configuration task makes a different start sequence, for example folding the revisions into the start, it changes this document and D-4 together, not around them.
 - `CLAUDE.md` is read by every session at its start. A session already running keeps the old paragraph until it restarts.
-- Other sessions edit `plans/mvp/MVP_PLAN.md` in parallel. A conflicting edit of D-10 is resolved by D-8 and the user's decision of 2026-10-04, not by overwriting.
+- Other sessions edit `plans_finished/mvp/MVP_PLAN.md` in parallel. A conflicting edit of D-10 is resolved by D-8 and the user's decision of 2026-10-04, not by overwriting.
 - The checks of F-15 cannot run on this machine (F-16). A formatting error is found only by `make check` on another machine.
 
 ## Open questions

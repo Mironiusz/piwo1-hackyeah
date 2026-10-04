@@ -56,7 +56,7 @@ The project adds its own directories next to `docs/standards/`, each with its pr
 - `docs/deployment/` - `hosted_demo.md`, the written instructions for standing the hosted demo up on the server, written on 2026-10-04 by `plans_finished/deployment/`, with the commands completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`.
 - `docs/setup/` - `EMULATOR_SETUP.md`, the instructions for installing the OpenHarmony toolchain and emulator and running a HarmonyOS client on it, merged on 2026-10-04 with pull request 16 from the branch `js/emulator-setup`. The client `accessway/`, `scripts/env.sh` and the `make` targets it runs, such as `make setup` and `make aw-run`, are not in the repository, and whether a HarmonyOS client is built is still open in `decision_registry.md`, entry HarmonyOS port and the Huawei submission.
 - `AI_WORKFLOW.md` in the repository root - the description of how AI tools are used here, required by the Huawei challenge.
-- `MVP.md` in the repository root - the summary of the MVP: its scope, its technical decisions, the initiatives that build it with their owners and order, and the requirements each of them meets, written on 2026-10-04 by `plans/mvp/`. The product specification prevails over it.
+- `MVP.md` in the repository root - the summary of the MVP: its scope, its technical decisions, the initiatives that build it with their owners and order, and the requirements each of them meets, written on 2026-10-04 by `plans_finished/mvp/`. The product specification prevails over it.
 - `TEAM.md` in the repository root - the members of the team and the role each one holds, set by Rafał on 2026-10-04, so that documents name people instead of roles (`CLAUDE.md`, section Language and communication style).
 
 ## Deviation rule

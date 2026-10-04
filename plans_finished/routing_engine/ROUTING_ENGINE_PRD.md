@@ -4,19 +4,19 @@ Document state: 2026-10-03
 
 ## Business goal
 
-By 11:00 on 4 October 2026 the MVP of `plans/mvp/` plans walking routes in Kraków matched to the barrier preferences of a person. The route is the core of the main scenario (`docs/product/specification.md` version 4, M2, M7, M8): it turns open data and reports into something a person can act on before leaving home. It also carries two of the things the Kraków demo has to show (M10): a contradiction between OpenStreetMap and a user report, and a plain message with no guessed route when routing does not answer.
+By 11:00 on 4 October 2026 the MVP of `plans_finished/mvp/` plans walking routes in Kraków matched to the barrier preferences of a person. The route is the core of the main scenario (`docs/product/specification.md` version 4, M2, M7, M8): it turns open data and reports into something a person can act on before leaving home. It also carries two of the things the Kraków demo has to show (M10): a contradiction between OpenStreetMap and a user report, and a plain message with no guessed route when routing does not answer.
 
-This task makes the decision that the route work package of `plans/mvp/` needs, so that the package builds the routing without making a choice of its own. The package builds it.
+This task makes the decision that the route work package of `plans_finished/mvp/` needs, so that the package builds the routing without making a choice of its own. The package builds it.
 
 ## Problem and its consequences
 
-How the MVP computes routes was not decided in phase B of `plans/mvp/`; the user handed the decision to the backend person of the team. Ordinary route engines do not apply the rules of the specification on their own: they do not avoid only the barriers from the profile, keep an unverified barrier on a red segment next to an alternative, fall back to the route with the fewest barriers, or give every segment one of four states with its missing attributes. As long as the decision is open:
+How the MVP computes routes was not decided in phase B of `plans_finished/mvp/`; the user handed the decision to the backend person of the team. Ordinary route engines do not apply the rules of the specification on their own: they do not avoid only the barriers from the profile, keep an unverified barrier on a red segment next to an alternative, fall back to the route with the fewest barriers, or give every segment one of four states with its missing attributes. As long as the decision is open:
 
-- `plans/mvp/MVP_PLAN.md` cannot be closed, and `plan-implement` cannot start on it: its open question Q-1 waits for this decision, and Q-11, the backend architecture with the worker, depends on Q-1.
+- `plans_finished/mvp/MVP_PLAN.md` cannot be closed, and `plan-implement` cannot start on it: its open question Q-1 waits for this decision, and Q-11, the backend architecture with the worker, depends on Q-1.
 - `plans_finished/demo_environment/` cannot tell whether the server of the demo carries the routing (its plan, Q-1), and its deadline of 22:00 on 3 October 2026 for the choice of the hosting moves.
 - The import cannot know which ways to process: `plans_finished/osm_barrier_mapping/OSM_BARRIER_MAPPING_PLAN.md` D-6 applies the tag rule "on the elements of the pedestrian network", and no initiative has said which tags make that network.
 - `plans_finished/fact_schema/` leaves open how a route is related to the stretches of way whose facts it keeps.
-- The contradiction of M2 has two values nobody set: which stretch of way a point report lies on, and within what distance of an opposite kerb point of OpenStreetMap a kerb report counts as contradicted. Without them, scenario 4 of `plans/mvp/MVP_SHAPE.md`, the contradiction the Kraków demo has to show, has no defined outcome.
+- The contradiction of M2 has two values nobody set: which stretch of way a point report lies on, and within what distance of an opposite kerb point of OpenStreetMap a kerb report counts as contradicted. Without them, scenario 4 of `plans_finished/mvp/MVP_SHAPE.md`, the contradiction the Kraków demo has to show, has no defined outcome.
 
 ## Scope
 
@@ -29,7 +29,7 @@ How the MVP computes routes was not decided in phase B of `plans/mvp/`; the user
 
 ## Out of scope
 
-- Building the routing: the network the engine reads, the cost per profile, the segment states, the alternative route, the route with the fewest barriers, the list and the endpoint. A work package of `plans/mvp/` builds them (`ROUTING_ENGINE_SHAPE.md`, question 1).
+- Building the routing: the network the engine reads, the cost per profile, the segment states, the alternative route, the route with the fewest barriers, the list and the endpoint. A work package of `plans_finished/mvp/` builds them (`ROUTING_ENGINE_SHAPE.md`, question 1).
 - Any routing service outside the project, the public Valhalla instance and the OSRM demo included (`ROUTING_ENGINE_SHAPE.md`, question 2).
 - The route part of the contract of the programming interface, which `plans_finished/api_contract/` defines and to which the engine adapts (U-5 of `plans_finished/consistency_check/`).
 - Writing the three product rules of `ROUTING_ENGINE_SHAPE.md`, questions 2, 5 and 6, into the specification. `plans_finished/consistency_check/` added them to M2 and to the section Personal data of version 4 on 2026-10-03 at the user's request, and the user approved them (`ROUTING_ENGINE_SHAPE.md`, question 7).
@@ -41,7 +41,7 @@ How the MVP computes routes was not decided in phase B of `plans/mvp/`; the user
 
 FR-1. Choice of the engine. The decision names how the MVP computes a walking route: which software computes it, where it runs within the project, how it reads the pedestrian network from the copy, and how it applies the profile carried by the route request together with the user facts and the geozones valid at the moment of the request. The chosen way:
 
-- makes FR-2, FR-3, FR-4, FR-10, FR-11 and FR-17 of `plans/mvp/MVP_PRD.md` achievable, the alternative route of FR-3 and the route with the fewest barriers of FR-4 included,
+- makes FR-2, FR-3, FR-4, FR-10, FR-11 and FR-17 of `plans_finished/mvp/MVP_PRD.md` achievable, the alternative route of FR-3 and the route with the fewest barriers of FR-4 included,
 - takes the facts, the segment states and the date from the copy in use, and never combines the ways of two copies, or the ways of one copy with the date of another (`ROUTING_ENGINE_SHAPE.md`, scenario 4),
 - takes a new vote, report or geozone into account in the next route, without a restart of the service or a new import (`ROUTING_ENGINE_SHAPE.md`, scenario 3),
 - keeps everything of the route request inside the project (section Domain rules),
@@ -55,7 +55,7 @@ FR-3. Route and stored facts. The decision states how every segment of a route i
 
 FR-4. Values of the contradiction. The decision names how a point report is assigned to the stretch of way it lies on, a report lying between a sidewalk and a carriageway included, and within what distance of an opposite kerb point of OpenStreetMap a report of a high or a lowered kerb counts as contradicted, each with its reason.
 
-FR-5. The decision recorded. The open question Q-1 of `plans/mvp/MVP_PLAN.md` is closed by a decision entry that points to this initiative and states the constraints for the rest of that plan: which work package builds the routing, what it reads from the import and from the stored facts, and what Q-11 takes from it about where the route is computed. The entry Technical directions of the MVP plan of `docs/standards/decision_registry.md` records that this initiative is decided.
+FR-5. The decision recorded. The open question Q-1 of `plans_finished/mvp/MVP_PLAN.md` is closed by a decision entry that points to this initiative and states the constraints for the rest of that plan: which work package builds the routing, what it reads from the import and from the stored facts, and what Q-11 takes from it about where the route is computed. The entry Technical directions of the MVP plan of `docs/standards/decision_registry.md` records that this initiative is decided.
 
 FR-6. Needs of the engine handed over. `plans_finished/demo_environment/` gets, as an input of its open question about the server, what the chosen engine needs from the server of the demo - memory, disk and any service of its own - and what makes it not answer, which the task `DEPLOYMENT` needs to show an unavailable source in the live demo. Nothing is decided there by this task.
 
@@ -65,11 +65,11 @@ AC-1 (FR-1). The recorded choice names the software, where it runs within the pr
 
 AC-2 (FR-2). The decision lists the including and the excluding tag values, each excluding value with the number of ways of the copy of Kraków it removes, counted in phase B. Under the list a way tagged `highway=footway` and `access=private` without a permission for pedestrians is outside the network, and a way tagged `highway=residential` without a sidewalk tag is inside it.
 
-AC-3 (FR-3). Applied by hand to scenario 6 of `ROUTING_ENGINE_SHAPE.md`, the decision gives a first segment of 4 m and a last segment of 60 m in the state no data; applied to scenario 9 of `plans/mvp/MVP_SHAPE.md`, it gives segment Y in the state partial data with the incline and the kerbs named as missing.
+AC-3 (FR-3). Applied by hand to scenario 6 of `ROUTING_ENGINE_SHAPE.md`, the decision gives a first segment of 4 m and a last segment of 60 m in the state no data; applied to scenario 9 of `plans_finished/mvp/MVP_SHAPE.md`, it gives segment Y in the state partial data with the incline and the kerbs named as missing.
 
-AC-4 (FR-4). The decision names a rule for the stretch of a point report and a distance in metres for the kerb, each with its reason. Applied by hand to scenario 4 of `plans/mvp/MVP_SHAPE.md`, they make the report of a high kerb at crossing X contradicted by the lowered kerb of OpenStreetMap, so the segment follows OpenStreetMap until the report reaches 2.0.
+AC-4 (FR-4). The decision names a rule for the stretch of a point report and a distance in metres for the kerb, each with its reason. Applied by hand to scenario 4 of `plans_finished/mvp/MVP_SHAPE.md`, they make the report of a high kerb at crossing X contradicted by the lowered kerb of OpenStreetMap, so the segment follows OpenStreetMap until the report reaches 2.0.
 
-AC-5 (FR-5). Q-1 is no longer among the open questions of `plans/mvp/MVP_PLAN.md`. A decision entry there points to this initiative and states the constraints of FR-5. The registry entry Technical directions of the MVP plan says that `plans_finished/routing_engine/` is decided.
+AC-5 (FR-5). Q-1 is no longer among the open questions of `plans_finished/mvp/MVP_PLAN.md`. A decision entry there points to this initiative and states the constraints of FR-5. The registry entry Technical directions of the MVP plan says that `plans_finished/routing_engine/` is decided.
 
 AC-6 (FR-6). The open question about the server in `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` names the chosen engine with what it needs from the server instead of the three variants it lists today, with a pointer to this initiative, and checking the 5 seconds of FR-1 on the server of the demo is listed among the checks after the first deployment. The decisions of that plan are unchanged.
 
@@ -89,14 +89,14 @@ AC-6 (FR-6). The open question about the server in `plans_finished/demo_environm
 
 ## Dependencies and impact on other modules
 
-- `plans/mvp/MVP_PLAN.md` gets Q-1 closed (FR-5), and Q-11 can then be decided. The plan stays open while its other questions wait.
-- `plans/mvp/MVP_PLAN.md` D-3 makes the backend run as exactly one process, because the cache of the address search lives in its memory. The chosen engine has to work with that.
+- `plans_finished/mvp/MVP_PLAN.md` gets Q-1 closed (FR-5), and Q-11 can then be decided. The plan stays open while its other questions wait.
+- `plans_finished/mvp/MVP_PLAN.md` D-3 makes the backend run as exactly one process, because the cache of the address search lives in its memory. The chosen engine has to work with that.
 - `plans_finished/osm_data_source/`: the condition of its D-17 is met, because the engine reads the copy of that initiative. The copy itself does not change.
-- `plans_finished/osm_barrier_mapping/`: FR-2 defines the network its D-6 relies on. Its closed plan is not changed; the import work package of `plans/mvp/` applies D-6 to the network of FR-2.
+- `plans_finished/osm_barrier_mapping/`: FR-2 defines the network its D-6 relies on. Its closed plan is not changed; the import work package of `plans_finished/mvp/` applies D-6 to the network of FR-2.
 - `plans_finished/fact_schema/`: FR-3 answers what its PRD left to this initiative, within what its FR-5 stores; since U-2 of `plans_finished/dependency_check/` that PRD no longer waits for a check against this initiative.
 - `plans_finished/api_contract/`: the route response describes the data of the product, and the engine adapts to it (U-5). The stretch to the network is an ordinary segment in the state no data.
 - `plans_finished/demo_environment/` and the task `DEPLOYMENT` of `plans_finished/deployment/` receive the needs of FR-6.
-- `plans_finished/local_database/`: the local database already carries pgRouting without creating it, so choosing pgRouting needs no change of the local environment (`plans/mvp/MVP_PLAN.md` D-7); another choice leaves it unused.
+- `plans_finished/local_database/`: the local database already carries pgRouting without creating it, so choosing pgRouting needs no change of the local environment (`plans_finished/mvp/MVP_PLAN.md` D-7); another choice leaves it unused.
 - `docs/product/specification.md`: version 4 states the three rules of `ROUTING_ENGINE_SHAPE.md`, questions 2, 5 and 6, in M2 and in the section Personal data; the tag values of FR-2 and the values of FR-4 go there after phase B.
 - `docs/standards/decision_registry.md`: the entry Technical directions of the MVP plan changes (FR-5).
 - `agent_docs/memory/_cross_cutting.md`: the risk note of the entry Personal data in requests to outside services names this initiative as undecided and becomes stale once it is implemented.
@@ -108,4 +108,4 @@ AC-6 (FR-6). The open question about the server in `plans_finished/demo_environm
 - With no outside service, the only way routing stops answering is the engine of the project failing. Showing an unavailable source in the live demo, which M10 asks for, needs a deliberate way to make it fail, and that is for the task `DEPLOYMENT`.
 - Most segments will be partial data for profiles that avoid a steep incline or a narrow passage: of the 151 882 ways of the network measured in `plans_finished/osm_data_source/OSM_DATA_SOURCE_PLAN.md` F-9, 5 798 carry `incline` and 4 849 carry `width`. On top of that almost every route starts or ends with a short segment in the state no data. That is honest, but the demo has to explain it.
 - A destination inside a gated estate gets a route that ends at the nearest public way with a segment in the state no data that can be tens of metres long. That follows from leaving private ways out of the network.
-- Ending with the decision alone delays the routing itself to a work package of `plans/mvp/`, which starts only once that plan is closed. The user chose this knowing the cost (`ROUTING_ENGINE_SHAPE.md`, question 1).
+- Ending with the decision alone delays the routing itself to a work package of `plans_finished/mvp/`, which starts only once that plan is closed. The user chose this knowing the cost (`ROUTING_ENGINE_SHAPE.md`, question 1).

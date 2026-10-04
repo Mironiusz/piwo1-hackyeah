@@ -4,7 +4,7 @@ Document state: 2026-10-03, plan closed
 
 ## Goal
 
-Write the contract that `plans_finished/api_contract/API_CONTRACT_PRD.md` requires (FR-1 - FR-8, AC-1 - AC-8) as `docs/product/api_contract.md`: every operation between the clients and the service with its request, responses and errors, approved by the user in place of the frontend person. Bring the four product rules the user decided in phase B into the specification as version 7, settle Q-9 of `plans/mvp/MVP_PLAN.md`, record that Q-11 moves to a separate initiative together with the implementation of the operations, point the standards and the maps at the contract, and hand the storage of the idempotency key to the task `SCHEMA_REVISION` of `plans_finished/schema_revision/`. No code is written here (D-1).
+Write the contract that `plans_finished/api_contract/API_CONTRACT_PRD.md` requires (FR-1 - FR-8, AC-1 - AC-8) as `docs/product/api_contract.md`: every operation between the clients and the service with its request, responses and errors, approved by the user in place of the frontend person. Bring the four product rules the user decided in phase B into the specification as version 7, settle Q-9 of `plans_finished/mvp/MVP_PLAN.md`, record that Q-11 moves to a separate initiative together with the implementation of the operations, point the standards and the maps at the contract, and hand the storage of the idempotency key to the task `SCHEMA_REVISION` of `plans_finished/schema_revision/`. No code is written here (D-1).
 
 ## Facts
 
@@ -25,10 +25,10 @@ F-14. Two standards say that the response codes and bodies and the path names of
 F-15. The request identifier comes from the header `X-Request-Id` when it has only alphanumeric characters, hyphens and underscores and at most 128 characters, and is generated otherwise. | doc:`docs/standards/standard_logging.md` line 85 | 2026-10-03
 F-16. A write that can be repeated for the same logical operation needs duplicate protection from its first day, keyed by a stable identifier of the operation rather than one generated anew on each attempt. | doc:`docs/standards/standard_idempotency.md` line 35, line 39, line 76 | 2026-10-03
 F-17. The programming interface exposes instants with milliseconds. | doc:`docs/standards/standard_time.md` line 41 | 2026-10-03
-F-18. In the MVP plan D-11 is the last decision, Q-9 and Q-11 are open, and the Risks item that begins "The open questions depend on each other" names Q-9 and `plans_finished/api_contract/`. | doc:`plans/mvp/MVP_PLAN.md` line 45, line 56, line 60, line 61, line 77 | 2026-10-03
-F-19. The pointers to version 6 of the specification stand in `PRODUCT.md`, in the Goal of the MVP plan and in the Scope and Domain rules of the MVP PRD. | cmd:`grep -rn "version 6"` over `PRODUCT.md`, `docs`, `plans/mvp` -> `PRODUCT.md:45`, `PRODUCT.md:100`, `plans/mvp/MVP_PLAN.md:7`, `plans/mvp/MVP_PRD.md:17`, `plans/mvp/MVP_PRD.md:111`, plus the provenance of the schema in `docs/product/schema.md:3`, `docs/standards/README.md:54` and `plans/mvp/MVP_PLAN.md:45` | 2026-10-03
-F-20. The registry entry of the technical directions says that `plans_finished/account_sessions/` and `plans_finished/api_contract/` are in their interviews and that phase B of `plans/mvp/` resumes with the backend architecture. | doc:`docs/standards/decision_registry.md` line 48, line 49 | 2026-10-03
-F-21. `PRODUCT.md` lists the routing engine and this contract as undecided, although the routing engine is D-9 of the MVP plan. | doc:`PRODUCT.md` line 94; doc:`plans/mvp/MVP_PLAN.md` line 41 | 2026-10-03
+F-18. In the MVP plan D-11 is the last decision, Q-9 and Q-11 are open, and the Risks item that begins "The open questions depend on each other" names Q-9 and `plans_finished/api_contract/`. | doc:`plans_finished/mvp/MVP_PLAN.md` line 45, line 56, line 60, line 61, line 77 | 2026-10-03
+F-19. The pointers to version 6 of the specification stand in `PRODUCT.md`, in the Goal of the MVP plan and in the Scope and Domain rules of the MVP PRD. | cmd:`grep -rn "version 6"` over `PRODUCT.md`, `docs`, `plans_finished/mvp` -> `PRODUCT.md:45`, `PRODUCT.md:100`, `plans_finished/mvp/MVP_PLAN.md:7`, `plans_finished/mvp/MVP_PRD.md:17`, `plans_finished/mvp/MVP_PRD.md:111`, plus the provenance of the schema in `docs/product/schema.md:3`, `docs/standards/README.md:54` and `plans_finished/mvp/MVP_PLAN.md:45` | 2026-10-03
+F-20. The registry entry of the technical directions says that `plans_finished/account_sessions/` and `plans_finished/api_contract/` are in their interviews and that phase B of `plans_finished/mvp/` resumes with the backend architecture. | doc:`docs/standards/decision_registry.md` line 48, line 49 | 2026-10-03
+F-21. `PRODUCT.md` lists the routing engine and this contract as undecided, although the routing engine is D-9 of the MVP plan. | doc:`PRODUCT.md` line 94; doc:`plans_finished/mvp/MVP_PLAN.md` line 41 | 2026-10-03
 F-22. The shape of the task `SCHEMA_REVISION` has its interview in progress and one open question. | doc:`plans_finished/schema_revision/SCHEMA_REVISION_SHAPE.md` line 3, lines 65 - 67 | 2026-10-03
 F-23. The standards map names `docs/product/` with the specification and the schema, and its table of tasks has no row for the programming interface. | doc:`docs/standards/README.md` line 54, lines 92 - 95 | 2026-10-03
 F-24. While this plan was written, another session implemented the task `FACT_SCHEMA` on the same working tree, leaving its changes uncommitted, among them the path updates and the item of its step 6.1 in the files of this initiative. | cmd:`git status --short` -> 23 changed files, among them `plans_finished/api_contract/API_CONTRACT_PRD.md` and `plans_finished/api_contract/API_CONTRACT_SHAPE.md`; doc:`plans_finished/fact_schema/FACT_SCHEMA_REVIEW.md` line 3 | 2026-10-03
@@ -630,15 +630,15 @@ Document state: YYYY-MM-DD, version 7 - a route request and an address search wi
 - Version 7: that a route request and an address search carry no identity of an account (M2, M9), that an outdated fact stays on the map unless it was removed in OpenStreetMap (M4), the length of a pseudonym and the refusal of a request with an expired session (M9) were decided by the user on 2026-10-03 in phase B of `plans_finished/api_contract/`, as product behavior version 6 did not describe, and the user chose at the gate of its PRD to bring them into this specification; the wording was proposed by the agent. The user approved this version on YYYY-MM-DD.
 ```
 
-2.10. The pointers to the version of the specification follow (D-3, F-19): in `PRODUCT.md`, "`docs/product/specification.md`, version 6" becomes "`docs/product/specification.md`, version 7" in both places; in `plans/mvp/MVP_PLAN.md`, Goal, "`docs/product/specification.md`, version 6," becomes "`docs/product/specification.md`, version 7,"; in `plans/mvp/MVP_PRD.md`, "of the specification, version 6," in Scope and "The rules are those of the specification, version 6," in Domain rules name version 7, and the item of its section Domain rules that begins "Changed after the gate on 2026-10-03, to follow version 4" gets this sentence appended:
+2.10. The pointers to the version of the specification follow (D-3, F-19): in `PRODUCT.md`, "`docs/product/specification.md`, version 6" becomes "`docs/product/specification.md`, version 7" in both places; in `plans_finished/mvp/MVP_PLAN.md`, Goal, "`docs/product/specification.md`, version 6," becomes "`docs/product/specification.md`, version 7,"; in `plans_finished/mvp/MVP_PRD.md`, "of the specification, version 6," in Scope and "The rules are those of the specification, version 6," in Domain rules name version 7, and the item of its section Domain rules that begins "Changed after the gate on 2026-10-03, to follow version 4" gets this sentence appended:
 
 ```text
  Scope and the first sentence of this section name version 7 since YYYY-MM-DD, which adds the rules of `plans_finished/api_contract/` on a route request and an address search without an account, outdated facts on the map, the pseudonym and an expired session; a route request and an address search carry no account, so they are not requests of the session of FR-12 and AC-11, and nothing else of this PRD changes.
 ```
 
-The mentions of version 6 as the version that made the schema part of the specification - `docs/product/schema.md` line 3, `docs/standards/README.md` line 54 and D-11 of `plans/mvp/MVP_PLAN.md` - stay as they are.
+The mentions of version 6 as the version that made the schema part of the specification - `docs/product/schema.md` line 3, `docs/standards/README.md` line 54 and D-11 of `plans_finished/mvp/MVP_PLAN.md` - stay as they are.
 
-### Step 3. `plans/mvp/MVP_PLAN.md`
+### Step 3. `plans_finished/mvp/MVP_PLAN.md`
 
 3.1. In Decisions, after the last decision, append the next free decision. On the tree of 2026-10-03 it is D-12; if another initiative took that number in the meantime, the next free number replaces D-12 here, in 3.2, in 3.4 and in 3.5:
 
@@ -672,13 +672,13 @@ In Scope and boundaries, replace "- path names in the programming interface - th
 
 ### Step 7. `docs/standards/decision_registry.md`
 
-7.1. In the entry Technical directions of the MVP plan, item Blocks, replace "`plans_finished/account_sessions/` and `plans_finished/api_contract/` are in their interviews." with "`plans_finished/account_sessions/` is decided (`plans/mvp/MVP_PLAN.md` D-8); `plans_finished/api_contract/` decided the contract `docs/product/api_contract.md` (`plans/mvp/MVP_PLAN.md` D-12), and on 2026-10-03 the user moved the backend architecture of Q-11, with the implementation of the operations of that contract, to a separate initiative set up later."
+7.1. In the entry Technical directions of the MVP plan, item Blocks, replace "`plans_finished/account_sessions/` and `plans_finished/api_contract/` are in their interviews." with "`plans_finished/account_sessions/` is decided (`plans_finished/mvp/MVP_PLAN.md` D-8); `plans_finished/api_contract/` decided the contract `docs/product/api_contract.md` (`plans_finished/mvp/MVP_PLAN.md` D-12), and on 2026-10-03 the user moved the backend architecture of Q-11, with the implementation of the operations of that contract, to a separate initiative set up later."
 
-7.2. In the same entry, item Condition, replace "and phase B of `plans/mvp/` resumes with the backend architecture." with "and the backend architecture of Q-11 is decided in its separate initiative."
+7.2. In the same entry, item Condition, replace "and phase B of `plans_finished/mvp/` resumes with the backend architecture." with "and the backend architecture of Q-11 is decided in its separate initiative."
 
 ### Step 8. `PRODUCT.md`
 
-8.1. In the list Undecided, replace the item "- The routing engine (`plans_finished/routing_engine/`) and the contract of the programming interface (`plans_finished/api_contract/`)." with "- The backend architecture with the worker, which the user moved on 2026-10-03 from Q-11 of `plans/mvp/MVP_PLAN.md` to a separate initiative set up later." The routing engine is already D-9 of the MVP plan (F-21).
+8.1. In the list Undecided, replace the item "- The routing engine (`plans_finished/routing_engine/`) and the contract of the programming interface (`plans_finished/api_contract/`)." with "- The backend architecture with the worker, which the user moved on 2026-10-03 from Q-11 of `plans_finished/mvp/MVP_PLAN.md` to a separate initiative set up later." The routing engine is already D-9 of the MVP plan (F-21).
 
 8.2. In the section Evidence on Hand, after the item that begins "- `docs/product/specification.md`, version", insert the item "- `docs/product/api_contract.md`: every operation between the clients and the service, with its request, responses and errors."
 
@@ -710,8 +710,8 @@ Steps for a human: the approval of step 3; the confirmation of the contract by t
 
 - `docs/product/api_contract.md` exists with the content of step 1 and the date of the user's approval in its state line.
 - `docs/product/specification.md` carries exactly the changes of steps 2.1 - 2.9, with the date of the user's approval, and no rule of version 6 changes except by the additions of step 2.
-- `PRODUCT.md`, `plans/mvp/MVP_PLAN.md`, `plans/mvp/MVP_PRD.md`, `docs/standards/standard_errors.md`, `docs/standards/standard_naming.md`, `docs/standards/README.md`, `docs/standards/decision_registry.md` and `plans_finished/schema_revision/SCHEMA_REVISION_SHAPE.md` carry exactly the changes of steps 2.10 - 9, and `plans_finished/` is unchanged.
-- `plans/mvp/MVP_PLAN.md` has the decision of step 3.1, no item that begins with Q-9 under Open questions, and the item Q-11 of step 3.4.
+- `PRODUCT.md`, `plans_finished/mvp/MVP_PLAN.md`, `plans_finished/mvp/MVP_PRD.md`, `docs/standards/standard_errors.md`, `docs/standards/standard_naming.md`, `docs/standards/README.md`, `docs/standards/decision_registry.md` and `plans_finished/schema_revision/SCHEMA_REVISION_SHAPE.md` carry exactly the changes of steps 2.10 - 9, and `plans_finished/` is unchanged.
+- `plans_finished/mvp/MVP_PLAN.md` has the decision of step 3.1, no item that begins with Q-9 under Open questions, and the item Q-11 of step 3.4.
 - `npx --no-install prettier --check` passes on every changed or created markdown file and on the files of `plans_finished/api_contract/`.
 - The changed and created files contain none of the characters forbidden by `docs/standards/standard_formatting.md` and no bold in prose.
 - `venv/Scripts/python.exe -m pytest tests/architecture -o addopts=-ra` reports no violation in a file this plan changes or creates or in `plans_finished/api_contract/`, the check of this closed plan by `tests/architecture/test_plan_document_contract.py` included.
@@ -730,7 +730,7 @@ Steps for a human: the approval of step 3; the confirmation of the contract by t
 - A geozone whose point lies outside the rectangle of `list_facts_in_area` is not listed even when its circle reaches into it.
 - `find_nearby_facts` also returns a fact outdated because it was removed in OpenStreetMap, as FR-13 of `plans_finished/fact_schema/FACT_SCHEMA_PRD.md` excludes only hidden facts; a confirmation of such a fact follows the status rule of M4.
 - No initiative of Q-11 exists yet, so nobody is scheduled to implement the operations before the Kraków deadline at 11:00 on 4 October 2026 (D-1).
-- When this initiative moves to `plans_finished/`, the references to `plans_finished/api_contract/` in `plans/mvp/MVP_PLAN.md`, `docs/standards/decision_registry.md`, `docs/standards/README.md`, `docs/product/api_contract.md`, `docs/product/specification.md` and `plans_finished/schema_revision/SCHEMA_REVISION_SHAPE.md` follow the move, as ch. 4.6 of `docs/standards/standard_agentic_workflow.md` requires.
+- When this initiative moves to `plans_finished/`, the references to `plans_finished/api_contract/` in `plans_finished/mvp/MVP_PLAN.md`, `docs/standards/decision_registry.md`, `docs/standards/README.md`, `docs/product/api_contract.md`, `docs/product/specification.md` and `plans_finished/schema_revision/SCHEMA_REVISION_SHAPE.md` follow the move, as ch. 4.6 of `docs/standards/standard_agentic_workflow.md` requires.
 
 ## Open questions
 

@@ -4,7 +4,7 @@ Document state: 2026-10-04, plan closed
 
 ## Goal
 
-Carry out `plans_finished/nominatim_client/NOMINATIM_CLIENT_PRD.md` (FR-1 - FR-6, AC-1 - AC-6): a script kept as an attachment of this initiative checks the live public Nominatim instance once, within the limits of FR-2, records every response, and a dated report states for each fact of `plans_finished/geocoding/GEOCODING_PLAN.md` F-1 - F-8, F-10, F-11 and for each new case whether it confirms or contradicts a decision of D-4 - D-10 there. `plans/mvp/MVP_PLAN.md` points to the report and the recording, and its D-3 changes only by a ruling on a contradiction. No code of the product is written.
+Carry out `plans_finished/nominatim_client/NOMINATIM_CLIENT_PRD.md` (FR-1 - FR-6, AC-1 - AC-6): a script kept as an attachment of this initiative checks the live public Nominatim instance once, within the limits of FR-2, records every response, and a dated report states for each fact of `plans_finished/geocoding/GEOCODING_PLAN.md` F-1 - F-8, F-10, F-11 and for each new case whether it confirms or contradicts a decision of D-4 - D-10 there. `plans_finished/mvp/MVP_PLAN.md` points to the report and the recording, and its D-3 changes only by a ruling on a contradiction. No code of the product is written.
 
 ## Facts
 
@@ -27,7 +27,7 @@ F-16. An existing script of the repository uses `main` as its entry point. | cod
 F-17. A technical timestamp is an aware instant in UTC. | doc:`docs/standards/standard_time.md:95` | 2026-10-04
 F-18. An attachment of an archived initiative is frozen as to its data, queries and logic, and only the run instruction in the docstring of an attachment script is updated with the new path. | doc:`docs/standards/standard_agentic_workflow.md:192` | 2026-10-04
 F-19. Line endings in the repository are LF, and on Windows `Path.write_text` without `newline="\n"` wrote CRLF, which prettier rejected. | code:`.gitattributes:1`; cmd:`npx prettier --check plans/nominatim_client/*.md` after a write without `newline` -> `Code style issues found`, after `newline="\n"` -> `All matched files use Prettier code style!` | 2026-10-04
-F-20. `plans/mvp/MVP_PLAN.md` carries the search decision in D-3 and lists `plans_finished/geocoding/GEOCODING_PLAN.md` as the decision behind D-3 under Supplementary files. | doc:`plans/mvp/MVP_PLAN.md:29`; doc:`plans/mvp/MVP_PLAN.md:70` | 2026-10-04
+F-20. `plans_finished/mvp/MVP_PLAN.md` carries the search decision in D-3 and lists `plans_finished/geocoding/GEOCODING_PLAN.md` as the decision behind D-3 under Supplementary files. | doc:`plans_finished/mvp/MVP_PLAN.md:29`; doc:`plans_finished/mvp/MVP_PLAN.md:70` | 2026-10-04
 F-21. The agent runs local tools and tests without asking. | doc:`CLAUDE.md:60` | 2026-10-04
 F-22. The Kraków solution is submitted no later than 11:00 on 4 October 2026. | doc:`docs/hackathon/challenge_requirements.md:24` | 2026-10-04
 
@@ -43,7 +43,7 @@ D-4. A new request starts no earlier than 1.1 seconds after the start of the pre
 
 D-5. A request has one of five outcomes, written in the field `error` of its entry: `null` for status 200 with a body that is valid JSON; `http_status` for `HTTPError`, with its code in `status`; `timeout` for `TimeoutError`, also when it arrives wrapped in a `URLError`; `connection_error` for any other `URLError` or `OSError`; `invalid_json` for status 200 with a body that is not valid UTF-8 JSON. Any outcome other than `null` stops the run at once: nothing is retried and no further text is sent. Agent decision at C:40, without asking: PRD FR-2 names 403, 429 and no answer within 5 seconds; stopping on every other failure as well is stricter and cannot exceed the limits of the instance.
 
-D-6. A run writes one recording, a UTF-8 JSON file with LF line endings, `ensure_ascii=False` and an indent of 2 (F-19), with the object `{"service_url", "user_agent", "parameters", "started_at", "finished_at", "stopped_early", "entries"}`. Each entry is `{"check_item", "text", "sent_at", "elapsed_seconds", "status", "error", "body"}`, where `sent_at` is an aware UTC instant written by `datetime.isoformat` with milliseconds (F-17), `elapsed_seconds` is rounded to three decimals, and `body` is the parsed JSON of the response, with the field `licence` of every result kept as the instance sent it (PRD FR-3), or `null` when there is no valid body. Agent decision at C:40, without asking: one file per run keeps the order and the times needed for AC-2, and the parsed body lets the tests of `plans/mvp/` build a fake response with one serialization.
+D-6. A run writes one recording, a UTF-8 JSON file with LF line endings, `ensure_ascii=False` and an indent of 2 (F-19), with the object `{"service_url", "user_agent", "parameters", "started_at", "finished_at", "stopped_early", "entries"}`. Each entry is `{"check_item", "text", "sent_at", "elapsed_seconds", "status", "error", "body"}`, where `sent_at` is an aware UTC instant written by `datetime.isoformat` with milliseconds (F-17), `elapsed_seconds` is rounded to three decimals, and `body` is the parsed JSON of the response, with the field `licence` of every result kept as the instance sent it (PRD FR-3), or `null` when there is no valid body. Agent decision at C:40, without asking: one file per run keeps the order and the times needed for AC-2, and the parsed body lets the tests of `plans_finished/mvp/` build a fake response with one serialization.
 
 D-7. The script takes exactly one argument, the path of the recording. It refuses to start, before sending anything, when the argument is missing, when the file already exists or when its directory does not exist, and it opens the file in the mode `x`, so that a recording is never overwritten (F-18). The recording is written in a `finally` block, so a run stopped by a failure or by Ctrl+C still keeps the entries already received. The exit code is 0 for a full run, 1 for a stopped run and 2 for a refused start. Each sent request prints one line to the standard output with its number, label, status or error and time. Agent decision at C:40, without asking: an argument instead of a fixed path lets a run after archiving write outside the frozen archive.
 
@@ -61,7 +61,7 @@ D-13. The result is the report `plans_finished/nominatim_client/attachments/nomi
 
 D-14. After the run, the recording is scanned for the characters forbidden by `docs/standards/standard_formatting.md` and the report is checked by the prose style gate (F-11, F-13). A forbidden character in the recording stops the implementation with a question to the user, as the shape promised, although no gate scans `.json`. Agent decision at C:40, without asking.
 
-D-15. A contradiction stops the implementation after the report: the agent shows each contradicting item to the user, asks for the ruling of the user and the external API person, and records it in the section Contradictions of the report of D-13. Only after a ruling to change a decision does the agent append to `plans/mvp/MVP_PLAN.md` D-3 one sentence per changed decision, of the form "Corrected on <day> by `plans_finished/nominatim_client/`: `plans_finished/geocoding/GEOCODING_PLAN.md` D-x <new rule>, see `plans_finished/nominatim_client/attachments/nominatim_check_<day>.md` R-N.", and nothing in `plans_finished/geocoding/` changes (PRD FR-5). Agent decision at C:40, without asking.
+D-15. A contradiction stops the implementation after the report: the agent shows each contradicting item to the user, asks for the ruling of the user and the external API person, and records it in the section Contradictions of the report of D-13. Only after a ruling to change a decision does the agent append to `plans_finished/mvp/MVP_PLAN.md` D-3 one sentence per changed decision, of the form "Corrected on <day> by `plans_finished/nominatim_client/`: `plans_finished/geocoding/GEOCODING_PLAN.md` D-x <new rule>, see `plans_finished/nominatim_client/attachments/nominatim_check_<day>.md` R-N.", and nothing in `plans_finished/geocoding/` changes (PRD FR-5). Agent decision at C:40, without asking.
 
 ## Scope of changes
 
@@ -72,7 +72,7 @@ D-15. A contradiction stops the implementation after the report: the agent shows
 5. Read again the two policy pages of F-5.
 6. Write `plans_finished/nominatim_client/attachments/nominatim_check_<day>.md` as D-13 says.
 7. Only when the report lists a contradiction: follow D-15.
-8. In `plans/mvp/MVP_PLAN.md`, section Supplementary files, after the item "`plans_finished/geocoding/GEOCODING_PLAN.md`, the decision behind D-3." add the item "`plans_finished/nominatim_client/attachments/nominatim_check_<day>.md`, the check of the public Nominatim instance behind D-3, and `plans_finished/nominatim_client/attachments/nominatim_check_<day>.json`, its recorded responses, material for the tests of the search with a fake transport."
+8. In `plans_finished/mvp/MVP_PLAN.md`, section Supplementary files, after the item "`plans_finished/geocoding/GEOCODING_PLAN.md`, the decision behind D-3." add the item "`plans_finished/nominatim_client/attachments/nominatim_check_<day>.md`, the check of the public Nominatim instance behind D-3, and `plans_finished/nominatim_client/attachments/nominatim_check_<day>.json`, its recorded responses, material for the tests of the search with a fake transport."
 
 ## Rollout order
 
@@ -91,21 +91,21 @@ Steps for a human: the ruling of the external API person on every contradiction 
 - `CHECK_ITEMS` holds exactly the 25 pairs of D-2, each text a public place or a public building (AC-6).
 - The live recording exists, holds at most 25 entries, and every entry with results keeps the field `licence` of each result (AC-3).
 - The report has an item for each of F-1 - F-8, F-10, F-11 and for each of the five new cases, each naming a decision of D-4 - D-10 and a verdict, and a Contradictions section (AC-1).
-- Every contradiction has a recorded ruling before `plans/mvp/MVP_PLAN.md` D-3 changes, and `git status` shows no change under `plans_finished/geocoding/` (AC-5).
-- `plans/mvp/MVP_PLAN.md` carries the item of step 8.
+- Every contradiction has a recorded ruling before `plans_finished/mvp/MVP_PLAN.md` D-3 changes, and `git status` shows no change under `plans_finished/geocoding/` (AC-5).
+- `plans_finished/mvp/MVP_PLAN.md` carries the item of step 8.
 - `venv/Scripts/ruff.exe check .` and `venv/Scripts/ruff.exe format --check .` pass, and `venv/Scripts/mypy.exe --strict` passes on the script.
 - `npx --no-install prettier --check "**/*.md"` passes, and `venv/Scripts/python.exe -m pytest tests/architecture` passes, the prose style gate and the check of this closed plan included.
 - No file under `tests/` and no configuration of a tool refers to the script (AC-4).
 
 ## Risks
 
-- The submission closes at 11:00 on 4 October 2026 (F-22), the day of this plan; a contradiction found after the search work package of `plans/mvp/` has started lands in code already written.
+- The submission closes at 11:00 on 4 October 2026 (F-22), the day of this plan; a contradiction found after the search work package of `plans_finished/mvp/` has started lands in code already written.
 - The live run may get the machine of the session blocked by the instance; the stop of D-5 limits it to one refused request, but the same machine is used for development.
 - The stop rule is proven against a stand-in, not against the live instance, which cannot be made to refuse on purpose.
 - The live run checks the instance from the machine of the session, not from the server of the demo; whether the server is blocked stays with `plans_finished/geocoding/GEOCODING_PLAN.md` D-16.
 - The recording is not covered by any formatting gate (F-11, F-12); D-14 covers it by hand for this run only, and a repeated run needs the same scan.
 - The recording is OpenStreetMap data under the ODbL in a public repository, which touches the open entry on the licence of the repository in `docs/standards/decision_registry.md`.
-- When the initiative is archived, the paths in `plans/mvp/MVP_PLAN.md` are updated as editable references (F-18); the tests of the search should copy what they need instead of reading from `plans/`.
+- When the initiative is archived, the paths in `plans_finished/mvp/MVP_PLAN.md` are updated as editable references (F-18); the tests of the search should copy what they need instead of reading from `plans/`.
 - The answers of the shape interview were given by the user; the ruling of the external API person on them is still to be confirmed.
 
 ## Open questions

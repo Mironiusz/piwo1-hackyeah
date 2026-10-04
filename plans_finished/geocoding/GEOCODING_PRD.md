@@ -6,11 +6,11 @@ Document state: 2026-10-03
 
 A user of the MVP gives the start and the destination of a route, and the point of a geozone, by typing an address or the name of a place, not only by finding the point on the map. This is the natural way to say where one goes on a phone, and the practical one for a person using a keyboard or a screen reader, which the Kraków brief requires for the main scenario. The search serves the judging criterion of usefulness and ease of use directly, and the demo at the Tauron Arena starts from it.
 
-The initiative delivers the decision on how the MVP searches, closing `plans/mvp/MVP_PLAN.md` Q-5, so that the MVP plan can be closed and its implementation can start before the deadline at 11:00 on 4 October 2026.
+The initiative delivers the decision on how the MVP searches, closing `plans_finished/mvp/MVP_PLAN.md` Q-5, so that the MVP plan can be closed and its implementation can start before the deadline at 11:00 on 4 October 2026.
 
 ## Problem and its consequences
 
-Without a search, the only way to give a destination is to pan and zoom the map until the place is found. On a phone that is slow, and with a keyboard alone or a screen reader it is close to impossible, which breaks the accessibility requirement of the MVP (`plans/mvp/MVP_PRD.md` FR-16) and the keyboard-only geozone (AC-7 of the same document).
+Without a search, the only way to give a destination is to pan and zoom the map until the place is found. On a phone that is slow, and with a keyboard alone or a screen reader it is close to impossible, which breaks the accessibility requirement of the MVP (`plans_finished/mvp/MVP_PRD.md` FR-16) and the keyboard-only geozone (AC-7 of the same document).
 
 At the same time the text a person searches for says where they are going. A destination such as a hospital can reveal information about health, and the specification already keeps even the current location out of storage and logs (`docs/product/specification.md`, M2). A search built carelessly would hand this text, together with the IP address of the person, to a third party, or leave it in the logs of the project, where it can be tied to a person and a time.
 
@@ -18,19 +18,19 @@ A search that silently takes the first match would send a route to a wrong place
 
 ## Scope
 
-- The behavior of the search of addresses and places used for the start and the destination of a route (`plans/mvp/MVP_PRD.md` FR-2) and for the point of a geozone (FR-8 of the same document).
+- The behavior of the search of addresses and places used for the start and the destination of a route (`plans_finished/mvp/MVP_PRD.md` FR-2) and for the point of a geozone (FR-8 of the same document).
 - The privacy rules of the search: who may learn the typed text, and where it may be kept.
-- The technical choice of the service that answers the search and of the way it is connected to the project, made in phase B of this initiative, recorded so that it closes `plans/mvp/MVP_PLAN.md` Q-5.
+- The technical choice of the service that answers the search and of the way it is connected to the project, made in phase B of this initiative, recorded so that it closes `plans_finished/mvp/MVP_PLAN.md` Q-5.
 
 ## Out of scope
 
-- Building the search. The code is written as a work package of `plans/mvp/`, together with the rest of the backend, because the backend architecture is decided there (`plans/mvp/MVP_PLAN.md` Q-11). Decided by the user with the external API person in the shape interview.
+- Building the search. The code is written as a work package of `plans_finished/mvp/`, together with the rest of the backend, because the backend architecture is decided there (`plans_finished/mvp/MVP_PLAN.md` Q-11). Decided by the user with the external API person in the shape interview.
 - The shape of the search request and response between the frontend and the backend, which is part of `plans_finished/api_contract/`.
 - The map tiles and what their source learns about the person, which is part of `plans_finished/frontend_stack/`.
-- The wording of the privacy information (`plans/mvp/MVP_PRD.md` FR-20), owned by `plans/mvp/`.
+- The wording of the privacy information (`plans_finished/mvp/MVP_PRD.md` FR-20), owned by `plans_finished/mvp/`.
 - Suggestions while the user types. Decided against by the user with the external API person in the shape interview.
 - Places outside Kraków, because routes work only within Kraków.
-- Turning a point chosen on the map into an address. Agent decision at C:40, without asking: neither the specification nor `plans/mvp/MVP_PRD.md` asks for it, and the shape covers only the direction from a typed text to a point; confirmed by the user with the external API person at the gate of this PRD on 2026-10-03.
+- Turning a point chosen on the map into an address. Agent decision at C:40, without asking: neither the specification nor `plans_finished/mvp/MVP_PRD.md` asks for it, and the shape covers only the direction from a typed text to a point; confirmed by the user with the external API person at the gate of this PRD on 2026-10-03.
 
 ## Functional requirements
 
@@ -42,7 +42,7 @@ FR-3. Picking from a list. The result of a search is always a list for the user 
 
 FR-4. Accessibility. The search field, the submission, the list and the picking work with a keyboard alone and with a screen reader; the screen reader announces how many results there are. This holds for the start and the destination of a route and for the point of a geozone.
 
-FR-5. Nothing found and search unavailable. When nothing is found in Kraków, the user gets a plain message saying so. When the outside service does not answer, refuses, or cannot be asked without exceeding its limits, the user gets a different plain message saying that the search is unavailable right now. In both cases no point is guessed, and choosing a point on the map stays available. Both messages exist in the two languages of the interface (`plans/mvp/MVP_PRD.md` FR-19).
+FR-5. Nothing found and search unavailable. When nothing is found in Kraków, the user gets a plain message saying so. When the outside service does not answer, refuses, or cannot be asked without exceeding its limits, the user gets a different plain message saying that the search is unavailable right now. In both cases no point is guessed, and choosing a point on the map stays available. Both messages exist in the two languages of the interface (`plans_finished/mvp/MVP_PRD.md` FR-19).
 
 FR-6. Privacy toward outside services. The typed text may reach a service outside the project only from the server of the project. The browser never sends it to an outside service, and nothing that identifies the person - their IP address, their account - travels with the text to that service.
 
@@ -85,7 +85,7 @@ The rules are those of the section Domain rules of `plans_finished/geocoding/GEO
 
 ## Dependencies and impact on other modules
 
-- No product code exists, so nothing in the repository is changed indirectly. The decision feeds `plans/mvp/`: it closes `plans/mvp/MVP_PLAN.md` Q-5, and the search becomes a work package of that plan, used by `plans/mvp/MVP_PRD.md` FR-2 and FR-8 and held to FR-16 and FR-19.
+- No product code exists, so nothing in the repository is changed indirectly. The decision feeds `plans_finished/mvp/`: it closes `plans_finished/mvp/MVP_PLAN.md` Q-5, and the search becomes a work package of that plan, used by `plans_finished/mvp/MVP_PRD.md` FR-2 and FR-8 and held to FR-16 and FR-19.
 - `plans_finished/api_contract/` waits for this initiative to know whether the search goes through the backend: it does, so the search is part of the contract between the frontend and the backend.
 - `plans_finished/frontend_stack/` builds the list and the messages; the risk of the map tiles revealing the IP address of the person is recorded for it.
 - `plans_finished/demo_environment/` decided a hosted service at a public link; where the hosting sends outgoing requests from matters for the outside service.
@@ -100,5 +100,5 @@ The rules are those of the section Domain rules of `plans_finished/geocoding/GEO
 - Query volume, an estimate by the agent from the shape: the team and the jury, at most a few dozen people, each making a few searches over several minutes, stay below 60 searches per minute, and the cache lowers the number further. A burst above the limit of the outside service ends in the search unavailable message, never in a wrong point.
 - People typing on a phone often leave out Polish diacritics or the prefix "ul.", for example "Rynek Glowny" or "Lipska 5". If the chosen service does not match such text, the search fails exactly where the demo uses it; phase B checks it.
 - The privacy policy of the operator of the most likely outside service gives no retention period for search requests. Because the text reaches it without anything identifying the person (FR-6), this is accepted, but it stays unknown.
-- The list of barriers for a route (`plans/mvp/MVP_PRD.md` FR-11) shows the place of every item. If `plans/mvp/` decides to show that place as a street address, it needs the opposite direction - a point turned into an address - for every item of the list, which this PRD leaves out and which multiplies requests to the outside service. That needs its own decision.
+- The list of barriers for a route (`plans_finished/mvp/MVP_PRD.md` FR-11) shows the place of every item. If `plans_finished/mvp/` decides to show that place as a street address, it needs the opposite direction - a point turned into an address - for every item of the list, which this PRD leaves out and which multiplies requests to the outside service. That needs its own decision.
 - Time: the decision blocks the closing of the MVP plan, and every hour it stays open is taken from implementation before 11:00 on 4 October 2026.

@@ -4,7 +4,7 @@ Document state: 2026-10-04, plan closed
 
 ## Goal
 
-Deliver `BACKEND_ARCHITECTURE_PRD.md`: decide the six items of Q-11 of `plans/mvp/MVP_PLAN.md` in the section Decisions of this plan, close Q-11 there with a decision that names this initiative, hand the implementation of the operations to the work packages of the MVP plan, and write the rule that the hash of a vote without an account is kept until the demo is deleted into the specification and the documents that follow it. No code is written; every decision below is built by a work package of `plans/mvp/` or by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`.
+Deliver `BACKEND_ARCHITECTURE_PRD.md`: decide the six items of Q-11 of `plans_finished/mvp/MVP_PLAN.md` in the section Decisions of this plan, close Q-11 there with a decision that names this initiative, hand the implementation of the operations to the work packages of the MVP plan, and write the rule that the hash of a vote without an account is kept until the demo is deleted into the specification and the documents that follow it. No code is written; every decision below is built by a work package of `plans_finished/mvp/` or by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`.
 
 ## Facts
 
@@ -19,7 +19,7 @@ F-8. The central logging mechanism, with the request identifier and the scope ma
 F-9. Test directories mirror the layers: `tests/api/`, `tests/service/`, `tests/data/`, `tests/worker/`. | doc:`docs/standards/standard_tests.md` line 32 | 2026-10-04
 F-10. The standards assume SQLAlchemy and psycopg for the database: the time pair is mapped through `composite()` of SQLAlchemy and checked in `before_flush`, psycopg decodes `timestamptz`, and every connection is opened in one place that pins the session zone to UTC. | doc:`docs/standards/standard_time.md` line 68, line 78, line 97; doc:`docs/standards/standard_database.md` line 88 | 2026-10-04
 F-11. The code passes bandit without findings at high and medium confidence. | doc:`docs/standards/standard_security.md` line 32 | 2026-10-04
-F-12. The backend is Python 3.13 with FastAPI on PostgreSQL with PostGIS. | doc:`plans/mvp/MVP_PLAN.md` line 25 | 2026-10-04
+F-12. The backend is Python 3.13 with FastAPI on PostgreSQL with PostGIS. | doc:`plans_finished/mvp/MVP_PLAN.md` line 25 | 2026-10-04
 F-13. The address search has one call site in the data layer and one seam in the rules layer, its blocking call runs from request handling through a thread pool, its constants lie next to the code of the integration, its names are left to Q-11, and the backend runs as exactly one process. | doc:`plans_finished/geocoding/GEOCODING_PLAN.md` D-2 line 38, D-13 line 60, D-15 line 64 | 2026-10-04
 F-14. The thresholds and value lists of the tag rule are constants in one module next to the code of the rule, the rule takes the tags of one element and, for a node, its membership in ways for motor traffic, and returns its facts without reading the database or the network; module, constant and function names are left to Q-11. | doc:`plans_finished/osm_barrier_mapping/OSM_BARRIER_MAPPING_PLAN.md` D-14 line 68, D-16 line 72 | 2026-10-04
 F-15. The import and refresh run is an administrative run with a database lock taken with zero wait, its trigger and machine are left to Q-11, the whole run has a timeout of 60 minutes, the downloaded file is deleted when the run ends, and its constants lie next to the code of the import. | doc:`plans_finished/osm_data_source/OSM_DATA_SOURCE_PLAN.md` D-11 line 79, D-12 line 81, D-14 line 85, D-15 line 87 | 2026-10-04
@@ -40,10 +40,10 @@ F-29. The page, the programming interface and the tiles are served from one host
 F-30. On the server everything of the demo runs in Docker containers - the backend, the database, the static frontend with its tile archive, the reverse proxy and the Valhalla service - behind a reverse proxy over plain HTTP. | doc:`plans_finished/deployment/DEPLOYMENT_SHAPE.md` line 81, line 82 | 2026-10-04
 F-31. The start command never applies a revision and never loads data; the loading program, run by hand after the revisions, loads the OpenStreetMap copy with its routing data, the tile archive and the sample reports, and the routing service is restarted after it. | doc:`docs/deployment/hosted_demo.md` line 27, line 35, line 37; doc:`plans_finished/deployment/DEPLOYMENT_PLAN.md` D-4 line 38 | 2026-10-04
 F-32. D-10 of the MVP plan is rewritten by `plans_finished/deployment/`, and this initiative only refers to it. | doc:`plans_finished/deployment/DEPLOYMENT_PLAN.md` D-8 line 46 | 2026-10-04
-F-33. D-12 of the MVP plan says that the implementation of the operations goes with Q-11, and Q-11 is its only open question. | doc:`plans/mvp/MVP_PLAN.md` line 56, line 66, line 67, line 71 | 2026-10-04
+F-33. D-12 of the MVP plan says that the implementation of the operations goes with Q-11, and Q-11 is its only open question. | doc:`plans_finished/mvp/MVP_PLAN.md` line 56, line 66, line 67, line 71 | 2026-10-04
 F-34. The specification, version 8, says the hash of a vote without an account is deleted 30 days after the vote, that the vote limit therefore reaches back at most 30 days, that a vote keeps its weight after the identifier is deleted, and keeps the hash for 30 days in its section Personal data. | doc:`docs/product/specification.md` line 3, line 118, line 199, line 272, line 311 | 2026-10-04
 F-35. `docs/product/schema.md` clears the hash 30 days after `cast_at` in the account of a vote without a person and in the section Who writes what. | doc:`docs/product/schema.md` line 208, line 235 | 2026-10-04
-F-36. FR-13 and AC-12 of the MVP PRD delete the identifier of a vote without an account after 30 days. | doc:`plans/mvp/MVP_PRD.md` line 53, line 93 | 2026-10-04
+F-36. FR-13 and AC-12 of the MVP PRD delete the identifier of a vote without an account after 30 days. | doc:`plans_finished/mvp/MVP_PRD.md` line 53, line 93 | 2026-10-04
 F-37. The PRD of `plans_finished/schema_revision/` names the periodic task of Q-11 three times. | doc:`plans_finished/schema_revision/SCHEMA_REVISION_PRD.md` line 29, line 40, line 78 | 2026-10-04
 F-38. The entry Technical directions of the MVP plan of the deferred decisions registry lists the initiatives behind the MVP plan without this one and waits for Q-11. | doc:`docs/standards/decision_registry.md` line 48, line 49 | 2026-10-04
 F-39. The memory of PostgreSQL on the server was never measured. | doc:`agent_docs/memory/_cross_cutting.md` line 44 | 2026-10-04
@@ -98,13 +98,13 @@ D-14. Structure of the operations (item 6). Each group of `docs/product/api_cont
 
 The architecture tests of the layer direction, of the worker direction and of the environment contract are created by the work package that writes the first code of each layer, as the standards require. Agent decision at C:40, without asking: F-3, F-4, F-27 and the groups of the contract.
 
-D-15. Hash of a vote without an account (PRD FR-6). The specification, version 9, `docs/product/schema.md`, FR-13 and AC-12 of `plans/mvp/MVP_PRD.md` and the MVP plan say that the hash is kept until the demo and all its data are deleted on 4 October 2026, with the texts of Scope of changes. M4 of the specification, which keeps the weight of a vote "after the identifier of a vote without an account is deleted", changes with them, because no such deletion happens any more (F-34). The index `IX_vote_cast_at_with_voter_hash` stays in `docs/product/schema.md`; `plans_finished/schema_revision/` decides it (PRD, section Out of scope). Decided by the user on 2026-10-04 in the shape, questions 5 and 7; M4 and FR-13 are an agent decision at C:40, without asking, from the PRD FR-6 requirement that no document in force requires the deletion.
+D-15. Hash of a vote without an account (PRD FR-6). The specification, version 9, `docs/product/schema.md`, FR-13 and AC-12 of `plans_finished/mvp/MVP_PRD.md` and the MVP plan say that the hash is kept until the demo and all its data are deleted on 4 October 2026, with the texts of Scope of changes. M4 of the specification, which keeps the weight of a vote "after the identifier of a vote without an account is deleted", changes with them, because no such deletion happens any more (F-34). The index `IX_vote_cast_at_with_voter_hash` stays in `docs/product/schema.md`; `plans_finished/schema_revision/` decides it (PRD, section Out of scope). Decided by the user on 2026-10-04 in the shape, questions 5 and 7; M4 and FR-13 are an agent decision at C:40, without asking, from the PRD FR-6 requirement that no document in force requires the deletion.
 
 D-16. The answers behind D-10 and the shape were given by the user for the backend person, the owner of Q-11, and for the db person on the schema; their rulings are still to be confirmed.
 
 ## Scope of changes
 
-S-1. `plans/mvp/MVP_PLAN.md`, checked against `git status` and its modification time right before the edit (`docs/standards/standard_agentic_workflow.md` ch. 4.7):
+S-1. `plans_finished/mvp/MVP_PLAN.md`, checked against `git status` and its modification time right before the edit (`docs/standards/standard_agentic_workflow.md` ch. 4.7):
 
 1. In D-12, the clause "the implementation of the operations goes with Q-11" becomes "the implementation of the operations goes to the work packages of this plan, in the structure of D-13".
 2. After D-12, a new decision:
@@ -129,22 +129,22 @@ S-3. `docs/product/schema.md`:
 1. Line 208: "- When the account is deleted, the vote stays with its weight and has no person any more, so it counts as a person of its own (M4, M9). The hash of a vote without an account is never cleared; it is deleted with the demo (M9). Votes are never deleted."
 2. Line 235: "- No task clears `voter_hash`; it is deleted with every other piece of data when the demo is deleted (M9)."
 
-S-4. `plans/mvp/MVP_PRD.md`:
+S-4. `plans_finished/mvp/MVP_PRD.md`:
 
 1. FR-13, line 53: "deleted after 30 days" becomes "kept until the demo and all its data are deleted on 4 October 2026".
 2. AC-12, line 93: "The identifier of a vote without an account no longer exists 30 days after the vote." becomes "The identifier of a vote without an account is kept until the demo is deleted on 4 October 2026, and no task of the app clears it."
 3. At the end of the section Risks and notes: "- FR-13 and AC-12 were changed on 2026-10-04 by `plans_finished/backend_architecture/`, after version 9 of the specification."
 
-S-5. `docs/standards/decision_registry.md`, entry Technical directions of the MVP plan: `plans_finished/backend_architecture/` (backend) is added to the list of initiatives and their owners, and the Condition item ends "and the backend architecture of Q-11 is decided in `plans_finished/backend_architecture/` (`plans/mvp/MVP_PLAN.md` D-13)" instead of "and the backend architecture of Q-11 is decided in its separate initiative".
+S-5. `docs/standards/decision_registry.md`, entry Technical directions of the MVP plan: `plans_finished/backend_architecture/` (backend) is added to the list of initiatives and their owners, and the Condition item ends "and the backend architecture of Q-11 is decided in `plans_finished/backend_architecture/` (`plans_finished/mvp/MVP_PLAN.md` D-13)" instead of "and the backend architecture of Q-11 is decided in its separate initiative".
 
 ## Rollout order
 
-1. Check that the facts still hold: `git log --since=2026-10-04 --name-only` intersected with the files cited in Facts, and the content under every hit, with `plans/mvp/MVP_PLAN.md` and `docs/product/specification.md` read again in full, because other sessions edit them.
+1. Check that the facts still hold: `git log --since=2026-10-04 --name-only` intersected with the files cited in Facts, and the content under every hit, with `plans_finished/mvp/MVP_PLAN.md` and `docs/product/specification.md` read again in full, because other sessions edit them.
 2. S-2 and S-3 together, so the specification and its schema never disagree.
 3. S-4.
 4. S-1, right after a fresh check of `git status` and the modification time of the file.
 5. S-5.
-6. Checks: the scan of every changed file for the forbidden characters and bold with the code points of `tests/architecture/test_prose_style.py`; `git diff --name-only` shows nothing under `plans_finished/`; a search of `docs/product/`, `plans/mvp/` and `docs/standards/` for "30 days" next to the hash or the identifier of a vote finds nothing; a search of the documents in force for "goes with Q-11" finds nothing.
+6. Checks: the scan of every changed file for the forbidden characters and bold with the code points of `tests/architecture/test_prose_style.py`; `git diff --name-only` shows nothing under `plans_finished/`; a search of `docs/product/`, `plans_finished/mvp/` and `docs/standards/` for "30 days" next to the hash or the identifier of a vote finds nothing; a search of the documents in force for "goes with Q-11" finds nothing.
 
 Steps for a human:
 
@@ -156,7 +156,7 @@ Steps for a human:
 ## Definition of Done
 
 - AC-1: D-1 - D-14 name the files, the functions, the entries and the placement for every work package of the backend.
-- AC-2 and AC-3: the edits of S-1 stand in `plans/mvp/MVP_PLAN.md`; its Open questions hold only the sentence of S-1 step 4.
+- AC-2 and AC-3: the edits of S-1 stand in `plans_finished/mvp/MVP_PLAN.md`; its Open questions hold only the sentence of S-1 step 4.
 - AC-4 and AC-5: D-6, D-8, D-9 and D-12 decide the behavior; the work packages that build them test it.
 - AC-6: the edits of S-2 - S-4 stand, and the searches of Rollout order step 6 find nothing.
 - AC-7: D-11 sums at most 10.1 GB of 16 GB.
@@ -165,7 +165,7 @@ Steps for a human:
 
 ## Risks
 
-- Parallel editing. Other sessions edit `plans/mvp/MVP_PLAN.md` and the specification; a conflicting edit is merged on the current text, never overwritten.
+- Parallel editing. Other sessions edit `plans_finished/mvp/MVP_PLAN.md` and the specification; a conflicting edit is merged on the current text, never overwritten.
 - The `/status` call adds a fourth call to Valhalla to a route request, against the three calls of 2 seconds `plans_finished/valhalla_routing/VALHALLA_ROUTING_PLAN.md` D-10 counts within 5 seconds; it answers from a `stat`, but its time on the server is not measured.
 - A change of the modification time of a tile extract, for example a copy of the volume that does not keep it, makes every route end with `routing_unavailable` until the run is repeated; it never lets a route mix two copies.
 - The backend image depends on the Valhalla image, whose build took 11 min 33 s, and Python 3.13 has to be added to Ubuntu 24.04; `DEPLOYMENT_CONFIG` carries that cost.

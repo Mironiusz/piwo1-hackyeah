@@ -7,18 +7,18 @@ The seed quotes agent questions whose text contains C:20 (an option the user did
 
 ## Problem
 
-The MVP (`plans/mvp/`) lets a user give the start and the destination of a route, and the point of a geozone, by an address. How an address typed by the user is turned into a point on the map was not decided in phase B of `plans/mvp/`; the user handed the decision to the people responsible for it.
+The MVP (`plans_finished/mvp/`) lets a user give the start and the destination of a route, and the point of a geozone, by an address. How an address typed by the user is turned into a point on the map was not decided in phase B of `plans_finished/mvp/`; the user handed the decision to the people responsible for it.
 
 ## Recipient and trigger
 
 - The owner of the decision is the external API person of the team; the import person is consulted, because OpenStreetMap carries address tags. The user named five team roles on 2026-10-03 - frontend, db, import, external API, backend - and asked the agent to assign the initiatives to them; this assignment is an agent decision at C:40, without asking, made at that request.
 - The interview from 2026-10-03 on is answered by the user together with the external API person, so its answers are decisions of the owner of the initiative.
-- `plans/mvp/MVP_PLAN.md`, open question Q-5, which waits for this decision. Trigger: the user delegated the decision on 2026-10-03 in phase B of `plans/mvp/`.
-- The decision has no deadline of its own: `plans/mvp/MVP_PLAN.md` cannot be closed until Q-5 is settled, and nothing of the MVP is implemented before that, so it is made as early as possible before 11:00 on 4 October 2026 (`plans/mvp/MVP_PLAN.md`, Risks). Agent decision at C:40, without asking: it follows from that recorded risk.
+- `plans_finished/mvp/MVP_PLAN.md`, open question Q-5, which waits for this decision. Trigger: the user delegated the decision on 2026-10-03 in phase B of `plans_finished/mvp/`.
+- The decision has no deadline of its own: `plans_finished/mvp/MVP_PLAN.md` cannot be closed until Q-5 is settled, and nothing of the MVP is implemented before that, so it is made as early as possible before 11:00 on 4 October 2026 (`plans_finished/mvp/MVP_PLAN.md`, Risks). Agent decision at C:40, without asking: it follows from that recorded risk.
 
 ## Current state
 
-- No product code exists. The backend is decided in `plans/mvp/MVP_PLAN.md` D-1: Python 3.13 with FastAPI, on PostgreSQL with PostGIS.
+- No product code exists. The backend is decided in `plans_finished/mvp/MVP_PLAN.md` D-1: Python 3.13 with FastAPI, on PostgreSQL with PostGIS.
 - On 2026-10-03, from the machine of the agent's session, the public Nominatim instance answered a search for an address in Kraków with HTTP 200.
 - The usage policy of the public Nominatim instance, read on 2026-10-03 at `operations.osmfoundation.org/policies/nominatim/`: an absolute limit of 1 request per second, search as you type (autocomplete) forbidden also when built on the client side, the application identified by its own User-Agent or HTTP Referer, results cached by the client, attribution displayed.
 - The privacy policy of the OpenStreetMap Foundation, read on 2026-10-03 at `osmfoundation.org/wiki/Privacy_Policy`: its services collect the IP address and the pages accessed; it gives no retention period specific to Nominatim and says some legacy practices are not yet documented.
@@ -30,16 +30,16 @@ The MVP (`plans/mvp/`) lets a user give the start and the destination of a route
 
 ## Smallest meaningful scope
 
-A decision on how the MVP searches addresses and places, taken by the right people: the product rules of the search recorded in this shape, and the technical choice - which service answers the search and how it is connected to the backend - made in phase B of `plan-prd` of this initiative. The result closes `plans/mvp/MVP_PLAN.md` Q-5. Decided by the user with the external API person on 2026-10-03, against this initiative also building the search.
+A decision on how the MVP searches addresses and places, taken by the right people: the product rules of the search recorded in this shape, and the technical choice - which service answers the search and how it is connected to the backend - made in phase B of `plan-prd` of this initiative. The result closes `plans_finished/mvp/MVP_PLAN.md` Q-5. Decided by the user with the external API person on 2026-10-03, against this initiative also building the search.
 
 ## Out of scope
 
-- Building the search. The code is written as a work package of `plans/mvp/`, together with the rest of the backend, because the backend architecture is decided there (`plans/mvp/MVP_PLAN.md` Q-10) and building the search here first would mean guessing it. Decided by the user with the external API person on 2026-10-03.
+- Building the search. The code is written as a work package of `plans_finished/mvp/`, together with the rest of the backend, because the backend architecture is decided there (`plans_finished/mvp/MVP_PLAN.md` Q-10) and building the search here first would mean guessing it. Decided by the user with the external API person on 2026-10-03.
 - The other technical decisions delegated in the same conversation have their own initiatives: `plans_finished/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans_finished/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/local_database/`, `plans_finished/account_sessions/`. The shape of the search request and response is part of `plans_finished/api_contract/`; the map tiles are part of `plans_finished/frontend_stack/`.
 
 ## Functional requirements
 
-The decision has to make these requirements of `plans/mvp/MVP_PRD.md` achievable:
+The decision has to make these requirements of `plans_finished/mvp/MVP_PRD.md` achievable:
 
 1. FR-2 - the start and the destination of a route given as an address within Kraków.
 2. FR-8 and AC-7 - the point of a geozone given by an address, with the keyboard alone.
@@ -78,7 +78,7 @@ The decision has to make these requirements of `plans/mvp/MVP_PRD.md` achievable
 - The current location is not stored, not logged and not linked to the account (`docs/product/specification.md`, M2); the typed text follows the same rule (Domain rules).
 - A cache of results is required by the usage policy of the public Nominatim instance; the cache in memory decided above satisfies it, and repeated searches for the same text within the life of the process do not reach the outside service again.
 - "Never written to a log" covers every log in the path of the request, not only the log entries of the application: an access log of the HTTP server or of the hosting records the client IP address and the full URL, so the text must not travel in a part of the request that such a log records. How this is achieved is a question for phase B of `plan-prd`.
-- Nothing about the search is kept that is tied to a person, so the privacy information (`plans/mvp/MVP_PRD.md` FR-20) gets no new kept item. Whether it also names the address search among the data that is not kept is left to `plans/mvp/`, which owns FR-20.
+- Nothing about the search is kept that is tied to a person, so the privacy information (`plans_finished/mvp/MVP_PRD.md` FR-20) gets no new kept item. Whether it also names the address search among the data that is not kept is left to `plans_finished/mvp/`, which owns FR-20.
 - Because the search goes through the server, an outside service with a per-client limit, such as the public Nominatim instance with 1 request per second, sees all users of the public demo link as one client.
 - The search going through the server answers the dependency recorded in `plans_finished/api_contract/`, Current state: the address search is part of the contract between the frontend and the backend.
 - Query volume, an estimate by the agent: the public link is used by the team and the jury, at most a few dozen people, each making a few searches over several minutes, which stays below the 60 searches per minute that a limit of 1 request per second allows, and cache hits lower it further. A burst above the limit ends in the plain message of scenario 5, never in a wrong point.
