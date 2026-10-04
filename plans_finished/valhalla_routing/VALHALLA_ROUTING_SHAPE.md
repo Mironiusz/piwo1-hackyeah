@@ -5,7 +5,7 @@ Regulator: C:40
 
 ## Problem
 
-The routing engine decided in `plans_finished/routing_engine/` (D-1 there, recorded as D-9 of `plans/mvp/MVP_PLAN.md`) is an own graph of the pedestrian network in the memory of the backend process, searched with scipy. The user judges that writing an own router is the wrong call, all the more so because routes are also meant to use public transport from static GTFS (seed, message 1). No product code exists yet, so the change costs only documents.
+The routing engine decided in `plans_finished/routing_engine/` (D-1 there, recorded as D-9 of `plans_finished/mvp/MVP_PLAN.md`) is an own graph of the pedestrian network in the memory of the backend process, searched with scipy. The user judges that writing an own router is the wrong call, all the more so because routes are also meant to use public transport from static GTFS (seed, message 1). No product code exists yet, so the change costs only documents.
 
 ## Recipient and trigger
 
@@ -44,7 +44,7 @@ The person planning a route in the app (M2 of `docs/product/specification.md`), 
 6. When the route with public transport cannot be answered while walking routes can, the app computes the walking route on its own and shows it together with a plain statement that public transport was unavailable.
 7. The copy of the GTFS is fetched before the demo as a whole or not at all, refreshed only by hand, and the last complete copy stays in use when a fresh one fails.
 8. The specification gets a new version: public transport routes leave the section Out of scope and become an optional feature built first, before O1, with a time box of 4.5 hours of work, after which it is dropped; the exception for public transport of ZTP Kraków departs from M7 and M10 and is written next to them. `CLAUDE.md` names the exception next to the rule from the briefs, and `AI_WORKFLOW.md` records that change.
-9. D-9 of `plans/mvp/MVP_PLAN.md` is replaced by the decision of this initiative, together with the constraints D-9 hands to the rest of that plan.
+9. D-9 of `plans_finished/mvp/MVP_PLAN.md` is replaced by the decision of this initiative, together with the constraints D-9 hands to the rest of that plan.
 
 ## Scenarios: input, flow, expected state after the run
 
@@ -82,7 +82,7 @@ The person planning a route in the app (M2 of `docs/product/specification.md`), 
 ## Notes on data, performance and security
 
 - Personal data. The current location and the preferences of the profile travel to Valhalla inside the infrastructure of the project, which M2 allows; M2 also says the current location is not logged, so whatever Valhalla writes to its own logs about a request has to keep that rule. Not checked yet; it is a constraint for phase B, not a question of product behavior.
-- Query volume. The route with the fewest barriers and the alternative of M2 may need more than one request to Valhalla per route request, and the PRD of `plans/mvp/` limits a route request to 5 seconds. The spike measures it.
+- Query volume. The route with the fewest barriers and the alternative of M2 may need more than one request to Valhalla per route request, and the PRD of `plans_finished/mvp/` limits a route request to 5 seconds. The spike measures it.
 - Memory and disk. Valhalla, its tiles and the transit tiles share the server of the demo with the backend and the database, within 4 GB of free memory and 64 GB of free disk. The spike measures it.
 - Source data. The GTFS copy is fetched by the team from a public server of the city before the demo; nothing about the person is sent there. The OpenStreetMap copy lives only in the database and the downloaded file is deleted after each run (`plans_finished/osm_data_source/` D-14), while Valhalla builds its tiles from a file; reconciling the two is for phase B.
 - Licences. The terms of use of the GTFS of ZTP Kraków were not checked; the brief asks the team to state them for every source (`docs/hackathon/challenge_requirements.md`, section Data sources named in the brief). Valhalla is under the MIT licence, according to its repository, not checked in this interview.

@@ -35,7 +35,7 @@ First verdict: ready after minor fixes, for the whole initiative, with no blocke
 
 - R-1. The Definition of Done item on the three sibling shapes is not met for `plans/demo_environment/`, by the user decision recorded in O-1. D-3 of `plans/mvp/MVP_PLAN.md` names the single process but only refers to D-16, so the check of a blocked hosting address reaches that initiative only if the user passes it on.
 - I-1. D-4 of the plan and the item in `plans/api_contract/API_CONTRACT_SHAPE.md` did not say whether the limit of 200 characters applies before or after normalization. Fixed: the limit applies to the text as received, checked before normalization. Agent decision at C:40, without asking: the input layer validates the length before the rules layer processes the text, and either reading met the PRD.
-- I-2. D-2 did not name the thread pool condition of `docs/standards/standard_architecture.md:89`. Fixed: D-2 now names it.
+- I-2. D-2 did not name the thread pool condition of `docs/standards/standard_architecture.md`, section Calls to external systems. Fixed: D-2 now names it.
 - I-3. The httpx documentation behind F-12 does not show whether the query string is logged. No change: D-12 switches the logging off regardless.
 
 After the fixes of I-1 and I-2, and the matching text of step 4 in the plan, `npx --no-install prettier --check` on the changed files and `pytest tests/architecture` passed again.

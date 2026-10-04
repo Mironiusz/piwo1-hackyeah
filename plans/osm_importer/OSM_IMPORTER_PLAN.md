@@ -8,7 +8,7 @@ Owner: Mateusz. Handoff on 2026-10-04: the user ended work on this initiative in
 
 Implement `OSM_IMPORTER_PRD.md` FR-1 - FR-13 and AC-1 - AC-14, including the scope amendment approved by the user on 2026-10-04. Deliver the first import, manual refresh, source validation, the pedestrian network, accessibility mapping, atomic database publication, reconciliation and matching Valhalla walking-routing data without losing votes or moderation state.
 
-The user reported that Rafał, who owns the MVP work, confirmed he would handle the import ownership handoff. Later on 2026-10-04 the user authorized modifications to MVP, superseding the original editing restriction. Necessary ownership and dependency updates can now be applied to `plans/mvp/` and `MVP.md`. The shared backend, local database setup and schema revision remain external prerequisites.
+The user reported that Rafał, who owns the MVP work, confirmed he would handle the import ownership handoff. Later on 2026-10-04 the user authorized modifications to MVP, superseding the original editing restriction. Necessary ownership and dependency updates can now be applied to `plans_finished/mvp/` and `MVP.md`. The shared backend, local database setup and schema revision remain external prerequisites.
 
 This is a technical draft, not an executable closed plan. On 2026-10-04 the user chose to settle the importer integration contract together with the agent in this initiative. The file allocation below is a proposal to settle in that interview, not a claim that those modules or shared interfaces already exist. Shared backend implementation remains with its owner. Q-4's scope reconciliation is complete in D-20; Q-1 - Q-3 must be answered before the allocation, adapters and rollout commands are finalized.
 

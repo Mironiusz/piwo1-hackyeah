@@ -9,7 +9,7 @@ If the task concerns a code unit, establish the current contract from the code, 
 
 Return only three kinds of items:
 
-- a finding together with a pointer to the file and line,
+- a finding together with a pointer to the file and the section, item or symbol in it, never to a line number, so that the pointer can go into a plan finding unchanged,
 - an explicit "not found" for a question that has no answer in the repository,
 - an explicit "not checked" for a question you did not reach before the call limit.
 

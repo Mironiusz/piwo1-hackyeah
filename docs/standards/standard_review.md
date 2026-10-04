@@ -1,6 +1,6 @@
 # Review and Definition of Done standard
 
-Document state: 2026-10-03
+Document state: 2026-10-04
 
 Status: ready - full content. The full description of this standard's position relative to the others is in `docs/standards/README.md`.
 
@@ -89,7 +89,7 @@ The verdict names its scope: the whole initiative, one task out of several, the 
 
 ## What to report and what not to report
 
-Review backs every finding with a specific file path and a reason - a general remark without pointing to a place gives the author of the change nothing to fix. Review does not guess a contract that it does not find in the code or in the standards - a missing file, standard, module boundary, test or document is reported explicitly as missing, not assumed.
+Review backs every finding with a specific file path, the place in it named by a section, an item or a code symbol (`standard_formatting.md`, section References to a place in a file), and a reason - a general remark without pointing to a place gives the author of the change nothing to fix. Review does not guess a contract that it does not find in the code or in the standards - a missing file, standard, module boundary, test or document is reported explicitly as missing, not assumed.
 
 Review does not report:
 

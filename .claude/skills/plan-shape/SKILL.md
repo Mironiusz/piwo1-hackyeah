@@ -142,4 +142,5 @@ Finish when all sections are filled in and `## Open questions` has no item with 
 - Zero guessing of contracts, names, scopes - that is a question for the user, not a decision of the model.
 - The regulator changes the number and depth of questions, never the inviolability of the blocks or the obligation to check the repository before asking.
 - The initiative name and the task prefix require the user's confirmation before anything is created on disk.
+- The document names a place in another file by a section, an item or a code symbol, never by a line number. See `docs/standards/standard_formatting.md`, section References to a place in a file.
 - The document has no bold in prose or bold labels opening a paragraph or a list item - order provides the emphasis, not the typeface. See `docs/standards/standard_formatting.md`, the section on emphasis in prose.
