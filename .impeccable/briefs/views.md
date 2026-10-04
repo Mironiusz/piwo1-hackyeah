@@ -76,7 +76,7 @@ Changed by the user on 2026-10-03 and applied to the mocks:
 
 Still open:
 
-- The name of the product. The mocks show a placeholder.
+- The mocks show a placeholder in the header. The name of the product, EnableMe, was decided by the team on 2026-10-04, after the mocks were reviewed.
 - The texts. They are kept in `docs/product/interface_texts.md`; on 2026-10-04 the mocks were brought in line with the choices decided there, and the single texts stay working copy until the views are built.
 - The rule for the labels of the route diagram when barriers are many or close together, as in the brief of the route result.
 - Since the review the user took four decisions where the views met `docs/product/api_contract.md` and version 7 of the specification (`docs/product/views.md`, decisions 11 - 14). An outdated fact stays on the map of facts: the system sheet and the page about the data show its status and its muted marker, and no other mock shows an outdated fact. The own vote of a person is remembered on the device, as the mock of the fact detail after a vote shows it. The street name stays in the list rows of the mocks and in the sample data of the demo; whether the programming interface carries it is deferred. The rule of a pseudonym in the mock of creating an account stays.
