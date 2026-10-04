@@ -1,6 +1,6 @@
 {
-  "base_url": "http://10.0.2.2:8000",
+  "base_url": "http://drocsid.eu",
   "timeout_ms": 15000,
-  "tiles_url": "http://10.0.2.2:8090/tiles/krakow.pmtiles",
+  "tiles_url": "http://drocsid.eu/tiles/krakow.pmtiles",
   "_help": "base_url: address of the API server without /api; empty means no server, data stored on the device. tiles_url: full address of the PMTiles archive of Krakow, read in byte ranges; empty or unreachable means the sample base map bundled in the app. 10.0.2.2 is the computer that runs the emulator; a real phone needs the LAN address of the computer (make api-device) or the public address of the demo server. Set with tools/api_target.py."
 }
