@@ -1,6 +1,6 @@
 # Review: First schema revision of the domain model of facts and votes - the documents its implementation needs
 
-Document state: 2026-10-04, implementation finished, version renumbered to 12 at the merge of `dev`, review ready for the whole initiative
+Document state: 2026-10-04, implementation finished, version renumbered to 12 at the merge of `dev`, review ready for the whole initiative, moved to `plans_finished/`
 
 ## Implementation run of 2026-10-04
 
@@ -80,3 +80,7 @@ After the second review the session that keeps the repository consistent correct
 ### Final verdict
 
 The subagent `dod-reviewer` checked again R-A, I-A and the two edits of the paragraph above on the current tree: the memory diff against `HEAD` only adds lines, the citation of `MVP.md` matches the steps of a human of the plan, the 120 tests pass and the touched files pass prettier. Verdict: ready, for the whole initiative `plans/schema_revision/`, which has one task. R-3 - R-5 stay as accepted risks reported to the user; Kuba confirming the rulings and the commit, push and Merge Request are steps of a human. The initiative qualifies for `plans_finished/` (`docs/standards/standard_agentic_workflow.md` ch. 4.6).
+
+## 2026-10-04 - Archiving recorded after the fact
+
+The directory was moved to `plans_finished/schema_revision/` on 2026-10-04; git first holds it there in commit `5f0f571` of 2026-10-04, which `plans_finished/mvp/MVP_REVIEW.md`, section 2026-10-04 - Initiative closed, describes as holding that move. This review recorded the verdict that qualifies the initiative for the archive under `docs/standards/standard_agentic_workflow.md` ch. 4.6, but not the move itself, so `plans/repository_consistency/` appended this entry on 2026-10-04 at the request of the user. Whether the checks of ch. 4.6 were run before the move is not recorded here and was not reconstructed.

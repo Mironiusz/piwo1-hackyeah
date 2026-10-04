@@ -14,4 +14,4 @@ Before you invent a name for a new file, function or constant, check whether the
 
 ## Current state
 
-The registry is empty, because the project has no code yet. The first entries are created together with the first files, functions and constants of the project, in sections by kind of name: names in the database, file names, function names, names of query constants, `makefile` target names, names in tests. The target rule is in `standard_naming.md`; the actual state goes here.
+The registry is empty: the project has no application code yet, and the names the template brought with it - the `makefile` targets and the architecture tests - have not been entered. The first entries are created together with the first files, functions and constants of the project, in sections by kind of name: names in the database, file names, function names, names of query constants, `makefile` target names, names in tests. The target rule is in `standard_naming.md`; the actual state goes here.

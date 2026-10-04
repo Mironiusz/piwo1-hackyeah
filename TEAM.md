@@ -6,14 +6,16 @@ Who is on the team and which role each person holds, so that documents name peop
 
 The role column uses the role names the repository already uses, so an older document that says "the db person" or "owner backend" can be read through this table.
 
-| Person  | Role                    | Works on                                                                                        |
-| ------- | ----------------------- | ----------------------------------------------------------------------------------------------- |
-| Rafał   | lead                    | leads the team, merges the work of the others, watches over the whole and helps wherever needed |
-| Kuber   | frontend                | the web frontend and the HarmonyOS port, together with Adrian                                   |
-| Adrian  | frontend                | the web frontend and the HarmonyOS port, together with Kuber                                    |
-| Kuba    | db                      | the database                                                                                    |
-| Marek   | backend                 | the backend                                                                                     |
-| Mateusz | import and external API | the integrations: the import of open data and the calls to external systems                     |
+| Person  | Role                    | Works on                                                                                                                                                                                                                                                                                        |
+| ------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Rafał   | lead                    | leads the team, merges the work of the others and watches over the whole; the clarifications, the deployment configuration and the hosted demo, the demo scenario, the Kraków documents and `AI_WORKFLOW.md`, the decks and the submissions, and with Adrian the Polish materials and the pitch |
+| Kuber   | frontend                | the HarmonyOS port, the Huawei part of the official requirements and the English demonstration                                                                                                                                                                                                  |
+| Adrian  | frontend                | the web frontend and the map tiles, and with Rafał the Polish materials and the pitch                                                                                                                                                                                                           |
+| Kuba    | db                      | the database, the accounts, and the votes, statuses, flags and moderation of the community facts                                                                                                                                                                                                |
+| Marek   | backend                 | the backend skeleton, route planning, the reports and geozones of the community facts, and last the optional routes with public transport                                                                                                                                                       |
+| Mateusz | import and external API | the integrations: the import of open data, the sample data and the calls to external systems                                                                                                                                                                                                    |
+
+The column Works on follows the division of the work of `plans/final_checklist/FINAL_CHECKLIST_SHAPE.md`, requirement 22.
 
 Kuba and Kuber are two different people.
 

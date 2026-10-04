@@ -1,6 +1,6 @@
 # Review: Backend architecture with the worker, Q-11 of the MVP plan
 
-Document state: 2026-10-04, ready for the whole initiative, initiative closed
+Document state: 2026-10-04, ready for the whole initiative, initiative closed, moved to `plans_finished/`
 
 ## Implementation run of 2026-10-04
 
@@ -48,3 +48,7 @@ Scope: the whole initiative `backend_architecture` - the plan, the PRD, the shap
 - Verification: `test_agent_docs_parity.py` 4 of 4 and `test_conflict_markers.py` passed, the prose scan found 0 and 0, the plan contract found 0 and 0 over 13 closed plans, all run with Python through their functions because pytest is not installed here; prettier passed after B-1; the standards of the Python and frontend profiles do not apply, because no code changed.
 
 Verdict after the fix of B-1: ready, for the whole initiative `backend_architecture`. R-1 and R-2 are steps left to the user after the closure, which ch. 4.6 of `docs/standards/standard_agentic_workflow.md` lets the archive go ahead of. The initiative qualifies for `plans_finished/backend_architecture/`.
+
+## 2026-10-04 - Archiving recorded after the fact
+
+The directory was moved to `plans_finished/backend_architecture/` on 2026-10-04; git first holds it there in commit `1b1cf04` of 2026-10-04. This review recorded the verdict that qualifies the initiative for the archive under `docs/standards/standard_agentic_workflow.md` ch. 4.6, but not the move itself, so `plans/repository_consistency/` appended this entry on 2026-10-04 at the request of the user. Whether the checks of ch. 4.6 were run before the move is not recorded here and was not reconstructed.

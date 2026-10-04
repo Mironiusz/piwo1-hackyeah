@@ -48,7 +48,7 @@ A working branch is personal and long-lived. It is not created per task and it d
 
 A change enters `main` and `dev` only through a Merge Request, MR for short. In the other direction, i.e. from `main` or `dev` to a working branch, a change comes down through an ordinary merge performed locally - an MR is not needed there, because nobody except the branch owner looks at that change.
 
-When the project has a CI pipeline, every Merge Request to `dev` and to `main` runs it, and the pipeline mechanically mirrors the Definition of Done of the repository. Merging then requires a green pipeline. The template does not contain a pipeline definition - the project adds it for its repository hosting.
+When the project has a CI pipeline, every Merge Request to `dev` and to `main` runs it, and the pipeline mechanically mirrors the Definition of Done of the repository. Merging then requires a green pipeline. The repository has no such pipeline yet - `.github/workflows/valhalla-image.yml` only builds the image of the routing engine - and the project adds it for its repository hosting.
 
 The pipeline checks the branch at the time of the run, not at the time of merging: an MR that has gone stale after its last run, because another change entered `dev`, keeps its last green result. A soft rule for the person merging closes this gap: before merging, run the pipeline again if another change has entered `dev` since its last run - nothing enforces this mechanically.
 

@@ -1,6 +1,6 @@
 # Review: MVP account sessions and actor resolution
 
-Document state: 2026-10-03, review ready for the whole initiative
+Document state: 2026-10-04, review ready for the whole initiative, moved to `plans_finished/`
 
 ## 2026-10-03 - Implementation run
 
@@ -181,3 +181,7 @@ Not checked, the call limit of the reviewer ran out: the citations of F-1, F-3, 
 ### Verdict
 
 Ready, for the whole initiative `plans/account_sessions/`, a decision record and hand-off without code. It qualifies for `plans_finished/` under ch. 4.6 of `docs/standards/standard_agentic_workflow.md`; the move waits for the session of `plans/api_contract/` to finish its path changes (R-D).
+
+## 2026-10-04 - Archiving recorded after the fact
+
+The directory was moved to `plans_finished/account_sessions/` on 2026-10-03, after the session of `plans/api_contract/` had finished its path changes (`plans_finished/api_contract/API_CONTRACT_REVIEW.md`); who moved it is not recorded, and git first holds it there in commit `5f1aaa6` of 2026-10-03. This review recorded the verdict that qualifies the initiative for the archive under `docs/standards/standard_agentic_workflow.md` ch. 4.6, but not the move itself, so `plans/repository_consistency/` appended this entry on 2026-10-04 at the request of the user. Whether the checks of ch. 4.6 were run before the move is not recorded here and was not reconstructed.

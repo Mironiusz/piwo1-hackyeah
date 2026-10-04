@@ -1,6 +1,6 @@
 # Views of the web frontend
 
-Document state: 2026-10-03
+Document state: 2026-10-04
 
 ## Why this document exists
 
@@ -197,7 +197,7 @@ Shows:
 - The type; for stairs the number of steps when it is known; for a geozone its radius.
 - The place as the street name; opened from a route, also the distance from the start.
 - The source - map data or user report - and the date: for a fact from OpenStreetMap the day of its last edit there, for a user fact the day it was reported or last confirmed.
-- The status in a word and an icon: unverified, confirmed or disputed.
+- The status in a word and an icon: unverified, confirmed, disputed or outdated.
 - The sample data mark when it applies, and the description when there is one.
 - For a report that contradicts OpenStreetMap: that OpenStreetMap says otherwise here.
 - The person's own latest vote on this fact, when there is one. The frontend remembers it on the device after the vote; the programming interface returns no vote of the person.
@@ -338,7 +338,7 @@ Shows:
 
 - Where the facts come from: OpenStreetMap and reports of people, and how the two are told apart on every fact.
 - The date of the OpenStreetMap copy in use.
-- What the statuses mean, in words: unverified, confirmed, disputed. It gives no weights and no numbers of votes.
+- What the statuses mean, in words: unverified, confirmed, disputed, outdated. It gives no weights and no numbers of votes.
 - What the four segment states mean, and that missing data is never shown as accessible.
 - What the sample data mark means.
 - How wrong or outdated data is corrected: by voting on a fact and by reporting.
@@ -428,7 +428,6 @@ The contract covers the views, with these differences:
 - The street name of a fact has no field, and the stored data keeps no name of a way. Deferred by the user until the backend person tests the programming interface (decision 13).
 - The own vote of a person has no field. A vote repeated within a day is refused with the moment from which the next vote is accepted, and the frontend keeps the vote on the device (decision 14).
 - A point outside Kraków has no outcome of its own. Proposed by the agent: the frontend checks a point against the bounds of the map of Kraków before it asks for a route, and gives the same message when the request is refused for its start or its destination.
-- A pseudonym may hold every character that is not a control character. The user asks for the narrower rule (decision 12).
 - A segment carries its missing attributes. The frontend does not show them (decision 8).
 - The contradiction of a report with OpenStreetMap is one mark on a fact of a route. It does not say what OpenStreetMap shows there, so the note of the fact detail is a general sentence, and a fact opened from the map of facts has no such note.
 
@@ -456,7 +455,7 @@ Decided by the user, the frontend person of the team, on 2026-10-03, question by
 9. The texts of the interface do not use the name OpenStreetMap. The source is called map data, in the working Polish copy "dane mapy"; the name stands only in the attribution on the map and on the page about the data.
 10. The states that have no mock are not drawn as mocks. The build covers them from this document.
 11. An outdated fact stays on the map with its status and can be confirmed again; only a fact removed in OpenStreetMap disappears. The user took over the rule the team had decided in `plans_finished/api_contract/` on the branch `dev`, in place of the earlier choice that an outdated fact is shown nowhere.
-12. A pseudonym keeps its narrower rule - 3 to 30 characters of letters, digits, the underscore and the hyphen - and the user asks the owners of `docs/product/api_contract.md` to bring it into the contract, which accepts every character that is not a control character.
+12. A pseudonym keeps its narrower rule - 3 to 30 characters of letters, digits, the underscore and the hyphen - and the user asks the owners of `docs/product/api_contract.md` to bring it into the contract, which accepts every character that is not a control character. The contract took the rule on 2026-10-04.
 13. Whether a list row names the street is deferred until the backend person tests the programming interface, which has no field for it. The sample data of the demo carries the street, and a row without a street name shows no place line.
 14. The own vote of a person is remembered on the device. On another device the person learns of it from the refusal of a vote repeated within a day.
 15. No frontend code is written before Q-11 of `plans_finished/mvp/MVP_PLAN.md` is decided; until then the frontend person prepares everything that does not depend on it. Q-11 was decided on 2026-10-04 in `plans_finished/backend_architecture/`, and `MVP.md` gives the frontend to the initiatives `plans/frontend_app/` and `plans/map_tiles/`, which wait for nothing to start.
@@ -479,5 +478,5 @@ The hosted demo is served over plain HTTP (`MVP.md`, Known departures from the K
 - The name of the product, which the header shows.
 - The texts of every label and message in Polish and in English, and the Polish names of the terms: in `docs/product/interface_texts.md`, with the rules of the wording decided on 2026-10-04 and the single texts working copy until the views are built.
 - The rule for the labels of the summary line when barriers are many or close together (`.impeccable/briefs/route-result.md`, Constraints and open decisions).
-- Whether a list row names the street (decision 13), and whether the contract takes the narrower rule of a pseudonym (decision 12).
+- Whether a list row names the street (decision 13).
 - The views of the optional feature O9, routes with public transport, added by version 8 of the specification: a switch in route planning, a public transport segment in the route result and the statement that public transport was unavailable. `MVP.md` gives them to `plans/frontend_app/` once `plans/public_transport_routing/` has written its interface into the contract. No view and no mock covers them.
