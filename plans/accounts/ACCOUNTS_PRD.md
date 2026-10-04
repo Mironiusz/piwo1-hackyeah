@@ -1,6 +1,6 @@
 # PRD: MVP accounts and shared actor resolution
 
-Document state: 2026-10-04, awaiting user confirmation
+Document state: 2026-10-04, approved by the user; technical planning authorized
 
 ## Business goal
 
@@ -14,7 +14,7 @@ The product rules and client-facing account contract are agreed, but the account
 
 Incorrect session handling could save an anonymous contribution while a person believes they are signed in. Incorrect deletion could erase community contributions, change their weight or let an old session access a newly created account. A role remembered after revocation could permit further moderation.
 
-The closed shape assigned account-related storage requirements and the pseudonym-contract correction to this initiative. The existing storage target covers the requirements established so far; its explanatory handoff and the contract correction are already recorded. Those documents do not prove that working account behavior has been delivered.
+The closed shape assigned account-related storage requirements and the pseudonym-contract correction to this initiative. The existing storage target covers the requirements established so far; its explanatory handoff and the contract correction are already recorded, and on 2026-10-04 Kuba delivered that target on the local database through the first schema revision. Neither those documents nor the delivered storage prove that working account behavior has been delivered.
 
 ## Scope
 
@@ -116,7 +116,7 @@ AC-16. Completion evidence identifies the applicable checks, their actual result
 ## Dependencies and impact on other modules
 
 - The skeleton initiative delivers the common application foundation, configuration, logging and data-access mechanisms. Marek coordinates accounts with that separate session.
-- Kuba delivers the initial storage implementation and its verification. The closed shape carries the account-specific handoff; the requirements established so far fit the existing target.
+- Kuba delivered the initial storage implementation and its verification through the first schema revision on 2026-10-04. The closed shape carries the account-specific handoff, which that revision builds; the requirements established so far fit the existing target.
 - Community features depend on account recognition and current moderator permissions. Their report, vote and moderation behavior remains with their owner.
 - Mateusz's importer and account deletion both affect how retained vote history is interpreted. Their integration must agree consistent behavior before it is reported as verified.
 - Kuber and Adrian build account screens, retain the active session, handle logout and expiry, and explain and confirm deletion. This initiative supplies the established service behavior rather than implementing those screens.
@@ -124,7 +124,7 @@ AC-16. Completion evidence identifies the applicable checks, their actual result
 
 ## Risks and notes
 
-- The shared foundation and initial storage are being delivered separately. Their documented target is not evidence of working integration.
+- The shared foundation is still being delivered separately; the initial storage was delivered by the first schema revision on 2026-10-04. Neither the documented target nor the delivered storage alone is evidence of working account integration.
 - The 5-character password minimum and lack of common-password rejection are deliberate product choices. Password recovery is absent, so losing a password can permanently prevent account access.
 - Logging out on one browser ends that browser's active session. The existing session contract does not promise revocation of copies retained elsewhere; deleting the account ends their account access.
 - Password protection and simultaneous logins have a resource cost that must be checked during implementation. This PRD adds no unmeasured capacity guarantee.

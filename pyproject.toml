@@ -10,7 +10,9 @@ build-backend = "setuptools.build_meta"
 name = "piwo1-hackyeah"
 version = "0.0.0"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "argon2-cffi==25.1.0",
+]
 
 [project.optional-dependencies]
 dev = [
@@ -101,12 +103,12 @@ docstring-code-format = true
 # pydantic.mypy plugin: without it mypy reports missing arguments when creating the settings model, because it does not know that
 # the values come from the environment.
 [tool.mypy]
-files = [".claude/hooks"]
+files = [".claude/hooks", "service"]
 cache_dir = ".cache/mypy"
 
 [tool.vulture]
 # Tests are scanned too: a use in a test is a use.
-paths = [".claude/hooks", "tests", "db"]
+paths = [".claude/hooks", "tests", "db", "service"]
 # The confidence threshold is raised from the default sixty, because Pydantic model fields and ORM columns are assembled
 # by the library by name, and vulture does not see that and reports them as dead. What the gate stops seeing at this
 # threshold: an unused function, class, method, attribute and variable - vulture assigns them

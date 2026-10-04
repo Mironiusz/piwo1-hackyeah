@@ -1,6 +1,6 @@
 # Programming interface contract
 
-Document state: 2026-10-04, approved by the user in place of Kuber and Adrian, whose confirmation is still to be obtained; the pseudonym rule is aligned with specification M9 by `plans/accounts/ACCOUNTS_SHAPE.md`, and `cast_vote` changed on 2026-10-04 with version 13 of `docs/product/specification.md`
+Document state: 2026-10-04, approved by the user in place of Kuber and Adrian, whose confirmation is still to be obtained; the pseudonym rule is aligned with specification M9 by `plans/accounts/ACCOUNTS_SHAPE.md`, its letters made explicit and a lone surrogate refused by Kuba on 2026-10-04 for `plans/accounts/` (`ACCOUNTS_PLAN.md` D-3, `ACCOUNTS_REVIEW.md`), with the confirmation of Adrian still to be obtained, and `cast_vote` changed on 2026-10-04 with version 13 of `docs/product/specification.md`
 
 ## Why this document exists
 
@@ -385,9 +385,9 @@ Request:
 { "pseudonym": "Wózek_KRK", "password": "five or more characters" }
 ```
 
-- `pseudonym` - leading and trailing spaces are removed, then it has 3 to 30 characters: letters, the Polish ones included, digits, the underscore and the hyphen; it is kept as it is after the trim, and it is unique without regard to letter case (M9).
+- `pseudonym` - leading and trailing spaces are removed, then it has 3 to 30 characters: letters, the Polish ones included, digits, the underscore and the hyphen; it is kept as it is after the trim, and it is unique without regard to letter case (M9). The letters are the 26 Latin letters and the nine Polish letters `ąćęłńóśźż`, each in both cases, and the digits are `0` - `9`; any other character, a letter of another alphabet or a decomposed Polish letter included, is refused.
 - `password` - 5 to 128 characters, all accepted: printable ASCII, spaces and Unicode, with no rule of composition (M9).
-- A character is a Unicode code point.
+- A character is a Unicode code point. A pseudonym or a password holding a lone surrogate, which no text in UTF-8 can carry, is refused with `invalid_request` and its field.
 
 Response `201`:
 

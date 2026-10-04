@@ -130,8 +130,9 @@ The critical path runs through `backend_skeleton`, `schema_first_revision` and `
 - Initiatives outside this file that build parts of the MVP on branches not merged yet, recorded in `docs/standards/decision_registry.md`, entry Initiatives outside MVP.md that overlap its initiatives.
 - Whether `public_transport_routing` waits for `route_planning` and `osm_importer` or starts in parallel with them, as the specification says of O9, recorded in `docs/standards/decision_registry.md`, entry When the initiative of O9 starts its code.
 - How the exception of O9 in M7 of the specification names a public transport segment the GTFS marks as accessible and the alighting at a stop, recorded in `docs/standards/decision_registry.md`, entry Wording of the public transport segment of O9.
-- The account pseudonym rule in `docs/product/api_contract.md` was aligned with specification M9 on 2026-10-04 through `plans/accounts/ACCOUNTS_SHAPE.md`, as approved by the user. Kuber and Adrian's confirmation remains part of the outstanding contract confirmation of D-12 above.
+- The account pseudonym rule in `docs/product/api_contract.md` was aligned with specification M9 on 2026-10-04 through `plans/accounts/ACCOUNTS_SHAPE.md`, as approved by the user. Kuber and Adrian's confirmation remains part of the outstanding contract confirmation of D-12 above. On 2026-10-04 Kuba made its letters explicit as the Latin and the Polish ones and its digits as `0` - `9`, the set the HarmonyOS client already checks (`plans/accounts/ACCOUNTS_PLAN.md` D-3); Adrian's confirmation is still to be obtained.
 - Whether an item of a list names its street, deferred until Marek tests the programming interface, recorded in `docs/standards/decision_registry.md`, entry Street name of an item of a list.
+- Who builds the API and service layers of the nine operations of `community_facts`, after Kuba narrowed its shape on 2026-10-04 to their data layer and the status evaluator, recorded in `docs/standards/decision_registry.md`, entry Executor of the API and service layers of the community facts.
 
 ## Known departures from the Kraków brief
 
