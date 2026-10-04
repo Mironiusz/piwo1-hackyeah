@@ -140,7 +140,7 @@ States:
 - Waiting for the consent of the browser to read the location.
 - The location is refused or cannot be read. A plain message; the search and the point on the map stay.
 - Point picking. The map shows a fixed mark at its center; the person moves the map, with touch or with the arrow keys, and confirms the point.
-- A point or the current location outside Kraków. A plain message that routes work only in Kraków; the point is not set.
+- A point or the current location outside Kraków. A plain message that routes work only in Kraków; the point is not set. A point inside the bounds of the map of Kraków but outside its boundary stays set until the route is requested.
 - The states of the address search (V-8).
 - Waiting for the route. The answer can take several seconds.
 - Routing does not answer. A plain message that a route cannot be planned right now; no route is shown.
@@ -326,7 +326,7 @@ Needs: N-11.
 
 For: J-12. A page of text in the language of the interface.
 
-Shows what the app keeps, for what purpose and for how long - the pseudonym and the password of an account, and the identifier of a vote without an account until the demo and all its data are deleted on 4 October 2026, which is pseudonymized personal data - and what it does not keep: the needs, the current location, an email address, any information about a disability. In the hosted demo it also says that the demo and all its data are deleted on 4 October 2026, after the results are announced.
+Shows what the app keeps, for what purpose and for how long - the pseudonym and the password of an account; the identifier of a vote without an account until the demo and all its data are deleted on 4 October 2026, which is pseudonymized personal data; and the points of route requests in the log of the routing service of the hosted demo until the demo is deleted - and what it does not keep: the needs, the current location apart from that log, an email address, any information about a disability. In the hosted demo it also says that the demo and all its data are deleted on 4 October 2026, after the results are announced.
 
 Needs from the programming interface: nothing.
 
@@ -427,7 +427,8 @@ The contract covers the views, with these differences:
 
 - The street name of a fact has no field, and the stored data keeps no name of a way. Deferred by the user until the backend person tests the programming interface (decision 13).
 - The own vote of a person has no field. A vote repeated on the same calendar day is refused with the instant from which the next vote is accepted, the start of the next day, and the frontend keeps the vote on the device (decision 14).
-- A point outside Kraków has no outcome of its own. Proposed by the agent: the frontend checks a point against the bounds of the map of Kraków before it asks for a route, and gives the same message when the request is refused for its start or its destination.
+- A point outside Kraków is refused by `plan_route` with `point_outside_krakow`, which names the point. The frontend also checks a point against the bounds of the map of Kraków when it is set; a point inside the bounds but outside the boundary stays set until the route is requested.
+- The segments of a route of a profile without barriers arrive in the state `not_assessed`, so the frontend derives nothing from its own request.
 - A segment carries its missing attributes. The frontend does not show them (decision 8).
 - The contradiction of a report with OpenStreetMap is one mark on a fact of a route. It does not say what OpenStreetMap shows there, so the note of the fact detail is a general sentence, and a fact opened from the map of facts has no such note.
 

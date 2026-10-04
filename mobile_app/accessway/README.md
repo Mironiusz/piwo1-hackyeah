@@ -1,4 +1,4 @@
-# AccessWay - Kraków bez barier (aplikacja HarmonyOS)
+# EnableMe - Kraków bez barier (aplikacja HarmonyOS)
 
 Aplikacja na wyzwanie "Kraków bez barier" (HackYeah 2026). Na razie działa w całości na urządzeniu: sieć piesza, trasy, ocena odcinków, zgłoszenia, głosy i konta liczą się lokalnie, a warstwa danych jest gotowa na podłączenie API zespołu.
 
@@ -29,7 +29,7 @@ Ekrany odwzorowują makiety zespołu "Widoki MVP: makiety" (artboardy System i V
 - V-7 Zgłaszanie bariery, udogodnienia albo obszaru krok po kroku, ze sprawdzeniem faktów tego samego rodzaju w promieniu 15 m.
 - V-10 do V-14: menu, konto z pseudonimem i hasłem, informacja o prywatności, o danych, moderacja.
 
-Nazwa produktu nie jest jeszcze wybrana, więc nagłówek pokazuje "[Nazwa produktu]" jak makiety (stała `PRODUCT_NAME` w `data/AppModel.ets`).
+Nagłówek pokazuje nazwę produktu EnableMe, wybraną przez zespół 2026-10-04 (stała `PRODUCT_NAME` w `data/AppModel.ets`).
 
 ## Dane i podłączenie API
 

@@ -1,5 +1,5 @@
 """
-Mock backend for the map tiles of AccessWay, standard library only.
+Mock backend for the map tiles of EnableMe, standard library only.
 
 Serves one PMTiles archive of Kraków (`make tiles`) or the sample archive (`make tiles-sample`):
 

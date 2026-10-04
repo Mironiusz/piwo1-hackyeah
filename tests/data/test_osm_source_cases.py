@@ -89,7 +89,7 @@ def test_whole_run_deadline_interrupts_stream(tmp_path):
     asyncio.run(run())
 
 
-def test_invalid_redirect_is_rejected_before_any_dated_request():
+def test_invalid_redirect_is_rejected_before_any_dated_request(tmp_path):
     calls = []
 
     async def run():
@@ -99,7 +99,7 @@ def test_invalid_redirect_is_rejected_before_any_dated_request():
 
         async with httpx.AsyncClient(transport=httpx.MockTransport(respond)) as client:
             with pytest.raises(OsmSourceError):
-                async with fetch_osm_extract(client, asyncio.get_running_loop().time() + 60):
+                async with fetch_osm_extract(client, tmp_path, asyncio.get_running_loop().time() + 60):
                     pytest.fail("Invalid redirect must not yield an extract")
 
     asyncio.run(run())
@@ -128,14 +128,14 @@ def test_acquisition_validates_pbf_and_cleans_after_caller_failure(tmp_path):
 
         async with httpx.AsyncClient(transport=httpx.MockTransport(respond)) as client:
             with pytest.raises(RuntimeError, match="invented caller failure"):
-                async with fetch_osm_extract(client, asyncio.get_running_loop().time() + 60) as extract:
+                async with fetch_osm_extract(client, tmp_path, asyncio.get_running_loop().time() + 60) as extract:
                     acquired.append(extract.path)
                     assert extract.path.read_bytes() == contents
                     assert extract.state_at.isoformat() == "2026-10-03T00:00:00+00:00"
                     raise RuntimeError("invented caller failure")
 
     asyncio.run(run())
-    assert acquired and not acquired[0].exists() and not acquired[0].parent.exists()
+    assert acquired and acquired[0].parent.parent == tmp_path and not acquired[0].parent.exists()
 
 
 @pytest.mark.parametrize("failure", [httpx.ConnectTimeout, httpx.ReadTimeout])

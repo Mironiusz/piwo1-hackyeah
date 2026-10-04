@@ -121,7 +121,7 @@ Every object the first revision `db/accessibility_db/migrations/versions/0001_ta
 
 ## Names of the backend foundation
 
-The names of `plans/backend_skeleton/`, merged on 2026-10-04 from the branch `mw-backend-skeleton`.
+The names of `plans_finished/backend_skeleton/`, merged on 2026-10-04 from the branch `mw-backend-skeleton`.
 
 - Layer packages: `api`, `service`, `data`, `worker`; shared configuration is `config` and time is `common_time`.
 - Factories and actions: `build_app`, `build_engine`, `build_import_engine`, `build_database_url`, `apply_import_exclusion`, `apply_publication`, `apply_import_process`.
