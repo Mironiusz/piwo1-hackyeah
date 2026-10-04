@@ -8,7 +8,7 @@ import { FONT, FONT_B, fs, P, RADIUS } from '../components/Theme';
 import { Btn, BtnKind, Icon, PageTitle } from '../components/Ui';
 import { Nav } from './Nav';
 
-/** V-2: potrzeby. Przy pierwszym otwarciu z przyciskami Pomiń i Gotowe, potem jako zakładka Potrzeby. */
+/** V-2: needs. On first open with the Pomiń (Skip) and Gotowe (Done) buttons, later as the Potrzeby (Needs) tab. */
 @Component
 export struct NeedsView {
   nav: Nav = new Nav();

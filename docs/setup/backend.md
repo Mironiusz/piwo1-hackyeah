@@ -1,6 +1,6 @@
 # Backend foundation
 
-The skeleton provides configuration, logging, an API process, database engine factories and a shared import publication boundary. It exposes no product endpoint and ships no product revision. The local database, the database of the hosted demo and the chain of schema revisions are the package `db/` of `plans/schema_first_revision/` (`db/README.md`), not part of the skeleton. `python -m api` validates configuration and starts without connecting to a database, running migrations or importing OSM.
+The skeleton provides configuration, logging, an API process, database engine factories and a shared import publication boundary. It exposes no product endpoint and ships no product revision. The local database, the database of the hosted demo and the chain of schema revisions are the package `db/` of `plans_finished/schema_first_revision/` (`db/README.md`), not part of the skeleton. `python -m api` validates configuration and starts without connecting to a database, running migrations or importing OSM.
 
 ## Install
 

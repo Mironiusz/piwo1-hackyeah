@@ -4,12 +4,13 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 import pytest
-from accessibility_db.closed_lists import FactSource, VoteVerdict, WayBarrierState
-from accessibility_db.tables import build_offset_instant
+from accessibility_db.closed_lists import FactSource
 
-from common_sample_data import SampleNearbyWay, SampleNetworkPrerequisites, StoredInitialVote, StoredSample, build_sample_voter_hash
-from service.sample_data import SAMPLE_DEFINITIONS
+from common_sample_data import SampleFactRow, SampleNearbyWay, SampleNetworkPrerequisites, SampleVoteRow, StoredSample, StoredSampleVote
+from service.sample_data import SAMPLE_DEFINITIONS, build_sample_insert_rows
 from tests.common_runtime_settings import apply_invented_runtime_settings
+
+SAMPLE_LOADING_AT = datetime(2026, 1, 10, 8, 0, tzinfo=ZoneInfo("Europe/Warsaw"))
 
 
 @pytest.fixture
@@ -21,40 +22,47 @@ def runtime_settings(monkeypatch: pytest.MonkeyPatch):
 
 @pytest.fixture
 def sample_prerequisites() -> tuple[SampleNetworkPrerequisites, ...]:
-    """Builds valid measured-path snapshots for the four fixed definitions."""
-    return tuple(
-        SampleNetworkPrerequisites(item.fact_id, True, True, WayBarrierState.ABSENT, (SampleNearbyWay(item.reference_way_id, 0.0),), 0.0, 100.0 if item.geozone_radius_m else 0.0)
-        for item in SAMPLE_DEFINITIONS
-    )
+    """Builds valid measured-place snapshots for the eight fixed definitions, with the kerb contradiction where one is required."""
+    return tuple(SampleNetworkPrerequisites(item.fact_id, True, True, (SampleNearbyWay(item.reference_way_id, 0.0),), 0.0, item.requires_kerb_contradiction) for item in SAMPLE_DEFINITIONS)
 
 
 @pytest.fixture
-def stored_samples() -> dict[int, StoredSample]:
-    """Builds exact fixed content with one original winter creation pair."""
-    created_at = build_offset_instant(datetime(2026, 1, 10, 8, 0, tzinfo=ZoneInfo("Europe/Warsaw")))
+def sample_insert_rows(runtime_settings) -> tuple[tuple[SampleFactRow, ...], tuple[SampleVoteRow, ...]]:
+    """Builds the fact and vote rows of a first loading on an invented winter morning."""
+    return build_sample_insert_rows(SAMPLE_DEFINITIONS, SAMPLE_LOADING_AT)
+
+
+@pytest.fixture
+def stored_samples(sample_insert_rows: tuple[tuple[SampleFactRow, ...], tuple[SampleVoteRow, ...]]) -> dict[int, StoredSample]:
+    """Builds the exact fixed content of every fact as the first loading stored it."""
+    fact_rows, _vote_rows = sample_insert_rows
     return {
-        item.fact_id: StoredSample(
-            item.fact_id,
-            item.fact_type,
+        row.definition.fact_id: StoredSample(
+            row.definition.fact_id,
+            row.definition.fact_type,
             FactSource.USER_REPORT,
-            item.latitude,
-            item.longitude,
-            item.geozone_radius_m,
-            item.description,
-            item.step_count,
+            row.definition.latitude,
+            row.definition.longitude,
+            row.definition.geozone_radius_m,
+            row.definition.description,
+            row.definition.step_count,
             True,
             None,
             None,
             None,
             None,
             False,
-            created_at,
+            row.created_at,
         )
-        for item in SAMPLE_DEFINITIONS
+        for row in fact_rows
     }
 
 
 @pytest.fixture
-def initial_votes(stored_samples: dict[int, StoredSample]) -> dict[int, tuple[StoredInitialVote, ...]]:
-    """Builds one fictional original confirmation for every sample."""
-    return {identifier: (StoredInitialVote(identifier, VoteVerdict.CONFIRM, False, None, build_sample_voter_hash(identifier), item.created_at),) for identifier, item in stored_samples.items()}
+def sample_votes(sample_insert_rows: tuple[tuple[SampleFactRow, ...], tuple[SampleVoteRow, ...]]) -> dict[int, tuple[StoredSampleVote, ...]]:
+    """Builds every sample vote of every fact as the first loading stored it."""
+    _fact_rows, vote_rows = sample_insert_rows
+    votes: dict[int, tuple[StoredSampleVote, ...]] = {}
+    for row in vote_rows:
+        votes[row.fact_id] = (*votes.get(row.fact_id, ()), StoredSampleVote(row.fact_id, row.verdict, False, None, row.voter_hash, row.cast_at))
+    return votes

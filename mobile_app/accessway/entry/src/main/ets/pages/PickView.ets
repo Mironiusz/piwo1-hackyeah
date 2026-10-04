@@ -8,7 +8,7 @@ import { FONT, fs, P } from '../components/Theme';
 import { Btn, BtnKind, BoxKind, MessageBox, SheetBox, SheetTitle } from '../components/Ui';
 import { Nav } from './Nav';
 
-/** Wskazanie startu albo celu na mapie: krzyżyk na środku, mapę przesuwa się palcem albo strzałkami. */
+/** Picking the start or destination on the map: a crosshair in the center; the map is moved by finger or arrows. */
 @Component
 export struct PickView {
   nav: Nav = new Nav();

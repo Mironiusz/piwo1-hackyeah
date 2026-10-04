@@ -13,12 +13,12 @@ export function getLang(): Lang {
   return current;
 }
 
-/** Wybiera tekst w bieżącym języku interfejsu. */
+/** Picks the text in the current UI language. */
 export function tr(pl: string, en: string): string {
   return current === Lang.PL ? pl : en;
 }
 
-/** Język startowy z ustawień systemu: polski dla polskich ustawień, angielski dla pozostałych. */
+/** Startup language from the system settings: Polish for Polish settings, English for all others. */
 export function langFromSystem(systemLanguage: string): Lang {
   return systemLanguage.toLowerCase().startsWith('pl') ? Lang.PL : Lang.EN;
 }

@@ -109,8 +109,8 @@ export interface PointFeature {
 }
 
 /**
- * Rodzaje faktów z makiet: pięć barier, których można unikać, i sześć udogodnień, których można potrzebować.
- * Obszar to zgłoszenie z promieniem, którego rodzaj jest jedną z barier.
+ * Fact kinds from the mockups: five barriers that can be avoided and six amenities that may be needed.
+ * An area is a report with a radius whose kind is one of the barriers.
  */
 export enum FactKind {
   STEPS = 'steps',
@@ -138,7 +138,7 @@ export enum FactCategory {
   AREA = 'area'
 }
 
-/** Statusy z makiety "O danych"; fakt nieaktualny nie jest nigdzie pokazywany. */
+/** Statuses from the "O danych" (About the data) mockup; an outdated fact is not shown anywhere. */
 export enum FactStatus {
   CONFIRMED = 'confirmed',
   UNVERIFIED = 'unverified',
@@ -158,7 +158,7 @@ export interface Vote {
   at: number;
 }
 
-/** Zgłoszenie użytkownika. Po zapisaniu nikt go nie zmienia; autor nie jest przechowywany w treści. */
+/** A user report. Once saved, nobody changes it; the author is not stored in its content. */
 export interface Barrier {
   id: string;
   kind: FactKind;
@@ -176,7 +176,7 @@ export interface Barrier {
   flagged: boolean;
 }
 
-/** Fakt pokazywany w aplikacji: zgłoszenie albo element OpenStreetMap, z jednym statusem. */
+/** A fact shown in the app: a report or an OpenStreetMap element, with a single status. */
 export interface Fact {
   id: string;
   kind: FactKind;

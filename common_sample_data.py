@@ -5,11 +5,10 @@ from datetime import date
 from enum import StrEnum
 from hashlib import sha256
 
-from accessibility_db.closed_lists import FactSource, FactType, OsmElementType, VoteVerdict, WayBarrierState
+from accessibility_db.closed_lists import FactSource, FactType, OsmElementType, VoteVerdict
 from accessibility_db.tables import OffsetInstant
 
 SAMPLE_POINT_ASSOCIATION_DISTANCE_M = 15
-SAMPLE_AMENITY_DISTANCE_M = 50
 
 
 class SampleDataOutcome(StrEnum):
@@ -32,7 +31,7 @@ class SampleFailureReason(StrEnum):
 
     COPY_MISSING = "copy_missing"
     SITE_INVALID = "site_invalid"
-    SURFACE_NOT_ABSENT = "surface_not_absent"
+    CONTRADICTION_MISSING = "contradiction_missing"
     IDENTITY_COLLISION = "identity_collision"
     CONTENT_MISMATCH = "content_mismatch"
     INITIAL_VOTE_INVALID = "initial_vote_invalid"
@@ -55,17 +54,35 @@ SampleDataFailure = SampleDataError
 
 
 @dataclass(frozen=True)
+class SampleVoteDefinition:
+    """One fictional vote without an account, as a verdict and its whole minutes before the first loading."""
+
+    verdict: VoteVerdict
+    minutes_before_loading: int
+
+
+@dataclass(frozen=True)
 class SampleDefinition:
-    """A fixed fictional fact and the real path used to validate its site."""
+    """
+    A fixed fictional fact, the real way used to validate its place, and its votes and moderation.
+
+    Every time is given in whole minutes before the first successful loading. A flag or a hiding without minutes is
+    absent. Only a fact that needs a lowered kerb of the copy to contradict it requires the kerb contradiction.
+    """
 
     fact_id: int
     fact_type: FactType
     latitude: float
     longitude: float
     reference_way_id: int
-    description: str
+    description: str | None
+    created_minutes_before_loading: int
+    votes: tuple[SampleVoteDefinition, ...]
     step_count: int | None = None
     geozone_radius_m: int | None = None
+    flagged_minutes_before_loading: int | None = None
+    hidden_minutes_before_loading: int | None = None
+    requires_kerb_contradiction: bool = False
 
 
 @dataclass(frozen=True)
@@ -78,15 +95,39 @@ class SampleNearbyWay:
 
 @dataclass(frozen=True)
 class SampleNetworkPrerequisites:
-    """Network measurements from one transaction snapshot for one definition."""
+    """
+    Network measurements from one transaction snapshot for one definition.
+
+    The storage measures the copy and the ways; the service establishes the kerb contradiction from the route graph. Until
+    it does, the contradiction stays false, because missing evidence never establishes one.
+    """
 
     fact_id: int
     has_copy: bool
     reference_exists: bool
-    poor_surface_state: WayBarrierState | None
     nearest_ways: tuple[SampleNearbyWay, ...]
     reference_distance_m: float | None
-    contradiction_path_distance_m: float | None
+    has_kerb_contradiction: bool = False
+
+
+@dataclass(frozen=True)
+class SampleFactRow:
+    """A definition ready to insert, with the creation pair and the flag and hide pairs it starts with."""
+
+    definition: SampleDefinition
+    created_at: OffsetInstant
+    flagged_at: OffsetInstant | None
+    hidden_at: OffsetInstant | None
+
+
+@dataclass(frozen=True)
+class SampleVoteRow:
+    """One sample vote ready to insert or expected in storage: its fact, fictional voter, verdict and pair."""
+
+    fact_id: int
+    voter_hash: bytes
+    verdict: VoteVerdict
+    cast_at: OffsetInstant
 
 
 @dataclass(frozen=True)
@@ -111,8 +152,8 @@ class StoredSample:
 
 
 @dataclass(frozen=True)
-class StoredInitialVote:
-    """One historical vote with the reserved fictional author's identity."""
+class StoredSampleVote:
+    """One stored vote cast under a fictional sample voter identity."""
 
     fact_id: int
     verdict: VoteVerdict
@@ -133,6 +174,6 @@ class SampleDataResult:
     fact_ids: tuple[int, ...]
 
 
-def build_sample_voter_hash(sample_id: int) -> bytes:
-    """Builds the reserved fictional author identity from a sample identifier."""
-    return sha256(f"sample-data:initial-author:v1:{sample_id}".encode()).digest()
+def build_sample_voter_hash(sample_id: int, vote_index: int) -> bytes:
+    """Builds the fictional voter identity of one sample vote from its fact identifier and 1-based vote index."""
+    return sha256(f"sample-data:voter:v2:{sample_id}:{vote_index}".encode()).digest()

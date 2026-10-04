@@ -44,14 +44,14 @@ const PLACE_KEYS: string[] = ['amenity', 'tourism', 'shop', 'historic', 'public_
 const FEATURE_ONLY_AMENITIES: string[] = ['bench', 'toilets', 'waste_basket', 'bicycle_parking', 'parking_entrance',
   'vending_machine', 'recycling', 'post_box', 'telephone'];
 
-/** Tło mapy: budynek albo zieleń, jako wielokąt. */
+/** Map background: a building or greenery, as a polygon. */
 export interface MapArea {
   kind: string;
   name: string;
   pts: number[];
 }
 
-/** Fakt odczytany z OpenStreetMap: bariera albo udogodnienie przypisane do punktu. */
+/** A fact read from OpenStreetMap: a barrier or amenity assigned to a point. */
 export interface OsmFact {
   id: string;
   kind: FactKind;
@@ -83,7 +83,7 @@ export class Dataset {
   maxLon: number = -180;
   private grid: Map<string, number[]> = new Map<string, number[]>();
 
-  /** Indeks przestrzenny węzłów w siatce co 0.002 stopnia. */
+  /** Spatial index of nodes in a 0.002-degree grid. */
   buildIndex(): void {
     this.grid.clear();
     for (let i = 0; i < this.nodes.length; i++) {
@@ -112,7 +112,7 @@ export class Dataset {
     }
   }
 
-  /** Najbliższy węzeł połączony z siecią albo -1, gdy żaden nie leży w promieniu `maxM`. */
+  /** The nearest node connected to the network, or -1 when none lies within `maxM`. */
   nearestNode(lat: number, lon: number, maxM: number): number {
     let best = -1;
     let bestD = maxM;
@@ -164,7 +164,7 @@ export function parseNumber(raw: string): number {
   return Number(m[0]);
 }
 
-/** Nachylenie w procentach z tagu `incline`; NaN, gdy tag nie niesie liczby. */
+/** Slope in percent from the `incline` tag; NaN when the tag carries no number. */
 export function parseIncline(raw: string): number {
   const v = parseNumber(raw);
   if (isNaN(v)) {
@@ -187,7 +187,7 @@ export function parseWidthM(raw: string): number {
   return v;
 }
 
-/** Wysokość krawężnika w cm; -1, gdy krawężnik istnieje, ale wysokość jest nieznana. */
+/** Curb height in cm; -1 when the curb exists but its height is unknown. */
 export function kerbHeightCm(tags: Record<string, string>): number {
   const h = tags['kerb:height'];
   if (h !== undefined) {
@@ -294,7 +294,7 @@ function emptyTags(): Record<string, string> {
   return t;
 }
 
-/** Odwzorowuje odpowiedź Overpass na sieć pieszą, miejsca i punkty udogodnień. */
+/** Maps the Overpass response to the pedestrian network, places and amenity points. */
 export function buildDataset(resp: OverpassResponse): Dataset {
   const ds = new Dataset();
   ds.isSample = resp.accessway_sample === true;
@@ -440,7 +440,7 @@ function osmFact(ds: Dataset, id: string, kind: FactKind, lat: number, lon: numb
   ds.osmFacts.push({ id: id, kind: kind, lat: lat, lon: lon, street: street, date: date, stepCount: steps });
 }
 
-/** Punkt w połowie drogi, liczony po długości odcinków. */
+/** The halfway point, measured along the segment lengths. */
 function wayMiddle(refs: number[], coords: Map<number, OverpassElement>): number[] {
   const pts: number[] = [];
   for (const ref of refs) {
@@ -530,7 +530,7 @@ function addNodeFacts(ds: Dataset, el: OverpassElement, tags: Record<string, str
   }
 }
 
-/** Nazwa najbliższej nazwanej drogi w promieniu 40 m albo pusty tekst. */
+/** Name of the nearest named way within 40 m, or an empty string. */
 export function nearestStreet(ds: Dataset, lat: number, lon: number): string {
   let best = '';
   let bestD = 40;

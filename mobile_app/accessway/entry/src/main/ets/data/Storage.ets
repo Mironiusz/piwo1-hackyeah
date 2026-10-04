@@ -13,7 +13,7 @@ export function readFileText(path: string): string | null {
   }
 }
 
-/** Zapis przez plik tymczasowy i zmianę nazwy, żeby przerwany zapis nie zostawił uciętego pliku. */
+/** Writes through a temporary file and a rename, so an interrupted write does not leave a truncated file. */
 export function writeFileText(path: string, text: string): void {
   const tmp = `${path}.tmp`;
   const f = fileIo.openSync(tmp, fileIo.OpenMode.CREATE | fileIo.OpenMode.READ_WRITE | fileIo.OpenMode.TRUNC);

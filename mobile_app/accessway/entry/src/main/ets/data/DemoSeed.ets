@@ -30,9 +30,9 @@ function sample(id: string, kind: FactKind, x: number, y: number, radius: number
 }
 
 /**
- * Zgłoszenia przykładowe w okolicy Tauron Areny, ułożone na schematycznej próbce sieci (tools/accessway_sample.py).
- * Każde ma znak "dane przykładowe". Kilka jest od razu zgłoszonych do moderacji albo ukrytych, żeby pokazać
- * ekran moderacji.
+ * Sample reports around Tauron Arena, placed on the schematic network sample (tools/accessway_sample.py).
+ * Each one has the "dane przykładowe" (sample data) mark. A few are already flagged for moderation or hidden,
+ * to show the moderation screen.
  */
 export function demoReports(now: number): Barrier[] {
   const d = (days: number): number => now - days * DAY_MS;

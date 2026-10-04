@@ -5,7 +5,7 @@ from collections.abc import Callable, Sequence
 from datetime import date, datetime
 from typing import cast
 
-from accessibility_db.closed_lists import FactSource, FactType, OsmElementType, VoteVerdict, WayBarrierState
+from accessibility_db.closed_lists import FactSource, FactType, OsmElementType, VoteVerdict
 from accessibility_db.tables import OffsetInstant
 from sqlalchemy import Connection, RowMapping, text
 from sqlalchemy.exc import DBAPIError, SQLAlchemyError
@@ -16,13 +16,16 @@ from common_sample_data import (
     SampleDataFailure,
     SampleDataResult,
     SampleDefinition,
+    SampleFactRow,
     SampleFailureReason,
     SampleNearbyWay,
     SampleNetworkPrerequisites,
-    StoredInitialVote,
+    SampleVoteRow,
     StoredSample,
+    StoredSampleVote,
     build_sample_voter_hash,
 )
+from data.engine import build_engine
 
 SELECT_SAMPLE_PREREQUISITES_SQL = """
 WITH point AS (
@@ -36,11 +39,9 @@ WITH point AS (
 )
 SELECT EXISTS (SELECT 1 FROM osm_copy) AS has_copy,
        EXISTS (SELECT 1 FROM osm_way WHERE id = :reference_way_id) AS reference_exists,
-       (SELECT poor_surface_state FROM osm_way WHERE id = :reference_way_id) AS poor_surface_state,
        ARRAY(SELECT id FROM nearby ORDER BY distance_m, id) AS nearest_ids,
        ARRAY(SELECT distance_m FROM nearby ORDER BY distance_m, id) AS nearest_distances,
-       (SELECT ST_Distance(w.geog, p.geog) FROM osm_way AS w CROSS JOIN point AS p WHERE w.id = :reference_way_id) AS reference_distance_m,
-       (SELECT ST_Distance(w.geog, p.geog) FROM osm_way AS w CROSS JOIN point AS p WHERE w.id = :contradiction_way_id) AS contradiction_path_distance_m
+       (SELECT ST_Distance(w.geog, p.geog) FROM osm_way AS w CROSS JOIN point AS p WHERE w.id = :reference_way_id) AS reference_distance_m
 """
 
 SELECT_STORED_SAMPLES_SQL = """
@@ -52,11 +53,11 @@ FROM fact
 WHERE id = ANY(CAST(:sample_ids AS bigint[]))
 """
 
-SELECT_INITIAL_SAMPLE_VOTES_SQL = """
+SELECT_SAMPLE_VOTES_SQL = """
 SELECT v.fact_id, v.verdict, v.is_cast_with_account, v.account_id, v.voter_hash,
        v.cast_at, v.cast_at_utc_offset_minutes
 FROM vote AS v
-JOIN jsonb_to_recordset(CAST(:authors AS jsonb)) AS a(fact_id bigint, voter_hash_hex text)
+JOIN jsonb_to_recordset(CAST(:voters AS jsonb)) AS a(fact_id bigint, voter_hash_hex text)
   ON v.fact_id = a.fact_id AND v.voter_hash = decode(a.voter_hash_hex, 'hex')
 ORDER BY v.fact_id, v.cast_at, v.id
 """
@@ -64,54 +65,47 @@ ORDER BY v.fact_id, v.cast_at, v.id
 INSERT_SAMPLE_FACTS_SQL = """
 INSERT INTO fact (id, fact_type, source, geog, geozone_radius_m, description, step_count,
                   is_sample, idempotency_key, osm_element_type, osm_element_id, osm_edited_on,
-                  is_removed_from_osm, created_at, created_at_utc_offset_minutes)
+                  is_removed_from_osm, created_at, created_at_utc_offset_minutes,
+                  flagged_at, flagged_at_utc_offset_minutes, hidden_at, hidden_at_utc_offset_minutes)
 OVERRIDING SYSTEM VALUE
 SELECT d.fact_id, CAST(d.fact_type AS fact_type), CAST(:source AS fact_source),
        ST_SetSRID(ST_MakePoint(d.longitude, d.latitude), 4326)::geography,
        d.geozone_radius_m, d.description, d.step_count,
-       true, NULL, NULL, NULL, NULL, false, :created_at, :created_at_utc_offset_minutes
-FROM jsonb_to_recordset(CAST(:definitions AS jsonb))
+       true, NULL, NULL, NULL, NULL, false, d.created_at, d.created_at_utc_offset_minutes,
+       d.flagged_at, d.flagged_at_utc_offset_minutes, d.hidden_at, d.hidden_at_utc_offset_minutes
+FROM jsonb_to_recordset(CAST(:facts AS jsonb))
      AS d(fact_id bigint, fact_type text, latitude double precision, longitude double precision,
-          geozone_radius_m smallint, description text, step_count smallint)
+          geozone_radius_m smallint, description text, step_count smallint,
+          created_at timestamptz, created_at_utc_offset_minutes smallint,
+          flagged_at timestamptz, flagged_at_utc_offset_minutes smallint,
+          hidden_at timestamptz, hidden_at_utc_offset_minutes smallint)
 WHERE true
 ON CONFLICT (id) DO NOTHING
 RETURNING id
 """
 
-INSERT_INITIAL_SAMPLE_VOTES_SQL = """
+INSERT_SAMPLE_VOTES_SQL = """
 INSERT INTO vote (fact_id, verdict, is_cast_with_account, account_id, voter_hash, cast_at, cast_at_utc_offset_minutes)
-SELECT a.fact_id, CAST(:verdict AS vote_verdict), false, NULL, decode(a.voter_hash_hex, 'hex'), :created_at, :created_at_utc_offset_minutes
-FROM jsonb_to_recordset(CAST(:authors AS jsonb)) AS a(fact_id bigint, voter_hash_hex text)
+SELECT v.fact_id, CAST(v.verdict AS vote_verdict), false, NULL, decode(v.voter_hash_hex, 'hex'), v.cast_at, v.cast_at_utc_offset_minutes
+FROM jsonb_to_recordset(CAST(:votes AS jsonb))
+     AS v(fact_id bigint, voter_hash_hex text, verdict text, cast_at timestamptz, cast_at_utc_offset_minutes smallint)
 RETURNING fact_id
 """
 
 
 def fetch_sample_prerequisites(connection: Connection, definitions: Sequence[SampleDefinition]) -> tuple[SampleNetworkPrerequisites, ...]:
-    """Reads measured path relations and current-copy presence for the fixed sites."""
+    """Reads current-copy presence, the reference way and the two nearest ways of every fixed place."""
     prerequisites: list[SampleNetworkPrerequisites] = []
-    contradiction_way_id = definitions[0].reference_way_id
     for definition in definitions:
         parameters = {
             "latitude": definition.latitude,
             "longitude": definition.longitude,
             "reference_way_id": definition.reference_way_id,
-            "contradiction_way_id": contradiction_way_id,
             "association_distance_m": SAMPLE_POINT_ASSOCIATION_DISTANCE_M,
         }
         row = connection.execute(text(SELECT_SAMPLE_PREREQUISITES_SQL), parameters).mappings().one()
-        state = row["poor_surface_state"]
         candidates = tuple(SampleNearbyWay(way_id, distance) for way_id, distance in zip(row["nearest_ids"], row["nearest_distances"], strict=True))
-        prerequisites.append(
-            SampleNetworkPrerequisites(
-                definition.fact_id,
-                row["has_copy"],
-                row["reference_exists"],
-                WayBarrierState(state) if state is not None else None,
-                candidates,
-                row["reference_distance_m"],
-                row["contradiction_path_distance_m"],
-            )
-        )
+        prerequisites.append(SampleNetworkPrerequisites(definition.fact_id, row["has_copy"], row["reference_exists"], candidates, row["reference_distance_m"]))
     return tuple(prerequisites)
 
 
@@ -143,17 +137,19 @@ def fetch_stored_samples(connection: Connection, sample_ids: Sequence[int]) -> d
     return {sample.fact_id: sample for sample in (build_stored_sample(row) for row in rows)}
 
 
-def build_sample_authors(sample_ids: Sequence[int]) -> str:
-    """Serializes the invented author identities as one bound batch parameter."""
-    return json.dumps([{"fact_id": sample_id, "voter_hash_hex": build_sample_voter_hash(sample_id).hex()} for sample_id in sample_ids])
+def build_sample_voters(definitions: Sequence[SampleDefinition]) -> str:
+    """Serializes the fictional voter identities of every defined vote as one bound batch parameter."""
+    return json.dumps(
+        [{"fact_id": definition.fact_id, "voter_hash_hex": build_sample_voter_hash(definition.fact_id, index).hex()} for definition in definitions for index in range(1, len(definition.votes) + 1)]
+    )
 
 
-def fetch_initial_sample_votes(connection: Connection, definitions: Sequence[SampleDefinition]) -> dict[int, tuple[StoredInitialVote, ...]]:
-    """Reads only historical votes of the reserved fictional authors."""
-    rows = connection.execute(text(SELECT_INITIAL_SAMPLE_VOTES_SQL), {"authors": build_sample_authors(tuple(item.fact_id for item in definitions))}).mappings()
-    votes: dict[int, tuple[StoredInitialVote, ...]] = {}
+def fetch_sample_votes(connection: Connection, definitions: Sequence[SampleDefinition]) -> dict[int, tuple[StoredSampleVote, ...]]:
+    """Reads every stored vote cast under a defined fictional voter identity, and no other vote."""
+    rows = connection.execute(text(SELECT_SAMPLE_VOTES_SQL), {"voters": build_sample_voters(definitions)}).mappings()
+    votes: dict[int, tuple[StoredSampleVote, ...]] = {}
     for row in rows:
-        vote = StoredInitialVote(
+        vote = StoredSampleVote(
             row["fact_id"],
             VoteVerdict(row["verdict"]),
             row["is_cast_with_account"],
@@ -165,28 +161,47 @@ def fetch_initial_sample_votes(connection: Connection, definitions: Sequence[Sam
     return votes
 
 
-def apply_sample_inserts(connection: Connection, definitions: Sequence[SampleDefinition], created_at: OffsetInstant) -> tuple[int, ...]:
-    """Inserts missing facts and only their original author votes in bound batches."""
-    payloads = [
-        {
-            "fact_id": item.fact_id,
-            "fact_type": item.fact_type.value,
-            "latitude": item.latitude,
-            "longitude": item.longitude,
-            "geozone_radius_m": item.geozone_radius_m,
-            "description": item.description,
-            "step_count": item.step_count,
-        }
-        for item in definitions
-    ]
-    time_parameters = {"created_at": created_at.instant, "created_at_utc_offset_minutes": created_at.utc_offset_minutes}
-    returned_ids: set[int] = set(connection.execute(text(INSERT_SAMPLE_FACTS_SQL), {"definitions": json.dumps(payloads), "source": FactSource.USER_REPORT.value, **time_parameters}).scalars())
-    inserted_ids = tuple(item.fact_id for item in definitions if item.fact_id in returned_ids)
-    if inserted_ids:
-        voted_ids: set[int] = set(
-            connection.execute(text(INSERT_INITIAL_SAMPLE_VOTES_SQL), {"authors": build_sample_authors(inserted_ids), "verdict": VoteVerdict.CONFIRM.value, **time_parameters}).scalars()
-        )
-        if voted_ids != returned_ids:
+def build_pair_payload(name: str, value: OffsetInstant | None) -> dict[str, object]:
+    """Serializes one instant and offset pair under its column names, both null when the pair is absent."""
+    if value is None:
+        return {name: None, f"{name}_utc_offset_minutes": None}
+    return {name: value.instant.isoformat(), f"{name}_utc_offset_minutes": value.utc_offset_minutes}
+
+
+def build_sample_fact_payload(rows: Sequence[SampleFactRow]) -> str:
+    """Serializes the fact rows with their own creation, flag and hide pairs as one bound batch parameter."""
+    return json.dumps(
+        [
+            {
+                "fact_id": row.definition.fact_id,
+                "fact_type": row.definition.fact_type.value,
+                "latitude": row.definition.latitude,
+                "longitude": row.definition.longitude,
+                "geozone_radius_m": row.definition.geozone_radius_m,
+                "description": row.definition.description,
+                "step_count": row.definition.step_count,
+                **build_pair_payload("created_at", row.created_at),
+                **build_pair_payload("flagged_at", row.flagged_at),
+                **build_pair_payload("hidden_at", row.hidden_at),
+            }
+            for row in rows
+        ]
+    )
+
+
+def build_sample_vote_payload(rows: Sequence[SampleVoteRow]) -> str:
+    """Serializes the vote rows with their fictional voters, verdicts and pairs as one bound batch parameter."""
+    return json.dumps([{"fact_id": row.fact_id, "voter_hash_hex": row.voter_hash.hex(), "verdict": row.verdict.value, **build_pair_payload("cast_at", row.cast_at)} for row in rows])
+
+
+def apply_sample_inserts(connection: Connection, fact_rows: Sequence[SampleFactRow], vote_rows: Sequence[SampleVoteRow]) -> tuple[int, ...]:
+    """Inserts the missing facts, then the vote rows of exactly the facts returned as newly inserted, refusing any lost or extra vote."""
+    returned_ids: set[int] = set(connection.execute(text(INSERT_SAMPLE_FACTS_SQL), {"facts": build_sample_fact_payload(fact_rows), "source": FactSource.USER_REPORT.value}).scalars())
+    inserted_ids = tuple(row.definition.fact_id for row in fact_rows if row.definition.fact_id in returned_ids)
+    inserted_votes = [row for row in vote_rows if row.fact_id in returned_ids]
+    if inserted_votes:
+        voted_ids: list[int] = list(connection.execute(text(INSERT_SAMPLE_VOTES_SQL), {"votes": build_sample_vote_payload(inserted_votes)}).scalars())
+        if len(voted_ids) != len(inserted_votes):
             raise SampleDataFailure(SampleFailureReason.INITIAL_VOTE_INVALID)
     return inserted_ids
 
@@ -236,8 +251,6 @@ def apply_sample_connection(connection: Connection, action: Callable[[Connection
 
 def apply_sample_transaction(action: Callable[[Connection], SampleDataResult]) -> SampleDataResult:
     """Uses the shared engine for a stable snapshot without adding automatic retries."""
-    from data.engine import build_engine
-
     try:
         connection = build_engine(5000).connect()
     except SQLAlchemyError:
