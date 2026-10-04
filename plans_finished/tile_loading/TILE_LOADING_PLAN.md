@@ -1,10 +1,10 @@
 # Plan: Tile-archive step of the common demo-loading program
 
-Document state: 2026-10-04, plan closed; implementation in progress, Rollout order steps 1 - 4 done, step 5 in progress
+Document state: 2026-10-04, plan closed; implemented and reviewed as ready, see `TILE_LOADING_REVIEW.md`
 
 ## Goal
 
-Meet FR-1 - FR-7 of `plans/tile_loading/TILE_LOADING_PRD.md`: a tile step in three layers - file operations in `data/tile_archive.py`, the decisions and the exclusion in `service/tile_archive.py`, and the command `python -m worker.tile_archive` in `worker/tile_archive.py` - with two administrative environment entries, its tests, the contract written into `docs/deployment/loading_program.md` for `plans/osm_import/` to compose, and the corrections of every document of FR-7.
+Meet FR-1 - FR-7 of `plans_finished/tile_loading/TILE_LOADING_PRD.md`: a tile step in three layers - file operations in `data/tile_archive.py`, the decisions and the exclusion in `service/tile_archive.py`, and the command `python -m worker.tile_archive` in `worker/tile_archive.py` - with two administrative environment entries, its tests, the contract written into `docs/deployment/loading_program.md` for `plans/osm_import/` to compose, and the corrections of every document of FR-7.
 
 ## Facts
 
@@ -228,7 +228,7 @@ S-22. `plans/tile_loading/STAGE.md`, new file: `# Stage`, then `4`, then `Source
 3. S-4, S-12 and S-13.
 4. S-14 - S-22, each after a fresh read of the file, because other sessions edit `MVP.md`, `FINAL_CHECKLIST.md`, `plans/osm_import/` and `plans/deployment_config/` in parallel (F-25); a sentence to replace that is no longer there is reported instead of guessed.
 5. The checks of Definition of Done.
-6. The review `plans/tile_loading/TILE_LOADING_REVIEW.md` and an entry in `agent_docs/memory/`, as `plan-implement` writes them.
+6. The review `plans_finished/tile_loading/TILE_LOADING_REVIEW.md` and an entry in `agent_docs/memory/`, as `plan-implement` writes them.
 
 Steps for a human:
 
@@ -262,7 +262,7 @@ None. Every technical decision of phase B is recorded in D-1 - D-13 as an agent 
 
 ## Supplementary files
 
-- `plans/tile_loading/TILE_LOADING_PRD.md`, the contract this plan implements, with `plans/tile_loading/TILE_LOADING_SHAPE.md` and its seed.
+- `plans_finished/tile_loading/TILE_LOADING_PRD.md`, the contract this plan implements, with `plans_finished/tile_loading/TILE_LOADING_SHAPE.md` and its seed.
 - `plans/osm_import/OSM_IMPORT_PLAN.md` D-7, D-10, D-11, D-13, D-14, D-17, D-18 and D-21, and `docs/deployment/loading_program.md`.
 - `plans/sample_data/SAMPLE_DATA_LOADING_HANDOFF.md`, the precedent of a provider contract.
 - `service/gtfs_import.py`, `worker/gtfs_import.py`, `worker/osm_import.py` and `data/routing_data.py`, the patterns this plan follows.

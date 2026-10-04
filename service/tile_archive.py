@@ -16,8 +16,8 @@ from data.tile_archive import (
     TileFileError,
     apply_tile_file_copy,
     apply_tile_file_placement,
-    apply_tile_file_removal,
     apply_tile_leftover_removal,
+    apply_tile_temporary_cleanup,
     fetch_tile_directory_presence,
     fetch_tile_file_digest,
 )
@@ -104,8 +104,10 @@ def apply_tile_archive_run(settings: TileArchiveSettings, deadline: Deadline) ->
 
     The step the common loading program composes, called while the program holds the exclusion. A served file of the
     recorded value gives unchanged without reading the source. Any other file under the served name, a link included,
-    is replaced by the archive. Every failure raises TileArchiveError with its reason and leaves the served name as it
-    was, and the temporary copy is removed on every path that does not end with its placement.
+    is replaced by the archive. A failure of the step raises TileArchiveError with its reason and leaves the served
+    name as it was, with one exception: copy_failed from a directory that cannot be synced after the replacement
+    leaves the complete checked archive there. An unexpected exception passes on unchanged. The temporary copy is
+    removed on every path that does not end with its placement.
     """
     if resolve_tile_places_overlap(settings):
         raise TileArchiveError("places_overlap")
@@ -152,11 +154,3 @@ def apply_tile_failure_reason(reason: TileArchiveFailureReason) -> Iterator[None
         raise TileArchiveError("deadline_expired") from error
     except TileFileError as error:
         raise TileArchiveError(reason) from error
-
-
-def apply_tile_temporary_cleanup(temporary: Path) -> None:
-    """Remove a temporary copy that was not placed, leaving it to the leftover removal of the next run when it cannot be removed now."""
-    try:
-        apply_tile_file_removal(temporary)
-    except TileFileError:
-        fetch_logger(__name__).warning("Tile archive temporary file was left for the next run", exc_info=True)
