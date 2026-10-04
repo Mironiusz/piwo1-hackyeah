@@ -8,7 +8,7 @@ This document records the decisions approved in `plans/osm_import/OSM_IMPORT_PLA
 
 For continuation of the initiative, read [OSM_IMPORT_HANDOFF.md](../../plans/osm_import/OSM_IMPORT_HANDOFF.md). It identifies approved decisions, the pending result proposal, dependency gaps and the checks already performed.
 
-`osm_import` owns the common program and the current-copy read. Mateusz retains the importer, routing-data preparation and pointer publication under `osm_importer`, and the sample provider under `sample_data`. Adrian supplies the tile provider through `map_tiles`. Shared configuration, engines, logging, session handling and exclusion remain with their existing initiatives. This handoff changes no hosted environment and supplies no host, credential or provider implementation.
+`osm_import` owns the common program and the current-copy read. Mateusz retains the importer, routing-data preparation and pointer publication under `osm_importer`, and the sample provider under `sample_data`. Rafał supplies the tile provider through `tile_loading`; `map_tiles` supplied only the archive file and its record. Shared configuration, engines, logging, session handling and exclusion remain with their existing initiatives. This handoff changes no hosted environment and supplies no host, credential or provider implementation.
 
 ## Approved execution and exclusion
 
@@ -20,7 +20,7 @@ Full loading and standalone imports mutually exclude each other. A competing inv
 
 ## Approved execution budgets
 
-Each provider has its own finite whole-step execution budget. There is no additional deadline shared by the entire loader. OpenStreetMap retains its 60-minute whole-import deadline and its existing nested publication and network limits. Tile and sample whole-step values and enforcement still require their provider contracts; a statement or inactivity limit alone does not settle them.
+Each provider has its own finite whole-step execution budget. There is no additional deadline shared by the entire loader. OpenStreetMap retains its 60-minute whole-import deadline and its existing nested publication and network limits. The tile step has 120 seconds, enforced by its provider (section Tile-provider handoff); the sample whole-step value and enforcement still require its provider contract; a statement or inactivity limit alone does not settle them.
 
 Budget expiration stops later steps, preserves actual effects and does not prove that outstanding work stopped or rolled back. Exclusion release requires the completion evidence established by the shared contract. A caller-side timer is not provider cancellation evidence.
 
@@ -39,7 +39,7 @@ Tiles: failed
 Samples: not started
 ```
 
-The failed step also reports its supplied safe reason code. This example does not define an as-yet-unagreed tile reason. A pointer failure instead retains the committed database effect and reports incomplete OpenStreetMap work. An uncertain commit remains unknown. Loading does not establish that Valhalla restarted or serves the prepared copy.
+The failed step also reports its supplied safe reason code. The tile reasons are those of section Tile-provider handoff. A pointer failure instead retains the committed database effect and reports incomplete OpenStreetMap work. An uncertain commit remains unknown. Loading does not establish that Valhalla restarted or serves the prepared copy.
 
 ## Approved current-copy read
 
@@ -54,6 +54,24 @@ The service is `service.osm_copy.fetch_osm_copy_date() -> date | None`. It build
 Consume `service.sample_data.apply_sample_data() -> SampleDataResult` and the records in `common_sample_data.py` under `plans/sample_data/SAMPLE_DATA_LOADING_HANDOFF.md`. The synchronous provider owns its transaction and returns created or unchanged only after acknowledged commit. Both outcomes complete the sample effect.
 
 Retain `created_count`, `unchanged_count`, `initial_votes_created_count` and `fact_ids` in the typed result; print only the approved aggregate counts. A named failure preserves its safe reason and commit state. An unknown commit remains unknown, and an unexpected exception establishes neither success nor confirmed rollback. A sample failure never implies rollback of earlier OpenStreetMap or tile effects.
+
+## Tile-provider handoff
+
+Delivered by `plans/tile_loading/` on 2026-10-04 (`plans/tile_loading/TILE_LOADING_PLAN.md` D-5 - D-9).
+
+Consume `service.tile_archive.apply_tile_archive_run(settings: TileArchiveSettings, deadline: Deadline) -> TileArchiveResult`, called synchronously while the common program holds the exclusion. Build the settings with `worker.tile_archive.build_tile_archive_settings()`, which reads `TILE_ARCHIVE_SOURCE` and `TILE_ARCHIVE_DIR` and raises `ConfigurationError` naming every missing entry and its file, and the deadline with `build_deadline(TILE_ARCHIVE_RUN_SECONDS, fetch_monotonic_seconds())`, started when the step starts. The step takes no lease and acquires no exclusion; the validation of a lease across provider steps stays with plan Q-5.
+
+Inputs: the source place, the file a person put on the server outside the served directory, and the served directory, from which the proxy serves the archive at `/tiles/krakow.pmtiles`. The step accepts only the recorded archive, `TILE_ARCHIVE_NAME` with `TILE_ARCHIVE_SHA256`, the record of `docs/setup/MAP_SETUP.md`, section The tile archive.
+
+Outcomes: `TileArchiveResult.outcome` is `loaded`, when the step put the checked archive under the served name, or `unchanged`, when the archive was already there. Both complete the `tile_archive` effect, which has no commit state. `skipped` is returned only by the standalone command, never by `apply_tile_archive_run`.
+
+Failures: `TileArchiveError` with `reason`, one of `places_overlap`, `served_directory_missing`, `served_unreadable`, `source_missing`, `source_unreadable`, `source_mismatch`, `copy_failed`, `copy_mismatch` and `deadline_expired`, and the constant message `Tile archive step failed: <reason>`, which names no path. Each leaves the served file as it was, except `copy_failed` raised when the directory cannot be synced on Linux after the replacement, which leaves the complete checked archive under the served name. An expired budget is `deadline_expired`. An unexpected exception is an unsuccessful step, with the served file either as before or the complete checked archive.
+
+Repeat: when the served file already has the recorded value the step writes nothing and returns `unchanged` without reading the source place, so a manual full-flow retry succeeds after the source file was removed; any other file or link under the served name is replaced. A temporary copy left by an interrupted run is removed by the next run.
+
+Budget: 120 seconds, `TILE_ARCHIVE_RUN_SECONDS`, checked by the provider before every chunk of 1 MiB of each read and write and once more before the placement; a system call that blocks inside one chunk is not interrupted.
+
+The standalone command `python -m worker.tile_archive` takes the same exclusion as the common program and the standalone import, so it gives `skipped` with exit code 2 while the common program runs, and the common program refuses while it runs.
 
 ## Proposed common result contract
 
@@ -96,7 +114,7 @@ Reason values must come from fixed integration codes or agreed provider allowlis
 
 - Approve or revise the proposed common entry point and result records.
 - Finalize the importer service signature, live-lease validation, effect mapping and manual retry after a committed copy with failed pointer publication. Importer planning stays with Mateusz.
-- Finalize the tile callable, outcome and failure records, repeat safety and execution budget with Adrian.
+- Map the outcomes and reasons of section Tile-provider handoff to the common records.
 - Supplement the sample provider with its finite whole-step budget and safe enforcement under the approved independent-budget rule.
 - Finalize shared lease-loss and completion behavior across provider work, including filesystem and sample effects outside importer publication.
 - Finalize the optional-session adapter, router registration, local critical fixtures and actual test commands with their existing owners.

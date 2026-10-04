@@ -55,3 +55,7 @@ Distances are planar, in metres, from the sample point to the nearest segment of
 | The same with node 317034340 excluded, S-5 confirmed | 1123 m | The route avoids the crossing of S-5 and crosses at a nearby crossing.                       |
 
 The proxy does not decide which route `route_planning` returns as the main route and which as the alternative around unverified barriers. PRD AC-5 settles that on the running service.
+
+## Use in the critical fixtures
+
+`tests/data/common_sample_data_fixtures.py` seeds the eight reference ways of the table above, each shortened to the nodes around its sample point, with the node positions of the same response and the `kerb=lowered` of node 317034340. Each shortened way keeps the segment nearest to its point, so the distances to the reference ways stay those of the table and no other way comes nearer. The critical tests prove the checks of the loader on this invented network, not on the imported copy.
