@@ -39,6 +39,7 @@ From the seed, before the interview:
 2. A route with public transport as D-12 decides, for FR-5 - FR-9 of `VALHALLA_ROUTING_PRD.md`.
 3. The time box of FR-11 of `VALHALLA_ROUTING_PRD.md`: 4.5 hours of work of the people of the team.
 4. The registry entry When the initiative of O9 starts its code moves to Resolved decisions, and `MVP.md`, sections Initiatives, Order and critical path and Open decisions and confirmations, follows the parallel start of question 1, in the same change, as the condition of that entry asks.
+5. Version 14 of `docs/product/specification.md`: the exception of M7, and the items of M10 and O9 that repeat it, name the boarding, the ride and the alighting, and a segment the GTFS marks as accessible next to one whose GTFS gives no accessibility information (question 2). The registry entry Wording of the public transport segment of O9 moves to Resolved decisions. Version 14 is approved by Rafał.
 
 ## Out of scope
 
@@ -62,6 +63,7 @@ To be filled in during the interview.
 ## Domain rules or explicit TODO
 
 - The code of this initiative starts at once, in parallel with `route_planning` and `osm_importer`, as the section Optional features of the specification says of O9. What does not need the code of `route_planning` goes first: the interface in the contract, the copy of the GTFS, the routing data with public transport and the multimodal request; the walking legs of D-8 and D-9 and the walking route of the fallback are joined to the code of `route_planning` once it exists, and the parts the two share are agreed by their owner, Marek. Decided by Rafał on 2026-10-04 in this interview, question 1, against waiting for `route_planning` and `osm_importer` as `plans_finished/mvp/MVP_PLAN.md` D-15 and D-20 record. The registry names Rafał and Marek, so Marek's ruling is still to be confirmed.
+- A public transport segment - the boarding at the stop, the ride and the alighting at the stop - is green when the GTFS marks it as accessible and when the GTFS gives no accessibility information for it, with the source GTFS of ZTP Kraków and no date. A stop or a trip the GTFS marks as not accessible is never used for boarding, alighting or a ride (specification, O9), so a public transport segment of a route is never in another state. Decided by Rafał on 2026-10-04 in this interview, question 2, as a new version 14 of the specification, against leaving the text of M7 as it is and reading both cases from the item of O9 on stops and trips. The registry names Marek and Rafał, so Marek's ruling is still to be confirmed. The routing data of D-12 rewrites an empty accessibility to accessible (`VALHALLA_ROUTING_PLAN.md` F-14), so the engine itself does not tell the two cases apart.
 
 ## Notes on data, performance and security
 
@@ -69,9 +71,8 @@ To be filled in during the interview.
 
 ## Open questions
 
-1. Does the exception of M7 also name a segment the GTFS marks as accessible and the alighting at the stop, in a new version of the specification, or does the text stay as it is? `Block: no` - resolved in this shape by the condition of the registry entry Wording of the public transport segment of O9.
-2. What does a public transport leg show the person besides its green state and its source: the line, the boarding and alighting stops, the departure time - and what of it is the text form of M8 and M10? `Block: yes` (category: time semantics and zone offset, if a departure time is shown)
-3. Who agrees the change of `plan_route` in `docs/product/api_contract.md`: Marek and Adrian, Kuber for the HarmonyOS client, or Rafał in their place with a caveat? `Block: yes` (category: stability of the programming interface (API) contract)
-4. Who fetches the copy of the GTFS and builds the routing data with public transport: a step of this initiative in the loading program of `osm_import`, or something else? `Block: no`
-5. Where does the day each feed was published, stated in the description of the data sources (M10), come from: written into the page by hand, or read from the service? `Block: no`
-6. When did the 4.5 hours start, and who keeps the record of them? `Block: no`
+1. What does a public transport leg show the person besides its green state and its source: the line, the boarding and alighting stops, the departure time - and what of it is the text form of M8 and M10? `Block: yes` (category: time semantics and zone offset, if a departure time is shown)
+2. Who agrees the change of `plan_route` in `docs/product/api_contract.md`: Marek and Adrian, Kuber for the HarmonyOS client, or Rafał in their place with a caveat? `Block: yes` (category: stability of the programming interface (API) contract)
+3. Who fetches the copy of the GTFS and builds the routing data with public transport: a step of this initiative in the loading program of `osm_import`, or something else? `Block: no`
+4. Where does the day each feed was published, stated in the description of the data sources (M10), come from: written into the page by hand, or read from the service? `Block: no`
+5. When did the 4.5 hours start, and who keeps the record of them? `Block: no`
