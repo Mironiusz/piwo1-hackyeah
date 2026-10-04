@@ -1,5 +1,5 @@
 # Stage
 
-7
+6
 
 Source: FINAL_CHECKLIST.md, section Stages.

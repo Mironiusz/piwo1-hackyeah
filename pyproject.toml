@@ -106,7 +106,7 @@ cache_dir = ".cache/mypy"
 
 [tool.vulture]
 # Tests are scanned too: a use in a test is a use.
-paths = [".claude/hooks", "tests"]
+paths = [".claude/hooks", "tests", "db"]
 # The confidence threshold is raised from the default sixty, because Pydantic model fields and ORM columns are assembled
 # by the library by name, and vulture does not see that and reports them as dead. What the gate stops seeing at this
 # threshold: an unused function, class, method, attribute and variable - vulture assigns them
@@ -118,6 +118,7 @@ min_confidence = 61
 # The dev group is tools run from the command line, not imported by the code. Without this entry deptry
 # reports each of them as declared and unused, because it looks for them in the imports - and they will never be there.
 optional_dependencies_dev_groups = ["dev"]
+extend_exclude = ["db"]
 # Bandit has no configuration section here and that is a decision, not an oversight. A suppression is to apply
 # only in the place where its reason stands, and bandit can suppress only globally - one
 # list in this file would also silence code that does not exist yet. The scope therefore stands next to the calls

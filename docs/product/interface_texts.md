@@ -23,7 +23,7 @@ The keys are proposals for the names the frontend uses in its two dictionaries. 
 
 - A date is a calendar day. Polish: `3.10.2026`. English: `3 Oct 2026`.
 - A distance under 1000 m is in metres: `400 m`. From 1000 m it is in kilometres with one decimal place: Polish `1,3 km`, English `1.3 km`.
-- The moment from which the next vote is accepted shows the day and the hour: Polish `4.10.2026 o 9:12`, English `4 Oct 2026 at 9:12`.
+- The day from which the next vote is accepted is a calendar day, in the format of a date: Polish `5.10.2026`, English `5 Oct 2026`.
 - A placeholder is written in braces, for example `{date}`.
 - Polish has three plural forms and English two. A text with a number names its forms in the order one, few, many for Polish and one, other for English.
 
@@ -307,14 +307,14 @@ The names of the two languages are never translated: `Polski` and `English`. The
   - PL: Twój głos: już nie ma.
   - EN: Your vote: no longer here.
 - `vote.own.saved`
-  - PL: Zapisaliśmy go {date}. Kolejny głos na ten fakt będzie możliwy po upływie doby.
-  - EN: We saved it on {date}. You can vote on this fact again after a day has passed.
+  - PL: Zapisaliśmy go {date}. Kolejny głos na ten fakt będzie możliwy następnego dnia.
+  - EN: We saved it on {date}. You can vote on this fact again the next day.
 - `vote.saved`, announced after a vote
   - PL: Głos zapisany. Status: {status}.
   - EN: Vote saved. Status: {status}.
 - `vote.too_soon`, for the error `vote_too_soon`
-  - PL: Twój głos na ten fakt jest już zapisany. Kolejny będzie możliwy {moment}.
-  - EN: Your vote on this fact is already saved. The next one is possible on {moment}.
+  - PL: Twój głos na ten fakt jest już zapisany. Kolejny będzie możliwy od {day}.
+  - EN: Your vote on this fact is already saved. The next one is possible from {day}.
 - `fact.outdated`
   - PL: Ten fakt jest nieaktualny: przeważają zgłoszenia, że tego już nie ma. Jeśli nadal jest, potwierdź go.
   - EN: This fact is outdated: reports that it is gone prevail. If it is still here, confirm it.
