@@ -29,102 +29,133 @@ afterEach(() => {
 
 describe("saveOwnVote and readOwnVote", () => {
   it("remembers no vote for a fact nobody voted on", () => {
-    expect(readOwnVote(42)).toBeNull();
+    expect(readOwnVote(42, null)).toBeNull();
   });
 
   it("returns the vote that was saved for a fact", () => {
-    saveOwnVote(42, "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
+    saveOwnVote(42, null, "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
 
-    expect(readOwnVote(42)).toEqual({ verdict: "confirm", votedOn: "2026-10-04", repeatAllowedAt: REPEAT_ALLOWED_AT });
+    expect(readOwnVote(42, null)).toEqual({ voter: null, verdict: "confirm", votedOn: "2026-10-04", repeatAllowedAt: REPEAT_ALLOWED_AT });
   });
 
   it("keeps the votes on different facts apart", () => {
-    saveOwnVote(42, "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
-    saveOwnVote(43, "deny", "2026-10-03", "2026-10-04T18:00:00.000+02:00");
+    saveOwnVote(42, null, "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
+    saveOwnVote(43, null, "deny", "2026-10-03", "2026-10-04T18:00:00.000+02:00");
 
-    expect(readOwnVote(42)).toEqual({ verdict: "confirm", votedOn: "2026-10-04", repeatAllowedAt: REPEAT_ALLOWED_AT });
-    expect(readOwnVote(43)).toEqual({ verdict: "deny", votedOn: "2026-10-03", repeatAllowedAt: "2026-10-04T18:00:00.000+02:00" });
-    expect(readOwnVote(44)).toBeNull();
+    expect(readOwnVote(42, null)).toEqual({ voter: null, verdict: "confirm", votedOn: "2026-10-04", repeatAllowedAt: REPEAT_ALLOWED_AT });
+    expect(readOwnVote(43, null)).toEqual({ voter: null, verdict: "deny", votedOn: "2026-10-03", repeatAllowedAt: "2026-10-04T18:00:00.000+02:00" });
+    expect(readOwnVote(44, null)).toBeNull();
   });
 
   it("replaces the earlier vote on the same fact with the latest one", () => {
-    saveOwnVote(42, "confirm", "2026-10-03", "2026-10-04T09:12:44.120+02:00");
-    saveOwnVote(42, "deny", "2026-10-04", REPEAT_ALLOWED_AT);
+    saveOwnVote(42, null, "confirm", "2026-10-03", "2026-10-04T09:12:44.120+02:00");
+    saveOwnVote(42, null, "deny", "2026-10-04", REPEAT_ALLOWED_AT);
 
-    expect(readOwnVote(42)).toEqual({ verdict: "deny", votedOn: "2026-10-04", repeatAllowedAt: REPEAT_ALLOWED_AT });
+    expect(readOwnVote(42, null)).toEqual({ voter: null, verdict: "deny", votedOn: "2026-10-04", repeatAllowedAt: REPEAT_ALLOWED_AT });
   });
 
   it("keeps the votes under their key, each under the identifier of its fact", () => {
-    saveOwnVote(42, "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
+    saveOwnVote(42, null, "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
 
     expect(JSON.parse(storage.getItem(STORAGE_KEYS.ownVotes) ?? "null")).toEqual({
-      "42": { verdict: "confirm", votedOn: "2026-10-04", repeatAllowedAt: REPEAT_ALLOWED_AT },
+      "42": { voter: null, verdict: "confirm", votedOn: "2026-10-04", repeatAllowedAt: REPEAT_ALLOWED_AT },
     });
+  });
+
+  it("keeps the vote of an account apart from the vote of a person without an account", () => {
+    saveOwnVote(42, "anna", "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
+
+    expect(readOwnVote(42, "anna")).toEqual({ voter: "anna", verdict: "confirm", votedOn: "2026-10-04", repeatAllowedAt: REPEAT_ALLOWED_AT });
+    expect(readOwnVote(42, null)).toBeNull();
+    expect(readOwnVote(42, "piotr")).toBeNull();
+  });
+
+  it("keeps one vote for a fact, the latest one cast on it", () => {
+    saveOwnVote(42, "anna", "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
+    saveOwnVote(42, null, "deny", "2026-10-04", REPEAT_ALLOWED_AT);
+
+    expect(readOwnVote(42, "anna")).toBeNull();
+    expect(readOwnVote(42, null)).toEqual({ voter: null, verdict: "deny", votedOn: "2026-10-04", repeatAllowedAt: REPEAT_ALLOWED_AT });
+  });
+
+  it("reads a vote kept without its voter as the vote of a person without an account", () => {
+    storage.setItem(STORAGE_KEYS.ownVotes, JSON.stringify({ "42": { verdict: "confirm", votedOn: "2026-10-04", repeatAllowedAt: REPEAT_ALLOWED_AT } }));
+
+    expect(readOwnVote(42, null)).toEqual({ voter: null, verdict: "confirm", votedOn: "2026-10-04", repeatAllowedAt: REPEAT_ALLOWED_AT });
+    expect(readOwnVote(42, "anna")).toBeNull();
   });
 
   it("reads a kept value of another form as no vote and removes it", () => {
     storage.setItem(STORAGE_KEYS.ownVotes, JSON.stringify({ "42": { verdict: "maybe", votedOn: "2026-10-04", repeatAllowedAt: REPEAT_ALLOWED_AT } }));
 
-    expect(readOwnVote(42)).toBeNull();
+    expect(readOwnVote(42, null)).toBeNull();
     expect(storage.getItem(STORAGE_KEYS.ownVotes)).toBeNull();
   });
 
   it("remembers nothing without a local storage", () => {
     vi.stubGlobal("localStorage", undefined);
 
-    saveOwnVote(42, "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
+    saveOwnVote(42, null, "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
 
-    expect(readOwnVote(42)).toBeNull();
+    expect(readOwnVote(42, null)).toBeNull();
   });
 });
 
 describe("canVoteNow", () => {
   it("allows a vote on a fact without a remembered vote", () => {
-    saveOwnVote(42, "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
+    saveOwnVote(42, null, "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
 
-    expect(canVoteNow(43, new Date("2026-10-04T10:00:00.000+02:00"))).toBe(true);
+    expect(canVoteNow(43, null, new Date("2026-10-04T10:00:00.000+02:00"))).toBe(true);
   });
 
   it("refuses a vote before the instant from which the next one is accepted", () => {
-    saveOwnVote(42, "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
+    saveOwnVote(42, null, "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
 
-    expect(canVoteNow(42, new Date("2026-10-04T09:12:44.120+02:00"))).toBe(false);
-    expect(canVoteNow(42, new Date("2026-10-05T09:12:44.119+02:00"))).toBe(false);
+    expect(canVoteNow(42, null, new Date("2026-10-04T09:12:44.120+02:00"))).toBe(false);
+    expect(canVoteNow(42, null, new Date("2026-10-05T09:12:44.119+02:00"))).toBe(false);
   });
 
   it("allows a vote at the instant from which the next one is accepted", () => {
-    saveOwnVote(42, "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
+    saveOwnVote(42, null, "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
 
-    expect(canVoteNow(42, new Date(REPEAT_ALLOWED_AT))).toBe(true);
+    expect(canVoteNow(42, null, new Date(REPEAT_ALLOWED_AT))).toBe(true);
   });
 
   it("allows a vote after that instant", () => {
-    saveOwnVote(42, "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
+    saveOwnVote(42, null, "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
 
-    expect(canVoteNow(42, new Date("2026-10-05T09:12:44.121+02:00"))).toBe(true);
-    expect(canVoteNow(42, new Date("2026-10-06T00:00:00.000+02:00"))).toBe(true);
+    expect(canVoteNow(42, null, new Date("2026-10-05T09:12:44.121+02:00"))).toBe(true);
+    expect(canVoteNow(42, null, new Date("2026-10-06T00:00:00.000+02:00"))).toBe(true);
   });
 
   it("compares the two instants as moments, whatever offset each is written with", () => {
-    saveOwnVote(42, "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
+    saveOwnVote(42, null, "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
 
-    expect(canVoteNow(42, new Date("2026-10-05T07:12:44.119Z"))).toBe(false);
-    expect(canVoteNow(42, new Date("2026-10-05T07:12:44.120Z"))).toBe(true);
+    expect(canVoteNow(42, null, new Date("2026-10-05T07:12:44.119Z"))).toBe(false);
+    expect(canVoteNow(42, null, new Date("2026-10-05T07:12:44.120Z"))).toBe(true);
+  });
+
+  it("allows the vote of a voter whose vote on the fact is not the remembered one", () => {
+    saveOwnVote(42, "anna", "confirm", "2026-10-04", REPEAT_ALLOWED_AT);
+
+    expect(canVoteNow(42, "anna", new Date("2026-10-04T10:00:00.000+02:00"))).toBe(false);
+    expect(canVoteNow(42, null, new Date("2026-10-04T10:00:00.000+02:00"))).toBe(true);
+    expect(canVoteNow(42, "piotr", new Date("2026-10-04T10:00:00.000+02:00"))).toBe(true);
   });
 
   it("allows a vote when the remembered instant cannot be read", () => {
-    saveOwnVote(42, "confirm", "2026-10-04", "tomorrow");
+    saveOwnVote(42, null, "confirm", "2026-10-04", "tomorrow");
 
-    expect(canVoteNow(42, new Date("2026-10-04T10:00:00.000+02:00"))).toBe(true);
+    expect(canVoteNow(42, null, new Date("2026-10-04T10:00:00.000+02:00"))).toBe(true);
   });
 
   it("refuses a second vote until the next calendar day starts on the clock of the device", () => {
     const votedAt = new Date(2026, 9, 4, 9, 12, 44, 120);
-    saveOwnVote(42, "deny", toDeviceDay(votedAt), startOfNextDay(votedAt));
+    saveOwnVote(42, null, "deny", toDeviceDay(votedAt), startOfNextDay(votedAt));
 
-    expect(canVoteNow(42, votedAt)).toBe(false);
-    expect(canVoteNow(42, new Date(2026, 9, 4, 23, 59, 59, 999))).toBe(false);
-    expect(canVoteNow(42, new Date(2026, 9, 5, 0, 0, 0, 0))).toBe(true);
+    expect(canVoteNow(42, null, votedAt)).toBe(false);
+    expect(canVoteNow(42, null, new Date(2026, 9, 4, 23, 59, 59, 999))).toBe(false);
+    expect(canVoteNow(42, null, new Date(2026, 9, 5, 0, 0, 0, 0))).toBe(true);
   });
 });
 

@@ -23,10 +23,11 @@ describe("isPseudonymValid", () => {
     ["three letters", "abc"],
     ["thirty characters", "a".repeat(30)],
     ["Polish letters", "Wózek_Żółć"],
+    ["the nine Polish letters in lower case", "ąćęłńóśźż"],
+    ["the nine Polish letters in upper case", "ĄĆĘŁŃÓŚŹŻ"],
     ["digits, the underscore and the hyphen", "wozek_krk-2026"],
     ["only digits", "123"],
     ["spaces around a pseudonym that keeps the rule", "  wozek_krk  "],
-    ["three letters outside the basic plane, each one character", "\u{1D400}\u{1D401}\u{1D402}"],
   ])("accepts %s", (_name, pseudonym) => {
     expect(isPseudonymValid(pseudonym)).toBe(true);
   });
@@ -41,6 +42,11 @@ describe("isPseudonymValid", () => {
     ["a dot", "wozek.krk"],
     ["an at sign", "wozek@krk"],
     ["a line break inside", "wozek\nkrk"],
+    ["letters outside the basic plane", "\u{1D400}\u{1D401}\u{1D402}"],
+    ["letters of another alphabet", "\u0416\u0443\u043A_123"],
+    ["a Latin letter with a mark that is not Polish", "caf\u00E9"],
+    ["a Polish letter written as a letter with a separate mark", "wa\u0328z"],
+    ["digits of another script", "\u0661\u0662\u0663"],
   ])("refuses %s", (_name, pseudonym) => {
     expect(isPseudonymValid(pseudonym)).toBe(false);
   });

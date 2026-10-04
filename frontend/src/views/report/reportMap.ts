@@ -76,14 +76,6 @@ export function buildMoveCamera(point: Point): MapCamera {
 }
 
 /**
- * Moves the keyboard focus to the map, so the arrow keys move it under the mark. The layout of the map views offers
- * no way to focus the map, so the map is found by the class name the map library gives its canvas.
- */
-export function focusMap(): void {
-  document.querySelector<HTMLElement>(".maplibregl-canvas")?.focus();
-}
-
-/**
  * Tells whether two points are the same place for the eye, within about a metre.
  */
 export function isSamePlace(first: Point, second: Point): boolean {

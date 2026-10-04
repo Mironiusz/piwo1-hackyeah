@@ -14,9 +14,10 @@ import { Panel } from "../../parts/Panel.tsx";
 import { ACTIONS, HINT, KEY_VALUE_KEY, KEY_VALUE_LIST, KEY_VALUE_VALUE } from "../../parts/styles.ts";
 import { usePlannedRoute } from "../../state/plannedRoute.tsx";
 import { useReportDraft } from "../../state/reportDraft.tsx";
+import { useSession } from "../../state/session.tsx";
 import { buildPointCamera, buildReportMarker, buildReportZone, buildZoneCamera, REPORT_POINT_ZOOM } from "./reportMap.ts";
 import { ReportStepHead } from "./ReportStepHead.tsx";
-import { buildCreateFactRequest, countSteps, findOpenStep, findStepNumber, hasExistingStep, makeIdempotencyKey, REPORT_HEADING_ID, REPORT_PATHS } from "./reportSteps.ts";
+import { buildCreateFactRequest, countSteps, findOpenStep, findStepNumber, hasExistingStep, makeIdempotencyKey, rememberConfirmation, REPORT_HEADING_ID, REPORT_PATHS } from "./reportSteps.ts";
 import { useIsMounted } from "./useIsMounted.ts";
 
 type SaveState = "idle" | "saving" | "failed";
@@ -33,6 +34,7 @@ export function ReportSummaryStep() {
   const isMounted = useIsMounted();
   const { draft, keepIdempotencyKey, dropIdempotencyKey, keepSavedFact } = useReportDraft();
   const { markStale } = usePlannedRoute();
+  const { account } = useSession();
   const [save, setSave] = useState<SaveState>("idle");
 
   const { kind, point, type } = draft;
@@ -68,6 +70,7 @@ export function ReportSummaryStep() {
    * because a further attempt with it could never succeed.
    * The saved fact goes to the draft also when the person has moved to another step meanwhile, so that step shows the saved state;
    * here the saved fact and the address of the saved state change in one change of the screen.
+   * A saved report carries the confirmation of its author, so the device remembers it as the own vote of the person on the new fact.
    */
   const approve = async () => {
     const key = draft.idempotencyKey ?? makeIdempotencyKey();
@@ -81,6 +84,7 @@ export function ReportSummaryStep() {
     setSave("saving");
     try {
       const fact = await createFact(body);
+      rememberConfirmation(fact.id, account?.pseudonym ?? null);
       markStale();
       startTransition(() => keepSavedFact(fact));
       if (isMounted()) {
