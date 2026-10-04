@@ -13,7 +13,7 @@ pytestmark = pytest.mark.integration
 
 def test_malformed_file_exits_without_values_or_traceback(tmp_path):
     """Reject literal-parser failures through the same safe startup boundary."""
-    (tmp_path / ".env").write_text("DATABASE_URL=private-first\nDATABASE_URL=private-second\n", encoding="utf-8")
+    (tmp_path / ".env").write_text("DB_SERVICE_ACCOUNT_PASSWORD=private-first\nDB_SERVICE_ACCOUNT_PASSWORD=private-second\n", encoding="utf-8")
     environment = dict(os.environ)
     environment["PYTHONPATH"] = os.pathsep.join((str(ROOT), environment.get("PYTHONPATH", "")))
     result = subprocess.run([sys.executable, "-m", "api"], cwd=tmp_path, env=environment, capture_output=True, text=True, timeout=5, check=False)

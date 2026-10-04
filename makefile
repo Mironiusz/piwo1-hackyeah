@@ -1,4 +1,4 @@
-.PHONY: lint lint-python lint-docs format test test-unit test-critical typecheck deadcode deps security audit check check-unit frontend-typecheck frontend-lint frontend-test frontend-format-check frontend-check backend db-build db-up db-down migration-heads migration-history
+.PHONY: lint lint-python lint-docs format test test-unit test-critical typecheck deadcode deps security audit check check-unit frontend-typecheck frontend-lint frontend-test frontend-format-check frontend-check backend
 
 # No recipe in this file contains shell syntax: no `||`, no brace blocks, no
 # apostrophes, no file sourcing. This is not a matter of style. GNU make on Windows picks the shell
@@ -66,13 +66,13 @@ security:
 	python -m bandit -r config -x config/settings.py --confidence-level medium
 # Settings B105 reports environment filenames as passwords, not credential literals.
 	python -m bandit config/settings.py -s B105 --confidence-level medium
-	python -m bandit -r api worker common_time.py alembic --confidence-level medium
+	python -m bandit -r api worker common_time.py --confidence-level medium
 	python -m bandit -r data -x data/import_process.py,data/windows_job.py --confidence-level medium
 # The process supervisor accepts an absolute executable from the trusted administrative caller, with shell=False and suppressed output.
 	python -m bandit data/import_process.py -s B404,B603 --confidence-level medium
 # The Windows supervisor uses subprocess only to encode argv for CreateProcessW; no shell is involved.
 	python -m bandit data/windows_job.py -s B404 --confidence-level medium
-	python -m bandit -r config api data worker common_time.py alembic -t B608
+	python -m bandit -r config api data worker common_time.py -t B608
 
 audit:
 	pip-audit
@@ -108,21 +108,6 @@ check: lint typecheck deadcode deps security audit test frontend-check
 
 backend:
 	python -m api
-
-db-build:
-	docker compose --env-file .env --env-file .env.local -f compose.local.yml build
-
-db-up:
-	docker compose --env-file .env --env-file .env.local -f compose.local.yml up -d
-
-db-down:
-	docker compose --env-file .env --env-file .env.local -f compose.local.yml down
-
-migration-heads:
-	python -m alembic heads
-
-migration-history:
-	python -m alembic history
 
 test-critical:
 	python -m pytest -m critical $(PYTEST_ARGS)

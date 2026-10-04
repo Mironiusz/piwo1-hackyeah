@@ -19,7 +19,6 @@ dependencies = [
     "psycopg[binary]==3.3.6",
     "pydantic==2.13.5",
     "tzdata==2026.5",
-    "alembic==1.20.0",
     "httpx==0.28.1",
     "osmium==4.3.1",
     "shapely==2.1.2",
@@ -118,7 +117,7 @@ docstring-code-format = true
 # pydantic.mypy plugin: without it mypy reports missing arguments when creating the settings model, because it does not know that
 # the values come from the environment.
 [tool.mypy]
-files = [".claude/hooks", "config", "api", "service", "data", "worker", "common_time.py", "alembic/env.py"]
+files = [".claude/hooks", "config", "api", "service", "data", "worker", "common_time.py"]
 plugins = ["pydantic.mypy"]
 cache_dir = ".cache/mypy"
 
@@ -141,7 +140,7 @@ min_confidence = 61
 # reports each of them as declared and unused, because it looks for them in the imports - and they will never be there.
 optional_dependencies_dev_groups = ["dev"]
 extend_exclude = ["db"]
-per_rule_ignores = {DEP002 = ["alembic", "tzdata"]}
+per_rule_ignores = {DEP002 = ["tzdata"]}
 # Bandit has no configuration section here and that is a decision, not an oversight. A suppression is to apply
 # only in the place where its reason stands, and bandit can suppress only globally - one
 # list in this file would also silence code that does not exist yet. The scope therefore stands next to the calls

@@ -19,7 +19,16 @@ def test_target_collection_never_runs_write_fixture(tmp_path, collect_only):
         encoding="utf-8",
     )
     environment = dict(
-        os.environ, APP_ENVIRONMENT="target", API_BIND_HOST="127.0.0.1", API_PORT="8000", BUSINESS_TIMEZONE="Europe/Warsaw", DATABASE_URL="postgresql+psycopg://invented:invented@localhost/invented"
+        os.environ,
+        APP_ENVIRONMENT="target",
+        API_BIND_HOST="127.0.0.1",
+        API_PORT="8000",
+        BUSINESS_TIMEZONE="Europe/Warsaw",
+        DB_HOST="localhost",
+        DB_PORT="5432",
+        DB_NAME="invented",
+        DB_SERVICE_ACCOUNT_NAME="invented",
+        DB_SERVICE_ACCOUNT_PASSWORD="invented-private",
     )
     environment["PYTHONPATH"] = os.pathsep.join((str(ROOT), environment.get("PYTHONPATH", "")))
     arguments = [sys.executable, "-m", "pytest", "-o", "addopts=-ra", str(tmp_path)]
@@ -28,4 +37,4 @@ def test_target_collection_never_runs_write_fixture(tmp_path, collect_only):
     result = subprocess.run(arguments, cwd=tmp_path, env=environment, capture_output=True, text=True, timeout=10, check=False)
     assert result.returncode == 4, result.stdout + result.stderr
     assert not (tmp_path / "sentinel").exists()
-    assert "invented:invented" not in result.stdout + result.stderr
+    assert "invented-private" not in result.stdout + result.stderr

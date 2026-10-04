@@ -14,7 +14,7 @@ Before you invent a name for a new file, function or constant, check whether the
 
 ## Current state
 
-The first entries came on 2026-10-04 with the package `db/` of `plans/schema_first_revision/`, the database implementation of the project. The names the template brought with it - the `makefile` targets and the architecture tests - have not been entered. The target rule is in `standard_naming.md`; the actual state goes here.
+The first entries came on 2026-10-04 with the package `db/` of `plans/schema_first_revision/`, the first code of the project. The names the template brought with it - the `makefile` targets and the architecture tests - have not been entered. The target rule is in `standard_naming.md`; the actual state goes here.
 
 ## Names in the database
 
@@ -124,10 +124,10 @@ Every object the first revision `db/accessibility_db/migrations/versions/0001_ta
 The names of `plans/backend_skeleton/`, merged on 2026-10-04 from the branch `mw-backend-skeleton`.
 
 - Layer packages: `api`, `service`, `data`, `worker`; shared configuration is `config` and time is `common_time`.
-- Factories and actions: `build_app`, `build_engine`, `build_import_engine`, `build_migration_engine`, `apply_import_exclusion`, `apply_publication`, `apply_import_process`.
+- Factories and actions: `build_app`, `build_engine`, `build_import_engine`, `build_database_url`, `apply_import_exclusion`, `apply_publication`, `apply_import_process`.
 - SQL constants use `FETCH_..._SQL` or `APPLY_..._SQL` in `data/locks.py`; import admission and publication fence have separate keys.
 - Planned public failure names such as `ImportAlreadyRunning` and `PublicationOutcomeUnknown` are aliases of exception classes ending in `Error`, satisfying the naming gate while preserving the shared contract.
-- Launch targets: `backend`, `db-build`, `db-up`, `db-down`, `migration-heads`, `migration-history`, `test-critical`, `check-unit`.
+- Launch targets: `backend`, `test-critical`, `check-unit`. The targets of the local database and of the revision runner left on 2026-10-04 with the local setup of the skeleton; the local database is started by the commands of `db/README.md`.
 
 ## Importer service names
 

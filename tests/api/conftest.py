@@ -14,7 +14,11 @@ def _runtime_settings(monkeypatch: pytest.MonkeyPatch):
         "API_BIND_HOST": "127.0.0.1",
         "API_PORT": "8000",
         "BUSINESS_TIMEZONE": "Europe/Warsaw",
-        "DATABASE_URL": "postgresql+psycopg://invented:private@127.0.0.1/invented",
+        "DB_HOST": "127.0.0.1",
+        "DB_PORT": "5432",
+        "DB_NAME": "invented",
+        "DB_SERVICE_ACCOUNT_NAME": "invented",
+        "DB_SERVICE_ACCOUNT_PASSWORD": "invented-private",
         "LOG_LEVEL": "DEBUG",
     }
     saved = sys.modules.pop("config.config", None)

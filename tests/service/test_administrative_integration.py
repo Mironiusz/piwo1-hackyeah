@@ -19,7 +19,11 @@ def administrative_settings(monkeypatch):
         "API_BIND_HOST": "127.0.0.1",
         "API_PORT": "8000",
         "BUSINESS_TIMEZONE": "Europe/Warsaw",
-        "DATABASE_URL": "postgresql+psycopg://invented:invented@localhost/invented",
+        "DB_HOST": "localhost",
+        "DB_PORT": "5432",
+        "DB_NAME": "invented",
+        "DB_SERVICE_ACCOUNT_NAME": "invented",
+        "DB_SERVICE_ACCOUNT_PASSWORD": "invented",
     }.items():
         monkeypatch.setenv(key, value)
     importlib.invalidate_caches()
