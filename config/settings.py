@@ -7,8 +7,6 @@ from typing import Any, Literal
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from pydantic import BaseModel, ConfigDict, Field, SecretStr, ValidationError, field_validator
-from sqlalchemy.engine import make_url
-from sqlalchemy.exc import ArgumentError
 
 ENVIRONMENT_ENTRY_FILES = {
     "APP_ENVIRONMENT": ".env.local",
@@ -17,16 +15,11 @@ ENVIRONMENT_ENTRY_FILES = {
     "BUSINESS_TIMEZONE": ".env.local",
     "LOG_LEVEL": ".env.local",
     "IMPORT_WORKSPACE_ROOT": ".env.local",
-    "DATABASE_URL": ".env",
-    "MIGRATION_DATABASE_URL": ".env",
-    "POSTGRES_PASSWORD": ".env",
-    "DATABASE_OWNER_PASSWORD": ".env",
-    "DATABASE_SERVICE_PASSWORD": ".env",
-    "POSTGRES_USER": ".env.local",
-    "DATABASE_OWNER_USER": ".env.local",
-    "DATABASE_SERVICE_USER": ".env.local",
-    "DATABASE_NAME": ".env.local",
-    "DATABASE_HOST_PORT": ".env.local",
+    "DB_SERVICE_ACCOUNT_PASSWORD": ".env",
+    "DB_SERVICE_ACCOUNT_NAME": ".env.local",
+    "DB_NAME": ".env.local",
+    "DB_HOST": "launch environment",
+    "DB_PORT": "launch environment",
 }
 
 
@@ -34,21 +27,8 @@ class ConfigurationError(ValueError):
     """Identify a missing or invalid setting without including its value."""
 
 
-def apply_database_address_validation(address: SecretStr) -> SecretStr:
-    """Require the selected PostgreSQL driver and an explicit database."""
-    try:
-        parsed = make_url(address.get_secret_value())
-    except ArgumentError:
-        raise ValueError("invalid_database_address") from None
-    if parsed.drivername != "postgresql+psycopg" or not parsed.database or not parsed.username:
-        raise ValueError("invalid_database_address")
-    if any(marker in address.get_secret_value() for marker in ("<", ">")):
-        raise ValueError("unfilled_database_address")
-    return address
-
-
 class Settings(BaseModel):
-    """Hold the validated application contract and optional import path."""
+    """Hold the validated application contract, the service-account entries of db/ and the optional import path."""
 
     model_config = ConfigDict(extra="ignore", hide_input_in_errors=True)
     APP_ENVIRONMENT: Literal["local", "target"]
@@ -56,7 +36,11 @@ class Settings(BaseModel):
     API_PORT: int = Field(ge=1, le=65535)
     BUSINESS_TIMEZONE: str
     LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
-    DATABASE_URL: SecretStr
+    DB_HOST: str
+    DB_PORT: int = Field(ge=1, le=65535)
+    DB_NAME: str = Field(min_length=1)
+    DB_SERVICE_ACCOUNT_NAME: str = Field(min_length=1)
+    DB_SERVICE_ACCOUNT_PASSWORD: SecretStr
     IMPORT_WORKSPACE_ROOT: Path | None = None
 
     def __init__(self, **data: Any) -> None:
@@ -68,11 +52,13 @@ class Settings(BaseModel):
             entries = ", ".join(f"{name} ({ENVIRONMENT_ENTRY_FILES[name]})" for name in names)
             raise ConfigurationError(f"Missing or invalid configuration: {entries}") from None
 
-    @field_validator("DATABASE_URL")
+    @field_validator("DB_SERVICE_ACCOUNT_PASSWORD")
     @classmethod
-    def apply_database_validation(cls, value: SecretStr) -> SecretStr:
-        """Validate the runtime address without connecting to the database."""
-        return apply_database_address_validation(value)
+    def apply_password_validation(cls, value: SecretStr) -> SecretStr:
+        """Refuse an empty service-account password, which an unfilled template marker leaves behind."""
+        if not value.get_secret_value():
+            raise ValueError("empty_service_account_password")
+        return value
 
     @field_validator("BUSINESS_TIMEZONE")
     @classmethod
@@ -84,16 +70,16 @@ class Settings(BaseModel):
             raise ValueError("invalid_business_timezone") from None
         return value
 
-    @field_validator("API_BIND_HOST")
+    @field_validator("API_BIND_HOST", "DB_HOST")
     @classmethod
     def apply_host_validation(cls, value: str) -> str:
-        """Accept an IP address or a syntactically valid DNS bind name."""
+        """Accept an IP address or a syntactically valid DNS name, for the bind host and for the database host alike."""
         try:
             ipaddress.ip_address(value)
         except ValueError:
             labels = value.split(".")
             if len(value) > 253 or not all(re.fullmatch(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?", label) for label in labels):
-                raise ValueError("invalid_bind_host") from None
+                raise ValueError("invalid_host") from None
         return value
 
     @field_validator("IMPORT_WORKSPACE_ROOT", mode="before")
