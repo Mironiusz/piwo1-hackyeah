@@ -39,7 +39,7 @@ interface Stretch {
 function joinStretches(route: Route, isAssessed: boolean): Stretch[] {
   const stretches: Stretch[] = [];
   for (const segment of route.segments) {
-    const state: DrawnState = isAssessed ? segment.state : "neutral";
+    const state: DrawnState = !isAssessed || segment.state === "not_assessed" ? "neutral" : segment.state;
     const last = stretches[stretches.length - 1];
     const lastPoint = last?.line[last.line.length - 1];
     const firstPoint = segment.line[0];

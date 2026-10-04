@@ -5,7 +5,7 @@ import { PAGE_HEADING, PAGE_LEAD, PAGE_TITLE, TEXT_LIST, TEXT_LIST_ITEM } from "
 import { LeadItem } from "./LeadItem.tsx";
 import { PageBack } from "./PageBack.tsx";
 
-const KEPT_TEXTS = ["privacy.kept.account", "privacy.kept.vote"] as const;
+const KEPT_TEXTS = ["privacy.kept.account", "privacy.kept.vote", "privacy.kept.route_log"] as const;
 
 const NOT_KEPT_TEXTS = ["privacy.not_kept.needs", "privacy.not_kept.location", "privacy.not_kept.email", "privacy.not_kept.disability"] as const;
 

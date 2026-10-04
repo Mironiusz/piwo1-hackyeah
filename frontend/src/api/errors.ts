@@ -1,25 +1,34 @@
 import type { ApiErrorCode } from "./types.ts";
 
 /**
+ * An end of a route, as the refusal of a route outside Kraków names it.
+ */
+export type RoutePointName = "start" | "destination";
+
+/**
  * The one error of every failed request: the code of the contract, the fields the service refused,
- * and for a vote that came too soon the instant from which the next one is accepted.
+ * for a vote that came too soon the instant from which the next one is accepted,
+ * and for a route refused outside Kraków the ends of the route that lie outside it.
  */
 export class ApiError extends Error {
   readonly code: ApiErrorCode;
   readonly fields: readonly string[];
   readonly repeatAllowedAt: string | null;
+  readonly points: readonly RoutePointName[];
 
-  constructor(code: ApiErrorCode, fields: readonly string[] = [], repeatAllowedAt: string | null = null) {
+  constructor(code: ApiErrorCode, fields: readonly string[] = [], repeatAllowedAt: string | null = null, points: readonly RoutePointName[] = []) {
     super(code);
     this.name = "ApiError";
     this.code = code;
     this.fields = fields;
     this.repeatAllowedAt = repeatAllowedAt;
+    this.points = points;
   }
 }
 
 const ERROR_TEXT_KEYS: Partial<Record<ApiErrorCode, string>> = {
   routing_unavailable: "plan.unavailable.title",
+  point_outside_krakow: "plan.outside",
   invalid_search_text: "search.invalid",
   address_search_unavailable: "search.unavailable",
   vote_too_soon: "vote.too_soon",

@@ -1,9 +1,10 @@
-"""Build the shared object Fact of the contract from a stored fact and the status the rule of M4 derived for it."""
+"""Build the shared object Fact of the contract from a stored fact and the status the rule of M4 derived for it, and the bodies of the community facts that carry it."""
 
 from datetime import date
 
 from accessibility_db.closed_lists import FactSource
 
+from service.community_facts import AreaFacts, FlaggedFactView, NearbyFactView
 from service.fact_status import FactView
 
 
@@ -31,3 +32,28 @@ def build_fact_body(fact: FactView) -> dict[str, object]:
         "is_sample": stored.is_sample,
         "can_be_flagged": not is_openstreetmap,
     }
+
+
+def build_fact_item_body(fact: FactView) -> dict[str, object]:
+    """Build the body of read_fact, create_fact and cast_vote: the one fact."""
+    return {"fact": build_fact_body(fact)}
+
+
+def build_area_facts_body(area: AreaFacts) -> dict[str, object]:
+    """Build the body of list_facts_in_area: the facts of the rectangle and whether it holds more."""
+    return {"facts": [build_fact_body(view) for view in area.facts], "is_truncated": area.is_truncated}
+
+
+def build_nearby_facts_body(nearby: tuple[NearbyFactView, ...]) -> dict[str, object]:
+    """Build the body of find_nearby_facts: each fact with its distance in whole metres, nearest first."""
+    return {"facts": [{"fact": build_fact_body(item.view), "distance_m": item.distance_m} for item in nearby]}
+
+
+def build_flagged_fact_body(item: FlaggedFactView) -> dict[str, object]:
+    """Build the moderator item of a flagged fact: the fact, the day of its first flag and whether it is hidden, nothing about who flagged it."""
+    return {"fact": build_fact_body(item.view), "flagged_on": build_day(item.flagged_on), "is_hidden": item.is_hidden}
+
+
+def build_flagged_facts_body(items: tuple[FlaggedFactView, ...]) -> dict[str, object]:
+    """Build the body of list_flagged_facts in the order of the service, the latest flag first."""
+    return {"facts": [build_flagged_fact_body(item) for item in items]}

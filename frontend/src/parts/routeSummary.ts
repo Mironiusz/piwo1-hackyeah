@@ -1,10 +1,10 @@
-import type { Route, RouteFact, SegmentState } from "../api/types.ts";
+import type { AnsweredSegmentState, Route, RouteFact } from "../api/types.ts";
 
 /**
  * A stretch of the summary line: the segments that follow each other in one state, with their joint length.
  */
 export interface SummaryStretch {
-  state: SegmentState;
+  state: AnsweredSegmentState;
   lengthM: number;
 }
 
@@ -37,6 +37,14 @@ export function joinSummaryStretches(route: Route): SummaryStretch[] {
     }
   }
   return stretches;
+}
+
+/**
+ * Tells whether the service assessed the segments of a route. It answers not_assessed for every segment of a route
+ * whose needs name no barrier, and for no other route.
+ */
+export function isRouteAssessed(route: Route): boolean {
+  return !route.segments.some((segment) => segment.state === "not_assessed");
 }
 
 /**

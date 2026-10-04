@@ -1,4 +1,4 @@
-"""Provide invented runtime settings for the rules that read the business zone or the logger through the configuration facade, and invented typed snapshots for sample validation."""
+"""Provide invented runtime settings for the rules that read the business zone or the logger through the configuration facade, invented typed snapshots for sample validation and the invented data seam of the community facts."""
 
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -9,6 +9,7 @@ from accessibility_db.closed_lists import FactSource
 from common_sample_data import SampleFactRow, SampleNearbyWay, SampleNetworkPrerequisites, SampleVoteRow, StoredSample, StoredSampleVote
 from service.sample_data import SAMPLE_DEFINITIONS, build_sample_insert_rows
 from tests.common_runtime_settings import apply_invented_runtime_settings
+from tests.service.common_community_fact_store import InventedFactStore, apply_invented_fact_store
 
 SAMPLE_LOADING_AT = datetime(2026, 1, 10, 8, 0, tzinfo=ZoneInfo("Europe/Warsaw"))
 
@@ -18,6 +19,14 @@ def runtime_settings(monkeypatch: pytest.MonkeyPatch):
     """Load valid invented configuration and restore module state afterwards."""
     with apply_invented_runtime_settings(monkeypatch):
         yield
+
+
+@pytest.fixture
+def fact_store(runtime_settings, monkeypatch: pytest.MonkeyPatch) -> InventedFactStore:
+    """Replace the data layer, the engine and the clock of the community facts with an empty invented store."""
+    store = InventedFactStore()
+    apply_invented_fact_store(monkeypatch, store)
+    return store
 
 
 @pytest.fixture

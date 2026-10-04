@@ -11,6 +11,7 @@
     "lint": "oxlint",
     "test": "vitest run",
     "mock": "node mock-server/server.mjs",
+    "mock:beside": "node mock-server/server.mjs --beside-service",
     "map-style": "node scripts/generate_base_map_style.mjs",
     "map-style:check": "node scripts/generate_base_map_style.mjs --check"
   },

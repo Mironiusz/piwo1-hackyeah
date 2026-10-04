@@ -244,7 +244,9 @@ export const en: Record<string, string> = {
   "privacy.kept.vote":
     "The identifier of a vote without an account. An irreversible digest of the IP address and of browser characteristics, to tell one person without an account from another. Until the demo and all its data are deleted on 4 October 2026. It is pseudonymized personal data, not anonymous data.",
   "privacy.not_kept.needs": "Your needs. They stay only on your device and are not part of the account.",
-  "privacy.not_kept.location": "Your current location. We use it only to plan one route.",
+  "privacy.kept.route_log":
+    "The points of route requests, your current location among them, in the log of the route planning service. To check how route planning works in this demo. Until the demo and all its data are deleted on 4 October 2026.",
+  "privacy.not_kept.location": "Your current location, apart from the log of the route planning service. We use it only to plan one route.",
   "privacy.not_kept.email": "An email address. We do not ask for one.",
   "privacy.not_kept.disability": "Information about disability. We do not ask about it.",
   "privacy.others.server": "Your browser talks only to our server. The map, the typefaces and the scripts come from us, so no outside service learns your IP address or the place you look at.",

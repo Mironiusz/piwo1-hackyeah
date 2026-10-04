@@ -70,6 +70,17 @@ The boundary of Kraków of a copy is the file `krakow_boundary.wkb` in the direc
 
 A call to the routing service waits at most 2 seconds. Error 442 means no path and error 443 a shape that cannot be traced; every other failure, a timeout and a body that cannot be read are the same failure, an unavailable service. `/status` gives the instant of the tiles the service loaded, in whole seconds. A traced edge gives its way, the OpenStreetMap nodes it begins and ends at, and its part of the traced shape.
 
+## Community facts
+
+Every operation of `community_facts.py` runs inside the transaction of its caller, in the order lock, decision, write, and the decision stays with the service layer.
+
+- A vote. The caller raises the statement limit to 120000 ms, and `fetch_stored_fact_for_vote` locks the fact with `FOR SHARE` and reads it as it is once locked; it waits for a publication of a fresh copy that holds the fact and for a moderation of it. The caller restores the limit, decides from the state read - missing, hidden, removed in OpenStreetMap - and takes the instant from the business clock. `apply_vote_insert` then inserts with `ON CONFLICT DO NOTHING` and returns the identifier and `cast_on` of the new row. With no row it reads the `cast_on` of the latest vote of the same person on the fact by instant and identity, which is the vote that took the day, and gives `VoteDayTaken`. The day is the generated column of the database, never computed again here.
+- A report or a geozone. `apply_fact_insert` inserts the fact with `ON CONFLICT (idempotency_key) DO NOTHING`, building the point from the bound longitude and latitude. A new row stores the confirmation of the author at the instant of the creation in the same transaction. With no row the statement has waited for the transaction that held the key, and the fact it stored is read by its key and returned with `is_created` false.
+- A flag, a hiding or a restoration. `fetch_stored_fact_for_change` locks the fact with `FOR NO KEY UPDATE` and reads it as it is once locked. The caller decides from the source, the flag and the hidden mark, and the write sets the instant with `COALESCE`, so a repeat keeps the first instant, or clears both columns of the hidden mark, and reads the fact back with `RETURNING`.
+- The reads. The map takes the visible facts of a rectangle compared as geometry, at most the given limit by identity; the check for existing facts takes the visible facts of one type within a distance of a point ordered by distance; the moderator list takes every flagged fact by the instant of its flag, latest first; the reading of one fact leaves out only the hidden ones. The votes of the facts read come afterwards from one call of `fetch_fact_votes`.
+
+No step logs, commits or retries, and no record or error of `community_facts.py` carries the 32 bytes of a person without an account or an account identifier in its text; only the votes of `fetch_fact_votes` carry them, for the status rule.
+
 ## Sample data
 
 The sample step runs in one Repeatable Read transaction, so the copy, the network, the stored facts and their votes belong to one state of the database.

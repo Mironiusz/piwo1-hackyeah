@@ -7,10 +7,11 @@ from typing import Literal
 from fastapi import APIRouter, FastAPI, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator
 
 from api.errors import build_error_response
 from api.fact_body import build_fact_body
+from api.point_body import PointBody
 from service.route_graph import RoutePoint, build_route_graph_at_start
 from service.route_planning import PlannedRoute, PointOutsideKrakowError, RouteAnswer, resolve_route
 from service.route_segments import RouteFactView, RoutingUnavailableError
@@ -19,14 +20,6 @@ type BarrierType = Literal["stairs", "high_kerb", "poor_surface", "steep_incline
 type AmenityType = Literal["ramp", "elevator", "lowered_kerb", "accessible_toilet", "rest_place", "handrail_at_stairs"]
 
 router = APIRouter()
-
-
-class PointBody(BaseModel):
-    """A point in degrees of WGS 84; a string for a number or a coordinate outside its range is refused."""
-
-    model_config = ConfigDict(extra="forbid", strict=True, allow_inf_nan=False)
-    lat: float = Field(ge=-90, le=90)
-    lon: float = Field(ge=-180, le=180)
 
 
 class RouteRequestBody(BaseModel):

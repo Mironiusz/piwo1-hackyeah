@@ -19,6 +19,8 @@ INVENTED_RUNTIME_SETTINGS = {
     "DB_SERVICE_ACCOUNT_NAME": "invented",
     "DB_SERVICE_ACCOUNT_PASSWORD": "invented-private",
     "SESSION_SIGNING_KEY": "invented-private-session-signing-key",
+    "VOTER_HASH_KEY": "invented-private-voter-hash-key-of-32",
+    "API_TRUSTED_PROXY_ADDRESSES": "",
     "LOG_LEVEL": "DEBUG",
     "ROUTING_SERVICE_URL": "http://routing:8002",
     "ROUTING_DATA_DIR": str(Path(__file__).resolve().parent / "invented_routing_data"),

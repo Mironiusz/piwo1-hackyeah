@@ -225,6 +225,15 @@ The names of `plans_finished/accounts/`, the four account operations and the one
 - `tests/conftest.py`: the fixture `stored_account_cleanup`, which deletes the accounts a critical test registered before committing them.
 - `SESSION_SIGNING_KEY`: the environment entry of the key that signs session tokens, with `SESSION_SIGNING_KEY_MIN_LENGTH` in `config/settings.py`.
 
+## Community fact names
+
+The names of `plans/community_facts/`, the data layer of the nine operations of the community facts.
+
+- `data/community_facts.py`, records and errors: `StoredCommunityFact`, `StoredNearbyFact`, `FactContent`, `AccountVoter`, `AnonymousVoter`, `Voter`, `FactInsertOutcome`, `StoredVoteInsert`, `VoteDayTaken`, `VoteInsertOutcome` and `VoteAccountMissingError`.
+- `data/community_facts.py`, functions: `fetch_stored_facts_in_area`, `fetch_stored_fact`, `fetch_stored_nearby_facts`, `fetch_stored_flagged_facts`, `fetch_stored_fact_for_vote`, `fetch_stored_fact_for_change`, `fetch_taken_vote_day`, `apply_fact_insert`, `apply_vote_insert`, `apply_vote_row`, `apply_fact_flag`, `apply_fact_hiding`, `apply_fact_restoration`, `build_stored_community_fact`, `build_optional_stored_community_fact` and `build_vote_voter_columns`.
+- `data/community_facts.py`, constants: `UNHIDDEN_FACT_CONDITION`, `WGS84_SRID`, `VOTE_ACCOUNT_CONSTRAINT_NAME`, `VOTE_ACCOUNT_MISSING_MESSAGE` and the query constants `FETCH_STORED_FACTS_IN_AREA_SQL`, `FETCH_STORED_FACT_SQL`, `FETCH_STORED_NEARBY_FACTS_SQL`, `FETCH_STORED_FLAGGED_FACTS_SQL`, `FETCH_STORED_FACT_FOR_VOTE_SQL`, `FETCH_STORED_FACT_FOR_CHANGE_SQL`, `FETCH_FACT_BY_IDEMPOTENCY_KEY_SQL`, `FETCH_ACCOUNT_VOTE_DAY_SQL`, `FETCH_HASH_VOTE_DAY_SQL`, `APPLY_FACT_INSERT_SQL`, `APPLY_VOTE_INSERT_SQL`, `APPLY_FACT_FLAG_SQL`, `APPLY_FACT_HIDING_SQL` and `APPLY_FACT_RESTORATION_SQL`.
+- `tests/data/test_community_facts_cases.py` and `tests/data/test_community_facts_critical.py`: the tests without and with the local database; the critical ones use the fixtures `service_transaction`, `stored_account_cleanup` and `database_cleanup_registry`, and no fixture of their own.
+
 ## Sample-loading interface
 
 `service.sample_data.apply_sample_data` is the no-argument administrative provider. Its shared records live in `common_sample_data.py`. `SampleDataFailure` is the public alias of `SampleDataError`; the alias preserves the approved provider contract while the class follows exception naming conventions.

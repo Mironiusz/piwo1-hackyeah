@@ -3,6 +3,7 @@ import { createContext, useCallback, useContext, useMemo, useRef, useState, type
 import { planRoute } from "../api/client.ts";
 import { ApiError, toApiError } from "../api/errors.ts";
 import type { PlanRouteResponse, Point, Route } from "../api/types.ts";
+import { isRouteAssessed } from "../parts/routeSummary.ts";
 import { needsSignature, useNeeds } from "./needs.tsx";
 
 export type RouteEndName = "start" | "destination";
@@ -50,6 +51,8 @@ const PlannedRouteContext = createContext<PlannedRouteContextValue | null>(null)
  * a change of the view and of the language. Nothing here is written to the device.
  * A request for the same two points and the same needs as the one that is running is not sent a second time.
  * A change of an end drops the answer planned for the ends before it, and the answer of a request that is still running.
+ * Whether a route is assessed is read from its answer. An end the service refuses as lying outside Kraków is removed,
+ * and the error stays, so the view says why.
  */
 export function PlannedRouteProvider({ children }: { children: ReactNode }) {
   const { needs } = useNeeds();
@@ -97,7 +100,7 @@ export function PlannedRouteProvider({ children }: { children: ReactNode }) {
           return false;
         }
         running.current = null;
-        setPlanned({ answer, signature, isAssessed: needs.avoid.length > 0 });
+        setPlanned({ answer, signature, isAssessed: isRouteAssessed(answer.route) });
         setShown("first");
         setIsMarkedStale(false);
         setState("ready");
@@ -108,8 +111,15 @@ export function PlannedRouteProvider({ children }: { children: ReactNode }) {
           return false;
         }
         running.current = null;
+        const failure = toApiError(caught);
+        if (failure.points.includes("start")) {
+          setStart(null);
+        }
+        if (failure.points.includes("destination")) {
+          setDestination(null);
+        }
         setPlanned(null);
-        setError(toApiError(caught));
+        setError(failure);
         setIsMarkedStale(false);
         setState("failed");
         return false;

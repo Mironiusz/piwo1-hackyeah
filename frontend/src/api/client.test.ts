@@ -592,6 +592,15 @@ describe("a failed request", () => {
     expect(error).toMatchObject({ code: "invalid_request", fields: ["start.lat", "destination"], repeatAllowedAt: null });
   });
 
+  it("throws an ApiError with the ends of a route that lie outside Kraków", async () => {
+    answerWith(() => buildJsonAnswer(422, { error: { code: "point_outside_krakow", points: ["start", "elsewhere", "destination"] } }));
+
+    const error = await catchFailure(() => planRoute(ROUTE_REQUEST));
+
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error).toMatchObject({ code: "point_outside_krakow", fields: [], points: ["start", "destination"] });
+  });
+
   it("throws an ApiError with the instant from which the next vote is accepted", async () => {
     answerWith(() => buildJsonAnswer(409, { error: { code: "vote_too_soon", repeat_allowed_at: "2026-10-04T09:12:44.120+02:00" } }));
 

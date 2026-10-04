@@ -186,7 +186,7 @@ export function RouteResultView() {
                   <b className="font-bold">{t("plan.unavailable.title")}</b> {t("plan.unavailable.body")}
                 </p>
               ) : (
-                <p>{t(error.code === "network_error" ? "state.offline" : "route.failed")}</p>
+                <p>{t(error.code === "network_error" ? "state.offline" : error.code === "point_outside_krakow" ? "plan.outside" : "route.failed")}</p>
               )}
             </Note>
             <div className={ACTIONS_ONE}>

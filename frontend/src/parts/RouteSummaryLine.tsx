@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-import type { Route, RouteFact, SegmentState } from "../api/types.ts";
+import type { AnsweredSegmentState, Route, RouteFact } from "../api/types.ts";
 import { formatDistance } from "../format/format.ts";
 import { useLanguage } from "../i18n/index.ts";
 import { nameTypeInSentence } from "./factText.ts";
@@ -13,7 +13,8 @@ interface RouteSummaryLineProps {
   destinationName: string;
 }
 
-const STRETCH_LOOKS: Record<SegmentState, string> = {
+const STRETCH_LOOKS: Record<AnsweredSegmentState, string> = {
+  not_assessed: "bg-white outline-2 outline-shell",
   no_barrier: "bg-clear",
   barrier: "bg-[repeating-linear-gradient(90deg,var(--color-barrier)_0_3px,var(--color-white)_3px_6px)] outline-2 outline-barrier",
   partial_data: "bg-[repeating-linear-gradient(90deg,var(--color-partial)_0_7px,var(--color-ink)_7px_10px)]",
