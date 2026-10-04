@@ -55,7 +55,10 @@ def test_missing_import_paths_are_named_with_their_file(monkeypatch):
     assert str(caught.value) == "Missing or invalid configuration: IMPORT_WORKSPACE_ROOT (.env.local), VALHALLA_CONFIG_TEMPLATE (.env.local)"
 
 
-@pytest.mark.parametrize(("outcome", "code", "level"), [("updated", 0, logging.INFO), ("unchanged", 0, logging.INFO), ("skipped", 2, logging.INFO), ("routing_incomplete", 1, logging.ERROR), ("commit_unknown", 1, logging.ERROR)])
+@pytest.mark.parametrize(
+    ("outcome", "code", "level"),
+    [("updated", 0, logging.INFO), ("unchanged", 0, logging.INFO), ("skipped", 2, logging.INFO), ("routing_incomplete", 1, logging.ERROR), ("commit_unknown", 1, logging.ERROR)],
+)
 def test_each_outcome_has_its_exit_code_and_one_report_line(report, outcome, code, level):
     result = OsmImportResult(outcome, datetime(2026, 10, 3, tzinfo=UTC), OsmPublicationCounts(3, 2, 4, 5) if outcome == "updated" else None)
     assert apply_osm_import_report(result, 12.34) == code

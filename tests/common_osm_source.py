@@ -21,10 +21,7 @@ INVENTED_WAYS_XML = (
     '<tag k="surface" v="sett"/></way>'
     f'<way id="12" {INVENTED_TIMESTAMP}><nd ref="5"/><nd ref="7"/><tag k="highway" v="motorway"/></way>'
 )
-INVENTED_RELATIONS_XML = (
-    f'<relation id="449696" {INVENTED_TIMESTAMP}><member type="way" ref="1" role="outer"/>'
-    '<tag k="type" v="multipolygon"/><tag k="boundary" v="administrative"/></relation>'
-)
+INVENTED_RELATIONS_XML = f'<relation id="449696" {INVENTED_TIMESTAMP}><member type="way" ref="1" role="outer"/><tag k="type" v="multipolygon"/><tag k="boundary" v="administrative"/></relation>'
 
 
 def apply_invented_osm_source(directory: Path, elements_xml: str = INVENTED_NODES_XML + INVENTED_WAYS_XML + INVENTED_RELATIONS_XML, state: str = INVENTED_STATE) -> Path:

@@ -31,6 +31,21 @@ docker compose --env-file .env --env-file .env.local -f db/compose.yaml down
 
 The first command starts the database and waits until it answers. The second applies the chain of revisions; nothing applies it at the start. The third runs every test of `db/tests/`, the critical ones included, against that database as the service account; each test rolls back its writes. The local database keeps its data only while its container runs, so `down` and `up` give an empty database again, which is also the supported way back after an applied revision was edited.
 
+## Moderator role
+
+The team assigns and removes the moderator role by hand (M11 of `docs/product/specification.md`); no operation of the programming interface and no command does it (`plans_finished/accounts/ACCOUNTS_PLAN.md` D-11). The statement runs in `psql` inside the container of the database as the service account, which holds `UPDATE` on `account`. The pseudonym is compared without regard to letter case, as the index of its uniqueness compares it; `true` assigns the role and `false` removes it.
+
+```bash
+docker compose --env-file .env --env-file .env.local -f db/compose.yaml exec database sh -c 'psql -U "$DB_SERVICE_ACCOUNT_NAME" -d "$DB_NAME" -v ON_ERROR_STOP=1'
+```
+
+```sql
+\set pseudonym 'Wózek_KRK'
+UPDATE account SET is_moderator = true WHERE lower(pseudonym) = lower(:'pseudonym');
+```
+
+`UPDATE 1` confirms the change and `UPDATE 0` means that no account has the pseudonym. The role is read again on every request, so the change takes effect on the next request of that account. On the hosted demo the same statement runs with `db/compose.deploy.yaml` and the environment file of the demo, as a step of a human.
+
 ## Hosted demo
 
 The database of the demo keeps its data in the named volume `database_data`. The step of applying the revisions runs by hand, with the consent given at the call and never written in a file:

@@ -1,6 +1,6 @@
 # Programming interface contract
 
-Document state: 2026-10-04, approved by the user in place of Kuber and Adrian, whose confirmation is still to be obtained; the pseudonym rule is aligned with specification M9 by `plans/accounts/ACCOUNTS_SHAPE.md`, its letters made explicit and a lone surrogate refused by Kuba on 2026-10-04 for `plans/accounts/` (`ACCOUNTS_PLAN.md` D-3, `ACCOUNTS_REVIEW.md`), with the confirmation of Adrian still to be obtained, and `cast_vote` changed on 2026-10-04 with version 13 of `docs/product/specification.md`; `plan_route` changed on 2026-10-04 by `plans/route_planning/` with the state `not_assessed` and the refusal `point_outside_krakow`, to be confirmed by Kuber and Adrian; `find_nearby_facts` changed on 2026-10-04 with version 17 of the specification to exclude facts removed in OpenStreetMap, approved by the user with Kuber and Adrian's confirmation still outstanding; the identifying inputs for anonymous votes and reports are aligned with version 18 of the specification, with Kuber and Adrian's confirmation still outstanding
+Document state: 2026-10-04, approved by the user in place of Kuber and Adrian, whose confirmation is still to be obtained; the pseudonym rule is aligned with specification M9 by `plans_finished/accounts/ACCOUNTS_SHAPE.md`, its letters made explicit and a lone surrogate refused by Kuba on 2026-10-04 for `plans_finished/accounts/` (`ACCOUNTS_PLAN.md` D-3, `ACCOUNTS_REVIEW.md`), with the confirmation of Adrian still to be obtained, and `cast_vote` changed on 2026-10-04 with version 13 of `docs/product/specification.md`; `plan_route` changed on 2026-10-04 by `plans_finished/route_planning/` with the state `not_assessed` and the refusal `point_outside_krakow`, to be confirmed by Kuber and Adrian; `plan_route` changed with the kind of route, the public transport segment and the statement that public transport was unavailable, `read_public_transport` added and the names of stops and lines admitted as text in a language on 2026-10-04 by `plans/public_transport_routing/` for the optional feature O9, approved by Rafał in place of Marek and Adrian, to be confirmed by Marek, Adrian and Kuber
 
 ## Why this document exists
 
@@ -20,7 +20,7 @@ The behavior behind the operations is that of `docs/product/specification.md`, w
 - An instant is a string of ISO 8601 with milliseconds and the offset of the Europe/Warsaw zone at that instant, for example `2026-10-04T00:30:00.000+02:00`.
 - A `GET` request carries only identifiers in its path and has no query string. Coordinates and free text travel only in the body of a `POST` request, because every access log on the way records the URL.
 - Every response carries the header `X-Request-Id`. A client may send its own; the service keeps it when it has only letters, digits, hyphens and underscores and at most 128 characters, and replaces it with a generated one otherwise.
-- Text in a language appears in a response only in the label of an address match, which comes from OpenStreetMap in Polish, and in a description a person wrote. Everything else is a code, a number, a day or an instant, so a client switches the language of the interface without repeating a request.
+- Text in a language appears in a response only in the label of an address match, which comes from OpenStreetMap in Polish, in a description a person wrote, and in the names of stops and lines of public transport, which come from the GTFS of ZTP Kraków in Polish as the GTFS gives them (O9). Everything else is a code, a number, a day or an instant, so a client switches the language of the interface without repeating a request.
 
 ## Sessions and actors
 
@@ -121,13 +121,15 @@ Request:
   "start": { "lat": 50.0645, "lon": 19.9837 },
   "destination": { "lat": 50.0678, "lon": 19.9914 },
   "avoid": ["stairs", "high_kerb", "poor_surface", "narrow_passage"],
-  "need": ["elevator", "ramp", "lowered_kerb"]
+  "need": ["elevator", "ramp", "lowered_kerb"],
+  "route_kind": "walking"
 }
 ```
 
 - `start` and `destination` - the chosen points: the current location, a match of `search_address` or a point on the map. The current location travels only in this request; the service does not store it, does not log it and links it to nothing (M2).
 - `avoid` - the barriers of the profile, barrier types, each at most once, possibly none.
 - `need` - the amenities of the profile, amenity types, each at most once, possibly none.
+- `route_kind` - optional, `walking` or `public_transport`, the position of the switch of the route form (O9); `walking` when absent. One route is computed at a time. A route with `public_transport` departs now, at the moment of the request in the Europe/Warsaw zone; the request carries no time.
 
 The request carries no identity of an account, so the profile and the chosen points are never linked to one, and nothing of the request leaves the project (M1, M2).
 
@@ -137,12 +139,14 @@ Response `200`:
 {
   "osm_copy_date": "2026-10-02",
   "barrier_free_route_exists": true,
+  "public_transport_unavailable": false,
   "route": { "...": "a route" },
   "alternative": null
 }
 ```
 
 - `osm_copy_date` - the day of the OpenStreetMap copy the route was computed from (M6).
+- `public_transport_unavailable` - `true` only when `route_kind` was `public_transport` and no route with public transport can be answered while walking routes can: no departure in time, the data of public transport unavailable, or no route with public transport whose walking legs avoid every barrier and geozone they have to avoid. `route` is then the walking route, the route with the fewest barriers when needed, and the client says plainly that public transport was unavailable (O9). `false` in every other case.
 - `barrier_free_route_exists` - `false` when every way to the destination crosses a barrier of the profile or a geozone of a type of the profile that a route avoids; the client then says plainly that no route without barriers exists, `route` is the route with the fewest such barriers, and its `profile_barriers` say where they are (M2).
 - `route` - the route.
 - `alternative` - `null`, or the alternative that avoids the unverified or disputed barriers of the profile `route` keeps (M2):
@@ -167,7 +171,8 @@ A route:
       "length_m": 14,
       "state": "no_data",
       "missing_attributes": ["kerbs", "surface", "incline", "width", "steps"],
-      "is_marked_wheelchair_no": false
+      "is_marked_wheelchair_no": false,
+      "public_transport": null
     }
   ],
   "profile_barriers": [],
@@ -176,10 +181,35 @@ A route:
 }
 ```
 
-- `segments` - the segments in order from the start, the straight stretches between a chosen point and the pedestrian network included (M2).
+- `segments` - the segments in order from the start, the straight stretches between a chosen point and the pedestrian network included (M2), and in a route with public transport its walking segments and its public transport segments in the order of the route (O9).
 - `state` - `barrier`, `no_barrier`, `partial_data` or `no_data`, the four states of M7, decided by the service; or `not_assessed` for every segment, the straight stretches included, when `avoid` is empty, and in no other case (M1, M7). The client draws each with its own color and its own icon or line pattern.
 - `missing_attributes` - for a segment in `partial_data` or `no_data`, the attributes behind the barriers of the profile that are not known, from `kerbs`, `surface`, `incline`, `width` and `steps`, in this order; empty in the other states, and empty for `not_assessed` (M7, M8).
 - `is_marked_wheelchair_no` - `true` when OpenStreetMap marks the way as not accessible for wheelchairs; the list then says so (M7, M8).
+- `public_transport` - `null` for a walking segment, and for a public transport segment its ride (O9):
+
+```json
+{
+  "line": [
+    [19.9578, 50.0663],
+    [19.9662, 50.0613]
+  ],
+  "length_m": 980,
+  "state": "no_barrier",
+  "missing_attributes": [],
+  "is_marked_wheelchair_no": false,
+  "public_transport": {
+    "vehicle": "tram",
+    "line": "14",
+    "boarding_stop": "Teatr Variété",
+    "alighting_stop": "Cystersów",
+    "departs_at": "2026-10-04T09:12:00.000+02:00",
+    "source": "ztp_krakow_gtfs"
+  }
+}
+```
+
+`vehicle` is `tram` or `bus`; `line` is the line as the GTFS names it; `boarding_stop` and `alighting_stop` are the names of the stops in Polish as the GTFS gives them; `departs_at` is the instant of the departure from the boarding stop, which the client shows in hours and minutes; `source` is `ztp_krakow_gtfs`, the GTFS of ZTP Kraków, shown without a date. The `line` of the segment runs straight from the boarding stop to the alighting stop. Its `state` is `no_barrier`, the boarding, the ride and the alighting counted as accessible whether the GTFS marks them as accessible or gives no accessibility information for them, or `not_assessed` when `avoid` is empty; `missing_attributes` is empty and `is_marked_wheelchair_no` is `false`. The segment is not a fact: it has no status and cannot be voted on or flagged. The client lists each public transport segment as an item of the list of M8 in the order of the route, with the vehicle, the line, the two stops and the departure time.
+
 - `profile_barriers`, `additional_barriers` and `amenities` - the three groups of the list for the route (M8), each in order along the route: the barriers of the profile on the route, the barriers outside the profile on the route, and the amenities of the profile within 50 m of the route. Only `profile_barriers` and `amenities` appear on the map (M7).
 
 A route fact is a fact with two more fields:
@@ -193,10 +223,11 @@ A route fact is a fact with two more fields:
 
 Errors:
 
-| Status | `code`                 | When                                                                                                                                                                                             |
-| ------ | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 422    | `point_outside_krakow` | The start or the destination lies outside the administrative boundary of Kraków of the copy in use (M2); `points` lists `start`, `destination` or both, in this order, and no route is computed. |
-| 503    | `routing_unavailable`  | No route can be computed right now (M10). The response carries no route, and no route is guessed.                                                                                                |
+| Status | `code`                      | When                                                                                                                                                                                             |
+| ------ | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 422    | `point_outside_krakow`      | The start or the destination lies outside the administrative boundary of Kraków of the copy in use (M2); `points` lists `start`, `destination` or both, in this order, and no route is computed. |
+| 409    | `public_transport_disabled` | route_kind is public_transport while the app does not offer public transport (O9).                                                                                                               |
+| 503    | `routing_unavailable`       | No route can be computed right now (M10). The response carries no route, and no route is guessed.                                                                                                |
 
 ```json
 { "error": { "code": "point_outside_krakow", "points": ["start"] } }
@@ -244,6 +275,28 @@ Response `200`:
 ```
 
 `date` is the day of the OpenStreetMap copy in use (M6), or `null` before the first copy exists.
+
+## Public transport
+
+### read_public_transport
+
+`GET /api/public-transport`, token optional, no request body.
+
+Response `200`:
+
+```json
+{
+  "is_enabled": true,
+  "feeds": [
+    { "feed": "GTFS_KRK_T", "published_on": "2026-10-02" },
+    { "feed": "GTFS_KRK_A", "published_on": "2026-10-02" },
+    { "feed": "GTFS_KRK_M", "published_on": "2026-10-02" }
+  ]
+}
+```
+
+- `is_enabled` - whether the app offers routes with public transport (O9); the client shows the switch of the route form only when it is `true`, and plans walking routes only otherwise.
+- `feeds` - the three feeds of the GTFS of ZTP Kraków, `GTFS_KRK_T`, `GTFS_KRK_A` and `GTFS_KRK_M`, of the copy the routing data with public transport in use was built from, each with `published_on`, the day the feed was published, never the day it was downloaded (M6, M10); an empty array when no such routing data of the OpenStreetMap copy in use exists. The page about the data shows them next to the day of the OpenStreetMap copy.
 
 ## Facts
 

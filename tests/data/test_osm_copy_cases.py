@@ -9,6 +9,7 @@ from sqlalchemy.dialects import postgresql
 from data.osm_copy import (
     APPLY_OSM_PRESENT_FACTS_SQL,
     FETCH_OSM_FACT_HISTORY_SQL,
+    FETCH_OSM_FACTS_FOR_UPDATE_SQL,
     FETCH_OSM_FACTS_SQL,
     OsmFactIdentity,
     OsmPresentFact,
@@ -63,6 +64,13 @@ def test_fact_read_takes_no_lock_and_vote_locks_keep_their_order():
     votes = str(FETCH_OSM_FACT_HISTORY_SQL.compile(dialect=dialect))
     assert facts.endswith("ORDER BY fact.id")
     assert "ORDER BY vote.fact_id, vote.id FOR UPDATE" in votes
+
+
+def test_facts_under_reconciliation_are_locked_by_identity_in_ascending_order():
+    """Only the given facts are locked, in ascending identity order, before their votes."""
+    locked = str(FETCH_OSM_FACTS_FOR_UPDATE_SQL.compile(dialect=postgresql.dialect()))
+    assert "fact.id = ANY (%(fact_ids)s::BIGINT[])" in locked
+    assert locked.endswith("ORDER BY fact.id FOR UPDATE")
 
 
 @pytest.mark.parametrize("value", [datetime(2026, 10, 4), datetime(2026, 10, 4, microsecond=1, tzinfo=UTC)])

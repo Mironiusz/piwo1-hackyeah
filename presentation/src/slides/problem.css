@@ -1,0 +1,18 @@
+/* Styles of the slide problem: who it concerns and the five barriers on the sheet, under a plate of two lines. */
+
+.reveal #problem {
+  --sheet-h: 440px;
+  --sheet-pad: 96px;
+}
+
+.reveal #problem .chip-row {
+  margin-top: 36px;
+}
+
+.reveal #problem .chip {
+  font-size: 40px;
+}
+
+.reveal .plate-sentence {
+  white-space: nowrap;
+}

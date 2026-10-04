@@ -75,6 +75,25 @@ docker login ghcr.io -u <github-user>
 
 The token stays on that server and never enters the repository. Whether the package is public or private is set on its page on GitHub, under Package settings. Nothing pulls or switches the image on its own: a server uses a new tag only after a person pulls it and points the routing service at it.
 
+## Starting the service
+
+The image starts the routing service by itself: its command is `python3 /opt/enableme/start_routing_service.py /data`, so a container needs only the volume of the routing data mounted read-only at `/data` and the port 8002 (D-6 and D-10 of `plans_finished/backend_architecture/BACKEND_ARCHITECTURE_PLAN.md`).
+
+`start_routing_service.py` runs with the Python 3.12 of the image and takes the directory of the routing data as its one argument, so it reads no environment entry. It waits until `current` exists in that directory, reading it again every 5 seconds and starting nothing meanwhile, and stops with a non-zero code when `current` does not name a copy or the copy has no `valhalla_tiles.tar`. Otherwise it takes the defaults that `valhalla_build_config` prints, merges `valhalla_overrides.json`, sets `mjolnir.tile_extract` to the absolute path of `copies/<name>/valhalla_tiles.tar`, writes the result to `/opt/enableme/valhalla_service.json` and replaces itself with `valhalla_service` with that file and one thread. The path stays fixed for the life of the container, so `tileset_last_modified` of `GET /status` names the copy the service loaded; a new copy is served after the container restarts.
+
+`valhalla_overrides.json` holds only the keys the project sets. The `mjolnir` keys act only when the tiles are built, and the import sets the same three keys itself in `build_osm_valhalla_config` of `service/osm_routing_preparation.py`, so a change of one of them is made in both places (`plans_finished/route_planning/ROUTE_PLANNING_REVIEW.md`, the run of D-20):
+
+| Key                                            | Value   | Why                                                                                            |
+| ---------------------------------------------- | ------- | ---------------------------------------------------------------------------------------------- |
+| `service_limits.max_exclude_locations`         | 5000    | A walking route excludes every avoided barrier of its corridor; the default is 50.             |
+| `service_limits.max_exclude_polygons_length`   | 1000000 | The geozones of a corridor travel as polygons; the default is 10000.                           |
+| `service_limits.max_exclude_polygons_vertices` | 50000   | Each geozone is a polygon of 32 vertices; the default is 100.                                  |
+| `mjolnir.include_platforms`                    | `true`  | Platforms stay in the walking network.                                                         |
+| `mjolnir.keep_osm_node_ids`                    | `true`  | A traced edge names its OpenStreetMap nodes, which tie the route to the stretches of the copy. |
+| `mjolnir.keep_all_osm_node_ids`                | `true`  | Every node keeps its identity, not only the ones Valhalla would keep by itself.                |
+
+The script names the directory and the tile archive in its own lines and never a request; the output of `valhalla_service` is left as it is. The names `current`, `copies` and `valhalla_tiles.tar` repeat those of `data/routing_data.py`, because the image holds no other code of the repository.
+
 ## Building tiles with the image
 
 - Road tiles built with the stock 3.9.0 tools work with the patched service unchanged.

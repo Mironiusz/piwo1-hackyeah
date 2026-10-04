@@ -24,7 +24,7 @@ A deferral needs a reason. "We did not want to think about it" is not a reason; 
 
 - Affects: `standard_worker.md`, sections One process, one task registry, Periodic task contract, Locks and Adding a new task; the parts of other standards that assume a worker keeping time - `standard_time.md`, section Writing the pair: one value, not two columns (the periodic control task), `standard_errors.md`, section Reaction in a periodic task, `standard_naming.md`, section File names, and `standard_architecture.md`, section Calls to external systems; the run identifier, which `standard_logging.md` and `standard_worker.md` each leave to the other; and the import command of `osm_importer`.
 - Variants: `standard_worker.md` is narrowed or extended to describe a one-off administrative command started by hand - its run deadline, the protection against two runs at the same time, its result and its reaction to errors - and the other standards follow it; or the periodic rules stay as the target for a later periodic task, next to a new section on one-off commands.
-- Blocks: `MVP.md` D-14 decides that no periodic task exists and that the import is the one-off command `python -m worker.osm_import`, while the Python profile was written for a service with a worker that keeps time. No worker code exists yet, and `plans/backend_skeleton/` and `plans/osm_importer/` are still planning the first one. The user decided on 2026-10-04 in `plans/repository_consistency/` to defer the rewrite until that code exists instead of guessing its shape.
+- Blocks: `MVP.md` D-14 decides that no periodic task exists and that the import is the one-off command `python -m worker.osm_import`, while the Python profile was written for a service with a worker that keeps time. No worker code exists yet, and `plans/backend_skeleton/` and `plans_finished/osm_importer/` are still planning the first one. The user decided on 2026-10-04 in `plans/repository_consistency/` to defer the rewrite until that code exists instead of guessing its shape.
 - Condition: the first worker code of `backend_skeleton` or `osm_importer` exists; the standards are then changed to match it, and this entry moves to Resolved decisions.
 
 ### HarmonyOS port and the Huawei submission
@@ -55,20 +55,6 @@ A deferral needs a reason. "We did not want to think about it" is not a reason; 
 - Blocks: on 2026-10-04 the initiative stood on the branch `mw`, not merged into the line of `plans_finished/mvp/`, with a plan in progress. The user decided that an unfinished initiative does not stop `plans_finished/mvp/` and adds its content to `MVP.md` later. The importer handoff of `osm_importer` does not settle this independent MSIP scope decision.
 - Condition: the branch is merged, or Rafał and the initiative owner decide whether the stops of MSIP enter the MVP. `MVP.md` follows in the same change.
 
-### When the initiative of O9 starts its code
-
-- Affects: the initiative `public_transport_routing` of `MVP.md`, its time box of 4.5 hours of work of the people of the team, and the order of the section Order and critical path of `MVP.md`.
-- Variants: `public_transport_routing` waits for `route_planning` and `osm_importer`, as `MVP.md` records since the import handoff of 2026-10-04 (`plans_finished/mvp/MVP_PLAN.md` D-15 and D-20); or it starts at once, in parallel with them, as the section Optional features of `docs/product/specification.md` says of O9 - built first and in parallel with the mandatory features - with the parts it shares with `route_planning` and `osm_importer` agreed between their owners.
-- Blocks: the specification prevails over the plan, but the waits of D-15 were approved by the user on 2026-10-04, and the user decided that no question is asked while `plans_finished/mvp/` is carried out. Both `route_planning` and `public_transport_routing` are owned by Marek.
-- Condition: Rafał and Marek decide the start of `public_transport_routing`, at the latest when its seed goes into `plan-shape`; `MVP.md` follows in the same change.
-
-### Wording of the public transport segment of O9
-
-- Affects: the exception of O9 in M7 and M10 of `docs/product/specification.md` and the state the initiative `public_transport_routing` of `MVP.md` shows for a public transport segment.
-- Variants: the exception of M7 also names a segment the GTFS marks as accessible, next to a segment whose GTFS gives no accessibility information, and names the alighting at the stop next to "the ride and the boarding at the stop", as the item of O9 on stops and trips already names boarding and alighting; or the text stays as it is, and those two cases are read from that item of O9.
-- Blocks: the first review of `plans_finished/valhalla_routing/` found the gap on 2026-10-04 (`plans_finished/valhalla_routing/VALHALLA_ROUTING_REVIEW.md`, I-2), and Rafał decided on 2026-10-04, when that initiative closed, to leave the text of the specification unchanged and to hand the wording to the initiative that builds O9.
-- Condition: Marek and Rafał decide the wording when the seed of `public_transport_routing` goes into `plan-shape`; a changed wording lands in a new version of the specification, and this entry then moves to Resolved decisions.
-
 ### Street name of an item of a list
 
 - Affects: the place of an item of the list of a route and of the list of the map of facts (`docs/product/views.md`, decision 13), the route response and the facts of an area of `docs/product/api_contract.md`, which have no field for the name of a way, `docs/product/schema.md`, which keeps no name of a way, and the initiatives `osm_importer`, `route_planning`, `community_facts` and `frontend_app` of `MVP.md`.
@@ -78,7 +64,7 @@ A deferral needs a reason. "We did not want to think about it" is not a reason; 
 
 ### Backend handoff for vote locking during OSM publication
 
-- Affects: the operation `cast_vote` of the initiative `community_facts` of `MVP.md`, the publication of a fresh OpenStreetMap copy of `osm_importer` (`plans/osm_importer/OSM_IMPORTER_PLAN.md` D-15 and its risk R-8), and the statuses of M4 of `docs/product/specification.md` computed during that publication.
+- Affects: the operation `cast_vote` of the initiative `community_facts` of `MVP.md`, the publication of a fresh OpenStreetMap copy of `osm_importer` (`plans_finished/osm_importer/OSM_IMPORTER_PLAN.md` D-15 and its risk R-8), and the statuses of M4 of `docs/product/specification.md` computed during that publication.
 - Variants: `cast_vote` locks its fact before it checks that the fact is visible and writes the vote, so that a vote on a fact being reconciled waits until the publication commits or rolls back, as D-15 of the importer plan assumes; or the owner of `community_facts` proposes another mechanism with the same guarantee, and the importer plan follows it.
 - Blocks: the user chose on 2026-10-04, in the plan of `osm_importer`, to freeze the votes of the facts being reconciled during the final publication instead of reconciling against a snapshot, and that choice rests on the code of another initiative. `community_facts` has only its seed, and its owner has not agreed to the lock; R-8 of the importer plan pointed to this entry before it existed. Recorded on 2026-10-04 by `plans/repository_consistency/` at the request of the user. On 2026-10-04 Kuba, who builds the vote write in the data layer of `community_facts`, agreed to the first variant in `plans/community_facts/COMMUNITY_FACTS_SHAPE.md`, question 3; the rule has not reached the plan of `community_facts` yet.
 - Condition: the owner of `community_facts` and Mateusz agree on the lock at the latest when `cast_vote` is planned in the shape of `community_facts`; the agreed rule lands in the plans of both initiatives, and this entry moves to Resolved decisions.
@@ -100,13 +86,21 @@ A deferral needs a reason. "We did not want to think about it" is not a reason; 
 
 ## Resolved decisions
 
+### When the initiative of O9 starts its code
+
+Resolved on 2026-10-04 by Rafał in the shape interview of `plans/public_transport_routing/`, question 1: `public_transport_routing` starts its code at once, in parallel with `route_planning` and `osm_importer`, as the section Optional features of `docs/product/specification.md` says of O9, against waiting for them as `plans_finished/mvp/MVP_PLAN.md` D-15 and D-20 recorded. What does not need the code of `route_planning` goes first - the interface in `docs/product/api_contract.md`, the copy of the GTFS and the routing data with public transport - and the route with public transport joins the code of `route_planning` once it exists (`plans/public_transport_routing/PUBLIC_TRANSPORT_ROUTING_PLAN.md` D-1). It lives in `MVP.md`, sections Initiatives and Order and critical path. The entry named Rafał and Marek, so Marek's confirmation is still to come.
+
+### Wording of the public transport segment of O9
+
+Resolved on 2026-10-04 by Rafał in the shape interview of `plans/public_transport_routing/`, question 2: the exception of O9 in M7, M10 and O9 names the boarding at the stop, the ride and the alighting at the stop, green whether the GTFS marks them as accessible or gives no accessibility information for them, against leaving the text as it was and reading both cases from the item of O9 on stops and trips. It lives in version 17 of `docs/product/specification.md`, with what the segment shows and its missing state for a profile without barriers. The entry named Marek and Rafał, so Marek's confirmation is still to come.
+
 ### Route without assessment in the contract
 
-Resolved on 2026-10-04 by Rafał in place of Marek in `plans/route_planning/`: with a profile that names no barrier, every segment of a route and of its alternative, the straight stretches to the network included, carries the state `not_assessed` of `plan_route`, a value of `state` outside the four states of M7 that appears in no other case, so the client derives nothing from its own request. It lives in `docs/product/api_contract.md`, section plan_route, and in `docs/product/views.md`, section The views read against the contract of the team, still to be confirmed by Kuber and Adrian.
+Resolved on 2026-10-04 by Rafał in place of Marek in `plans_finished/route_planning/`: with a profile that names no barrier, every segment of a route and of its alternative, the straight stretches to the network included, carries the state `not_assessed` of `plan_route`, a value of `state` outside the four states of M7 that appears in no other case, so the client derives nothing from its own request. It lives in `docs/product/api_contract.md`, section plan_route, and in `docs/product/views.md`, section The views read against the contract of the team, still to be confirmed by Kuber and Adrian.
 
 ### Refusal of a point outside Kraków in the contract
 
-Resolved on 2026-10-04 by Rafał in place of Marek in `plans/route_planning/`: `plan_route` refuses a start or a destination outside the administrative boundary of Kraków of the copy in use with `point_outside_krakow` and the status 422, whose field `points` names the point, and the client also checks a point against the bounds of the map of Kraków when it is set; a point inside the bounds but outside the boundary stays set until the route is requested, as M2 of `docs/product/specification.md` says since version 15. It lives in `docs/product/api_contract.md`, section plan_route, and in `docs/product/views.md`, section The views read against the contract of the team and V-4, still to be confirmed by Kuber and Adrian.
+Resolved on 2026-10-04 by Rafał in place of Marek in `plans_finished/route_planning/`: `plan_route` refuses a start or a destination outside the administrative boundary of Kraków of the copy in use with `point_outside_krakow` and the status 422, whose field `points` names the point, and the client also checks a point against the bounds of the map of Kraków when it is set; a point inside the bounds but outside the boundary stays set until the route is requested, as M2 of `docs/product/specification.md` says since version 15. It lives in `docs/product/api_contract.md`, section plan_route, and in `docs/product/views.md`, section The views read against the contract of the team and V-4, still to be confirmed by Kuber and Adrian.
 
 ### Hash length reported by Kuba
 
@@ -114,7 +108,7 @@ Resolved on 2026-10-04: Kuba named the hash of a vote without an account as the 
 
 ### OpenStreetMap importer ownership and Valhalla data preparation
 
-Resolved on 2026-10-04: the user authorized modifying MVP and approved including network PBF preparation, Valhalla walking-data construction and post-commit routing-pointer publication in `osm_importer`. The importer and its tests are assigned there; `osm_import` retains `read_osm_copy` and the common demo-loading program, consuming the importer. The decisions live in `plans/osm_importer/OSM_IMPORTER_PLAN.md` D-19 - D-21 and `plans_finished/mvp/MVP_PLAN.md` D-20, and `MVP.md` records the ownership, requirements and dependencies. Shared backend, schema delivery and the vote-lock integration remain outstanding prerequisites.
+Resolved on 2026-10-04: the user authorized modifying MVP and approved including network PBF preparation, Valhalla walking-data construction and post-commit routing-pointer publication in `osm_importer`. The importer and its tests are assigned there; `osm_import` retains `read_osm_copy` and the common demo-loading program, consuming the importer. The decisions live in `plans_finished/osm_importer/OSM_IMPORTER_PLAN.md` D-19 - D-21 and `plans_finished/mvp/MVP_PLAN.md` D-20, and `MVP.md` records the ownership, requirements and dependencies. Shared backend, schema delivery and the vote-lock integration remain outstanding prerequisites.
 
 ### Language of the repository
 

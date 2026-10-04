@@ -24,6 +24,26 @@ def registered_cleanup():
         action()
 
 
+@pytest.fixture
+def stored_account_cleanup(registered_cleanup):
+    """Register the pseudonym of an account a critical test commits, before the commit, so the account is deleted afterwards as the service account."""
+    from data.accounts import apply_account_delete, fetch_account_by_pseudonym
+    from data.engine import fetch_api_engine
+
+    pseudonyms: list[str] = []
+
+    def apply_cleanup() -> None:
+        """Delete every registered account that still exists; the tests commit no vote or fact, which the service account could not delete."""
+        with fetch_api_engine().begin() as connection:
+            for pseudonym in pseudonyms:
+                account = fetch_account_by_pseudonym(connection, pseudonym)
+                if account is not None:
+                    apply_account_delete(connection, account.account_id)
+
+    registered_cleanup(apply_cleanup)
+    return pseudonyms.append
+
+
 def pytest_addoption(parser):
     """Accept an explicit local maintenance URL solely for scratch fixtures."""
     parser.addoption("--scratch-database-url", default=None, help="Local owner URL for registered scratch setup only")

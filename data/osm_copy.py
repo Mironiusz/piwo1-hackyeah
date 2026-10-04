@@ -8,7 +8,7 @@ from typing import Any, cast
 
 from accessibility_db.closed_lists import FactSource, FactType, KerbPointState, OsmElementType, VoteVerdict, WayBarrierState
 from accessibility_db.tables import Fact, OffsetInstant, OsmCopy, OsmNode, OsmWay, OsmWayNode, Vote, build_offset_instant
-from sqlalchemy import BigInteger, Connection, Table, any_, bindparam, delete, insert, select, update
+from sqlalchemy import BigInteger, Connection, RowMapping, Table, any_, bindparam, delete, insert, select, update
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.dialects.postgresql import insert as postgres_insert
 
@@ -147,10 +147,9 @@ FETCH_OSM_COPY_HISTORY_SQL = select(_copy.c.id, _copy.c._state_at.label("state_a
 )
 FETCH_CURRENT_OSM_COPY_SQL = FETCH_OSM_COPY_HISTORY_SQL.limit(1)
 FETCH_OSM_FACTS_SQL = (
-    select(_fact.c.id, _fact.c.osm_element_type, _fact.c.osm_element_id, _fact.c.fact_type, _fact.c.source, _fact.c.is_removed_from_osm)
-    .where(_fact.c.osm_element_id.is_not(None))
-    .order_by(_fact.c.id)
+    select(_fact.c.id, _fact.c.osm_element_type, _fact.c.osm_element_id, _fact.c.fact_type, _fact.c.source, _fact.c.is_removed_from_osm).where(_fact.c.osm_element_id.is_not(None)).order_by(_fact.c.id)
 )
+FETCH_OSM_FACTS_FOR_UPDATE_SQL = FETCH_OSM_FACTS_SQL.where(_fact.c.id == any_(bindparam("fact_ids", type_=ARRAY(BigInteger)))).with_for_update()
 FETCH_OSM_FACT_HISTORY_SQL = (
     select(
         _vote.c.id,
@@ -257,12 +256,22 @@ def fetch_osm_copy_history(connection: Connection) -> tuple[OsmCopySnapshot, ...
     return tuple(OsmCopySnapshot(row["id"], OffsetInstant(row["state_at"], row["state_at_utc_offset_minutes"]), row["file_name"]) for row in connection.execute(FETCH_OSM_COPY_HISTORY_SQL).mappings())
 
 
+def build_osm_stored_fact(row: RowMapping) -> OsmStoredFact:
+    """Turn one read fact row into the fields reconciliation needs."""
+    return OsmStoredFact(row["id"], OsmFactIdentity(OsmElementType(row["osm_element_type"]), row["osm_element_id"], FactType(row["fact_type"])), FactSource(row["source"]), row["is_removed_from_osm"])
+
+
 def fetch_osm_facts(connection: Connection) -> tuple[OsmStoredFact, ...]:
     """Read source-identified facts in ascending identity order without row locks, which only facts under reconciliation take."""
-    return tuple(
-        OsmStoredFact(row["id"], OsmFactIdentity(OsmElementType(row["osm_element_type"]), row["osm_element_id"], FactType(row["fact_type"])), FactSource(row["source"]), row["is_removed_from_osm"])
-        for row in connection.execute(FETCH_OSM_FACTS_SQL).mappings()
-    )
+    return tuple(build_osm_stored_fact(row) for row in connection.execute(FETCH_OSM_FACTS_SQL).mappings())
+
+
+def fetch_osm_facts_for_update(connection: Connection, fact_ids: Iterable[int]) -> tuple[OsmStoredFact, ...]:
+    """Lock the given source-identified facts in ascending identity order, batch by batch, and read them as they are once locked."""
+    result: list[OsmStoredFact] = []
+    for batch in batched(sorted(set(fact_ids)), OSM_WRITE_BATCH_SIZE, strict=False):
+        result.extend(build_osm_stored_fact(row) for row in connection.execute(FETCH_OSM_FACTS_FOR_UPDATE_SQL, {"fact_ids": list(batch)}).mappings())
+    return tuple(result)
 
 
 def fetch_osm_fact_history(connection: Connection, fact_ids: Iterable[int]) -> tuple[OsmVoteSnapshot, ...]:

@@ -20,4 +20,6 @@ RUN cmake -S /src/valhalla -B /build -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPIL
 
 FROM ghcr.io/valhalla/valhalla:3.9.0
 COPY --from=builder /build/valhalla_service /build/valhalla_convert_transit /build/valhalla_build_tiles /usr/local/bin/
+COPY start_routing_service.py valhalla_overrides.json /opt/enableme/
+CMD ["python3", "/opt/enableme/start_routing_service.py", "/data"]
 LABEL org.opencontainers.image.description="Valhalla 3.9.0 + multimodal exclusions + stop accessibility patches"

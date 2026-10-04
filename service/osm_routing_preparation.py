@@ -7,6 +7,8 @@ from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
+from shapely import MultiPolygon, Polygon, to_wkb
+
 from common_time import Deadline
 from config.logging import fetch_logger
 from data.import_workspace import WorkspaceLease
@@ -17,6 +19,7 @@ from data.osm_valhalla import OsmTileBuildError, apply_osm_valhalla_config, appl
 from data.routing_data import (
     ROUTING_COPIES_NAME,
     RoutingDataError,
+    apply_osm_boundary_file,
     apply_osm_routing_manifest,
     apply_routing_copy_placement,
     apply_routing_directory_removal,
@@ -31,11 +34,12 @@ from service.osm_routing_recovery import OsmRoutingIntegrityError
 
 @dataclass(frozen=True)
 class OsmPreparedCopy:
-    """Keep the original network, the motor-traffic node membership and the present facts of one source."""
+    """Keep the original network, the motor-traffic node membership, the present facts and the boundary of Kraków of one source."""
 
     network: OsmPreparedNetwork
     motor_traffic_node_ids: frozenset[int]
     facts: tuple[OsmPresentFact, ...]
+    boundary: Polygon | MultiPolygon
 
 
 def fetch_osm_prepared_copy(source_path: Path, deadline: Deadline, zone: ZoneInfo) -> OsmPreparedCopy:
@@ -43,7 +47,7 @@ def fetch_osm_prepared_copy(source_path: Path, deadline: Deadline, zone: ZoneInf
     boundary = build_osm_boundary(fetch_osm_elements(source_path, deadline))
     network = build_osm_network(fetch_osm_elements(source_path, deadline), boundary)
     fact_data = build_osm_fact_data(fetch_osm_elements(source_path, deadline), boundary, network, zone)
-    return OsmPreparedCopy(network, fact_data.motor_traffic_node_ids, fact_data.facts)
+    return OsmPreparedCopy(network, fact_data.motor_traffic_node_ids, fact_data.facts, boundary)
 
 
 def build_osm_valhalla_config(template: dict[str, Any], tile_directory: Path, archive_path: Path) -> dict[str, Any]:
@@ -62,6 +66,7 @@ def apply_osm_routing_preparation(
     lease: WorkspaceLease,
     routing_root: Path,
     network: OsmPreparedNetwork,
+    boundary: Polygon | MultiPolygon,
     state_at: datetime,
     committed_names: frozenset[str],
     template: dict[str, Any],
@@ -73,8 +78,9 @@ def apply_osm_routing_preparation(
 
     A complete directory whose manifest names this instant is reused. An incomplete directory of an instant never
     committed is replaced only after its replacement has been built and verified; one of a committed copy is preserved
-    and stops the run. Tiles and the build configuration stay in the run workspace, and nothing in a placed copy is
-    overwritten.
+    and stops the run. The boundary of Kraków is written as WKB in longitude and latitude next to the network and the
+    tiles before the manifest, so the manifest guards it too. Tiles and the build configuration stay in the run
+    workspace, and nothing in a placed copy is overwritten.
     """
     name = build_routing_copy_name(state_at)
     target = routing_root / ROUTING_COPIES_NAME / name
@@ -97,6 +103,7 @@ def apply_osm_routing_preparation(
         apply_osm_network_pbf(network_path, routing.nodes, routing.ways, state_at)
         apply_osm_valhalla_config(config_path, build_osm_valhalla_config(template, lease.workspace / "tiles", archive_path))
         apply_osm_valhalla_tiles(lease, config_path, tool_directory, network_path, archive_path, state_at, deadline)
+        apply_osm_boundary_file(preparation, to_wkb(boundary))
         apply_osm_routing_manifest(preparation, state_at)
         fetch_osm_routing_manifest(preparation)
         if is_incomplete:

@@ -27,9 +27,28 @@ from pmtiles_mvt import PMTilesReader, decode_mvt
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 TILE_RE = re.compile(r"^/tiles/(\d+)/(\d+)/(\d+)\.json$")
 OUT_EXTENT = 512
-GREEN_KINDS = frozenset(("park", "grass", "garden", "forest", "wood", "nature_reserve", "cemetery",
-                         "recreation_ground", "pitch", "playground", "golf_course", "meadow", "allotments",
-                         "village_green", "grassland", "scrub", "orchard", "zoo"))
+GREEN_KINDS = frozenset(
+    (
+        "park",
+        "grass",
+        "garden",
+        "forest",
+        "wood",
+        "nature_reserve",
+        "cemetery",
+        "recreation_ground",
+        "pitch",
+        "playground",
+        "golf_course",
+        "meadow",
+        "allotments",
+        "village_green",
+        "grassland",
+        "scrub",
+        "orchard",
+        "zoo",
+    )
+)
 FILL_CLASSES = ("green", "water", "building")
 LINE_CLASSES = ("path", "minor", "major")
 
@@ -236,8 +255,7 @@ class Handler(BaseHTTPRequestHandler):
         with open(t.path, "rb") as f:
             f.seek(start)
             body = f.read(end - start + 1)
-        return self._send(206, body, "application/octet-stream",
-                          {"Accept-Ranges": "bytes", "Content-Range": "bytes %d-%d/%d" % (start, end, t.size)})
+        return self._send(206, body, "application/octet-stream", {"Accept-Ranges": "bytes", "Content-Range": "bytes %d-%d/%d" % (start, end, t.size)})
 
 
 def main():
@@ -257,8 +275,7 @@ def main():
         sys.exit("No tile archive. Run `make tiles` (Kraków, needs internet) or `make tiles-sample` first.")
     Handler.tiles = Tiles(path)
     info = Handler.tiles.info
-    print("Serving %s (%.1f MB, zoom %d-%d) on http://%s:%d" % (path, info["archive_bytes"] / 1e6, info["min_zoom"],
-                                                                 info["max_zoom"], a.host, a.port))
+    print("Serving %s (%.1f MB, zoom %d-%d) on http://%s:%d" % (path, info["archive_bytes"] / 1e6, info["min_zoom"], info["max_zoom"], a.host, a.port))
     print("Emulator address: http://10.0.2.2:%d" % a.port)
     ThreadingHTTPServer((a.host, a.port), Handler).serve_forever()
 

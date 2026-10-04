@@ -11,3 +11,17 @@
 - Why: On Linux a contained writer can outlive its killed owner and keeps exclusion through the inherited descriptor; on Windows the kill-on-close job ends the whole tree with its owner, so the next launch recovers at once. One cross-platform expectation was wrong on one of the two systems.
 - Reusable pattern: Write a crash or process test per platform with its own expectation, and guard platform-only code with `if sys.platform != "<platform>": raise ...` so mypy checks the module on both Windows and Linux.
 - Risk / notes: A Windows run never proves the Linux orphan path and a Linux run never proves the Job Object path; check `mypy --platform linux` next to the native run.
+
+## 2026-10-04 - Two copies of the immutable directory and pointer mechanism (public_transport_routing, S-9)
+
+- What changed: `data/routing_directories.py` holds the preparation directory, the placement by a rename and the pointer replaced through a synced temporary file for any parent and pattern of names, used by `gtfs/` and `transit/` under `ROUTING_DATA_DIR`; `data/routing_data.py` keeps its own copy of the same mechanism for `copies/` and `current`.
+- Why: `route_planning` was changing `data/routing_data.py` on the same tree while the GTFS step was written, so it was not generalized then.
+- Reusable pattern: a new kind of immutable routing data takes `routing_directories.py` with its own parent and name pattern, and its pointer is written only after the placement.
+- Risk / notes: once `route_planning` is merged, `routing_data.py` should delegate its preparation, placement and pointer to `routing_directories.py`, keeping its function names and `RoutingDataError`.
+
+## 2026-10-04 - A broad ValueError catch hides a configuration failure (route_planning)
+
+- What changed: `fetch_valhalla_answer` of `data/valhalla.py` builds its client, which loads the configuration facade, before the `try` that catches `httpx.HTTPError` and `ValueError`.
+- Why: `ConfigurationError` of `config/settings.py` derives from `ValueError`, so a missing entry was reported as an unavailable routing service; `ValueError` is caught there only for an answer that is not JSON.
+- Reusable pattern: in the data layer, call whatever reads `config.config` outside a `try` that catches `ValueError`, and keep that `try` around the call and the decoding alone.
+- Risk / notes: `fetch_krakow_boundary` of `service/route_boundary.py` follows the same rule; a new adapter that catches `ValueError` has to as well.
