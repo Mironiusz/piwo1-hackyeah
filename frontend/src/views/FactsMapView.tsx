@@ -36,6 +36,7 @@ function compareDistance(from: Point, to: Point): number {
  * The map of facts, the view the application opens on: the barriers and amenities of the needs in the visible area,
  * with a switch to every fact, and under the map the same facts as a list, which is the text form of the map.
  * It asks for facts when the map has stood still and not when the map is zoomed out beyond a part of a district.
+ * Until the map has rested for the first time the list says that it is loading, and never that no fact is known.
  * The detail of a fact opens in place of the list.
  */
 export function FactsMapView() {
@@ -131,7 +132,8 @@ export function FactsMapView() {
     return detail;
   }
 
-  const isLoading = facts.state === "loading" && !isZoomedOut;
+  const isWaitingForMap = rest === null && !hasFailed;
+  const isLoading = (facts.state === "loading" || isWaitingForMap) && !isZoomedOut;
   const hasList = facts.state !== "failed" && !isZoomedOut && shown.length > 0;
 
   return (
@@ -164,7 +166,7 @@ export function FactsMapView() {
         <output className="block">
           {isLoading && !hasList ? <p className={`${HINT} py-2`}>{t("state.loading")}</p> : null}
           {isZoomedOut ? <Note className="mt-2">{t("facts.zoom_in")}</Note> : null}
-          {facts.state === "ready" && !isZoomedOut && shown.length === 0 ? <Note className="mt-2">{t(shownScope === "needs" ? "facts.none" : "facts.none_at_all")}</Note> : null}
+          {facts.state === "ready" && !isWaitingForMap && !isZoomedOut && shown.length === 0 ? <Note className="mt-2">{t(shownScope === "needs" ? "facts.none" : "facts.none_at_all")}</Note> : null}
           {facts.data?.is_truncated === true && !isZoomedOut ? (
             <Note kind="strong" className="mt-2">
               {t("facts.too_many")}

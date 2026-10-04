@@ -4,35 +4,42 @@ import { slideText } from '../lib/lang.js';
 import './solution.css';
 
 const t = slideText('solution');
+const brand = slideText('title').heading;
 
-/** The answer in three steps, needs, route and facts, one card per click, then the line that the judgement stays with the person. */
+/** The answer in three steps, needs, route and facts, one row per click, then the line that the judgement stays with the person. */
 export default {
   id: 'solution',
   summary: t.summary,
   html: `
+    <p class="brand">${brand}</p>
     <h2 class="slide-title">${t.heading}</h2>
-    <ol class="card-row">
-      ${t.steps.map((s, i) => `<li class="card"><span class="card-num">${i + 1}</span><h3>${s.head}</h3><p>${s.text}</p></li>`).join('')}
-    </ol>
-    <p class="statement solution-footer">${t.footer}</p>`,
+    <div class="sheet">
+      <ol class="step-rows">
+        ${t.steps.map((s, i) => `<li class="step-row"><span class="card-num">${i + 1}</span><h3>${s.head}</h3><p>${s.text}</p></li>`).join('')}
+      </ol>
+    </div>
+    <p class="plate solution-footer">${t.footer}</p>`,
   notes: t.notes,
 
   animate(root) {
-    const cards = root.querySelectorAll('.card');
+    const rows = root.querySelectorAll('.step-row');
     const footer = root.querySelector('.solution-footer');
-    gsap.set(cards, { opacity: 0, y: 24 });
-    gsap.set(footer, { opacity: 0 });
+    gsap.set(rows, { opacity: 0, y: 24 });
+    gsap.set(footer, { opacity: 0, y: -18 });
     return [
-      null,
       (tl) => {
-        tl.to(cards[0], { opacity: 1, y: 0, duration: 0.45 });
+        tl.from(root.querySelector('.slide-title'), { opacity: 0, y: 24, duration: 0.5, ease: 'power3.out' });
+        tl.from(root.querySelector('.sheet'), { y: 110, duration: 0.6, ease: 'power3.out' }, '-=0.3');
       },
       (tl) => {
-        tl.to(cards[1], { opacity: 1, y: 0, duration: 0.45 });
+        tl.to(rows[0], { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' });
       },
       (tl) => {
-        tl.to(cards[2], { opacity: 1, y: 0, duration: 0.45 });
-        tl.to(footer, { opacity: 1, duration: 0.4 }, '+=0.15');
+        tl.to(rows[1], { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' });
+      },
+      (tl) => {
+        tl.to(rows[2], { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' });
+        tl.to(footer, { opacity: 1, y: 0, duration: 0.5, ease: 'back.out(1.6)' }, '+=0.15');
       },
     ];
   },

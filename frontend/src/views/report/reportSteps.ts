@@ -146,11 +146,12 @@ export function buildCreateFactRequest(draft: ReportDraft, idempotencyKey: strin
 }
 
 /**
- * Remembers on the device that the person confirmed a fact, by default at this moment, as the detail of a fact does after a vote,
- * so the detail shows the vote and from when the next one is possible.
+ * Remembers on the device that a voter confirmed a fact, by default at this moment, as the detail of a fact does after a vote,
+ * so the detail shows the vote and from when the next one is possible. The voter is the pseudonym of the account of the session,
+ * or null for a person without an account. A saved report is remembered the same way, because it carries the confirmation of its author.
  */
-export function rememberConfirmation(factId: number, now: Date = new Date()): void {
-  saveOwnVote(factId, "confirm", toDeviceDay(now), startOfNextDay(now));
+export function rememberConfirmation(factId: number, voter: string | null, now: Date = new Date()): void {
+  saveOwnVote(factId, voter, "confirm", toDeviceDay(now), startOfNextDay(now));
 }
 
 /**

@@ -174,6 +174,8 @@ interface MapViewProps {
  * tells when a marker is pressed, and tells where it rests 0.3 seconds after it stopped moving and never while it moves.
  * When the size of the map changes, the map goes back to the place the view asked for, unless the person has moved it since:
  * a move that was still running would otherwise end at the center of the old size.
+ * It tells that the map failed when the map cannot be created, when its style does not load and when the tile archive cannot be read.
+ * An error of one tile or of a font is passed over, because the rest of the map is still drawn.
  */
 export function MapView({ label, markers, zones, route, isRouteAssessed, isPicking, hasSampleData, camera, onReady, onMarkerPress, onRest, onFail }: MapViewProps) {
   const { t } = useTranslation();
@@ -309,15 +311,23 @@ export function MapView({ label, markers, zones, route, isRouteAssessed, isPicki
         moveCamera(map, liveCamera.current, false);
       }
     };
+    const fail = (event: { error: unknown; sourceId?: string; tile?: unknown }) => {
+      const isOfBaseMap = event.sourceId !== undefined && event.sourceId !== ZONES_SOURCE_ID && event.sourceId !== ROUTE_SOURCE_ID;
+      if (isOfBaseMap && event.tile === undefined) {
+        latest.current.onFail();
+      }
+    };
     map.on("movestart", start);
     map.on("moveend", schedule);
     map.on("resize", keepPlace);
+    map.on("error", fail);
     schedule();
     return () => {
       cancel();
       map.off("movestart", start);
       map.off("moveend", schedule);
       map.off("resize", keepPlace);
+      map.off("error", fail);
     };
   }, [map]);
 

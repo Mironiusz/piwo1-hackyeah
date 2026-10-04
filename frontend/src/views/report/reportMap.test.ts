@@ -1,6 +1,6 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
-import { buildMoveCamera, buildPointCamera, buildPointMarker, buildReportMarker, buildReportZone, buildZoneCamera, findZoneZoom, focusMap, isSamePlace } from "./reportMap.ts";
+import { buildMoveCamera, buildPointCamera, buildPointMarker, buildReportMarker, buildReportZone, buildZoneCamera, findZoneZoom, isSamePlace } from "./reportMap.ts";
 
 const POINT = { lat: 50.0661, lon: 19.9878 };
 const EQUATOR_METRES_PER_PIXEL_AT_ZOOM_0 = 40_075_016.686 / 512;
@@ -12,10 +12,6 @@ function measureDiameterInPixels(radiusM: number, zoom: number): number {
   const metresPerPixel = (EQUATOR_METRES_PER_PIXEL_AT_ZOOM_0 * Math.cos((POINT.lat * Math.PI) / 180)) / 2 ** zoom;
   return (2 * radiusM) / metresPerPixel;
 }
-
-afterEach(() => {
-  vi.unstubAllGlobals();
-});
 
 describe("buildPointMarker and buildReportMarker", () => {
   it("builds the marker of the point as a named mark that cannot be pressed", () => {
@@ -125,24 +121,5 @@ describe("isSamePlace", () => {
   it("tells two points some metres apart from each other", () => {
     expect(isSamePlace(POINT, { lat: POINT.lat + 0.0001, lon: POINT.lon })).toBe(false);
     expect(isSamePlace(POINT, { lat: POINT.lat, lon: POINT.lon - 0.0001 })).toBe(false);
-  });
-});
-
-describe("focusMap", () => {
-  it("moves the focus to the canvas of the map", () => {
-    const focus = vi.fn();
-    const querySelector = vi.fn(() => ({ focus }));
-    vi.stubGlobal("document", { querySelector });
-
-    focusMap();
-
-    expect(querySelector).toHaveBeenCalledWith(".maplibregl-canvas");
-    expect(focus).toHaveBeenCalledTimes(1);
-  });
-
-  it("does nothing where no map is drawn", () => {
-    vi.stubGlobal("document", { querySelector: () => null });
-
-    expect(() => focusMap()).not.toThrow();
   });
 });

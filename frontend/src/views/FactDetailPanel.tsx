@@ -18,6 +18,7 @@ import { StatusMark } from "../parts/StatusMark.tsx";
 import { HINT, KEY_VALUE_KEY, KEY_VALUE_LIST, KEY_VALUE_VALUE, PANEL_TEXT, PANEL_TITLE } from "../parts/styles.ts";
 import { canVoteNow, readOwnVote, saveOwnVote, startOfNextDay, toDeviceDay } from "../state/ownVotes.ts";
 import { usePlannedRoute } from "../state/plannedRoute.tsx";
+import { useSession } from "../state/session.tsx";
 import type { FactDetailContext } from "./factDetail.ts";
 
 type VoteState = { kind: "idle" } | { kind: "saving" } | { kind: "saved"; status: Fact["status"] } | { kind: "too_soon"; repeatAllowedAt: string | null } | { kind: "failed"; textKey: string };
@@ -43,8 +44,10 @@ function FactBody({ fact, routeFact, vote, flag, openedAt, onVote, onFlagStep, o
   const { t } = useTranslation();
   const language = useLanguage();
   const kind = findFactKind(fact);
-  const ownVote = readOwnVote(fact.id);
-  const canVote = canVoteNow(fact.id, openedAt);
+  const { account } = useSession();
+  const voter = account?.pseudonym ?? null;
+  const ownVote = readOwnVote(fact.id, voter);
+  const canVote = canVoteNow(fact.id, voter, openedAt);
   const isVoteOpen = canVote && vote.kind !== "saving" && vote.kind !== "too_soon";
 
   return (
@@ -83,7 +86,7 @@ function FactBody({ fact, routeFact, vote, flag, openedAt, onVote, onFlagStep, o
         {fact.geozone_radius_m !== null ? (
           <>
             <dt className={KEY_VALUE_KEY}>{t("fact.radius")}</dt>
-            <dd className={KEY_VALUE_VALUE}>{`${fact.geozone_radius_m} m`}</dd>
+            <dd className={KEY_VALUE_VALUE}>{formatDistance(fact.geozone_radius_m, language)}</dd>
           </>
         ) : null}
         {fact.description !== null ? (
@@ -165,7 +168,8 @@ function FactBody({ fact, routeFact, vote, flag, openedAt, onVote, onFlagStep, o
 
 /**
  * The detail of a fact, a panel over the map: its type, source, days and status, the sample data mark and the description,
- * the two equal votes with the own latest vote of the person, which the device remembers, and the flag for moderation
+ * the two equal votes with the own latest vote of the person, which the device remembers for the account of the session
+ * or for a person without an account, and the flag for moderation
  * where the service allows one. An outdated fact keeps both votes, so it can be confirmed again.
  * The heading stays the same element while the fact loads, so the focus that moved to it stays on it.
  */
@@ -176,6 +180,7 @@ export function FactDetailPanel() {
   const factId = Number(params.factId);
   const { closePath, routeFacts, onLoad, onChange } = useOutletContext<FactDetailContext>();
   const { markStale } = usePlannedRoute();
+  const { account } = useSession();
   const loaded = useRequest(() => readFact(factId), [factId]);
   const [changed, setChanged] = useState<Fact | null>(null);
   const [vote, setVote] = useState<VoteState>({ kind: "idle" });
@@ -208,7 +213,7 @@ export function FactDetailPanel() {
     try {
       const after = await castVote(factId, verdict);
       const now = new Date();
-      saveOwnVote(factId, verdict, toDeviceDay(now), startOfNextDay(now));
+      saveOwnVote(factId, account?.pseudonym ?? null, verdict, toDeviceDay(now), startOfNextDay(now));
       setChanged(after);
       setVote({ kind: "saved", status: after.status });
       markStale();
