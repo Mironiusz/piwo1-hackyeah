@@ -1,4 +1,4 @@
-.PHONY: lint lint-python lint-docs format test test-unit typecheck deadcode deps security audit check
+.PHONY: lint lint-python lint-docs format test test-unit test-critical typecheck deadcode deps security audit check check-unit backend db-build db-up db-down migration-heads migration-history
 
 # No recipe in this file contains shell syntax: no `||`, no brace blocks, no
 # apostrophes, no file sourcing. This is not a matter of style. GNU make on Windows picks the shell
@@ -28,11 +28,11 @@ format:
 	npx --no-install prettier --write "**/*.md"
 
 test:
-	pytest
+	python -m pytest
 
 # A quick run without the tests with a real dependency, to fire without a database set up.
 test-unit:
-	pytest -m "not critical"
+	python -m pytest -m "not critical"
 
 typecheck:
 	mypy
@@ -57,6 +57,16 @@ deps:
 security:
 	bandit -r .claude/hooks -s B404,B603,B607 --confidence-level medium
 	bandit -r .claude/hooks -t B608
+	python -m bandit -r config -x config/settings.py --confidence-level medium
+# Settings B105 reports environment filenames as passwords, not credential literals.
+	python -m bandit config/settings.py -s B105 --confidence-level medium
+	python -m bandit -r api service worker common_time.py alembic --confidence-level medium
+	python -m bandit -r data -x data/import_process.py,data/windows_job.py --confidence-level medium
+# The process supervisor accepts an absolute executable from the trusted administrative caller, with shell=False and suppressed output.
+	python -m bandit data/import_process.py -s B404,B603 --confidence-level medium
+# The Windows supervisor uses subprocess only to encode argv for CreateProcessW; no shell is involved.
+	python -m bandit data/windows_job.py -s B404 --confidence-level medium
+	python -m bandit -r config api service data worker common_time.py alembic -t B608
 
 audit:
 	pip-audit
@@ -64,3 +74,26 @@ audit:
 # The target does not cover the critical tests with a real database: the code quality check is to work also on a machine
 # where the database is not running. The project adds a separate target for the critical run together with the first such test.
 check: lint typecheck deadcode deps security audit test
+
+backend:
+	python -m api
+
+db-build:
+	docker compose --env-file .env --env-file .env.local -f compose.local.yml build
+
+db-up:
+	docker compose --env-file .env --env-file .env.local -f compose.local.yml up -d
+
+db-down:
+	docker compose --env-file .env --env-file .env.local -f compose.local.yml down
+
+migration-heads:
+	python -m alembic heads
+
+migration-history:
+	python -m alembic history
+
+test-critical:
+	python -m pytest -m critical $(PYTEST_ARGS)
+
+check-unit: lint typecheck deadcode deps security audit test-unit

@@ -35,7 +35,7 @@ The scope follows the closed shape and the user's extension of its requirements 
 - Acquiring and processing OpenStreetMap data, deriving facts, reconciliation, preparing routing data and selecting or activating a routing copy. These remain with their assigned initiatives.
 - The common demo-data loading workflow, sample data and map assets.
 - Operating or changing the hosted demo and accessing its database.
-- Periodic scheduling or automatic import runs.
+- Periodic scheduling or automatic import runs. Automatic recovery of a failed run was requested by the user on 2026-10-04; it runs on the next manual import launch and does not automatically start a fresh import or require an independent background recovery service.
 
 ## Functional requirements
 
@@ -53,7 +53,7 @@ FR-6. Provide the foundation for explicitly launched administrative work under t
 
 FR-7. Deliver the checks required with the first backend implementation, including agreed responsibility boundaries and a guard that refuses critical tests under target-environment configuration before any test can write. The included critical checks run against the team member's local database.
 
-FR-8. Only one import run can hold shared import exclusion for the configured database. A second run is refused without waiting or beginning acquisition. Exclusion remains held until the owning run's outstanding work, rollback and cleanup have ended.
+FR-8. Only one import run can hold shared import exclusion for the configured database. A second run is refused without waiting or beginning acquisition. Exclusion remains held until the owning run's outstanding work, rollback and cleanup have ended, including private-file cleanup after loss of all database connections. Confirmed database completion alone does not permit a new run. This existing requirement was explicitly confirmed by the user on 2026-10-04. If the owning process crashes before cleanup completes, recovery must finish cleanup and release admission automatically; recovery runs on the next manually launched import, before new acquisition. Without another launch, cleanup remains pending. The user selected this trigger on 2026-10-04. All imports for a given database run on one execution machine and use the same persistent workspace, including across replacement containers; the user confirmed this boundary on 2026-10-04.
 
 FR-9. Enforce one 120-second elapsed-time budget from the start of a publication transaction through commit, including all writes and waiting. If the importer has less whole-run time remaining, use that earlier deadline. The budget is not renewed for individual statements and excludes acquisition and preparation completed before publication.
 
@@ -77,7 +77,7 @@ AC-6. The delivered administrative foundation can be used with the shared config
 
 AC-7. The applicable foundation gates pass. A critical test session configured for the target environment is refused before any test writes; approved local critical checks run against the team member's own database. Covers FR-7.
 
-AC-8. Two independent local consumers attempt to acquire import exclusion for the same database. While A owns it, B is refused with zero wait and does not begin acquisition. After A's work and cleanup end, a later attempt can acquire it. Covers FR-8.
+AC-8. Two independent local consumers attempt to acquire import exclusion for the same database. While A owns it, B is refused with zero wait and does not begin acquisition. After A's work and cleanup end, a later attempt can acquire it. Repeat with A losing all database connections while its private-file cleanup is still outstanding: B remains refused until cleanup completes. If A has crashed, the next manual launch automatically completes recovery before it begins new acquisition; a surviving A remains excluded from concurrent recovery. Covers FR-8.
 
 AC-9. A publication starts with a 120-second budget, waits until second 80 and then needs another 50 seconds of work. It is interrupted at the shared deadline rather than allowed to complete at second 130. A confirmed rollback leaves its uncommitted changes invisible. Covers FR-9 and FR-10.
 

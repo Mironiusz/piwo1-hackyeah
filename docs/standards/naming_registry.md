@@ -14,4 +14,8 @@ Before you invent a name for a new file, function or constant, check whether the
 
 ## Current state
 
-The registry is empty, because the project has no code yet. The first entries are created together with the first files, functions and constants of the project, in sections by kind of name: names in the database, file names, function names, names of query constants, `makefile` target names, names in tests. The target rule is in `standard_naming.md`; the actual state goes here.
+- Layer packages: `api`, `service`, `data`, `worker`; shared configuration is `config` and time is `common_time`.
+- Factories and actions: `build_app`, `build_engine`, `build_import_engine`, `build_migration_engine`, `apply_import_exclusion`, `apply_publication`, `apply_import_process`.
+- SQL constants use `FETCH_..._SQL` or `APPLY_..._SQL` in `data/locks.py`; import admission and publication fence have separate keys.
+- Planned public failure names such as `ImportAlreadyRunning` and `PublicationOutcomeUnknown` are aliases of exception classes ending in `Error`, satisfying the naming gate while preserving the shared contract.
+- Launch targets: `backend`, `db-build`, `db-up`, `db-down`, `migration-heads`, `migration-history`, `test-critical`, `check-unit`.
