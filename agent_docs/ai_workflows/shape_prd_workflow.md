@@ -12,13 +12,13 @@ plan-prd     <TASK>_SHAPE.md
 plan-implement  <TASK>_PLAN.md
 ```
 
-Every call is manual. A skill finishes its work, says plainly what was produced and what can be called next, but does not start the next skill on its own - every phase boundary is a checkpoint at which you can see the result and turn back.
+Every call is manual, with one exception: `plan-implement` itself calls the review when the implementation ends (`docs/standards/standard_agentic_workflow.md`, section 3.1). A skill finishes its work, says plainly what was produced and what can be called next, but does not start the next skill on its own - every phase boundary is a checkpoint at which you can see the result and turn back.
 
 ## Artifacts
 
 One generic chain of skills handles any task through a parameter - the task name prefix and the initiative name (a directory in `plans/`). We do not create a separate skill per task.
 
-Five files, each with one allowed kind of content - the full section templates are written directly into the `plan-shape` and `plan-prd` skills. By default flat in `plans/<INITIATIVE>/`; when an initiative carries more than one task, a subdirectory per task is allowed, `plans/<INITIATIVE>/<TASK>/` - details and an example in `docs/standards/standard_agentic_workflow.md`, section 3.2:
+Five files, each with one allowed kind of content - the format of each is in `docs/standards/standard_agent_docs.md`, and the section skeletons are written directly into the `plan-shape` and `plan-prd` skills. By default flat in `plans/<INITIATIVE>/`; when an initiative carries more than one task, a subdirectory per task is allowed, `plans/<INITIATIVE>/<TASK>/` - details and an example in `docs/standards/standard_agentic_workflow.md`, section 3.2:
 
 - `<TASK>_SEED.md` - the raw request, immutable once saved.
 - `<TASK>_SHAPE.md` - a loose plan with the clarifying interview.

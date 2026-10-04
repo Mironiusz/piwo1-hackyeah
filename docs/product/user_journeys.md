@@ -1,10 +1,10 @@
 # User journeys of the MVP
 
-Document state: 2026-10-03
+Document state: 2026-10-04
 
 ## Why this document exists
 
-This document describes, step by step, what a person does in the app and what the app answers, for every mandatory feature M1 - M11 of `docs/product/specification.md`, version 11. It is derived from that specification and from `plans/mvp/MVP_PRD.md`, and it adds no product rule of its own: where the journeys needed behavior that no earlier version described, the rule was decided by the user on 2026-10-03 and entered the specification as version 11, written on the branch of the frontend person as version 6. In case of a discrepancy the specification prevails.
+This document describes, step by step, what a person does in the app and what the app answers, for every mandatory feature M1 - M11 of `docs/product/specification.md`, version 11. It is derived from that specification and from `plans_finished/mvp/MVP_PRD.md`, and it adds no product rule of its own: where the journeys needed behavior that no earlier version described, the rule was decided by the user on 2026-10-03 and entered the specification as version 11, written on the branch of the frontend person as version 6. In case of a discrepancy the specification prevails.
 
 The journeys are the input for two things: the list of views of the web frontend (`docs/product/views.md`), and the view of the frontend person on the contract of the programming interface, `docs/product/api_contract.md`. They do not describe the layout or the look of a screen; the design direction is in `PRODUCT.md` and `.impeccable/briefs/`.
 
@@ -30,7 +30,7 @@ Places of the app the journeys move between. The names are working names for the
 
 A fact is a barrier or an amenity of the closed list at a place, or a geozone. Without an account and logged in are the two ways a person contributes; the journeys are the same for both unless a journey says otherwise.
 
-Every journey gives who it is for, where it starts, its steps, its branches, where it ends and the rules it rests on. M stands for a section of the specification, FR and AC for `plans/mvp/MVP_PRD.md`.
+Every journey gives who it is for, where it starts, its steps, its branches, where it ends and the rules it rests on. M stands for a section of the specification, FR and AC for `plans_finished/mvp/MVP_PRD.md`.
 
 ## J-1. First opening: setting the needs
 
@@ -175,7 +175,7 @@ Starts: the one entry to reporting, on the map of facts and on the route result.
 
 Branches:
 
-- It is the same one. The report becomes a confirmation of the existing fact and follows J-8, its limit of one vote a day included. No new report is saved.
+- It is the same one. The report becomes a confirmation of the existing fact and follows J-8, its limit of one vote per calendar day included. No new report is saved.
 - The person leaves before approving. Nothing is saved.
 - The point lies farther than 15 m from every way of the pedestrian network. The report is saved and shown like any other; it changes no route, and the app does not say so.
 - A route is shown. After the report is saved, the app plans the route again (J-5).
@@ -216,12 +216,12 @@ The fact detail shows the type, the place, the source - OpenStreetMap or user re
 
 1. The person chooses one of two equal answers: still there, or gone.
 2. The app saves the vote and shows the status of the fact after it, together with the person's own vote.
-3. Until a day has passed since that vote, the vote controls of this fact are inactive, and the app says that the next vote is possible after a day.
+3. Until the next calendar day, the vote controls of this fact are inactive, and the app says that the next vote is possible the next day.
 
 Branches:
 
-- The person voted on this fact less than a day ago. The controls are inactive from the start, with the same explanation. A vote that reaches the server earlier than a day after the previous one is refused, and the app says so; this is an ordinary answer, not an error.
-- A change of mind after a day. The new vote replaces the earlier one; only the latest vote of a person counts, and a vote cannot be withdrawn without casting another one.
+- The person already voted on this fact the same day. The controls are inactive from the start, with the same explanation. A vote that reaches the server on the same calendar day as the previous one is refused, and the app says so; this is an ordinary answer, not an error.
+- A change of mind on a later day. The new vote replaces the earlier one; only the latest vote of a person counts, and a vote cannot be withdrawn without casting another one.
 - The fact becomes outdated. It stays on the map of facts with that status, so that a person can confirm it again, and it no longer counts for a route or for its list. A fact outdated because it was removed in OpenStreetMap disappears.
 - The fact was hidden by a moderator in the meantime. The vote is refused, and the fact is gone from the screen.
 - A fact from OpenStreetMap. It is voted on in the same way and has the same statuses; a confirmation updates its date of last confirmation, and its shown date stays the date of its last OpenStreetMap edit.
@@ -290,7 +290,7 @@ Logging in and out:
 3. The person logs out. The app logs them out in this browser.
 
 - A wrong pseudonym or password. The app says that the two do not match, without saying which.
-- The session ended. The next action of the person is handled as without an account, and the app shows that they are not logged in.
+- The session ended. The next request the app makes with that session is refused, the app says that the person is logged out, and nothing of it is saved as a contribution without an account (M9).
 - What changes after logging in. Contributions count as made from an account. The app says nothing about their weight, shows nothing about the account to other people, and keeps the needs on the device, apart from the account.
 
 Deleting the account:
@@ -369,8 +369,8 @@ Decided by the user, the frontend person of the team, on 2026-10-03, question by
 7. During reporting the location only moves the map, in the browser (M3).
 8. A report far from every way is saved and shown, and the summary does not mention it (M3).
 9. A geozone can carry an optional description; it has no check for existing geozones (M5).
-10. The app shows a person their own vote, and the vote controls are inactive for a day after it (M4). The vote is remembered on the device, decided on 2026-10-03, because the programming interface returns no vote of the person.
-11. The app says nothing about the weight of an account; a pseudonym has 3 to 30 characters of letters, digits, the underscore and the hyphen; deleting an account takes one confirmation, without the password (M9). On 2026-10-03 the user kept the rule of the characters against the wider one of `docs/product/api_contract.md`, and asks the owners of that contract to change it.
+10. The app shows a person their own vote, and the vote controls are inactive until the next calendar day (M4). The vote is remembered on the device, decided on 2026-10-03, because the programming interface returns no vote of the person.
+11. The app says nothing about the weight of an account; a pseudonym has 3 to 30 characters of letters, digits, the underscore and the hyphen; deleting an account takes one confirmation, without the password (M9). On 2026-10-03 the user kept the rule of the characters against the wider one of `docs/product/api_contract.md`, and asked the owners of that contract to change it; the contract took the rule on 2026-10-04.
 12. A flag has no reason and takes one confirmation (M11).
 13. The map of facts has a switch between the facts of the profile and every fact (M4).
 14. The first opening shows the needs screen, which can be skipped (M1).
@@ -395,4 +395,4 @@ Where the date of the OpenStreetMap copy stands and how a moderator reaches the 
 - the wording of the messages and of every label, in Polish and in English, and the Polish names of the terms of the specification, proposed in `docs/product/interface_texts.md` and not approved yet,
 - the name of the product.
 
-Two rules of version 11 still differ from `docs/product/api_contract.md` and wait for its owners: the characters of a pseudonym, which the contract leaves open, and the street name of an item, for which the contract has no field and the stored data keeps no name of a way.
+One rule of version 11 still differs from `docs/product/api_contract.md` and waits for its owners: the street name of an item, for which the contract has no field and the stored data keeps no name of a way. The other one, the characters of a pseudonym, the contract took on 2026-10-04.

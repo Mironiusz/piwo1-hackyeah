@@ -57,6 +57,11 @@ deps:
 security:
 	bandit -r .claude/hooks -s B404,B603,B607 --confidence-level medium
 	bandit -r .claude/hooks -t B608
+	bandit -r db -s B101 --confidence-level medium
+	bandit -r service --confidence-level medium
+	bandit -r service -t B608
+	bandit -r data --confidence-level medium
+	bandit -r data -t B608
 
 audit:
 	pip-audit

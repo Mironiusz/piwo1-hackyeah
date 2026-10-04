@@ -35,7 +35,7 @@ The structure and content of module documentation - see `standard_documentation.
 
 Code contains no line comments unless they are truly necessary. Two exceptions: a complicated algorithm that cannot be described sufficiently with a docstring, and a configuration constant acting as a switch - then a short line comment indicating which options this switch can take is acceptable. Outside these two exceptions, documenting logic goes into the docstring, not into a comment next to a line - a docstring describes the whole intent of the function in one place, while a line comment drifts apart from the code at the first change nearby, because nobody remembers it during a refactor.
 
-Documents, including this one, do not overuse bold - bold is meant to highlight the genuinely most important thought of a paragraph, not every other sentence.
+Documents, including this one, use no bold in prose; the rule and the places where bold stays allowed are in `standard_formatting.md`, section Emphasis in prose.
 
 Forbidden characters in code and documentation - see `standard_formatting.md`.
 
@@ -63,7 +63,7 @@ Code contains no functions, variables or imports that are not used anywhere, det
 
 Dependencies declared in `pyproject.toml` match the dependencies actually imported in code, detected with deptry. An unused declared dependency needlessly increases the surface of security updates and the size of the environment. A dependency that is actually imported but undeclared works today only thanks to its accidental presence in the environment - for example as a transitive dependency of another package - and stops working the moment that accidental presence disappears.
 
-This requirement is checked at the level of the whole repository, not of a single module - a change in one module can reveal a mismatch introduced earlier elsewhere. The deviation rule applies nonetheless: what must be fixed is the mismatch resulting from the module being changed, not every other legacy mismatch found in the repo along the way.
+This requirement is checked at the level of the whole repository, not of a single module - a change in one module can reveal a mismatch introduced earlier elsewhere. Under the strict deviation rule of this repository every mismatch found this way blocks review, also one introduced earlier elsewhere; narrowing it to the mismatch of the changed module would be the soft version, which only an explicit decision in `docs/standards/README.md` brings in.
 
 ## Code performance requirements
 

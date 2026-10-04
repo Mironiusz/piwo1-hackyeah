@@ -16,7 +16,7 @@ Agent decision at C:40, without asking: in `docs/standards/decision_registry.md`
 
 Other sessions worked on the same tree during this phase, and the work was coordinated with them by messages. The session resolving the merge of `dev` holds `plans/mvp/MVP_PLAN.md`, `plans/mvp/MVP_PRD.md`, `docs/product/specification.md`, `plans/api_contract/` and `plans/account_sessions/` until it reports done, and step 5 waits for it. The routing engine session edited Q-1 of this plan and `DEPLOYMENT_SHAPE.md` before this run started, has one sentence still to add to the first item of Risks of this plan, and adds its decision to `plans/mvp/MVP_PLAN.md` before step 6 closes Q-7 there with the next free number.
 
-Done: steps 1 - 4 of the plan. `CLAUDE.md` and `AGENTS.md` carry the same new section Target environment, `README.md` line 41 and the log of `AI_WORKFLOW.md` follow it, and the registry entry names Q-1 as its only blocker.
+Done: steps 1 - 4 of the plan. `CLAUDE.md` and `AGENTS.md` carry the same new section Target environment, `README.md`, step 2 of section Setup from the template, and the log of `AI_WORKFLOW.md` follow it, and the registry entry names Q-1 as its only blocker.
 
 Architecture tests after steps 1 - 4: `venv\Scripts\python.exe -m pytest tests/architecture -o addopts="" -q` -> `5 failed, 109 passed`. The parity test of `CLAUDE.md` and `AGENTS.md` passes. None of the five failures points at a file changed in this run: the parity of the skill `impeccable` and of the four `impeccable-*` agent roles without a Codex pair, and forbidden characters and bold in prose inside `.claude/skills/impeccable/` and `.agents/skills/impeccable/`, all present in `HEAD` since commit `090f5a9`; and conflict markers in `plans/account_sessions/ACCOUNT_SESSIONS_SHAPE.md` and `plans/api_contract/API_CONTRACT_SHAPE.md`, the work in progress of the merge session. Neither is fixed here.
 
@@ -107,7 +107,7 @@ None.
 
 ### Improvements
 
-- I-1. F-1, F-6 and F-7 of the closed plan describe the tree before steps 1 - 3: both rule files and `README.md` no longer say what F-1 and F-6 quote, and the lines of F-7 moved to `CLAUDE.md` line 121 and `AI_WORKFLOW.md` line 59. Rewording them as the state before the step that changed them, as F-5 already is, keeps the closed plan true.
+- I-1. F-1, F-6 and F-7 of the closed plan describe the tree before steps 1 - 3: both rule files and `README.md` no longer say what F-1 and F-6 quote, and the passages F-7 cites now stand in `CLAUDE.md` section Task cycle and the agentic system and `AI_WORKFLOW.md` section Log. Rewording them as the state before the step that changed them, as F-5 already is, keeps the closed plan true.
 
 ### Verification
 
@@ -139,7 +139,7 @@ Ready, for the whole task `DEMO_ENVIRONMENT` (FR-1 - FR-4). It does not cover th
 
 ## 2026-10-03 - After the review, phase two
 
-I-1 was applied: F-1 and F-6 now say what both rule files and `README.md` said until steps 1 and 2 of the plan, and F-7 points at `CLAUDE.md` line 121 and `AI_WORKFLOW.md` line 59; no other content of the plan changed. R-4 - R-7 stay open for their owners: R-4 for whoever edits `plans/mvp/MVP_PLAN.md` after steps 3.2 and 3.7 of `plans/fact_schema/FACT_SCHEMA_PLAN.md`, R-5 for the task `DEPLOYMENT`, R-6 for the first deployment, and R-7 for the session of `plans/fact_schema/`.
+I-1 was applied: F-1 and F-6 now say what both rule files and `README.md` said until steps 1 and 2 of the plan, and F-7 points at `CLAUDE.md` section Task cycle and the agentic system and `AI_WORKFLOW.md` section Log; no other content of the plan changed. R-4 - R-7 stay open for their owners: R-4 for whoever edits `plans/mvp/MVP_PLAN.md` after steps 3.2 and 3.7 of `plans/fact_schema/FACT_SCHEMA_PLAN.md`, R-5 for the task `DEPLOYMENT`, R-6 for the first deployment, and R-7 for the session of `plans/fact_schema/`.
 
 R-4 was settled later on 2026-10-03. The session of `plans/fact_schema/` finished its edits of `plans/mvp/MVP_PLAN.md`: the sentence of the item of Risks now reads "The critical path is Q-11", and its D-11 follows D-10. The item "- `plans/demo_environment/DEMO_ENVIRONMENT_PLAN.md`, the decision behind D-10." was then inserted in the Supplementary files of that plan, between the items of D-9 and D-11.
 

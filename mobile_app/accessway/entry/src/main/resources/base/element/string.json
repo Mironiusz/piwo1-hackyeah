@@ -1,0 +1,24 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "Trasy dla Twoich potrzeb i fakty o barierach w Krakowie"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "Trasy dla Twoich potrzeb, fakty o barierach i udogodnieniach, zgłoszenia"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "AccessWay"
+    },
+    {
+      "name": "internet_reason",
+      "value": "Połączenie z usługą tras i faktów"
+    },
+    {
+      "name": "location_reason",
+      "value": "Ustawienie startu trasy albo miejsca zgłoszenia w Twojej lokalizacji, tylko po naciśnięciu Moja lokalizacja"
+    }
+  ]
+}

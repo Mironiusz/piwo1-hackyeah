@@ -518,7 +518,7 @@ def test_resolve_fact_violations_accepts_a_well_formed_position() -> None:
     lines = [
         FACTS_HEADING,
         "",
-        "F-1. The probe reads the address from the configuration. | code:`data/engine.py:31`; doc:`docs/standards/standard_config.md` para. One place of reading | 2026-08-17",
+        "F-1. The probe reads the address from the configuration. | code:`data/engine.py` function `build_engine`; doc:`docs/standards/standard_config.md` section One place of reading | 2026-08-17",
         "",
         "## Decisions",
         "F-2. This is no longer a fact.",
@@ -574,7 +574,7 @@ def test_resolve_fact_violations_flags_an_unknown_evidence_kind() -> None:
 
 def test_resolve_fact_violations_flags_a_second_evidence_without_its_kind() -> None:
     """Ensures that evidence added after a semicolon must also carry its kind."""
-    lines = [FACTS_HEADING, "F-4. Type checking does not cover the tests. | code:`pyproject.toml` section mypy; same in the second tool | 2026-08-17"]
+    lines = [FACTS_HEADING, "F-4. Type checking does not cover the tests. | code:`pyproject.toml` table `[tool.mypy]`; same in the second tool | 2026-08-17"]
 
     assert len(resolve_fact_violations("PLAN.md", lines)) == 1
 

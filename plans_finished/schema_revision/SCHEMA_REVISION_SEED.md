@@ -12,7 +12,7 @@ Agent proposal, the part about this initiative, original in Polish:
 ```text
 ## Problem 1: Q-10 i szkielet backendu
 
-**Skąd cykl.** [LOCAL_DATABASE_PLAN.md:53](plans_finished/local_database/LOCAL_DATABASE_PLAN.md:53) (D-8) mówi, że ścieżki plików i konfigurację Alembica ustala work package MVP, bo należą do szkieletu backendu, a ten kształtuje Q-11. W efekcie plan `fact_schema` nie może określić, gdzie i jak powstaje rewizja (FR-15), bez zgadywania. Dlatego:
+**Skąd cykl.** [LOCAL_DATABASE_PLAN.md](plans_finished/local_database/LOCAL_DATABASE_PLAN.md) (D-8) mówi, że ścieżki plików i konfigurację Alembica ustala work package MVP, bo należą do szkieletu backendu, a ten kształtuje Q-11. W efekcie plan `fact_schema` nie może określić, gdzie i jak powstaje rewizja (FR-15), bez zgadywania. Dlatego:
 
 - plan `fact_schema` zostaje otwarty, więc Q-10 się nie zamyka,
 - bez Q-10 plan MVP się nie zamyka i szkielet nie powstaje,
@@ -43,7 +43,7 @@ Agent proposal, the part about this initiative, English translation by the agent
 ```text
 ## Problem 1: Q-10 and the backend skeleton
 
-Where the cycle comes from. LOCAL_DATABASE_PLAN.md:53 (D-8) says that the file paths and the Alembic configuration are set by the MVP work package, because they belong to the backend skeleton, which Q-11 shapes. As a result the plan of `fact_schema` cannot state where and how the revision is made (FR-15) without guessing. Therefore:
+Where the cycle comes from. LOCAL_DATABASE_PLAN.md (D-8) says that the file paths and the Alembic configuration are set by the MVP work package, because they belong to the backend skeleton, which Q-11 shapes. As a result the plan of `fact_schema` cannot state where and how the revision is made (FR-15) without guessing. Therefore:
 
 - the plan of `fact_schema` stays open, so Q-10 does not close,
 - without Q-10 the MVP plan does not close and the skeleton is not built,
