@@ -488,12 +488,15 @@ The radii of an area are written the same in both languages: `10 m`, `25 m`, `50
 - `privacy.kept.vote`
   - PL: Identyfikator głosu bez konta. Nieodwracalny skrót adresu IP i cech przeglądarki, żeby odróżnić jedną osobę bez konta od drugiej. Do usunięcia dema i wszystkich jego danych 4 października 2026. To dane osobowe w postaci spseudonimizowanej, nie dane anonimowe.
   - EN: The identifier of a vote without an account. An irreversible digest of the IP address and of browser characteristics, to tell one person without an account from another. Until the demo and all its data are deleted on 4 October 2026. It is pseudonymized personal data, not anonymous data.
+- `privacy.kept.route_log`
+  - PL: Punkty zapytań o trasę, także Twojej bieżącej lokalizacji, w dzienniku usługi wyznaczania tras. Żeby w wersji demonstracyjnej dało się sprawdzić, jak działa wyznaczanie tras. Do usunięcia dema i wszystkich jego danych 4 października 2026.
+  - EN: The points of route requests, your current location among them, in the log of the route planning service. To check how route planning works in this demo. Until the demo and all its data are deleted on 4 October 2026.
 - `privacy.not_kept.needs`
   - PL: Twoich potrzeb. Zostają tylko na Twoim urządzeniu i nie są częścią konta.
   - EN: Your needs. They stay only on your device and are not part of the account.
 - `privacy.not_kept.location`
-  - PL: Bieżącej lokalizacji. Używamy jej tylko do wyznaczenia jednej trasy.
-  - EN: Your current location. We use it only to plan one route.
+  - PL: Bieżącej lokalizacji poza dziennikiem usługi wyznaczania tras. Używamy jej tylko do wyznaczenia jednej trasy.
+  - EN: Your current location, apart from the log of the route planning service. We use it only to plan one route.
 - `privacy.not_kept.email`
   - PL: Adresu e-mail. Nie pytamy o niego.
   - EN: An email address. We do not ask for one.

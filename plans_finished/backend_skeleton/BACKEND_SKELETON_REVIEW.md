@@ -219,7 +219,8 @@ Agent decision at C:40, without asking: the owner-crash test was split instead o
 - After the revision the critical suite of the skeleton again gave 12 passed and 1 skipped, and no `public.backend_skeleton_scratch` was left.
 - The non-critical suite passes for every skeleton test. Its 7 failures are outside the skeleton: the prose gates on `mobile_app/`, three pyosmium cases of `osm_importer` that cannot open a temporary path with a non-ASCII user name, and two Linux process cases of `data/osm_valhalla.py`.
 - Mypy: no error in the skeleton files on Windows and with `--platform linux`; two errors remain in `data/osm_valhalla.py`, which calls `os.killpg` and `signal.SIGKILL` without a platform guard. Ruff check and format, vulture and every Bandit pass of the target `security` for the skeleton paths are clean; Ruff and deptry report only `mobile_app/`. pip-audit found no known vulnerability in the project dependencies; it reported only `pip` of the tool environment (PYSEC-2026-3721) and could not audit the local `accessibility-db`. Pinned Prettier formatted the changed documents.
-- The task-owned Compose containers, network and the three images built for the check were removed. No hosted environment was accessed and no existing container was stopped.
+- Linux run of the changed Linux-only code: a `python:3.13-slim` container with Python 3.13.16, the repository mounted read-only and the network of the same database of `db/` gave 9 passed and 4 skipped (the Windows-only cases) for the critical files of the skeleton, the refactored `test_next_manual_launch_recovers_after_owner_crash` included, and 8 passed for `tests/data/test_import_process_integration.py` and `tests/data/test_import_workspace_cases.py`.
+- The task-owned Compose containers, network and the images built for the checks were removed; the pulled base image `python:3.13-slim` stays, as it is also the base of `db/image/Dockerfile.tools`. No hosted environment was accessed and no existing container was stopped.
 
 ### Blockers
 
@@ -229,8 +230,40 @@ None for the skeleton. B-1 is closed: the database image is the one of `db/`, wh
 
 R-1. `make typecheck` and the full `make check` still fail on Windows because of `data/osm_valhalla.py` of `osm_importer` and of `mobile_app/`; their owners fix them.
 
-R-2. The Linux orphan variant was refactored into `apply_owner_crash` and not run again on Linux after the refactoring; its expectations are unchanged and it passed on Linux in the entry "Recovery design closed and foundation implemented".
+R-2. `import osmium` fails in `python:3.13-slim` with a missing `libexpat.so.1`, so six test modules of `osm_importer` do not even collect there. It does not touch the skeleton, but every Linux image that runs the import, the backend image of D-14 included, needs that system library; it is a handoff to Mateusz and to `plans/deployment_config/`.
 
 R-3. `plans/accounts/ACCOUNTS_PLAN.md` F-13 and `plans/deployment_config/DEPLOYMENT_CONFIG_SHAPE.md` still describe two local database setups; both are work in progress of other sessions and were not edited.
 
 R-4. A developer whose `.env.local` predates this change fails the environment contract test until the six new entries are added to it.
+
+### Improvements
+
+None required. The skeleton tests could be collected without the modules of `osm_importer` on a machine without `libexpat`, but that is a property of those modules, not of the foundation.
+
+### Verification
+
+| Standard         | State and evidence                                                                                                                                                                                                                      |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Agentic workflow | Checked automatically: the parity, vendored content, session-context hook and dangerous-command tests passed; the handoff with the parallel session followed ch. 4.7.                                                                   |
+| Agent docs       | Checked automatically: the plan contract test passed with F-30; the memory entry is a durable platform pattern, not a task status.                                                                                                      |
+| Review           | Checked manually against the checklist of `standard_review.md` and AC-1 - AC-15 of the PRD.                                                                                                                                             |
+| Documentation    | Checked manually: `docs/setup/backend.md` and the section Environment entries describe the actual template; every new function has a docstring.                                                                                         |
+| Formatting       | Checked automatically: Ruff format and Prettier pass on the changed files; the prose gate fails only on `mobile_app/`, outside this change. No line comment and no forbidden character in the changed code.                             |
+| Git              | Checked automatically: no conflict markers. No commit, push, staging or rebase by the agent; the user committed the work as `e1d621c` and `ea782db`.                                                                                    |
+| Architecture     | Checked automatically: the layer boundary test passed.                                                                                                                                                                                  |
+| Configuration    | Checked automatically: the environment contract test and the critical environment guard passed; the contract against a local `.env.local` was skipped, as no such file exists on this executor.                                         |
+| Database         | Checked automatically: Bandit B608 clean; the service account is refused `alembic_version`, and the scratch fixture leaves nothing behind.                                                                                              |
+| Errors           | Checked manually and by the live 404 envelope and the rollback, timeout and unknown-commit cases on Windows and Linux.                                                                                                                  |
+| Idempotency      | Not applicable: the change introduces no repeatable product operation.                                                                                                                                                                  |
+| Code quality     | Checked automatically: Ruff, vulture and deptry clean for the skeleton; mypy clean for the skeleton on Windows and with `--platform linux`, with two errors left in `data/osm_valhalla.py` of `osm_importer` (R-1).                     |
+| Logging          | Checked automatically with Ruff G; the live request log carries only the allowlisted fields.                                                                                                                                            |
+| Naming           | Checked automatically with Ruff N; `DEFAULT_LOG_LEVEL`, `build_log_level` and `apply_owner_crash` follow `standard_naming.md`.                                                                                                          |
+| Security         | Checked automatically: every Bandit pass of the skeleton paths clean; pip-audit found no known vulnerability in the project dependencies. Test credentials were generated, kept outside the repository and destroyed with the database. |
+| Tests            | Checked automatically: the skeleton suites on Windows, the critical suite on Windows and Linux against the database of `db/`, the 120-second ceiling and `db/tests`.                                                                    |
+| Time             | Checked manually: no change of time handling; the deadline cases pass on both platforms.                                                                                                                                                |
+| Worker           | Not applicable: no periodic task exists.                                                                                                                                                                                                |
+| Frontend         | Not applicable: no frontend file changed.                                                                                                                                                                                               |
+
+### Verdict
+
+Ready, for the whole backend skeleton initiative. Every acceptance criterion of the PRD has a passing run on the agreed systems: Windows x64 natively in this entry, Linux x64 in the entry "Recovery design closed and foundation implemented" and in the container run above, with the local database of `db/` that replaced the skeleton's own setup. B-1 and B-2 are closed by runs and B-3 is a consumer handoff by the user's decision. R-1 - R-4 belong to other initiatives or to each developer's local file and do not undermine the completion. The initiative qualifies for `plans_finished/backend_skeleton/`; check 2.1 of `FINAL_CHECKLIST.md` is ticked by a person.

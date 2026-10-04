@@ -2,6 +2,7 @@
 
 import importlib
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -24,6 +25,8 @@ def administrative_settings(monkeypatch):
         "DB_NAME": "invented",
         "DB_SERVICE_ACCOUNT_NAME": "invented",
         "DB_SERVICE_ACCOUNT_PASSWORD": "invented",
+        "ROUTING_SERVICE_URL": "http://routing:8002",
+        "ROUTING_DATA_DIR": str(Path(__file__).resolve().parent / "invented_routing_data"),
     }.items():
         monkeypatch.setenv(key, value)
     importlib.invalidate_caches()

@@ -1,4 +1,4 @@
-# AccessWay - walking routes in Kraków for your needs
+# EnableMe - walking routes in Kraków for your needs
 
 HackYeah 2026, challenge "Kraków bez barier". An OpenHarmony application (ArkTS / ArkUI, Stage model) targeting **API 20**, in `accessway/`.
 

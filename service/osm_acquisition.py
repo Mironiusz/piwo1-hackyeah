@@ -25,14 +25,14 @@ class OsmExtract:
 
 
 @asynccontextmanager
-async def fetch_osm_extract(client: httpx.AsyncClient, deadline: float) -> AsyncIterator[OsmExtract]:
-    """Validate redirect, checksum and source state and remove temporary data on every exit."""
+async def fetch_osm_extract(client: httpx.AsyncClient, directory: Path, deadline: float) -> AsyncIterator[OsmExtract]:
+    """Validate redirect, checksum and source state inside the run's directory and remove the downloaded data on every exit."""
     location = await fetch_osm_latest_location(client, OSM_SOURCE_DIRECTORY + "malopolskie-latest.osm.pbf", deadline)
     url = resolve_osm_source_location(location)
     filename = url.rsplit("/", 1)[1]
     checksum_text = await fetch_osm_checksum_text(client, url + ".md5", deadline)
-    with tempfile.TemporaryDirectory(prefix="osm-import-", dir=tempfile.gettempdir()) as directory:
-        path = Path(directory) / filename
+    with tempfile.TemporaryDirectory(prefix="osm-import-", dir=directory) as download_directory:
+        path = Path(download_directory) / filename
         digest = await apply_osm_download(client, url, path, deadline)
         resolve_osm_checksum(checksum_text, filename, digest)
         if asyncio.get_running_loop().time() >= deadline:

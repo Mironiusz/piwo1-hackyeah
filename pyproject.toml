@@ -23,6 +23,8 @@ dependencies = [
     "osmium==4.3.1",
     "shapely==2.1.2",
     "pyproj==3.7.2",
+    "numpy==2.5.3",
+    "scipy==1.18.1",
     "accessibility-db==0.1.0",
 ]
 
