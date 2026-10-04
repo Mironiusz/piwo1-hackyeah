@@ -20,9 +20,9 @@ An initiative waits for another when one of its checks waits for a check of the 
 | Stage | Initiatives                                                                                     | Waits for, at the stage below                                        |
 | ----- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | 1     | `backend_skeleton`, `schema_first_revision`, `stage1_clarifications`, `final_checklist`         | Nothing.                                                             |
-| 2     | `address_search`, `accounts`, `osm_importer`                                                    | `backend_skeleton`, `schema_first_revision`.                         |
-| 3     | `osm_import`, `route_planning`, `community_facts`                                               | `osm_importer`, `accounts`.                                          |
-| 4     | `sample_data`, `map_tiles`, `frontend_app`, `public_transport_routing`, `stage5_harmonyos_port` | `osm_import`, `route_planning`, `community_facts`.                   |
+| 2     | `address_search`, `accounts`, `osm_importer`, `community_facts`                                 | `backend_skeleton`, `schema_first_revision`.                         |
+| 3     | `osm_import`, `route_planning`, `community_facts_api`                                           | `osm_importer`, `accounts`, `community_facts`.                       |
+| 4     | `sample_data`, `map_tiles`, `frontend_app`, `public_transport_routing`, `stage5_harmonyos_port` | `osm_import`, `route_planning`, `community_facts_api`.               |
 | 5     | `deployment_config`, `stage6_official_requirements`                                             | `sample_data`, `map_tiles`, `frontend_app`, `stage5_harmonyos_port`. |
 | 6     | `stage7_demo_scenario`, `repository_consistency`                                                | `deployment_config`, `stage6_official_requirements`.                 |
 | 7     | `stage8_materials_and_pitch`                                                                    | `stage7_demo_scenario`.                                              |
@@ -113,12 +113,12 @@ Initiatives: `route_planning`, and O9 through `public_transport_routing`.
 
 ## Set 5. Community facts
 
-Initiatives: `community_facts` in three fragments.
+Initiatives: `community_facts_api` in three fragments, on the data layer of `community_facts`.
 
 - [ ] 5.1 Reports and geozones
   - Done when: On the running service a point report and a geozone are saved once even when the save is repeated, and are shown with their source, date and status (MVP AC-5, AC-7, AC-14 for reports).
   - Waits for: 2.2, 2.3.
-  - Before that: The code written from `docs/product/api_contract.md`, section Facts, `docs/product/schema.md` and the recognition of the actor written down in check 2.3.
+  - Before that: The code written from `docs/product/api_contract.md`, section Facts, `docs/product/schema.md`, the recognition of the actor written down in check 2.3 and the data operations written down by `community_facts`.
 - [ ] 5.2 Votes and statuses
   - Done when: Confirmations and denials, with and without an account, change the status of a fact by the rules of M4 (MVP AC-6, AC-12).
   - Waits for: 2.2, 5.1.

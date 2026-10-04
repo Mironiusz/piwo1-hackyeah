@@ -55,3 +55,10 @@ What the module does: see `service/SERVICE_ALGORITHM.md`, sections "Algorithm go
 - Why: `service/fact_status.py` delivered the one M4 rule for every caller, and the user accepted it as the evaluator D-40 waited for.
 - Reusable pattern: inside a long publication transaction, take the locks that freeze other people's writes as late as possible - here after the network and present-fact writes, right before the copy row - and decide on the rows read under those locks. Two connections with `FOR UPDATE NOWAIT` prove that a lock is held without making the test wait. `resolve_fact_status` reads the business zone through the configuration facade whenever a fact has a confirmation, so a unit test that calls it needs the `runtime_settings` fixture.
 - Risk / notes: the vote write that must lock its fact before validating (D-15) is still not delivered; the shape of plans/community_facts/ lists its own status evaluator, and a change of `resolve_fact_status` must be followed by the importer's call.
+
+## 2026-10-04 - Fixed sample identity and author history (sample_data)
+
+- What changed: the no-argument sample provider and shared records reserve four negative fact identifiers and one fictional author identity per sample.
+- Why: the current schema forbids a report-save key on samples; retries must preserve contributors and must not create a new daily author vote.
+- Reusable pattern: reconcile the exact immutable definition under its fixed primary key; create the initial author vote only for a newly inserted fact, and validate the original instant plus offset on later runs. Changing a definition is a refusal, not an update.
+- Risk / notes: detail, vote and moderation consumers must accept integer identifiers without a positive-only restriction. Unchanged sample loading does not assert visibility or initial reliability. The clock and logger are required shared runtime inputs; pure imports do not read configuration.

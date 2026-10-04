@@ -5,7 +5,7 @@ Regulator: C:40
 
 ## Problem
 
-The product has a decided contract for reports, geozones, votes, flags and moderation, but the current FastAPI application exposes none of the nine community-fact operations. Kuba narrowed `COMMUNITY_FACTS_SHAPE.md` to their data layer and the status evaluator. Those parts alone do not make checks 5.1 - 5.3 of `FINAL_CHECKLIST.md` verifiable on the service.
+The product has a decided contract for reports, geozones, votes, flags and moderation, but the current FastAPI application exposes none of the nine community-fact operations. Kuba narrowed `plans/community_facts/COMMUNITY_FACTS_SHAPE.md` to their data layer and the status evaluator. Those parts alone do not make checks 5.1 - 5.3 of `FINAL_CHECKLIST.md` verifiable on the service.
 
 This task supplies the missing API and service layers on Kuba's data layer. The user accepted the scope and confirmed the task prefix in the conversation of 2026-10-04. The work belongs to Marek's backend part; confirmation of the team handoff remains subject to `MVP.md`, section Open decisions and confirmations.
 
@@ -22,8 +22,8 @@ This task supplies the missing API and service layers on Kuba's data layer. The 
 - `api/app.py` builds the shared FastAPI foundation with request correlation and error handlers. It registers no product route. The absence of the skeleton recorded in the earlier community-facts shape is no longer the current state.
 - `service/fact_status.py` already supplies `resolve_fact_status`, `FactStatusResult` and `FactView`; the evaluator must be reused rather than implemented a second time. Its delivery is distinct from completion of Kuba's data operations.
 - The database models and revision chain exist in `db/accessibility_db/`. This interview has not connected to a database or verified its applied revisions.
-- Kuba's `COMMUNITY_FACTS_SHAPE.md` orders the data layer of all nine operations and fact locking before a vote's visibility check. No corresponding community-fact data-operation module is present in the current tree.
-- `plans/accounts/ACCOUNTS_PLAN.md`, D-7 and S-5 - S-6, names the shared actor resolution and API dependencies. Their modules are not present in the current tree, so this task depends on their delivery and does not replace them.
+- Kuba's `plans/community_facts/COMMUNITY_FACTS_SHAPE.md` orders the data layer of all nine operations and fact locking before a vote's visibility check. No corresponding community-fact data-operation module is present in the current tree.
+- `plans_finished/accounts/ACCOUNTS_PLAN.md`, D-7 and S-5 - S-6, names the shared actor resolution and API dependencies. Their modules are not present in the current tree, so this task depends on their delivery and does not replace them.
 - The earlier data-layer shape proposed excluding facts removed in OpenStreetMap from the nearby check, while version 16 of M3 and the contract did not name that exception. The user settled the discrepancy on 2026-10-04 in question 1: exclude removed facts. Version 17 of the specification and `find_nearby_facts` of the contract now contain the exception; ordinary outdated facts remain included. Kuber and Adrian's confirmation of the contract amendment remains outstanding.
 - The registry entry Executor of the API and service layers of the community facts records the executor and anonymous-identity handoff. This task supplies the executor, and question 2 settles the permitted identifying inputs as IP + User-Agent. Exact hashing, the trusted-proxy boundary and confirmation of the team handoff remain to be settled before implementation.
 
