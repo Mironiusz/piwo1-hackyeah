@@ -19,14 +19,13 @@ An initiative waits for another when one of its checks waits for a check of the 
 
 | Stage | Initiatives                                                                                     | Waits for, at the stage below                                        |
 | ----- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| 1     | `backend_skeleton`, `stage1_clarifications`, `final_checklist`                                  | Nothing.                                                             |
-| 2     | `schema_first_revision`, `address_search`                                                       | `backend_skeleton`, and the hash length of `stage1_clarifications`.  |
-| 3     | `accounts`, `osm_importer`                                                                      | `schema_first_revision`.                                             |
-| 4     | `osm_import`, `route_planning`, `community_facts`                                               | `osm_importer`, `accounts`.                                          |
-| 5     | `sample_data`, `map_tiles`, `frontend_app`, `public_transport_routing`, `stage5_harmonyos_port` | `osm_import`, `route_planning`, `community_facts`.                   |
-| 6     | `deployment_config`, `stage6_official_requirements`                                             | `sample_data`, `map_tiles`, `frontend_app`, `stage5_harmonyos_port`. |
-| 7     | `stage7_demo_scenario`, `repository_consistency`                                                | `deployment_config`, `stage6_official_requirements`.                 |
-| 8     | `stage8_materials_and_pitch`                                                                    | `stage7_demo_scenario`.                                              |
+| 1     | `backend_skeleton`, `schema_first_revision`, `stage1_clarifications`, `final_checklist`         | Nothing.                                                             |
+| 2     | `address_search`, `accounts`, `osm_importer`                                                    | `backend_skeleton`, `schema_first_revision`.                         |
+| 3     | `osm_import`, `route_planning`, `community_facts`                                               | `osm_importer`, `accounts`.                                          |
+| 4     | `sample_data`, `map_tiles`, `frontend_app`, `public_transport_routing`, `stage5_harmonyos_port` | `osm_import`, `route_planning`, `community_facts`.                   |
+| 5     | `deployment_config`, `stage6_official_requirements`                                             | `sample_data`, `map_tiles`, `frontend_app`, `stage5_harmonyos_port`. |
+| 6     | `stage7_demo_scenario`, `repository_consistency`                                                | `deployment_config`, `stage6_official_requirements`.                 |
+| 7     | `stage8_materials_and_pitch`                                                                    | `stage7_demo_scenario`.                                              |
 
 ## Set 1. Clarifications and housekeeping
 
@@ -51,7 +50,7 @@ Initiatives: `stage1_clarifications`, `repository_consistency`.
 - [ ] 1.5 Decisions that block checks (`stage1_clarifications`)
   - Done when: The registry entries on when the code of O9 starts, on the wording of its public transport segment and on the hash length are resolved by the people they name, or the dependent check is recorded as dropped.
   - Waits for: Nothing.
-  - Before that: Everything, at once. Check 4.2 depends on the first two, check 2.2 on the third.
+  - Before that: Everything, at once. Check 4.2 depends on the first two. The third was resolved on 2026-10-04 by `schema_first_revision`, so check 2.2 no longer waits for this check (`docs/standards/decision_registry.md`, entry Hash length reported by Kuba).
 - [ ] 1.6 Consistency of the repository (`repository_consistency`)
   - Done when: At the moment of the submissions the repository and its documentation contradict each other nowhere, or every contradiction left is recorded.
   - Waits for: 7.1, 9.4, 9.5.
@@ -67,7 +66,7 @@ Initiatives: `backend_skeleton`, `schema_first_revision`, `accounts`, `address_s
   - Before that: Everything, from its plan.
 - [ ] 2.2 `schema_first_revision`
   - Done when: The first revision builds the target schema of `docs/product/schema.md` on an empty local database, and its tests and the critical tests that check it pass.
-  - Waits for: 2.1, 1.5.
+  - Waits for: Nothing.
   - Before that: The revision and its tests written from `docs/product/schema.md` and D-11.
 - [ ] 2.3 `accounts`
   - Done when: On the running service an account is created, logged into, read and deleted (MVP AC-11), an invalid or expired session is refused, and a moderator request is refused for an account without the role.

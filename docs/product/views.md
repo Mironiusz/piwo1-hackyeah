@@ -208,9 +208,9 @@ A person can: vote; flag; close the panel.
 States:
 
 - The person can vote.
-- The person voted less than a day ago. The controls are inactive and say that the next vote is possible after a day.
+- The person already voted on this fact the same day. The controls are inactive and say that the next vote is possible the next day.
 - The vote is being saved; the vote is saved, and the detail shows the status after it and the person's vote.
-- The vote is refused because a day has not passed. A plain message, not an error.
+- The vote is refused because the person already voted on this fact the same day. A plain message, not an error.
 - The fact is not available any more - hidden in the meantime. A plain message, and the panel closes.
 - The fact is outdated. The panel shows that status and keeps the two votes, so that the fact can be confirmed again.
 - Flagging: one confirmation, without a reason, then a message that the content was passed to moderation.
@@ -241,7 +241,7 @@ States:
 
 - Each step, with what was already given kept when the person goes back.
 - No existing fact nearby. Step 4 is skipped.
-- It is the same one. The report becomes a vote on that fact, and the states of voting of V-6 apply, the refusal within a day included.
+- It is the same one. The report becomes a vote on that fact, and the states of voting of V-6 apply, the refusal on the same day included.
 - Saving; saved.
 - The report cannot be saved. A plain message; the panel keeps what was given, so the person can try again.
 - The states of the address search (V-8), for an area.
@@ -380,7 +380,7 @@ Every message is plain, has its text in both dictionaries, and where it comes fr
 - Routes work only in Kraków.
 - Nothing was found in Kraków; the search is unavailable right now; this text cannot be searched.
 - No facts are known here; no barriers are known on this route; no amenities of the profile are near this route.
-- The vote was saved; the next vote on this fact is possible after a day; this fact is not available any more.
+- The vote was saved; the next vote on this fact is possible the next day; this fact is not available any more.
 - The content was passed to moderation.
 - The report was saved; the area was saved.
 - This cannot be saved right now; this cannot be loaded right now.
@@ -407,10 +407,10 @@ Operations:
 - N-2. Whether a point lies in Kraków, at the moment the point is set, for a point on the map and for the current location.
 - N-3. A route for a start, a destination and the preferences of the profile. The answer carries: the segments with their geometry, their state, the marking of a way not accessible for wheelchairs and the two straight stretches at the ends; the three groups with their items, each with the distance from the start and the street name; at most one alternative with its reason; whether no route without barriers exists; whether the segments are assessed at all; the length of the route. Separate outcomes: routing does not answer; a point is outside Kraków.
 - N-4. The address search: the text in the body of the request; the answer is a list of at most ten matches with a label and a point, an empty list, the search unavailable, or the text refused.
-- N-5. One fact with everything the fact detail shows and whether it can be flagged. The person's own latest vote and the moment the next vote is possible are kept on the device (decision 14).
+- N-5. One fact with everything the fact detail shows and whether it can be flagged. The person's own latest vote and the day from which the next vote is possible are kept on the device (decision 14).
 - N-6. The existing facts of a type near a point, for the check before a report is saved.
 - N-7. Saving a point report: the kind, the type, the point, the optional description, the optional number of steps.
-- N-8. A vote on a fact: confirm or deny. Outcomes: saved, with the status after it; refused because a day has not passed; the fact is not available.
+- N-8. A vote on a fact: confirm or deny. Outcomes: saved, with the status after it; refused because the person already voted on it the same day; the fact is not available.
 - N-9. A flag on a fact. Outcomes: saved; the fact cannot be flagged.
 - N-10. Saving a geozone: the point, the radius, the barrier type, the optional description.
 - N-11. The account: creating one, logging in, logging out, deleting, and who is logged in now - the pseudonym and whether the account has the moderator role. Outcomes of creating: the pseudonym is taken; a rule is broken, and which one.
@@ -426,7 +426,7 @@ On 2026-10-03 the contract was written as `docs/product/api_contract.md`, withou
 The contract covers the views, with these differences:
 
 - The street name of a fact has no field, and the stored data keeps no name of a way. Deferred by the user until the backend person tests the programming interface (decision 13).
-- The own vote of a person has no field. A vote repeated within a day is refused with the moment from which the next vote is accepted, and the frontend keeps the vote on the device (decision 14).
+- The own vote of a person has no field. A vote repeated on the same calendar day is refused with the instant from which the next vote is accepted, the start of the next day, and the frontend keeps the vote on the device (decision 14).
 - A point outside Kraków has no outcome of its own. Proposed by the agent: the frontend checks a point against the bounds of the map of Kraków before it asks for a route, and gives the same message when the request is refused for its start or its destination.
 - A segment carries its missing attributes. The frontend does not show them (decision 8).
 - The contradiction of a report with OpenStreetMap is one mark on a fact of a route. It does not say what OpenStreetMap shows there, so the note of the fact detail is a general sentence, and a fact opened from the map of facts has no such note.
@@ -457,7 +457,7 @@ Decided by the user, the frontend person of the team, on 2026-10-03, question by
 11. An outdated fact stays on the map with its status and can be confirmed again; only a fact removed in OpenStreetMap disappears. The user took over the rule the team had decided in `plans_finished/api_contract/` on the branch `dev`, in place of the earlier choice that an outdated fact is shown nowhere.
 12. A pseudonym keeps its narrower rule - 3 to 30 characters of letters, digits, the underscore and the hyphen - and the user asks the owners of `docs/product/api_contract.md` to bring it into the contract, which accepts every character that is not a control character. The contract took the rule on 2026-10-04.
 13. Whether a list row names the street is deferred until the backend person tests the programming interface, which has no field for it. The sample data of the demo carries the street, and a row without a street name shows no place line.
-14. The own vote of a person is remembered on the device. On another device the person learns of it from the refusal of a vote repeated within a day.
+14. The own vote of a person is remembered on the device. On another device the person learns of it from the refusal of a vote repeated on the same day.
 15. No frontend code is written before Q-11 of `plans_finished/mvp/MVP_PLAN.md` is decided; until then the frontend person prepares everything that does not depend on it. Q-11 was decided on 2026-10-04 in `plans_finished/backend_architecture/`, and `MVP.md` gives the frontend to the initiatives `plans/frontend_app/` and `plans/map_tiles/`, which wait for nothing to start.
 16. The demo runs only on the programming interface of the service. The frontend shows no route and no fact from sample data of its own when the service is not ready; decided on 2026-10-04 as the position of the frontend person, with the last word left to the team.
 17. The navigation between the views uses the library React Router, decided on 2026-10-04. The reason for the new run time dependency: the addresses of the views and the back button of the browser, without code of our own to test.
