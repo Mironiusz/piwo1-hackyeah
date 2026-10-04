@@ -4,14 +4,14 @@ Document state: 2026-10-04
 
 ## Business goal
 
-By 11:00 on 4 October 2026 the MVP of `plans/mvp/` plans walking routes in Kraków matched to the barrier preferences of a person (`docs/product/specification.md` version 7, M2, M7, M8), computed by a routing engine run by the project instead of a graph the project writes itself. The user judged writing an own router the wrong call, all the more so because routes are also meant to use public transport (seed, message 1), and chose Valhalla, run by the project on its own infrastructure, in the shape. As an optional feature, a route can use the public transport of ZTP Kraków from its static GTFS, if that can be integrated quickly (seed, message 2).
+By 11:00 on 4 October 2026 the MVP of `plans_finished/mvp/` plans walking routes in Kraków matched to the barrier preferences of a person (`docs/product/specification.md` version 7, M2, M7, M8), computed by a routing engine run by the project instead of a graph the project writes itself. The user judged writing an own router the wrong call, all the more so because routes are also meant to use public transport (seed, message 1), and chose Valhalla, run by the project on its own infrastructure, in the shape. As an optional feature, a route can use the public transport of ZTP Kraków from its static GTFS, if that can be integrated quickly (seed, message 2).
 
-This task also unblocks the two initiatives waiting for it: items 3 and 4 of `plans_finished/backend_architecture/BACKEND_ARCHITECTURE_SHAPE.md`, on which Q-11 and the whole of `plans/mvp/MVP_PLAN.md` wait, and `plans_finished/deployment/`, which already deploys Valhalla on the answer of the user of 2026-10-04 while D-9 of the MVP plan still names the own graph.
+This task also unblocks the two initiatives waiting for it: items 3 and 4 of `plans_finished/backend_architecture/BACKEND_ARCHITECTURE_SHAPE.md`, on which Q-11 and the whole of `plans_finished/mvp/MVP_PLAN.md` wait, and `plans_finished/deployment/`, which already deploys Valhalla on the answer of the user of 2026-10-04 while D-9 of the MVP plan still names the own graph.
 
 ## Problem and its consequences
 
-- D-9 of `plans/mvp/MVP_PLAN.md` names a graph of the pedestrian network in the memory of the backend process, written by the project. The user rejected it on 2026-10-03 (seed, message 1). Until this task replaces D-9, two documents of the repository say different things about how routes are computed, and Q-11 cannot decide how the route computation is fed or where it runs.
-- No product code exists yet, so the change costs documents only; every hour the decision stays open is taken from the work packages of `plans/mvp/`, which all wait for Q-11.
+- D-9 of `plans_finished/mvp/MVP_PLAN.md` names a graph of the pedestrian network in the memory of the backend process, written by the project. The user rejected it on 2026-10-03 (seed, message 1). Until this task replaces D-9, two documents of the repository say different things about how routes are computed, and Q-11 cannot decide how the route computation is fed or where it runs.
+- No product code exists yet, so the change costs documents only; every hour the decision stays open is taken from the work packages of `plans_finished/mvp/`, which all wait for Q-11.
 - Valhalla does not apply the rules of the specification on its own. It has its own rules of which ways a pedestrian may use, decides some barriers by itself, has no route with the fewest barriers, and in its published version the walking legs of a public transport route ignore the places a request asks to avoid (the spike of 2026-10-03, run by the user outside the project). Left alone, it could lead a wheelchair user over steps on the way to a tram stop, which is exactly what M10 forbids: "Missing information is never presented as a confirmation of accessibility."
 - Public transport routes are out of scope in version 7 of the specification ("Turn-by-turn navigation and public transport routes."), so the optional feature needs a new version of it first.
 
@@ -20,14 +20,14 @@ This task also unblocks the two initiatives waiting for it: items 3 and 4 of `pl
 1. Valhalla, run by the project on its own infrastructure, computes the walking routes of M2 in place of the own graph of `plans_finished/routing_engine/`, with the behavior of M2, M7 and M8 unchanged (shape, Smallest meaningful scope, item 1).
 2. Routes with public transport from the static GTFS of ZTP Kraków as an optional feature, built first among the optional features and, unlike them, in parallel with the mandatory features from the start, within a time box of 4.5 hours of work of the people of the team, after which it is dropped (shape, Smallest meaningful scope, item 2; the parallel start and the measure of the time box decided by the user at the gate of this PRD on 2026-10-04).
 3. A new version of the specification, of `CLAUDE.md` and of `AI_WORKFLOW.md` that records the optional feature and the exception for public transport without accessibility data (shape, functional requirement 8).
-4. Replacing D-9 of `plans/mvp/MVP_PLAN.md` with the decision of this initiative, together with the constraints D-9 hands to the rest of that plan (shape, functional requirement 9).
+4. Replacing D-9 of `plans_finished/mvp/MVP_PLAN.md` with the decision of this initiative, together with the constraints D-9 hands to the rest of that plan (shape, functional requirement 9).
 5. Handing over to `plans_finished/backend_architecture/` and to `plans_finished/deployment/` what the engine needs from the backend and from the server of the demo, and what makes it not answer. Agent decision at C:40, without asking: both shapes wait for this initiative by name (`BACKEND_ARCHITECTURE_SHAPE.md`, question 2; `DEPLOYMENT_SHAPE.md`, section Current state), as `plans_finished/routing_engine/` handed its needs to the demo environment.
 6. The technical decision the work packages build on: how the engine is fed with the copy in use, how a request carries the profile, the facts and the geozones, how the route with the fewest barriers and the alternative are computed, how a route is tied to the stored stretches and checked before it is shown, and what makes routing unavailable. Decided by the user in phase B on 2026-10-04: this initiative delivers documents only, against building the engine and its data here and against building everything here.
 
 ## Out of scope
 
-- Building the engine, its data and the route on it: the image of the engine, the network file and the routing data the import produces, the requests, the route with the fewest barriers, the alternative, the tie of a route to the stored stretches and its check. Work packages of `plans/mvp/` build them under the decision of this initiative, which replaces D-9 there. Decided by the user in phase B on 2026-10-04 (Scope, item 6).
-- Building the routes with public transport of O9. A separate initiative, set up by the user, takes FR-5 - FR-9 and FR-11 of this PRD and the decision of this initiative as its input, and its time box runs from its start. Decided by the user in phase B on 2026-10-04, against a work package of `plans/mvp/`.
+- Building the engine, its data and the route on it: the image of the engine, the network file and the routing data the import produces, the requests, the route with the fewest barriers, the alternative, the tie of a route to the stored stretches and its check. Work packages of `plans_finished/mvp/` build them under the decision of this initiative, which replaces D-9 there. Decided by the user in phase B on 2026-10-04 (Scope, item 6).
+- Building the routes with public transport of O9. A separate initiative, set up by the user, takes FR-5 - FR-9 and FR-11 of this PRD and the decision of this initiative as its input, and its time box runs from its start. Decided by the user in phase B on 2026-10-04, against a work package of `plans_finished/mvp/`.
 - GTFS-RT and any real-time public transport data (seed, message 2).
 - A departure or arrival time chosen by the person; a public transport route always departs now (section Domain rules).
 - A date of the timetable in the interface; the freshness of the GTFS goes into the description of the data sources (section Domain rules).
@@ -39,13 +39,13 @@ This task also unblocks the two initiatives waiting for it: items 3 and 4 of `pl
 
 ## Functional requirements
 
-FR-1. Walking routes by the engine of the project. A walking route of M2 is computed by Valhalla run by the project on its own infrastructure. The behavior of M2, M7 and M8 does not change: the route uses only the pedestrian network of M2, never the access rules of the engine; it avoids the barriers from the profile and the matching geozones; it keeps an unverified or disputed barrier on a red segment and proposes the alternative that avoids it; it falls back to the route with the fewest barriers when every way crosses one; it shows the stretch to the network in the state no data; and every segment gets its state of M7 and its items in the list of M8 (shape, functional requirement 1; `plans/mvp/MVP_PRD.md` FR-2, FR-3, FR-4, FR-10, FR-11).
+FR-1. Walking routes by the engine of the project. A walking route of M2 is computed by Valhalla run by the project on its own infrastructure. The behavior of M2, M7 and M8 does not change: the route uses only the pedestrian network of M2, never the access rules of the engine; it avoids the barriers from the profile and the matching geozones; it keeps an unverified or disputed barrier on a red segment and proposes the alternative that avoids it; it falls back to the route with the fewest barriers when every way crosses one; it shows the stretch to the network in the state no data; and every segment gets its state of M7 and its items in the list of M8 (shape, functional requirement 1; `plans_finished/mvp/MVP_PRD.md` FR-2, FR-3, FR-4, FR-10, FR-11).
 
 FR-2. Nothing of a route request leaves the project. The request to the engine stays on the infrastructure of the project, and nothing the engine keeps or logs about a request holds the current location, which M2 says is "not stored, not logged and not linked to the account" (shape, functional requirement 2 and section Notes on data, performance and security).
 
 FR-3. The copy in use and new facts. A route takes its ways, its facts, its segment states and the date of the copy from one copy of OpenStreetMap, the copy in use (M6), and never combines the ways of one copy with the facts or the date of another. A new vote, report or geozone counts in the next route, without a restart of a service and without a new import. Taken over from `plans_finished/routing_engine/ROUTING_ENGINE_PRD.md` FR-1, which the replaced engine had to meet. Agent decision at C:40, without asking: the shape keeps the behavior of M2, M6 and M7 unchanged, and these are the conditions under which that behavior holds.
 
-FR-4. Response time. A walking route across Kraków, with everything FR-2, FR-3, FR-4 and FR-11 of `plans/mvp/MVP_PRD.md` show after planning, is answered within 5 seconds on the server of the demo, the route with the fewest barriers and the alternative included (`plans_finished/routing_engine/ROUTING_ENGINE_PRD.md` FR-1).
+FR-4. Response time. A walking route across Kraków, with everything FR-2, FR-3, FR-4 and FR-11 of `plans_finished/mvp/MVP_PRD.md` show after planning, is answered within 5 seconds on the server of the demo, the route with the fewest barriers and the alternative included (`plans_finished/routing_engine/ROUTING_ENGINE_PRD.md` FR-1).
 
 FR-5. Kind of route. The route form has a switch between a walking route and a route with public transport. Walking is the default, and one route is computed at a time (shape, functional requirement 3).
 
@@ -57,23 +57,23 @@ FR-8. Public transport unavailable. When the route with public transport cannot 
 
 FR-9. Copy of the GTFS. The copy of the GTFS is fetched before the demo as a whole or not at all, refreshed only by hand, and the last complete copy stays in use when a fresh one fails (shape, functional requirement 7).
 
-FR-10. Engine not answering. When the engine does not answer or does not answer in time, the app shows the plain message of M10 and no route, walking or otherwise, and sends nothing to a routing service outside the project (shape, scenario 5; `plans/mvp/MVP_PRD.md` FR-17).
+FR-10. Engine not answering. When the engine does not answer or does not answer in time, the app shows the plain message of M10 and no route, walking or otherwise, and sends nothing to a routing service outside the project (shape, scenario 5; `plans_finished/mvp/MVP_PRD.md` FR-17).
 
 FR-11. Time box. When public transport routes do not give a working route with a tram in Kraków within 4.5 hours of work of the people of the team, the feature is dropped; the work of agents does not count toward the 4.5 hours, and the time box runs from the start of the work, which goes in parallel with the mandatory features (section Domain rules). When it is dropped: the switch of FR-5 is not shown, walking routes of FR-1 stay, and the work moves on to O1 (shape, Smallest meaningful scope, item 2, and scenario 6).
 
 FR-12. Specification and rules. The specification gets a new version: public transport routes leave the section Out of scope and become the optional feature O9, built first, before O1, and, as the only optional feature, in parallel with the mandatory features, with the time box of FR-11; the exception for the public transport of ZTP Kraków departs from M7 and M10 and is written next to them. `CLAUDE.md` names the exception next to the rule from the briefs, and `AI_WORKFLOW.md` records that change (shape, functional requirement 8).
 
-FR-13. Decision recorded and handed over. D-9 of `plans/mvp/MVP_PLAN.md` is replaced by the decision of this initiative, with the constraints it hands to the rest of that plan, and the entry Technical directions of the MVP plan of `docs/standards/decision_registry.md` follows it. `plans_finished/backend_architecture/` gets, for its items 3 and 4, how the route computation is fed with the copy in use and what runs where; `plans_finished/deployment/` gets what the engine needs from the server of the demo - memory, disk, processor, its own service and the data it is built from - and what makes it not answer (Scope, item 5).
+FR-13. Decision recorded and handed over. D-9 of `plans_finished/mvp/MVP_PLAN.md` is replaced by the decision of this initiative, with the constraints it hands to the rest of that plan, and the entry Technical directions of the MVP plan of `docs/standards/decision_registry.md` follows it. `plans_finished/backend_architecture/` gets, for its items 3 and 4, how the route computation is fed with the copy in use and what runs where; `plans_finished/deployment/` gets what the engine needs from the server of the demo - memory, disk, processor, its own service and the data it is built from - and what makes it not answer (Scope, item 5).
 
 ## Acceptance criteria
 
-AC-1 - AC-13 are checked by the work packages of `plans/mvp/` and by the initiative of O9 that build them (section Out of scope). This initiative checks AC-14 - AC-16.
+AC-1 - AC-13 are checked by the work packages of `plans_finished/mvp/` and by the initiative of O9 that build them (section Out of scope). This initiative checks AC-14 - AC-16.
 
 AC-1 (FR-1). Shape scenario 1: profile "I use a wheelchair", start Rondo Mogilskie, destination Tauron Arena, a confirmed user report of stairs on the shortest way, switch on walking. The route goes around the stairs, its segments carry the states of M7, and the list of M8 is shown.
 
 AC-2 (FR-1). Shape scenario 2: a profile that avoids stairs and a destination reachable only by ways with 1, 2 and 4 known stairs. The app shows the route with 1 barrier, the plain statement that no route without barriers exists, and the place of that barrier in the list.
 
-AC-3 (FR-1). An anonymous report of stairs on a stretch OpenStreetMap says nothing about: for a wheelchair profile the route goes through it, the segment is red, and an alternative route avoiding it is proposed with the reason naming the stairs and the status unverified (`plans/mvp/MVP_PRD.md` AC-3).
+AC-3 (FR-1). An anonymous report of stairs on a stretch OpenStreetMap says nothing about: for a wheelchair profile the route goes through it, the segment is red, and an alternative route avoiding it is proposed with the reason naming the stairs and the status unverified (`plans_finished/mvp/MVP_PRD.md` AC-3).
 
 AC-4 (FR-1). A way M2 admits but the engine on its own would refuse - for example a way with `highway=bridleway`, or one with `smoothness=impassable` - is used by a route when it is the shortest way, and a way M2 keeps out but the engine on its own would admit - for example `access=private` without a permission for pedestrians, or `foot=use_sidepath` - is never part of a route.
 
@@ -97,9 +97,9 @@ AC-13 (FR-11). Shape scenario 6: when 4.5 hours of work of the people of the tea
 
 AC-14 (FR-12). The new version of the specification lists O9 before O1 with the time box and its parallel start, has no public transport routes in Out of scope, and states the exception next to M7 and M10; `CLAUDE.md` and `AI_WORKFLOW.md` name it.
 
-AC-15 (FR-13). D-9 of `plans/mvp/MVP_PLAN.md` points to this initiative; `plans_finished/backend_architecture/` and `plans_finished/deployment/` cite the needs handed to them.
+AC-15 (FR-13). D-9 of `plans_finished/mvp/MVP_PLAN.md` points to this initiative; `plans_finished/backend_architecture/` and `plans_finished/deployment/` cite the needs handed to them.
 
-AC-16 (FR-13). The decision names, for each of FR-1 - FR-4 and FR-10, what the import and route work packages of `plans/mvp/` build and with which settings of the engine, so that they build it without a choice of their own, and for FR-5 - FR-9 and FR-11 what the initiative of O9 takes over.
+AC-16 (FR-13). The decision names, for each of FR-1 - FR-4 and FR-10, what the import and route work packages of `plans_finished/mvp/` build and with which settings of the engine, so that they build it without a choice of their own, and for FR-5 - FR-9 and FR-11 what the initiative of O9 takes over.
 
 ## Domain rules
 
@@ -118,16 +118,16 @@ AC-16 (FR-13). The decision names, for each of FR-1 - FR-4 and FR-10, what the i
 
 ## Dependencies and impact on other modules
 
-- `plans/mvp/`: D-9 of its plan is replaced (FR-13); FR-2, FR-3, FR-4, FR-10, FR-11 and FR-17 of its PRD are met by the engine of this task.
+- `plans_finished/mvp/`: D-9 of its plan is replaced (FR-13); FR-2, FR-3, FR-4, FR-10, FR-11 and FR-17 of its PRD are met by the engine of this task.
 - `plans_finished/backend_architecture/`: its items 3 and 4 wait for this task by the decision of the user (`BACKEND_ARCHITECTURE_SHAPE.md`, question 2), and Q-11 of the MVP plan closes only after them.
 - `plans_finished/deployment/`: deploys the engine as one service of its own in a container, from an image of the project that serves both kinds of route, with its data and, if the optional feature is built, the public transport data (`DEPLOYMENT_SHAPE.md`, section Current state, answer of the user of 2026-10-04; one service decided by the user in phase B on 2026-10-04, against a second service for public transport).
 - The initiative of O9, set up by the user (section Out of scope).
 - `plans_finished/schema_revision/` and `docs/product/schema.md`: the route takes its facts and geozones from the stored data; whether the engine needs anything stored beyond it is for phase B, and a need beyond it is raised with the db person, never assumed (`plans_finished/routing_engine/ROUTING_ENGINE_PRD.md` FR-3).
 - `plans_finished/osm_data_source/`: the copy of OpenStreetMap lives in the database and the downloaded file is deleted after each run (D-14 there), while the engine builds its own data from a file; reconciling the two, without breaking FR-3, is for phase B, and a change to a decision of that finished initiative is raised with the user.
-- `docs/product/api_contract.md`: the switch of FR-5, the public transport segments of FR-7 and the statement of FR-8 change the route operation, and a change of an operation is a change of that document first (`plans/mvp/MVP_PLAN.md` D-12).
-- `plans_finished/frontend_stack/` and the frontend work package of `plans/mvp/`: the switch, the public transport segment and the statement are shown by the frontend.
+- `docs/product/api_contract.md`: the switch of FR-5, the public transport segments of FR-7 and the statement of FR-8 change the route operation, and a change of an operation is a change of that document first (`plans_finished/mvp/MVP_PLAN.md` D-12).
+- `plans_finished/frontend_stack/` and the frontend work package of `plans_finished/mvp/`: the switch, the public transport segment and the statement are shown by the frontend.
 - `docs/product/specification.md`, `CLAUDE.md` and `AI_WORKFLOW.md` (FR-12).
-- Changed on 2026-10-04 by the user in `plans/mvp/` (`plans/mvp/MVP_PLAN.md` D-13): `plans/mvp/` builds no code, and every work package of `plans/mvp/` named in this document is the initiative `MVP.md` names for it: `osm_import` for the import work package, `route_planning` for the route work package and `frontend_app` for the frontend work package; the initiative of O9 is `public_transport_routing`.
+- Changed on 2026-10-04 by the user in `plans_finished/mvp/` (`plans_finished/mvp/MVP_PLAN.md` D-13): `plans_finished/mvp/` builds no code, and every work package of `plans_finished/mvp/` named in this document is the initiative `MVP.md` names for it: `osm_import` for the import work package, `route_planning` for the route work package and `frontend_app` for the frontend work package; the initiative of O9 is `public_transport_routing`.
 
 ## Risks and notes
 

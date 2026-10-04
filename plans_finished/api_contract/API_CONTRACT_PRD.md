@@ -80,7 +80,7 @@ AC-8. The contract states that request logs contain only the operation name, out
 
 - The implementation of the operations follows the backend architecture, which the user moved on 2026-10-03 from Q-11 of the MVP plan to a separate initiative set up later; this contract is an input of that initiative.
 - The resources, statuses and closed lists the contract exposes follow the target schema of `plans_finished/fact_schema/`, part of `docs/product/specification.md` since version 6. A repeated save that returns the first fact needs the stored data to recognize the repetition, which that schema does not hold yet; how it is stored is for that initiative to decide.
-- Actor resolution follows `plans_finished/account_sessions/`, settled before this contract (U-3 of `plans_finished/dependency_check/`, `plans/mvp/MVP_PLAN.md` D-8). The route response describes the data of the product, and the routing engine adapts to it (U-5 of `plans_finished/consistency_check/`).
+- Actor resolution follows `plans_finished/account_sessions/`, settled before this contract (U-3 of `plans_finished/dependency_check/`, `plans_finished/mvp/MVP_PLAN.md` D-8). The route response describes the data of the product, and the routing engine adapts to it (U-5 of `plans_finished/consistency_check/`).
 - The frontend initiative is the first consumer and is consulted on the contract. The user approves the contract in place of the frontend person, whose confirmation is still to be obtained. The geocoding initiative has already decided that address search goes through the service.
 - The interface enables parallel frontend and backend work and is intended to be shared by Web and a possible HarmonyOS client.
 

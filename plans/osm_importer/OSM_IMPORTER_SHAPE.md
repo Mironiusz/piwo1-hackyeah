@@ -27,7 +27,7 @@ The following list records the repository state at creation, rather than the sta
 - `plans_finished/osm_data_source/` delivered the source and refresh decisions. Its PRD explicitly excludes building the importer and assigns that work to the MVP. Its PLAN supplies the download, validation, area, reconciliation, failure behavior and required tests.
 - `plans_finished/osm_barrier_mapping/` delivered the rules for deriving barriers, amenities and way attributes. Those rules are reflected in the product specification, rather than being new product choices for this initiative.
 - `plans_finished/routing_engine/ROUTING_ENGINE_PLAN.md` D-4 and D-11 require the imported pedestrian network with ordered nodes and their coordinates. Building the route engine remains outside this initiative.
-- At creation, `plans/mvp/MVP_PLAN.md` is in progress. D-4 and D-5 still assign import work and its tests to an MVP work package, and Q-11 owns the backend architecture and the import trigger. The sections Scope of changes, Rollout order and Definition of Done are empty.
+- At creation, `plans_finished/mvp/MVP_PLAN.md` is in progress. D-4 and D-5 still assign import work and its tests to an MVP work package, and Q-11 owns the backend architecture and the import trigger. The sections Scope of changes, Rollout order and Definition of Done are empty.
 - `plans/fact_schema/FACT_SCHEMA_PLAN.md` is closed as a plan, but its target document `docs/product/schema.md` is not present in the tree read for this task. Its sibling task `SCHEMA_REVISION` still has an interview in progress. Neither the target schema nor an applied revision is assumed to exist.
 - There is no product backend or importer code in the tree read for this task. Runtime dependencies in `pyproject.toml` are empty. The preparation plans are evidence of decisions, not proof of implemented services.
 
@@ -35,7 +35,7 @@ Refresh on 2026-10-03, before phase A of `plan-prd`: the product specification i
 
 ### WARNING: IMPORT OWNERSHIP HANDOFF BEFORE IMPLEMENTATION
 
-The user assigns implementation of the importer to `osm_importer`. This instruction takes precedence over the earlier assignment to an MVP work package. No file under `plans/mvp/` is changed by this initiative's creation.
+The user assigns implementation of the importer to `osm_importer`. This instruction takes precedence over the earlier assignment to an MVP work package. No file under `plans_finished/mvp/` is changed by this initiative's creation.
 
 Before the colleague finalizes or executes the MVP import work package, its owner needs to record that `osm_importer` supplies the importer and its tests, while the MVP consumes the resulting data and retains responsibility for its shared backend setup. D-4 and D-5 currently describe the earlier ownership; the data-source and product decisions themselves do not need to change.
 
@@ -46,6 +46,8 @@ On 2026-10-04 the user reported that Rafał, who owns the MVP work, confirmed he
 Later on 2026-10-04, in phase B, the user chose to settle the importer integration contract together with the agent in this initiative. Shared backend and schema implementation stay outside this scope; the contract decisions are recorded in `OSM_IMPORTER_PLAN.md` for their owners to consume.
 
 Scope reconciliation on 2026-10-04: the user approved adding preparation of the pedestrian-network file, construction of Valhalla walking-routing data and publication of the routing-data pointer to `osm_importer`. The importer owns these outputs and their tests. `osm_import` retains its previously assigned copy-read operation and the common demo-loading program, consuming this importer rather than building another one. Shared backend and schema implementation, route computation, routing-service startup and public transport ingestion remain outside this initiative.
+
+Ownership handoff on 2026-10-04: the user ended work on osm_importer in this conversation and handed the initiative to Mateusz, explicitly clarifying that osm_importer, rather than osm_import, is being transferred. Mateusz takes over remaining technical planning, implementation, verification and documentation. The initiative remains in plans with its approved scope and unfinished plan; it is neither completed nor cancelled. Q-1 - Q-3 and the proposed routing-pointer recovery behavior remain unresolved. No further work on this initiative is performed in this conversation without a new request.
 
 ## Smallest meaningful scope
 

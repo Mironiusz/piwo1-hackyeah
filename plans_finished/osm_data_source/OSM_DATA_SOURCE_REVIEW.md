@@ -7,7 +7,7 @@ Document state: 2026-10-03, implementation finished, moved to `plans_finished/` 
 ### Check before implementation
 
 - The plan was closed at 18:29. The last commit touching a file it cites is 7178497 at 17:38, and the target files of steps 1 - 11 were last written between 16:46 and 17:43, so the facts of the plan still hold. The quoted fragments of steps 3 - 6 and 8 - 11 were found verbatim, and `plans/mvp/MVP_PLAN.md` had D-1 - D-3, so D-M is D-4.
-- F-25 and F-34 were checked against `plans/osm_barrier_mapping/OSM_BARRIER_MAPPING_PLAN.md`, untracked and written by another session at 18:28: the cited lines 44, 100 - 112, 147, 159, 169, 193 - 199 and 249 still carry the cited content. Its steps 5 and 6 append items to `plans/routing_engine/ROUTING_ENGINE_SHAPE.md` and `plans/api_contract/API_CONTRACT_SHAPE.md`, which steps 8 and 11 here do not touch, so the two plans still apply in either order.
+- F-25 and F-34 were checked against `plans/osm_barrier_mapping/OSM_BARRIER_MAPPING_PLAN.md`, untracked and written by another session at 18:28: the cited places - D-2, steps 1.4 and 1.5, Step 2, steps 2.4 and 2.7, Step 4 and section Risks - still carry the cited content. Its steps 5 and 6 append items to `plans/routing_engine/ROUTING_ENGINE_SHAPE.md` and `plans/api_contract/API_CONTRACT_SHAPE.md`, which steps 8 and 11 here do not touch, so the two plans still apply in either order.
 - F-35 was run again before any change: the same four architecture tests fail, with no violation under `plans/`.
 - `plans/osm_data_source/OSM_DATA_SOURCE_SHAPE.md` has no open question, and the plan has none either.
 
