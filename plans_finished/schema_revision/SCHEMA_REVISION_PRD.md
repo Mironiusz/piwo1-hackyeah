@@ -4,7 +4,7 @@ Document state: 2026-10-03
 
 ## Business goal
 
-By 11:00 on 4 October 2026 the MVP of `plans/mvp/` is implemented, and every part of it that reads or writes facts and votes - the import, the route, voting, geozones, accounts and moderation - builds on one first schema revision that matches the product specification. That revision is built by a work package of the MVP plan, not by this task: on 2026-10-03 the user decided that this task writes no code and only prepares the documents the implementation of the MVP needs (`plans/schema_revision/SCHEMA_REVISION_SHAPE.md`, Problem).
+By 11:00 on 4 October 2026 the MVP of `plans/mvp/` is implemented, and every part of it that reads or writes facts and votes - the import, the route, voting, geozones, accounts and moderation - builds on one first schema revision that matches the product specification. That revision is built by a work package of the MVP plan, not by this task: on 2026-10-03 the user decided that this task writes no code and only prepares the documents the implementation of the MVP needs (`plans_finished/schema_revision/SCHEMA_REVISION_SHAPE.md`, Problem).
 
 This task delivers two things that implementation is missing: a target schema that holds what the programming interface contract already asks of it - the idempotency key of a saved report or geozone - and one place in the MVP plan that says who builds the first revision and what it has to meet.
 
@@ -22,7 +22,7 @@ This task delivers two things that implementation is missing: a target schema th
 
 ## Out of scope
 
-- Any code: the first schema revision, the code of the rules its tests need and the tests themselves. They are built by a work package of the MVP plan, which also decides which of its work packages builds which code of the rules. Decided by the user on 2026-10-03, against this task building the revision or any of that code, and against cancelling this task and moving everything to the MVP plan (`plans/schema_revision/SCHEMA_REVISION_SHAPE.md`, Problem).
+- Any code: the first schema revision, the code of the rules its tests need and the tests themselves. They are built by a work package of the MVP plan, which also decides which of its work packages builds which code of the rules. Decided by the user on 2026-10-03, against this task building the revision or any of that code, and against cancelling this task and moving everything to the MVP plan (`plans_finished/schema_revision/SCHEMA_REVISION_SHAPE.md`, Problem).
 - When the revision is ready: the Rollout order of `plans/mvp/MVP_PLAN.md`.
 - The rules of facts and votes, the target schema except the change of FR-1, and closing Q-10 of the MVP plan: the task `FACT_SCHEMA` of `plans_finished/fact_schema/`.
 - The local setup, its configuration of schema changes and their critical tests: the work package of `plans/mvp/MVP_PLAN.md` D-7.
@@ -50,11 +50,11 @@ FR-3. The references follow. D-11, the Risks, Q-11 and the Supplementary files o
 
 ## Acceptance criteria
 
-AC-1 (FR-1). The specification has a new version approved by the user, whose history names this initiative and the decision of the user of 2026-10-03. Read against scenario 1 of `plans/schema_revision/SCHEMA_REVISION_SHAPE.md` - a save at 10:00:01 whose response is lost, the same save repeated at 10:00:06 and again 25 hours later, and the same key sent with another content - the target schema leaves one fact, unverified with 0.5 of confirmations, and lets the stored data refuse every second fact with that key.
+AC-1 (FR-1). The specification has a new version approved by the user, whose history names this initiative and the decision of the user of 2026-10-03. Read against scenario 1 of `plans_finished/schema_revision/SCHEMA_REVISION_SHAPE.md` - a save at 10:00:01 whose response is lost, the same save repeated at 10:00:06 and again 25 hours later, and the same key sent with another content - the target schema leaves one fact, unverified with 0.5 of confirmations, and lets the stored data refuse every second fact with that key.
 
 AC-2 (FR-1). The target schema says which facts carry a key and which do not, and that a key is kept for as long as its fact exists. Its form either meets the convention of `docs/standards/standard_idempotency.md`, section Reconciliation key, or a deviation from it is recorded with its reason where the standards of the repository record deviations. A comparison of the new version with version 7 shows no other change of a rule or of the target schema.
 
-AC-3 (FR-2). A person who reads only `plans/mvp/MVP_PLAN.md` and the specification finds every item of FR-2 and knows that a work package of the MVP plan builds the first revision, without opening `plans/schema_revision/` or `plans_finished/`. Changed on 2026-10-04 by the user in `plans/mvp/` (`plans/mvp/MVP_PLAN.md` D-13): `plans/mvp/` builds no code, and every work package of `plans/mvp/` named in this document is the initiative `MVP.md` names for it: `schema_first_revision` builds the first schema revision; FR-2 is met by D-11 of `plans/mvp/MVP_PLAN.md` with that builder, and AC-3 by D-11 together with `MVP.md`, which names it.
+AC-3 (FR-2). A person who reads only `plans/mvp/MVP_PLAN.md` and the specification finds every item of FR-2 and knows that a work package of the MVP plan builds the first revision, without opening `plans_finished/schema_revision/` or `plans_finished/`. Changed on 2026-10-04 by the user in `plans/mvp/` (`plans/mvp/MVP_PLAN.md` D-13): `plans/mvp/` builds no code, and every work package of `plans/mvp/` named in this document is the initiative `MVP.md` names for it: `schema_first_revision` builds the first schema revision; FR-2 is met by D-11 of `plans/mvp/MVP_PLAN.md` with that builder, and AC-3 by D-11 together with `MVP.md`, which names it.
 
 AC-4 (FR-3). No document in force names this task as the builder of the first revision or says that it waits for Q-11 or for the backend skeleton; the archived artifacts of `plans_finished/` are unchanged.
 
@@ -70,13 +70,13 @@ AC-4 (FR-3). No document in force names this task as the builder of the first re
 
 ## Dependencies and impact on other modules
 
-- `plans/mvp/MVP_PLAN.md`, a plan in progress, gets the entry of FR-2 and the changes of FR-3. Its sections Scope of changes, Rollout order and Definition of Done are empty, so the work package of FR-2 is defined when that plan writes them; it has to carry the entry before it closes. Other sessions edit that plan on 2026-10-03 for `plans/valhalla_routing/` and `plans_finished/deployment/`.
-- `docs/product/specification.md` and `docs/product/schema.md` get a new version (FR-1). The documents that name the version of the specification in force follow it, and `plans/valhalla_routing/` plans a new version of its own.
+- `plans/mvp/MVP_PLAN.md`, a plan in progress, gets the entry of FR-2 and the changes of FR-3. Its sections Scope of changes, Rollout order and Definition of Done are empty, so the work package of FR-2 is defined when that plan writes them; it has to carry the entry before it closes. Other sessions edit that plan on 2026-10-03 for `plans_finished/valhalla_routing/` and `plans_finished/deployment/`.
+- `docs/product/specification.md` and `docs/product/schema.md` get a new version (FR-1). The documents that name the version of the specification in force follow it, and `plans_finished/valhalla_routing/` plans a new version of its own.
 - `docs/product/api_contract.md` does not change. The repetition of `create_fact` becomes implementable once FR-1 is approved.
 - `docs/standards/decision_registry.md` changes in the entry Technical directions of the MVP plan (FR-3).
 - `docs/standards/standard_idempotency.md` is the standard FR-1 either meets or records a deviation from.
 - The initiative of Q-11 of the MVP plan, not set up yet, builds the backend skeleton the revision waits for and the periodic task of the worker that meets the last sentence of AC-4 of `plans_finished/fact_schema/FACT_SCHEMA_PRD.md`.
-- The work packages of the import, the route, voting, geozones, accounts and moderation build on the revision of FR-2; the routing engine of D-9 reads the stored ways and points, and `plans/valhalla_routing/` may replace it.
+- The work packages of the import, the route, voting, geozones, accounts and moderation build on the revision of FR-2; the routing engine of D-9 reads the stored ways and points, and `plans_finished/valhalla_routing/` may replace it.
 - The archived artifacts of `plans_finished/fact_schema/` and `plans_finished/local_database/` keep saying that this task builds the revision.
 
 ## Risks and notes

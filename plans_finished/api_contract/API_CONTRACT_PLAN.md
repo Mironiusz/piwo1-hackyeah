@@ -4,7 +4,7 @@ Document state: 2026-10-03, plan closed
 
 ## Goal
 
-Write the contract that `plans_finished/api_contract/API_CONTRACT_PRD.md` requires (FR-1 - FR-8, AC-1 - AC-8) as `docs/product/api_contract.md`: every operation between the clients and the service with its request, responses and errors, approved by the user in place of the frontend person. Bring the four product rules the user decided in phase B into the specification as version 7, settle Q-9 of `plans/mvp/MVP_PLAN.md`, record that Q-11 moves to a separate initiative together with the implementation of the operations, point the standards and the maps at the contract, and hand the storage of the idempotency key to the task `SCHEMA_REVISION` of `plans/schema_revision/`. No code is written here (D-1).
+Write the contract that `plans_finished/api_contract/API_CONTRACT_PRD.md` requires (FR-1 - FR-8, AC-1 - AC-8) as `docs/product/api_contract.md`: every operation between the clients and the service with its request, responses and errors, approved by the user in place of the frontend person. Bring the four product rules the user decided in phase B into the specification as version 7, settle Q-9 of `plans/mvp/MVP_PLAN.md`, record that Q-11 moves to a separate initiative together with the implementation of the operations, point the standards and the maps at the contract, and hand the storage of the idempotency key to the task `SCHEMA_REVISION` of `plans_finished/schema_revision/`. No code is written here (D-1).
 
 ## Facts
 
@@ -29,7 +29,7 @@ F-18. In the MVP plan D-11 is the last decision, Q-9 and Q-11 are open, and the 
 F-19. The pointers to version 6 of the specification stand in `PRODUCT.md`, in the Goal of the MVP plan and in the Scope and Domain rules of the MVP PRD. | cmd:`grep -rn "version 6"` over `PRODUCT.md`, `docs`, `plans/mvp` -> `PRODUCT.md:45`, `PRODUCT.md:100`, `plans/mvp/MVP_PLAN.md:7`, `plans/mvp/MVP_PRD.md:17`, `plans/mvp/MVP_PRD.md:111`, plus the provenance of the schema in `docs/product/schema.md:3`, `docs/standards/README.md:54` and `plans/mvp/MVP_PLAN.md:45` | 2026-10-03
 F-20. The registry entry of the technical directions says that `plans_finished/account_sessions/` and `plans_finished/api_contract/` are in their interviews and that phase B of `plans/mvp/` resumes with the backend architecture. | doc:`docs/standards/decision_registry.md` line 48, line 49 | 2026-10-03
 F-21. `PRODUCT.md` lists the routing engine and this contract as undecided, although the routing engine is D-9 of the MVP plan. | doc:`PRODUCT.md` line 94; doc:`plans/mvp/MVP_PLAN.md` line 41 | 2026-10-03
-F-22. The shape of the task `SCHEMA_REVISION` has its interview in progress and one open question. | doc:`plans/schema_revision/SCHEMA_REVISION_SHAPE.md` line 3, lines 65 - 67 | 2026-10-03
+F-22. The shape of the task `SCHEMA_REVISION` has its interview in progress and one open question. | doc:`plans_finished/schema_revision/SCHEMA_REVISION_SHAPE.md` line 3, lines 65 - 67 | 2026-10-03
 F-23. The standards map names `docs/product/` with the specification and the schema, and its table of tasks has no row for the programming interface. | doc:`docs/standards/README.md` line 54, lines 92 - 95 | 2026-10-03
 F-24. While this plan was written, another session implemented the task `FACT_SCHEMA` on the same working tree, leaving its changes uncommitted, among them the path updates and the item of its step 6.1 in the files of this initiative. | cmd:`git status --short` -> 23 changed files, among them `plans_finished/api_contract/API_CONTRACT_PRD.md` and `plans_finished/api_contract/API_CONTRACT_SHAPE.md`; doc:`plans_finished/fact_schema/FACT_SCHEMA_REVIEW.md` line 3 | 2026-10-03
 F-25. The project virtual environment has Python 3.13.14 with pytest 9.1.1, and prettier is installed in `node_modules`. | cmd:`venv/Scripts/python.exe --version` -> `Python 3.13.14`; cmd:`venv/Scripts/python.exe -m pytest --version` -> `pytest 9.1.1`; cmd:`ls node_modules/.bin/prettier` -> found | 2026-10-03
@@ -643,7 +643,7 @@ The mentions of version 6 as the version that made the schema part of the specif
 3.1. In Decisions, after the last decision, append the next free decision. On the tree of 2026-10-03 it is D-12; if another initiative took that number in the meantime, the next free number replaces D-12 here, in 3.2, in 3.4 and in 3.5:
 
 ```text
-D-12. Programming interface contract, settling the former Q-9. Every operation between the clients and the service, with its request, responses and errors, is in `docs/product/api_contract.md`, with the decisions of `plans_finished/api_contract/API_CONTRACT_PLAN.md` D-1 - D-18. Constraints for the rest of this plan: the clients and the service use the operations, codes and shapes of that document, and a change of an operation is a change of that document first (D-2 there); the session token of D-8 travels in the header `Authorization: Bearer` and comes back renewed in the response header `Session-Token`, and a request with an expired token is refused, never handled without an account (D-4, D-5 there); a route request, an address search, an account creation and a login carry no token (D-6 there); a saved report or geozone carries an idempotency key that the stored data of D-11 does not hold yet, which the task `SCHEMA_REVISION` of `plans/schema_revision/` answers (D-9 there); the implementation of the operations goes with Q-11. Decided by the user on 2026-10-03 in phase B of `plans_finished/api_contract/`, approving the contract in place of the frontend person, whose confirmation is still to be obtained; the rest by the agent at C:40.
+D-12. Programming interface contract, settling the former Q-9. Every operation between the clients and the service, with its request, responses and errors, is in `docs/product/api_contract.md`, with the decisions of `plans_finished/api_contract/API_CONTRACT_PLAN.md` D-1 - D-18. Constraints for the rest of this plan: the clients and the service use the operations, codes and shapes of that document, and a change of an operation is a change of that document first (D-2 there); the session token of D-8 travels in the header `Authorization: Bearer` and comes back renewed in the response header `Session-Token`, and a request with an expired token is refused, never handled without an account (D-4, D-5 there); a route request, an address search, an account creation and a login carry no token (D-6 there); a saved report or geozone carries an idempotency key that the stored data of D-11 does not hold yet, which the task `SCHEMA_REVISION` of `plans_finished/schema_revision/` answers (D-9 there); the implementation of the operations goes with Q-11. Decided by the user on 2026-10-03 in phase B of `plans_finished/api_contract/`, approving the contract in place of the frontend person, whose confirmation is still to be obtained; the rest by the agent at C:40.
 ```
 
 3.2. In Risks, in the item that begins "The open questions depend on each other", replace "Q-9 depends on D-11 and Q-6 and not on Q-1 (U-5 of `plans_finished/consistency_check/`), and `plans_finished/api_contract/` is settled after `plans_finished/account_sessions/` (U-3 of `plans_finished/dependency_check/`);" with "the former Q-9 is settled as D-12 after D-11 and D-8, not depending on Q-1 (U-5 of `plans_finished/consistency_check/`), in the order of U-3 of `plans_finished/dependency_check/`;".
@@ -682,7 +682,7 @@ In Scope and boundaries, replace "- path names in the programming interface - th
 
 8.2. In the section Evidence on Hand, after the item that begins "- `docs/product/specification.md`, version", insert the item "- `docs/product/api_contract.md`: every operation between the clients and the service, with its request, responses and errors."
 
-### Step 9. `plans/schema_revision/SCHEMA_REVISION_SHAPE.md`
+### Step 9. `plans_finished/schema_revision/SCHEMA_REVISION_SHAPE.md`
 
 9.1. In Current state, after the item "- The Kraków submission closes at 11:00 on 4 October 2026 (`docs/hackathon/challenge_requirements.md`, Shared facts).", insert the item:
 
@@ -704,13 +704,13 @@ In Scope and boundaries, replace "- path names in the programming interface - th
 4. Step 2.10 and steps 3 - 9, in any order.
 5. `npx --no-install prettier --write` on every changed or created markdown file, then the checks of the Definition of Done.
 
-Steps for a human: the approval of step 3; the confirmation of the contract by the frontend person, after which any change is agreed with that person first; setting up the separate initiative of Q-11, which also implements the operations; the answer to question 2 of `plans/schema_revision/SCHEMA_REVISION_SHAPE.md`; the commit and the Merge Request of the changed files.
+Steps for a human: the approval of step 3; the confirmation of the contract by the frontend person, after which any change is agreed with that person first; setting up the separate initiative of Q-11, which also implements the operations; the answer to question 2 of `plans_finished/schema_revision/SCHEMA_REVISION_SHAPE.md`; the commit and the Merge Request of the changed files.
 
 ## Definition of Done
 
 - `docs/product/api_contract.md` exists with the content of step 1 and the date of the user's approval in its state line.
 - `docs/product/specification.md` carries exactly the changes of steps 2.1 - 2.9, with the date of the user's approval, and no rule of version 6 changes except by the additions of step 2.
-- `PRODUCT.md`, `plans/mvp/MVP_PLAN.md`, `plans/mvp/MVP_PRD.md`, `docs/standards/standard_errors.md`, `docs/standards/standard_naming.md`, `docs/standards/README.md`, `docs/standards/decision_registry.md` and `plans/schema_revision/SCHEMA_REVISION_SHAPE.md` carry exactly the changes of steps 2.10 - 9, and `plans_finished/` is unchanged.
+- `PRODUCT.md`, `plans/mvp/MVP_PLAN.md`, `plans/mvp/MVP_PRD.md`, `docs/standards/standard_errors.md`, `docs/standards/standard_naming.md`, `docs/standards/README.md`, `docs/standards/decision_registry.md` and `plans_finished/schema_revision/SCHEMA_REVISION_SHAPE.md` carry exactly the changes of steps 2.10 - 9, and `plans_finished/` is unchanged.
 - `plans/mvp/MVP_PLAN.md` has the decision of step 3.1, no item that begins with Q-9 under Open questions, and the item Q-11 of step 3.4.
 - `npx --no-install prettier --check` passes on every changed or created markdown file and on the files of `plans_finished/api_contract/`.
 - The changed and created files contain none of the characters forbidden by `docs/standards/standard_formatting.md` and no bold in prose.
@@ -721,7 +721,7 @@ Steps for a human: the approval of step 3; the confirmation of the contract by t
 
 - Another session worked on the same tree while this plan was written (F-24); a passage quoted here may change before the implementation, and its step then stops.
 - The frontend person has not confirmed the contract yet (D-10). A change asked for later changes the contract and whatever was already built on it.
-- The repetition of `create_fact` cannot be implemented until question 2 of `plans/schema_revision/SCHEMA_REVISION_SHAPE.md` is answered (D-9). If the db person rejects a stored key, the contract changes, or the user records a deviation from `docs/standards/standard_idempotency.md`.
+- The repetition of `create_fact` cannot be implemented until question 2 of `plans_finished/schema_revision/SCHEMA_REVISION_SHAPE.md` is answered (D-9). If the db person rejects a stored key, the contract changes, or the user records a deviation from `docs/standards/standard_idempotency.md`.
 - A vote repeated after a lost response gets `vote_too_soon`, so the client cannot tell its own first vote from an earlier one of the same day (D-16).
 - A token in the storage of the browser can be read by a script running on the page (D-4); the frontend loads no script from another host (F-10), which narrows that risk without removing it.
 - A person who only plans routes and searches addresses for more than 24 hours is logged out, because those requests carry no token (D-6).
@@ -730,7 +730,7 @@ Steps for a human: the approval of step 3; the confirmation of the contract by t
 - A geozone whose point lies outside the rectangle of `list_facts_in_area` is not listed even when its circle reaches into it.
 - `find_nearby_facts` also returns a fact outdated because it was removed in OpenStreetMap, as FR-13 of `plans_finished/fact_schema/FACT_SCHEMA_PRD.md` excludes only hidden facts; a confirmation of such a fact follows the status rule of M4.
 - No initiative of Q-11 exists yet, so nobody is scheduled to implement the operations before the Kraków deadline at 11:00 on 4 October 2026 (D-1).
-- When this initiative moves to `plans_finished/`, the references to `plans_finished/api_contract/` in `plans/mvp/MVP_PLAN.md`, `docs/standards/decision_registry.md`, `docs/standards/README.md`, `docs/product/api_contract.md`, `docs/product/specification.md` and `plans/schema_revision/SCHEMA_REVISION_SHAPE.md` follow the move, as ch. 4.6 of `docs/standards/standard_agentic_workflow.md` requires.
+- When this initiative moves to `plans_finished/`, the references to `plans_finished/api_contract/` in `plans/mvp/MVP_PLAN.md`, `docs/standards/decision_registry.md`, `docs/standards/README.md`, `docs/product/api_contract.md`, `docs/product/specification.md` and `plans_finished/schema_revision/SCHEMA_REVISION_SHAPE.md` follow the move, as ch. 4.6 of `docs/standards/standard_agentic_workflow.md` requires.
 
 ## Open questions
 

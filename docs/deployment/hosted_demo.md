@@ -34,7 +34,7 @@ The schema revisions are applied by hand, as a step of their own, with the conse
 
 The separate loading program loads three things: the OpenStreetMap copy together with the routing data built from it, the map tile archive and the sample reports. Run it by hand after the schema revisions. The start command never runs it. The step has finished when the program ends without an error and the map of Kraków shows at the public link.
 
-After the program ends, restart the routing service on the routing data it built. Until then every route ends with the message that a route cannot be planned right now (`plans/valhalla_routing/VALHALLA_ROUTING_PLAN.md` D-3).
+After the program ends, restart the routing service on the routing data it built. Until then every route ends with the message that a route cannot be planned right now (`plans_finished/valhalla_routing/VALHALLA_ROUTING_PLAN.md` D-3).
 
 The step is not repeated after a restart of the demo. Completed by the task `DEPLOYMENT_CONFIG` of `plans/deployment_config/`: the command of the program and the command that restarts the routing service.
 
