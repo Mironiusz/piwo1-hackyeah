@@ -6,8 +6,9 @@ The documents of the project decide one host that serves the programming interfa
 (piwo1-hackyeah, `plans_finished/frontend_stack/` D-3 and D-5, `docs/standards/standard_frontend.md`). This server
 stands in for that host during development, so the HarmonyOS app talks to it the way it will to the hosted demo.
 
-  /api/...                    the sixteen operations of the contract, in memory (`api_mock.py`)
-  GET /<archive file name>    the archive, with byte ranges (Range header, 206 Partial Content), also HEAD
+  /api/...                    the operations of the contract, in memory (`api_mock.py`)
+  GET /tiles/<archive name>   the archive, with byte ranges (Range header, 206 Partial Content), also HEAD; the
+                              address of the host of the project is `/tiles/krakow.pmtiles` (`docs/setup/MAP_SETUP.md`)
   GET /health                 "ok"
 
 Usage: python3 tools/mock_backend/server.py [--archive tiles/krakow.pmtiles] [--port 8090] [--host 0.0.0.0]
@@ -128,7 +129,7 @@ class Handler(BaseHTTPRequestHandler):
             return self._api()
         if path == "/health":
             return self._send(200, b"ok", "text/plain")
-        if path == "/" + Handler.name:
+        if path in ("/" + Handler.name, "/tiles/" + Handler.name):
             return self._archive()
         return self._send(404, b"not found", "text/plain")
 
@@ -193,7 +194,7 @@ def main():
     Handler.name = os.path.basename(path)
     print("Serving %s (%.1f MB, zoom %d-%d) on http://%s:%d/%s" % (path, Handler.size / 1e6, reader.min_zoom,
                                                                     reader.max_zoom, a.host, a.port, Handler.name))
-    print("For the emulator, rawfile/config/api.json: base_url http://10.0.2.2:%d, tiles_url http://10.0.2.2:%d/%s"
+    print("For the emulator, rawfile/config/api.json: base_url http://10.0.2.2:%d, tiles_url http://10.0.2.2:%d/tiles/%s"
           % (a.port, a.port, Handler.name))
     print("Moderator account: pseudonym moderator, password given by --moderator-password")
     ThreadingHTTPServer((a.host, a.port), Handler).serve_forever()

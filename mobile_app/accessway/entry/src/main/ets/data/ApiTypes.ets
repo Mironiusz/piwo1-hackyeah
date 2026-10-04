@@ -37,6 +37,7 @@ export interface ApiAccount {
 export interface ApiErrorDetail {
   code: string;
   fields?: string[];
+  points?: string[];
   repeat_allowed_at?: string;
 }
 

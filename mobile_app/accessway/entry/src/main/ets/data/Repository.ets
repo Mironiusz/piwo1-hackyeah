@@ -11,6 +11,7 @@ import { EdgeState, Fact, FactKind, LatLon } from '../model/Types';
 export enum ErrorCode {
   UNAVAILABLE = 'unavailable',
   NOT_FOUND = 'not_found',
+  NOT_SUPPORTED = 'not_supported',
   NO_ROUTE = 'no_route',
   OUTSIDE_AREA = 'outside_area',
   BAD_CREDENTIALS = 'bad_credentials',

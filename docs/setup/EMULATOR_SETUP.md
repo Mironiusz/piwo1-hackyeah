@@ -9,13 +9,13 @@ the toolchain versions are pinned in `mobile_app/scripts/env.sh`. The short path
 
 ## What gets installed
 
-| Item | Version / location | Installed by |
-|---|---|---|
-| `@oniroproject/oniro-app` CLI | 0.11.0, in `.tools/` of the repo | `make setup` |
-| OpenHarmony SDK | 6.0, API 20, in `~/setup-ohos-sdk` (`ONIRO_SDK_ROOT_DIR`) | `make setup` |
-| Command-line tools (hvigorw, ohpm, hdc, codelinter) | `~/command-line-tools` (`ONIRO_CMD_TOOLS_PATH`) | `make setup` |
-| Oniro emulator (QEMU image, OpenHarmony 6.1) | `~/oniro-emulator` (`ONIRO_EMULATOR_DIR`) | `make setup` |
-| Debug signing material | `accessway/signatures/`, `accessway/build-profile.json5` | `make sign` (also run by `make build`) |
+| Item                                                | Version / location                                        | Installed by                           |
+| --------------------------------------------------- | --------------------------------------------------------- | -------------------------------------- |
+| `@oniroproject/oniro-app` CLI                       | 0.11.0, in `.tools/` of the repo                          | `make setup`                           |
+| OpenHarmony SDK                                     | 6.0, API 20, in `~/setup-ohos-sdk` (`ONIRO_SDK_ROOT_DIR`) | `make setup`                           |
+| Command-line tools (hvigorw, ohpm, hdc, codelinter) | `~/command-line-tools` (`ONIRO_CMD_TOOLS_PATH`)           | `make setup`                           |
+| Oniro emulator (QEMU image, OpenHarmony 6.1)        | `~/oniro-emulator` (`ONIRO_EMULATOR_DIR`)                 | `make setup`                           |
+| Debug signing material                              | `accessway/signatures/`, `accessway/build-profile.json5`  | `make sign` (also run by `make build`) |
 
 The three home-directory paths can be overridden with the environment variables above before running any target.
 Do not commit `accessway/local.properties`, `accessway/signatures/` or any keystore: they are machine-specific
@@ -149,7 +149,7 @@ needed for building) or on another Linux machine, and installed with `hdc`.
 4. Get the emulator image: download
    https://github.com/eclipse-oniro4openharmony/device_board_oniro/releases/latest/download/oniro_emulator.zip
    and unpack it, for example to `C:\oniro-emulator`. Alternatively `npx @oniroproject/oniro-app@0.11.0
-   emulator install`.
+emulator install`.
 5. Start it from the `images` folder: `.\run.bat` (in Git Bash: `./run.sh`). Options: `-s <vCPUs>`,
    `-m <RAM, e.g. 6G>`, `-r 540x1080`, `--headless` (then VNC on `localhost:5900`).
 6. `hdc` for Windows comes with the OpenHarmony command-line tools, which on Windows must be downloaded
@@ -185,11 +185,11 @@ without the service, the mock of the host of the project serves the same contrac
 
 ```bash
 make tiles        # tiles/krakow.pmtiles, about 35 MB, needs internet
-make mock         # http://0.0.0.0:8090, API under /api, archive at /krakow.pmtiles
+make mock         # http://0.0.0.0:8090, API under /api, archive at /tiles/krakow.pmtiles
 ```
 
 Inside the emulator the computer is `10.0.2.2`, so `base_url` is `http://10.0.2.2:8090` and `tiles_url`
-`http://10.0.2.2:8090/krakow.pmtiles`. `python3 tools/mock_backend/contract_check.py` checks a running service
+`http://10.0.2.2:8090/tiles/krakow.pmtiles`. `python3 tools/mock_backend/contract_check.py` checks a running service
 against the contract.
 
 ## Known behaviour of the emulator
@@ -226,15 +226,15 @@ The image runs under plain TCG emulation, about ten times slower, with these adj
 
 ## Troubleshooting
 
-| Symptom | Fix |
-|---|---|
-| `make doctor` says `kvm: no access` | `sudo usermod -aG kvm $USER`, log out and in (WSL: close the terminal, `wsl --shutdown`) |
-| `Emulator did not connect in 5 min` | Read `.tools/emulator.log`; check free RAM; try `make emulator-stop` then `make emulator-fast EMU_MEM=4G` |
-| `oniro devices` empty although the window is up | `hdc tconn 127.0.0.1:55555`, then retry `make run` |
-| Build fails with "sdk.dir" or SDK not found | Delete `accessway/local.properties` and run `make sign` |
-| Install fails with a signature error | `make sign` then `make run`; if an older build with a different key is installed, `make uninstall` first |
-| Screen too small | Restart with `make emulator-fast EMU_RES=540x1080` (or another `WxH`) |
-| App shows stale data after an update | `make uninstall` then `make run` |
+| Symptom                                         | Fix                                                                                                       |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `make doctor` says `kvm: no access`             | `sudo usermod -aG kvm $USER`, log out and in (WSL: close the terminal, `wsl --shutdown`)                  |
+| `Emulator did not connect in 5 min`             | Read `.tools/emulator.log`; check free RAM; try `make emulator-stop` then `make emulator-fast EMU_MEM=4G` |
+| `oniro devices` empty although the window is up | `hdc tconn 127.0.0.1:55555`, then retry `make run`                                                        |
+| Build fails with "sdk.dir" or SDK not found     | Delete `accessway/local.properties` and run `make sign`                                                   |
+| Install fails with a signature error            | `make sign` then `make run`; if an older build with a different key is installed, `make uninstall` first  |
+| Screen too small                                | Restart with `make emulator-fast EMU_RES=540x1080` (or another `WxH`)                                     |
+| App shows stale data after an update            | `make uninstall` then `make run`                                                                          |
 
 ## Quick reference for an agent
 

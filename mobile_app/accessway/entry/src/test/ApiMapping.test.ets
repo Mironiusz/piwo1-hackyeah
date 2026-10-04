@@ -1,5 +1,6 @@
 import { describe, it, expect } from '@ohos/hypium';
-import { dayToMs, factFromApi, kindFromApi, kindToApi, planFromApi, routeFactFromApi } from '../main/ets/data/ApiMapping';
+import { dayToMs, factFromApi, isNotAssessed, kindFromApi, kindToApi, planFromApi, routeFactFromApi } from '../main/ets/data/ApiMapping';
+import { sameDay } from '../main/ets/domain/Trust';
 import { ApiFact, ApiPlanRouteResponse, ApiRouteFact } from '../main/ets/data/ApiTypes';
 import { Lang, setLang } from '../main/ets/model/I18n';
 import { EdgeState, FactCategory, FactKind, FactSource, FactStatus } from '../main/ets/model/Types';
@@ -97,6 +98,23 @@ export default function apiMappingTest() {
       expect(plan.rated).assertFalse();
       expect(plan.barrierFree).assertTrue();
       expect(plan.gaps.length).assertEqual(0);
+    });
+    it('not_assessed_route_is_unrated', 0, () => {
+      const r = response();
+      for (const s of r.route.segments) {
+        s.state = 'not_assessed';
+        s.missing_attributes = [];
+      }
+      expect(isNotAssessed(r.route)).assertTrue();
+      const plan = planFromApi(r.route, r.barrier_free_route_exists, true, r);
+      expect(plan.rated).assertFalse();
+      expect(plan.gaps.length).assertEqual(0);
+      expect(isNotAssessed(response().route)).assertFalse();
+    });
+    it('vote_limit_is_a_calendar_day', 0, () => {
+      const evening = new Date(2026, 9, 4, 23, 30).getTime();
+      expect(sameDay(evening, new Date(2026, 9, 4, 8, 0).getTime())).assertTrue();
+      expect(sameDay(evening, new Date(2026, 9, 5, 0, 10).getTime())).assertFalse();
     });
   });
 }

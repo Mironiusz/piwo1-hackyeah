@@ -1,7 +1,7 @@
 import { opposite } from '../domain/Facts';
 import { tr } from '../model/I18n';
 import { EdgeState, Fact, FactCategory, FactKind, FactSource, FactStatus } from '../model/Types';
-import { ApiFact, ApiPlanRouteResponse, ApiRoute, ApiRouteFact } from './ApiTypes';
+import { ApiFact, ApiPlanRouteResponse, ApiRoute, ApiRouteFact, ApiSegment } from './ApiTypes';
 import { RouteAlternative, RouteFactItem, RouteGap, RoutePlan, RouteSegment } from './Repository';
 
 /**
@@ -74,6 +74,11 @@ export function stateFromApi(code: string): EdgeState {
     return EdgeState.PARTIAL;
   }
   return EdgeState.NO_DATA;
+}
+
+/** True when the service marked the route as not assessed: a profile without barriers to avoid (M1, M7). */
+export function isNotAssessed(route: ApiRoute): boolean {
+  return route.segments.some((s: ApiSegment): boolean => s.state === 'not_assessed');
 }
 
 /** A `YYYY-MM-DD` day computed by the server, as the moment at noon of that day, so it displays without shifts. */
@@ -154,8 +159,9 @@ const CONNECTOR_MAX_M: number = 80;
  * server; the app only computes segment positions from the start and the map rectangle. `rated` says whether the
  * needs have any barrier, because without one the result screen shows the route without a rating.
  */
-export function planFromApi(route: ApiRoute, barrierFree: boolean, rated: boolean,
+export function planFromApi(route: ApiRoute, barrierFree: boolean, ratedByNeeds: boolean,
   alternative: ApiPlanRouteResponse | null): RoutePlan {
+  const rated = ratedByNeeds && !isNotAssessed(route);
   const segments: RouteSegment[] = [];
   const gaps: RouteGap[] = [];
   let pos = 0;

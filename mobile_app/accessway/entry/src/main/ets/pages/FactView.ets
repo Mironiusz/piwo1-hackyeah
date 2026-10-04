@@ -180,8 +180,8 @@ export struct FactView {
       MessageBox({
         lead: tr(`Twój głos: ${(this.myVote as MyVote).stillThere ? 'nadal jest' : 'już nie ma'}.`,
           `Your vote: ${(this.myVote as MyVote).stillThere ? 'still there' : 'gone'}.`),
-        text: tr(`Zapisaliśmy go ${formatDate((this.myVote as MyVote).at)}. Kolejny głos na ten fakt będzie możliwy po upływie doby.`,
-          `We saved it on ${formatDate((this.myVote as MyVote).at)}. You can vote on this fact again after a day.`),
+        text: tr(`Zapisaliśmy go ${formatDate((this.myVote as MyVote).at)}. Kolejny głos na ten fakt będzie możliwy jutro.`,
+          `We saved it on ${formatDate((this.myVote as MyVote).at)}. You can vote on this fact again tomorrow.`),
         kind: BoxKind.INFO
       }).margin({ top: 12 })
     } else {

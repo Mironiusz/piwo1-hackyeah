@@ -59,11 +59,18 @@ export function lastConfirmation(createdAt: number, votes: Vote[]): number {
   return t;
 }
 
-/** This person's vote cast within the last 24 hours, or null. */
+/** Whether two moments fall on the same calendar day of the device, which the app treats as Europe/Warsaw. */
+export function sameDay(a: number, b: number): boolean {
+  const x = new Date(a);
+  const y = new Date(b);
+  return x.getFullYear() === y.getFullYear() && x.getMonth() === y.getMonth() && x.getDate() === y.getDate();
+}
+
+/** This person's vote cast on the same calendar day, or null: one vote per fact per day (M4, specification v13). */
 export function recentVote(votes: Vote[], voterId: string, now: number): Vote | null {
   let found: Vote | null = null;
   for (const v of votes) {
-    if (v.voterId === voterId && now - v.at < VOTE_COOLDOWN_MS) {
+    if (v.voterId === voterId && now - v.at < VOTE_COOLDOWN_MS && sameDay(v.at, now)) {
       if (found === null || v.at > found.at) {
         found = v;
       }

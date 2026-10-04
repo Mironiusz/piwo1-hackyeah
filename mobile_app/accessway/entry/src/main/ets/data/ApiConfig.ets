@@ -7,7 +7,7 @@ import { readRawText } from './Storage';
  * that runs the emulator. An empty address means working without a server, on device data (LocalRepository).
  * The client appends the operation paths (`/api/...`), so give the address without `/api` and no trailing slash.
  * Field `tiles_url` is the full address of the PMTiles archive of Kraków served next to the API, for example
- * `http://10.0.2.2:8090/krakow.pmtiles`; empty means the sample base map bundled in the app.
+ * `http://10.0.2.2:8090/tiles/krakow.pmtiles`; empty means the sample base map bundled in the app.
  */
 export interface ApiSettings {
   base_url: string;

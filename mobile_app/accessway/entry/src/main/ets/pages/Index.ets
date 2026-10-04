@@ -52,12 +52,19 @@ struct Index {
 
   private async start(): Promise<void> {
     await tileStore.init();
-    try {
-      await appModel.refreshInfo();
-      await appModel.refreshFacts();
-      await appModel.refreshAccount();
-    } catch (e) {
-      this.toast(errorText(e as Object));
+    const steps: (() => Promise<void>)[] = [
+      () => appModel.refreshInfo(), () => appModel.refreshFacts(), () => appModel.refreshAccount()
+    ];
+    let failure = '';
+    for (const step of steps) {
+      try {
+        await step();
+      } catch (e) {
+        failure = failure.length > 0 ? failure : errorText(e as Object);
+      }
+    }
+    if (failure.length > 0) {
+      this.toast(failure);
     }
     this.stack = [{ screen: appModel.needsDone ? AppScreen.MAP : AppScreen.NEEDS, arg: '' }];
     this.loading = false;

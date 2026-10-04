@@ -66,7 +66,7 @@ export class TileStore {
   private running: number = 0;
   private notifyTimer: number = -1;
 
-  /** Sets the full address of the archive, for example `http://10.0.2.2:8090/krakow.pmtiles`. */
+  /** Sets the full address of the archive, for example `http://10.0.2.2:8090/tiles/krakow.pmtiles`. */
   configure(url: string): void {
     this.archiveUrl = url.trim();
   }

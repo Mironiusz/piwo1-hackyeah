@@ -62,7 +62,25 @@ export function apiErrorText(code: string, fields: string[]): string {
     return tr('Ten pseudonim jest już zajęty. Wybierz inny.', 'This nickname is already taken. Choose another one.');
   }
   if (code === 'vote_too_soon') {
-    return tr('Kolejny głos na ten fakt będzie możliwy po upływie doby.', 'You can vote on this fact again after a day.');
+    return tr('Na ten fakt głosowałeś już dzisiaj. Kolejny głos będzie możliwy jutro.',
+      'You already voted on this fact today. You can vote again tomorrow.');
+  }
+  if (code === 'point_outside_krakow') {
+    const start = fields.indexOf('start') >= 0;
+    const dest = fields.indexOf('destination') >= 0;
+    if (start && dest) {
+      return tr('Start i cel leżą poza Krakowem. Trasy wyznaczamy tylko w granicach miasta.',
+        'The start and the destination lie outside Kraków. We plan routes only within the city.');
+    }
+    if (start) {
+      return tr('Start leży poza Krakowem. Trasy wyznaczamy tylko w granicach miasta.',
+        'The start lies outside Kraków. We plan routes only within the city.');
+    }
+    return tr('Cel leży poza Krakowem. Trasy wyznaczamy tylko w granicach miasta.',
+      'The destination lies outside Kraków. We plan routes only within the city.');
+  }
+  if (code === 'not_found') {
+    return tr('Serwer nie obsługuje jeszcze tej funkcji.', 'The server does not offer this function yet.');
   }
   if (code === 'fact_not_found') {
     return tr('Tego faktu już nie ma albo został ukryty.', 'This fact no longer exists or was hidden.');
@@ -104,7 +122,13 @@ function codeOf(apiCode: string, fields: string[]): ErrorCode {
   if (apiCode === 'vote_too_soon') {
     return ErrorCode.VOTE_TOO_SOON;
   }
-  if (apiCode === 'fact_not_found' || apiCode === 'not_found') {
+  if (apiCode === 'point_outside_krakow') {
+    return ErrorCode.OUTSIDE_AREA;
+  }
+  if (apiCode === 'not_found') {
+    return ErrorCode.NOT_SUPPORTED;
+  }
+  if (apiCode === 'fact_not_found') {
     return ErrorCode.NOT_FOUND;
   }
   if (apiCode === 'fact_not_flaggable' || apiCode === 'fact_not_flagged') {
@@ -219,7 +243,7 @@ export class ApiClient {
     try {
       const err = JSON.parse(out.body) as ApiErrorBody;
       apiCode = err.error.code;
-      fields = err.error.fields ?? [];
+      fields = err.error.fields ?? err.error.points ?? [];
     } catch (e) {
       apiCode = out.status === 503 ? 'service_unavailable' : 'internal_error';
     }

@@ -120,6 +120,12 @@ export struct MapHome {
           'Switch to All or set your needs in the Needs tab.'),
         kind: BoxKind.INFO
       }).margin({ top: 10 })
+    } else if (appModel.factsUnsupported) {
+      MessageBox({
+        text: tr('Serwer nie udostępnia jeszcze faktów o barierach i udogodnieniach. Trasy działają, a fakty pojawią się tu, gdy serwer je udostępni.',
+          'The server does not offer facts about barriers and amenities yet. Routes work, and facts will appear here once the server offers them.'),
+        kind: BoxKind.INFO
+      }).margin({ top: 10 })
     } else if (appModel.factsTruncated) {
       MessageBox({
         text: tr('W tym miejscu jest więcej faktów, niż możemy pokazać naraz. Przybliż mapę.',

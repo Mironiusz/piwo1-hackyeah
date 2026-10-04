@@ -266,7 +266,7 @@ class LocalFacts implements FactsRepository {
     }
     if (recentVote(core.votesOf(id), voter, now) !== null) {
       throw new RepoError(ErrorCode.VOTE_TOO_SOON,
-        tr('Kolejny głos na ten fakt będzie możliwy po upływie doby.', 'You can vote on this fact again after a day.'));
+        tr('Na ten fakt głosowałeś już dzisiaj. Kolejny głos będzie możliwy jutro.', 'You already voted on this fact today. You can vote again tomorrow.'));
     }
     const v: Vote = { voterId: voter, value: stillThere ? 1 : -1, weight: voteWeight(core.account() !== null), at: now };
     const b = core.findReport(id);

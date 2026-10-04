@@ -51,13 +51,13 @@ The choice depends on a single file: `entry/src/main/resources/rawfile/config/ap
 
 What is where:
 
-| File | Role |
-|---|---|
-| `data/ApiConfig.ets` | reads `config/api.json` |
-| `data/ApiClient.ets` | HTTP, the `Authorization: Bearer` header, renewed token from `Session-Token`, error codes to messages |
-| `data/ApiTypes.ets` | JSON shapes from the contract, one to one |
-| `data/ApiMapping.ets` | translates the contract into app types (tests in `entry/src/test/ApiMapping.test.ets`) |
-| `data/ApiRepository.ets` | contract operations, each described by name and path |
+| File                     | Role                                                                                                  |
+| ------------------------ | ----------------------------------------------------------------------------------------------------- |
+| `data/ApiConfig.ets`     | reads `config/api.json`                                                                               |
+| `data/ApiClient.ets`     | HTTP, the `Authorization: Bearer` header, renewed token from `Session-Token`, error codes to messages |
+| `data/ApiTypes.ets`      | JSON shapes from the contract, one to one                                                             |
+| `data/ApiMapping.ets`    | translates the contract into app types (tests in `entry/src/test/ApiMapping.test.ets`)                |
+| `data/ApiRepository.ets` | contract operations, each described by name and path                                                  |
 
 Contract operations and where they are used in the app: `plan_route` (route result), `search_address` (search), `read_osm_copy` (data date), `list_facts_in_area` (fact map, fetched again after the map is moved), `read_fact`, `cast_vote`, `flag_fact` (fact details), `find_nearby_facts`, `create_fact` (reporting), `create_account`, `log_in`, `read_own_account`, `delete_own_account` (account), `list_flagged_facts`, `hide_fact`, `restore_fact` (moderation).
 
@@ -73,6 +73,24 @@ The server runs over plain HTTP, so `resources/base/profile/network_config.json`
 
 In the local version the moderator role goes to the account with the pseudonym `moderator`; with the API the server assigns the role. Accounts, votes and reports of the local version are stored only on the device; `make uninstall` clears them.
 
+### Real backend on a Huawei phone or the emulator
+
+The app talks to the team's backend (`python -m api`, `make backend` in the repository root), which implements every contract operation the app uses: routes, address search, accounts, facts in an area, nearby facts, reports, votes, flags and moderation. The backend has no `read_osm_copy`; the app then takes the OpenStreetMap copy date from the first route. The backend serves only `/api/...`; the map archive comes from the demo proxy or, locally, from `make mock` on port 8090.
+
+From `mobile_app/`:
+
+```bash
+make api-emulator                 # emulator: http://10.0.2.2:8000 (default in the repository)
+make run-device                   # Huawei phone on USB + same Wi-Fi: LAN IP of this computer, check, build, install, launch
+make api-set API_URL=http://<demo-host> TILES_URL=http://<demo-host>/tiles/krakow.pmtiles   # the hosted demo
+make api-check                    # calls the operations the app uses and says which answer as expected
+make api-offline                  # back to device-only data
+```
+
+`API_PORT=8787 make api-device` changes the port, `API_HOST=192.168.1.20` overrides the detected address. For a phone, start the backend with `API_BIND_HOST=0.0.0.0` in `.env.local` (with `127.0.0.1` only the computer and the emulator reach it) and allow the port in the firewall. The setting is built into the package, so every change needs `make run`. Never commit the address of the hosted demo (`docs/standards/standard_config.md`).
+
+A person without an account can report and vote: the backend tells people apart by the address and the User-Agent of the request, so two phones behind one Wi-Fi with the same app version count as one voter for the once-per-day vote limit.
+
 ### Mock of the project server (API and map)
 
 `make mock` runs `tools/mock_backend/server.py`: a single host as in the demo, with the API under `/api` and the map archive next to it. The mock keeps everything in memory (`tools/mock_backend/api_mock.py`) and implements all 16 contract operations with their errors, sessions (`Authorization`, renewed `Session-Token`), `X-Request-Id` and the specification rules: M4 statuses from the latest votes of five people with weights 1 and 0.5, the once-per-day vote limit, idempotent reports, M11 flagging and moderation, M2 routes with the four M7 segment states and the three M8 lists, and an alternative route around an unverified barrier.
@@ -87,7 +105,7 @@ What the mock makes up (marked in the code):
 
 Account with the moderator role: pseudonym `moderator`, password from `--moderator-password` (default `moderator`, for the local mock only). Every restart begins with a clean state.
 
-`api.json` for the emulator: `base_url` `http://10.0.2.2:8090`, `tiles_url` `http://10.0.2.2:8090/krakow.pmtiles` (the mock prints both at startup). `python3 tools/mock_backend/contract_check.py` checks a running server against the contract (50 checks: every operation, its errors and conventions, token renewal also on errors, the M7 state rules). The mock also passed an independent review against the contract; fixed: token in error responses, default "no steps" ("bez schodów") on roads (M7), `wheelchair=no` never green, reports overruled by OSM (`is_overruled_by_osm`), newest flag first, JSON 404 for unknown methods, strict validation of the idempotency key, the geofence radius and the pseudonym.
+`api.json` for the emulator: `base_url` `http://10.0.2.2:8090`, `tiles_url` `http://10.0.2.2:8090/tiles/krakow.pmtiles` (the mock prints both at startup). `python3 tools/mock_backend/contract_check.py` checks a running server against the contract (53 checks: every operation, its errors and conventions, token renewal also on errors, the M7 state rules, `not_assessed`, `point_outside_krakow`, the vote limit per calendar day, `read_public_transport`). The mock also passed an independent review against the contract; fixed: token in error responses, default "no steps" ("bez schodów") on roads (M7), `wheelchair=no` never green, reports overruled by OSM (`is_overruled_by_osm`), newest flag first, JSON 404 for unknown methods, strict validation of the idempotency key, the geofence radius and the pseudonym.
 
 Known gap in the contract: for needs without any barrier (M7: segments "without assessment" ("bez oceny")) the contract has no separate state, so the mock returns `no_barrier`, and the app draws such a route neutrally based on its own flag.
 
@@ -104,7 +122,7 @@ make mock           # API and archive on port 8090 (Range for the archive)
 make run            # the app; the emulator sees the computer at 10.0.2.2
 ```
 
-The full archive address is the `tiles_url` field in `entry/src/main/resources/rawfile/config/api.json` (default `http://10.0.2.2:8090/krakow.pmtiles`; the mock prints the correct address at startup, for the sample `.../sample.pmtiles`). When the archive does not respond or the field is empty, the map draws the background from the data in the app.
+The full archive address is the `tiles_url` field in `entry/src/main/resources/rawfile/config/api.json` (default `http://10.0.2.2:8090/tiles/krakow.pmtiles`; the mock prints the correct address at startup, for the sample `.../tiles/sample.pmtiles`). When the archive does not respond or the field is empty, the map draws the background from the data in the app.
 
 The mock (`tools/mock_backend/server.py`, Python standard library only) serves the archive at `GET /<archive name>` with `Range` support (206), next to the API from the section above and `GET /health`.
 
