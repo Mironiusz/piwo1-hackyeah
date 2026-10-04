@@ -11,3 +11,10 @@
 - Why: the user settled the clash of `plans/accounts/ACCOUNTS_PLAN.md` F-13 in favor of `plans/schema_first_revision/SCHEMA_FIRST_REVISION_PLAN.md` D-14 and D-15: the local database, the revisions and the database entries belong to `db/`, not to the skeleton.
 - Reusable pattern: a new database consumer takes the address from `data/engine.py` and never declares its own database entry; `DB_HOST` and `DB_PORT` are given at launch, never in a template.
 - Risk / notes: `ENVIRONMENT_ENTRY_FILES` names the launch environment for `DB_HOST` and `DB_PORT`. The other backend entries still have no template line, so `.env.local.example` does not yet describe everything the facade reads.
+
+## 2026-10-04 - `ConfigurationError` is a `ValueError` (public_transport_routing, S-9)
+
+- What changed: `build_gtfs_published_day` of `data/gtfs_source.py` guards only the parsing of the header, after a broad `except (TypeError, ValueError)` around `build_business_day` reported a missing configuration as a missing `Last-Modified` header.
+- Why: `config.settings.ConfigurationError` subclasses `ValueError`, and `build_business_day` and `fetch_business_now` of `common_time.py` import the facade lazily, so the first call is where a missing entry surfaces. The mistake showed only on a real run, because the tests load invented settings.
+- Reusable pattern: never wrap a call that may load `config.config` in an `except ValueError` that turns into a domain error; parse the input in its own `try`, then call the clock or the zone outside it. A test that replaces the zone function with one raising `ConfigurationError` keeps it so (`tests/data/test_gtfs_source_integration.py`).
+- Risk / notes: other broad `except ValueError` blocks around rules that read the business zone have the same trap.

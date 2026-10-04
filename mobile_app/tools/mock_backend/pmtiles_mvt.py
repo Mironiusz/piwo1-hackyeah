@@ -115,10 +115,8 @@ class PMTilesReader:
         h = self.f.read(HEADER_LEN)
         if h[:7] != b"PMTiles" or h[7] != 3:
             raise ValueError("not a PMTiles v3 archive")
-        (self.root_off, self.root_len, self.meta_off, self.meta_len, self.leaf_off, self.leaf_len,
-         self.data_off, self.data_len, _, _, _) = struct.unpack_from("<11Q", h, 8)
-        (self.clustered, self.internal_comp, self.tile_comp, self.tile_type, self.min_zoom,
-         self.max_zoom) = struct.unpack_from("<6B", h, 96)
+        (self.root_off, self.root_len, self.meta_off, self.meta_len, self.leaf_off, self.leaf_len, self.data_off, self.data_len, _, _, _) = struct.unpack_from("<11Q", h, 8)
+        (self.clustered, self.internal_comp, self.tile_comp, self.tile_type, self.min_zoom, self.max_zoom) = struct.unpack_from("<6B", h, 96)
         (self.min_lon, self.min_lat, self.max_lon, self.max_lat) = [v / 1e7 for v in struct.unpack_from("<4i", h, 102)]
         self.center_zoom = h[118]
         self.center_lon, self.center_lat = [v / 1e7 for v in struct.unpack_from("<2i", h, 119)]
@@ -136,6 +134,7 @@ class PMTilesReader:
 
     def metadata(self):
         import json
+
         if self.meta_len == 0:
             return {}
         return json.loads(decompress(self._read(self.meta_off, self.meta_len), self.internal_comp))
@@ -176,6 +175,7 @@ class PMTilesReader:
 def write_pmtiles(path, tiles, min_zoom, max_zoom, bounds, center, metadata):
     """Writes an archive from {(z, x, y): mvt bytes}; tiles are gzip compressed, one root directory."""
     import json
+
     items = sorted(((zxy_to_tileid(*k), v) for k, v in tiles.items()), key=lambda t: t[0])
     data = bytearray()
     entries = []
@@ -189,8 +189,7 @@ def write_pmtiles(path, tiles, min_zoom, max_zoom, bounds, center, metadata):
     meta_off = root_off + len(root)
     data_off = meta_off + len(meta)
     header = bytearray(b"PMTiles") + bytes([3])
-    header += struct.pack("<11Q", root_off, len(root), meta_off, len(meta), data_off, 0, data_off, len(data),
-                          len(entries), len(entries), len(entries))
+    header += struct.pack("<11Q", root_off, len(root), meta_off, len(meta), data_off, 0, data_off, len(data), len(entries), len(entries), len(entries))
     header += struct.pack("<6B", 1, COMPRESSION_GZIP, COMPRESSION_GZIP, TILE_TYPE_MVT, min_zoom, max_zoom)
     header += struct.pack("<4i", *[int(round(v * 1e7)) for v in bounds])
     header += struct.pack("<B2i", center[2], int(round(center[0] * 1e7)), int(round(center[1] * 1e7)))
@@ -213,13 +212,13 @@ def _fields(buf):
             yield field, wire, v
         elif wire == 2:
             ln, pos = read_varint(buf, pos)
-            yield field, wire, buf[pos:pos + ln]
+            yield field, wire, buf[pos : pos + ln]
             pos += ln
         elif wire == 1:
-            yield field, wire, buf[pos:pos + 8]
+            yield field, wire, buf[pos : pos + 8]
             pos += 8
         elif wire == 5:
-            yield field, wire, buf[pos:pos + 4]
+            yield field, wire, buf[pos : pos + 4]
             pos += 4
         else:
             raise ValueError("unsupported wire type %d" % wire)

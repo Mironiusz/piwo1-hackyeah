@@ -119,7 +119,7 @@ docstring-code-format = true
 # pydantic.mypy plugin: without it mypy reports missing arguments when creating the settings model, because it does not know that
 # the values come from the environment.
 [tool.mypy]
-files = [".claude/hooks", "config", "api", "service", "data", "worker", "common_time.py"]
+files = [".claude/hooks", "config", "api", "service", "data", "worker", "common_time.py", "valhalla/start_routing_service.py"]
 plugins = ["pydantic.mypy"]
 cache_dir = ".cache/mypy"
 
@@ -127,9 +127,15 @@ cache_dir = ".cache/mypy"
 module = ["accessibility_db.*"]
 follow_untyped_imports = true
 
+# scipy ships no type information and its stubs are a separate package; the graph of the route uses only a few
+# of its functions, whose results the code checks itself.
+[[tool.mypy.overrides]]
+module = ["scipy.*"]
+ignore_missing_imports = true
+
 [tool.vulture]
 # Tests are scanned too: a use in a test is a use.
-paths = [".claude/hooks", "config", "api", "service", "data", "worker", "common_time.py", "tests", "db"]
+paths = [".claude/hooks", "config", "api", "service", "data", "worker", "common_time.py", "valhalla/start_routing_service.py", "tests", "db"]
 # The confidence threshold is raised from the default sixty, because Pydantic model fields and ORM columns are assembled
 # by the library by name, and vulture does not see that and reports them as dead. What the gate stops seeing at this
 # threshold: an unused function, class, method, attribute and variable - vulture assigns them

@@ -1,6 +1,6 @@
 """
 Scenario tests of the password hashes of accounts: the encoded Argon2id form with the parameters of
-`plans/accounts/ACCOUNTS_PLAN.md` D-4, a match, a refusal and a damaged hash (AC-4 of `plans/accounts/ACCOUNTS_PRD.md`).
+`plans_finished/accounts/ACCOUNTS_PLAN.md` D-4, a match, a refusal and a damaged hash (AC-4 of `plans_finished/accounts/ACCOUNTS_PRD.md`).
 """
 
 import pytest

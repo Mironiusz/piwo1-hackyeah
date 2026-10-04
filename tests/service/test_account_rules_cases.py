@@ -1,7 +1,7 @@
 """
 Scenario tests of the input rules of an account: the pseudonym and the password of M9 (AC-1, AC-2 and AC-4 of
-`plans/accounts/ACCOUNTS_PRD.md`), on both sides of every limit, with the character set of
-`plans/accounts/ACCOUNTS_PLAN.md` D-3.
+`plans_finished/accounts/ACCOUNTS_PRD.md`), on both sides of every limit, with the character set of
+`plans_finished/accounts/ACCOUNTS_PLAN.md` D-3.
 """
 
 import pytest

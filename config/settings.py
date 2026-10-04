@@ -20,13 +20,16 @@ ENVIRONMENT_ENTRY_FILES = {
     "ROUTING_DATA_DIR": ".env.local",
     "VALHALLA_TOOL_DIR": ".env.local",
     "VALHALLA_CONFIG_TEMPLATE": ".env.local",
+    "PUBLIC_TRANSPORT_ENABLED": ".env.local",
     "DB_SERVICE_ACCOUNT_PASSWORD": ".env",
+    "SESSION_SIGNING_KEY": ".env",
     "DB_SERVICE_ACCOUNT_NAME": ".env.local",
     "DB_NAME": ".env.local",
     "DB_HOST": "launch environment",
     "DB_PORT": "launch environment",
 }
 DEFAULT_LOG_LEVEL: Final = "INFO"
+SESSION_SIGNING_KEY_MIN_LENGTH: Final = 32
 
 
 class ConfigurationError(ValueError):
@@ -34,7 +37,10 @@ class ConfigurationError(ValueError):
 
 
 class Settings(BaseModel):
-    """Hold the validated application contract, the service-account entries of db/, the routing service and its data, and the optional import path."""
+    """
+    Hold the validated application contract, the service-account entries of db/, the key that signs session tokens,
+    the routing service and its data, the optional import path and the switch of public transport.
+    """
 
     model_config = ConfigDict(extra="ignore", hide_input_in_errors=True)
     APP_ENVIRONMENT: Literal["local", "target"]
@@ -47,11 +53,13 @@ class Settings(BaseModel):
     DB_NAME: str = Field(min_length=1)
     DB_SERVICE_ACCOUNT_NAME: str = Field(min_length=1)
     DB_SERVICE_ACCOUNT_PASSWORD: SecretStr
+    SESSION_SIGNING_KEY: SecretStr = Field(min_length=SESSION_SIGNING_KEY_MIN_LENGTH)
     IMPORT_WORKSPACE_ROOT: Path | None = None
     ROUTING_SERVICE_URL: str
     ROUTING_DATA_DIR: Path
     VALHALLA_TOOL_DIR: Path | None = None
     VALHALLA_CONFIG_TEMPLATE: Path | None = None
+    PUBLIC_TRANSPORT_ENABLED: bool = False
 
     def __init__(self, **data: Any) -> None:
         """Replace library validation details with safe key-only failures."""
@@ -75,6 +83,17 @@ class Settings(BaseModel):
     def build_log_level(cls, value: Any) -> Any:
         """Treat the empty template marker as the documented default level, never as a more verbose one."""
         return DEFAULT_LOG_LEVEL if value == "" else value
+
+    @field_validator("PUBLIC_TRANSPORT_ENABLED", mode="before")
+    @classmethod
+    def build_public_transport_switch(cls, value: Any) -> Any:
+        """Turn routes with public transport on only for the exact text true, off for false or the empty template marker, and refuse any other text."""
+        if isinstance(value, bool):
+            return value
+        switch = {"true": True, "false": False, "": False}
+        if not isinstance(value, str) or value not in switch:
+            raise ValueError("invalid_public_transport_switch")
+        return switch[value]
 
     @field_validator("BUSINESS_TIMEZONE")
     @classmethod

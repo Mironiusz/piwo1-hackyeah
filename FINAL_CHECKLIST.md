@@ -44,13 +44,13 @@ Initiatives: `stage1_clarifications`, `repository_consistency`.
   - Waits for: Nothing.
   - Before that: Everything, at once. Check 2.2 starts from the shape and the PRD on `jmi/odklejka_v1`.
 - [ ] 1.4 Confirmations (`stage1_clarifications`)
-  - Done when: Every ruling `MVP.md`, section Open decisions and confirmations, lists as given in place of a member of the team, the division of the work included, and the thresholds of D-5 are confirmed or changed by the people that section names.
+  - Done when: Every ruling `MVP.md`, section Open decisions and confirmations, lists as given in place of a member of the team, the division of the work included, and the thresholds of D-5 are confirmed or changed by the people that section names - among them the contract of O9 in `docs/product/api_contract.md`, confirmed by Marek, Adrian and Kuber, and the two rulings of O9, the parallel start and the wording of the exception, confirmed by Marek.
   - Waits for: Nothing.
   - Before that: Everything, at once.
 - [ ] 1.5 Decisions that block checks (`stage1_clarifications`)
   - Done when: The registry entries on when the code of O9 starts, on the wording of its public transport segment and on the hash length are resolved by the people they name, or the dependent check is recorded as dropped.
   - Waits for: Nothing.
-  - Before that: Everything, at once. Check 4.2 depends on the first two. The third was resolved on 2026-10-04 by `schema_first_revision`, so check 2.2 no longer waits for this check (`docs/standards/decision_registry.md`, entry Hash length reported by Kuba).
+  - Before that: Everything, at once. Check 4.2 depends on the first two. The third was resolved on 2026-10-04 by `schema_first_revision`, so check 2.2 no longer waits for this check (`docs/standards/decision_registry.md`, entry Hash length reported by Kuba). The first two were resolved on 2026-10-04 by Rafał in `public_transport_routing`, Marek's confirmation still to come in check 1.4 (`docs/standards/decision_registry.md`, entries When the initiative of O9 starts its code and Wording of the public transport segment of O9).
 - [ ] 1.6 Consistency of the repository (`repository_consistency`)
   - Done when: At the moment of the submissions the repository and its documentation contradict each other nowhere, or every contradiction left is recorded.
   - Waits for: 7.1, 9.4, 9.5.
@@ -82,7 +82,7 @@ Initiatives: `backend_skeleton`, `schema_first_revision`, `accounts`, `address_s
 Initiatives: `osm_importer`, `osm_import`, `sample_data`, and the loading step of `map_tiles`.
 
 - [ ] 3.1 `osm_importer`
-  - Done when: The copy of the OpenStreetMap data of Kraków is imported with the barriers and amenities of D-5, and the walking data of the routing engine are prepared from it, as `plans/osm_importer/` decides.
+  - Done when: The copy of the OpenStreetMap data of Kraków is imported with the barriers and amenities of D-5, and the walking data of the routing engine are prepared from it, as `plans_finished/osm_importer/` decides.
   - Waits for: 2.2.
   - Before that: The code written from its plan, D-4 and D-5; the form of the data check 4.1 reads agreed with it.
 - [ ] 3.2 `osm_import`

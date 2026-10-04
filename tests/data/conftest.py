@@ -1,11 +1,28 @@
-"""Own isolated local scratch objects without changing product revisions."""
+"""Own isolated local scratch objects without changing product revisions, and give rolled-back service connections."""
+
+from collections.abc import Iterator
 
 import pytest
-from sqlalchemy import make_url, text
+from sqlalchemy import Connection, make_url, text
 
-from data.engine import apply_engine_construction, build_import_engine
+from data.engine import API_STATEMENT_TIMEOUT_MS, apply_engine_construction, build_engine, build_import_engine
 
 SCRATCH_OWNER_STATEMENT_TIMEOUT_MS = 30000
+
+
+@pytest.fixture
+def service_transaction() -> Iterator[Connection]:
+    """Give a connection of the service account of db/ inside a transaction rolled back after the test, so no seeded row stays behind."""
+    engine = build_engine(API_STATEMENT_TIMEOUT_MS)
+    try:
+        with engine.connect() as connection:
+            transaction = connection.begin()
+            try:
+                yield connection
+            finally:
+                transaction.rollback()
+    finally:
+        engine.dispose()
 
 
 @pytest.fixture

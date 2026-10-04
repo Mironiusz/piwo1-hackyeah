@@ -338,8 +338,9 @@ Shows:
 
 - Where the facts come from: OpenStreetMap and reports of people, and how the two are told apart on every fact.
 - The date of the OpenStreetMap copy in use.
+- The day each feed of the GTFS of ZTP Kraków was published, from `read_public_transport` of `docs/product/api_contract.md`, when it gives any (O9).
 - What the statuses mean, in words: unverified, confirmed, disputed, outdated. It gives no weights and no numbers of votes.
-- What the four segment states mean, and that missing data is never shown as accessible.
+- What the four segment states mean, and that missing data is never shown as accessible, with the one exception of O9: a public transport segment counts as accessible when the GTFS marks it as accessible or gives no accessibility information for it.
 - What the sample data mark means.
 - How wrong or outdated data is corrected: by voting on a fact and by reporting.
 - The licence and the attribution of OpenStreetMap.
@@ -479,4 +480,4 @@ The hosted demo is served over plain HTTP (`MVP.md`, Known departures from the K
 - The texts of every label and message in Polish and in English, and the Polish names of the terms: in `docs/product/interface_texts.md`, with the rules of the wording decided on 2026-10-04 and the single texts working copy until the views are built.
 - The rule for the labels of the summary line when barriers are many or close together (`.impeccable/briefs/route-result.md`, Constraints and open decisions).
 - Whether a list row names the street (decision 13).
-- The views of the optional feature O9, routes with public transport, added by version 8 of the specification: a switch in route planning, a public transport segment in the route result and the statement that public transport was unavailable. `MVP.md` gives them to `plans/frontend_app/` once `plans/public_transport_routing/` has written its interface into the contract. No view and no mock covers them.
+- The views of the optional feature O9, routes with public transport, added by version 8 of the specification: a switch in route planning, a public transport segment in the route result and the statement that public transport was unavailable. `MVP.md` gives them to `plans/frontend_app/` once `plans/public_transport_routing/` has written its interface into the contract, which it did on 2026-10-04: `route_kind`, `public_transport_unavailable` and the `public_transport` of a segment of `plan_route`, and `read_public_transport` with `is_enabled` for the switch. No view and no mock covers them.

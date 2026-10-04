@@ -10,7 +10,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
-ROUTING_FILE_NAMES = ("network.osm.pbf", "valhalla_tiles.tar")
+ROUTING_BOUNDARY_NAME = "krakow_boundary.wkb"
+ROUTING_FILE_NAMES = ("network.osm.pbf", "valhalla_tiles.tar", ROUTING_BOUNDARY_NAME)
 ROUTING_MANIFEST_NAME = "manifest.json"
 ROUTING_SHA256_PATTERN = re.compile(r"[0-9a-f]{64}")
 ROUTING_COPIES_NAME = "copies"
@@ -80,7 +81,7 @@ def apply_osm_routing_manifest(directory: Path, state_at: datetime) -> RoutingMa
 
 
 def fetch_osm_routing_manifest(directory: Path) -> RoutingManifest:
-    """Read a manifest and require both files to match its sizes and SHA-256 checksums."""
+    """Read a manifest and require every routing file to match its sizes and SHA-256 checksums."""
     path = directory / ROUTING_MANIFEST_NAME
     if path.is_symlink():
         raise RoutingDataError("Invalid routing manifest")
@@ -196,3 +197,38 @@ def apply_routing_directory_removal(path: Path) -> None:
         shutil.rmtree(path)
     except OSError as error:
         raise RoutingDataError("Cannot remove routing directory") from error
+
+
+def build_routing_copy_directory(root: Path, state_at: datetime) -> Path:
+    """Give the directory of the routing data of one copy, named by build_routing_copy_name for the writer and the reader alike."""
+    return root / ROUTING_COPIES_NAME / build_routing_copy_name(state_at)
+
+
+def fetch_osm_boundary(directory: Path, state_at: datetime) -> bytes:
+    """
+    Read the boundary of Kraków of one copy as WKB in longitude and latitude, after its manifest is verified.
+
+    The manifest must be of the same instant as the copy and lists every routing file, the boundary included, so a file
+    of another copy, a file the manifest does not guard and a copy prepared before the boundary was kept are never used.
+    """
+    manifest = fetch_osm_routing_manifest(directory)
+    if manifest.state_at != state_at:
+        raise RoutingDataError("Routing manifest belongs to another copy")
+    path = directory / ROUTING_BOUNDARY_NAME
+    if path.is_symlink():
+        raise RoutingDataError("Invalid boundary file")
+    try:
+        return path.read_bytes()
+    except OSError as error:
+        raise RoutingDataError("Cannot read boundary file") from error
+
+
+def apply_osm_boundary_file(directory: Path, boundary_wkb: bytes) -> None:
+    """Write the boundary of Kraków of a copy as WKB into its preparation directory, never over an existing file, before its manifest is made."""
+    try:
+        with (directory / ROUTING_BOUNDARY_NAME).open("xb") as stream:
+            stream.write(boundary_wkb)
+            stream.flush()
+            os.fsync(stream.fileno())
+    except OSError as error:
+        raise RoutingDataError("Cannot write the boundary file") from error

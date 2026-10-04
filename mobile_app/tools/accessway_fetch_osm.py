@@ -20,8 +20,7 @@ ENDPOINTS = [
     "https://overpass.kumi.systems/api/interpreter",
     "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
 ]
-HIGHWAYS = ("footway|pedestrian|path|living_street|residential|service|steps|tertiary|secondary|primary|"
-            "unclassified|cycleway|track|corridor|tertiary_link|secondary_link|primary_link|elevator")
+HIGHWAYS = "footway|pedestrian|path|living_street|residential|service|steps|tertiary|secondary|primary|unclassified|cycleway|track|corridor|tertiary_link|secondary_link|primary_link|elevator"
 
 
 def build_query(bbox):
@@ -69,7 +68,7 @@ def main():
     ways = sum(1 for e in elements if e.get("type") == "way" and "highway" in e.get("tags", {}))
     if ways == 0:
         raise SystemExit("Odpowiedź bez sieci pieszej - plik nie został zapisany")
-    data["accessway_fetched_at"] = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    data["accessway_fetched_at"] = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
     data["accessway_source"] = url
     with open(out, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, separators=(",", ":"))

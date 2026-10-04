@@ -28,7 +28,6 @@ from data.routing_data import RoutingDataError, apply_routing_directory_removal,
 from service.osm_acquisition import fetch_osm_extract
 from service.osm_geometry import OsmGeometryError
 from service.osm_publication import OsmPublicationCounts, apply_osm_copy_publication, fetch_osm_commit_outcome
-from service.osm_reconciliation import OsmReconciliationError
 from service.osm_routing_preparation import OsmPreparedCopy, apply_osm_routing_preparation, fetch_osm_prepared_copy
 from service.osm_routing_recovery import OsmRoutingIntegrityError, apply_osm_routing_recovery
 from service.osm_source_validation import OsmSourceError, resolve_osm_source_is_newer
@@ -55,7 +54,6 @@ OSM_IMPORT_NAMED_ERRORS: tuple[type[Exception], ...] = (
     OsmTileBuildError,
     RoutingDataError,
     OsmRoutingIntegrityError,
-    OsmReconciliationError,
     PublicationRolledBack,
     ImportLeaseLost,
     ImportWorkspaceUnconfirmed,
@@ -136,7 +134,7 @@ async def apply_osm_import_run(settings: OsmImportSettings, client: httpx.AsyncC
             return OsmImportResult("unchanged", extract.state_at, None)
         prepared = fetch_osm_prepared_copy(extract.path, run_deadline, settings.zone)
     committed_names = frozenset(build_routing_copy_name(snapshot.state_at.instant) for snapshot in history)
-    apply_osm_routing_preparation(lease.workspace_lease, settings.routing_root, prepared.network, extract.state_at, committed_names, template, settings.tool_directory, run_deadline)
+    apply_osm_routing_preparation(lease.workspace_lease, settings.routing_root, prepared.network, prepared.boundary, extract.state_at, committed_names, template, settings.tool_directory, run_deadline)
     publication, counts = apply_osm_publication_step(lease, prepared, extract.state_at, extract.filename, run_deadline)
     if publication == "commit_unknown":
         return OsmImportResult("commit_unknown", extract.state_at, None)
@@ -146,6 +144,11 @@ async def apply_osm_import_run(settings: OsmImportSettings, client: httpx.AsyncC
         fetch_logger(__name__).exception("Routing pointer publication failed after commit")
         return OsmImportResult("routing_incomplete", extract.state_at, counts)
     return OsmImportResult("updated", extract.state_at, counts)
+
+
+def build_osm_stamp(value: datetime) -> datetime:
+    """Cut a server-stamped instant to the whole millisecond the schema's timestamptz(3) columns store."""
+    return value.replace(microsecond=value.microsecond // 1000 * 1000)
 
 
 def apply_osm_publication_step(
@@ -158,14 +161,14 @@ def apply_osm_publication_step(
     refusal to report it instead. A lost commit confirmation is settled by the bounded outcome checks: a copy proven
     absent is a failure, a copy proven present is committed with unknown counts, and no answer leaves it unknown.
     """
-    made_current_at = fetch_business_now()
+    made_current_at = build_osm_stamp(fetch_business_now())
     refusals: list[Exception] = []
 
     def apply_write(connection: Connection) -> OsmPublicationCounts:
         """Keep a named refusal of the publication rules before the transaction rolls back."""
         try:
             return apply_osm_copy_publication(connection, prepared, state_at, filename, made_current_at)
-        except (OsmSourceError, OsmReconciliationError) as refusal:
+        except OsmSourceError as refusal:
             refusals.append(refusal)
             raise
 

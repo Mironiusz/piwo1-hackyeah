@@ -4,7 +4,7 @@ Signed session tokens of accounts (`docs/product/api_contract.md`, section Sessi
 A token is `<payload>.<signature>`, both parts base64url without padding. The payload is the compact JSON
 `{"a": <account id>, "e": <expiry>}`, the expiry in whole milliseconds since the UTC epoch, and the signature is
 HMAC-SHA256 of the payload part under the signing key. A token is valid while the current instant is earlier than its
-expiry, which is 24 hours after the request that issued it (`plans/accounts/ACCOUNTS_PLAN.md` D-6).
+expiry, which is 24 hours after the request that issued it (`plans_finished/accounts/ACCOUNTS_PLAN.md` D-6).
 
 Every way a token can be wrong - its shape, its encoding, its signature, its JSON, its keys and their types, its expiry -
 ends in the same `SessionExpiredError`, because the contract answers all of them with `session_expired`. The signature

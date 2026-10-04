@@ -15,7 +15,6 @@ Reusable instructions: `CLAUDE.md` / `AGENTS.md` (English in the repo, no commit
 
 - **Scope.** The user asked for the app only, without a backend ("masz zrobic tylko frontend w postaci aplikacji"); product rules come from the piwo1-hackyeah specification.
 - **Design.** The user pointed to the mock-up artifact "Widoki MVP: makiety" and asked for the app to look exactly like it, with an API connection added later. The agent captured every artboard (System, V-2 to V-14) and rebuilt the screens, tokens and fonts (Barlow Semi Condensed, Barlow Condensed) from them.
-- **Name.** The header shows the product name EnableMe, decided by the team on 2026-10-04, where the mock-ups first had a placeholder; the user asked the agent to put it everywhere the repository named the product otherwise.
 - **Data layer.** Because the API is not decided, screens use a `Repository` interface implemented on the device (`LocalRepository`), so no endpoint is guessed.
 - **Sample data.** `tools/accessway_sample.py` generates a schematic network around Tauron Arena laid out like the mock-ups, with all four segment states, a lowered kerb, a steep incline, stairs at the park entrance and an alternative path. Every sample report is labelled "dane przykładowe" in the app.
 - **Validation.** 0 ArkTS errors in the hvigor build, unit tests for the domain rules, and the sample scenarios printed and checked against the mock-ups (route length, data gaps, facts on the route, alternative route).
