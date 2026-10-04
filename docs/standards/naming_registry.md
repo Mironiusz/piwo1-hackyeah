@@ -186,10 +186,10 @@ The names of `plans/public_transport_routing/`, the GTFS step of the routing dat
 
 ## Tile archive names
 
-The names of `plans/tile_loading/`, the tile step of the loading program.
+The names of `plans_finished/tile_loading/`, the tile step of the loading program.
 
-- `data/tile_archive.py`: `TileFileError`, `fetch_tile_directory_presence`, `fetch_tile_file_digest`, `apply_tile_file_copy`, `apply_tile_file_placement`, `apply_tile_file_removal`, `apply_tile_leftover_removal` and the constants `TILE_FILE_CHUNK_BYTES`, `TILE_TEMPORARY_PREFIX` and `TILE_FILE_MODE`.
-- `service/tile_archive.py`: `TileArchiveSettings`, `TileArchiveResult`, `TileArchiveError`, `TILE_ARCHIVE_NAMED_ERRORS`, `resolve_tile_places_overlap`, `apply_tile_archive_command`, `apply_tile_archive`, `apply_tile_archive_run`, `apply_tile_failure_reason`, `apply_tile_temporary_cleanup`, the types `TileArchiveOutcome` and `TileArchiveFailureReason` and the constants `TILE_ARCHIVE_NAME`, `TILE_ARCHIVE_SHA256`, `TILE_ARCHIVE_RUN_SECONDS` and `TILE_ARCHIVE_GUARD_STATEMENT_TIMEOUT_MS`; its outcomes are `loaded`, `unchanged` and `skipped`, and its failure reasons `places_overlap`, `served_directory_missing`, `served_unreadable`, `source_missing`, `source_unreadable`, `source_mismatch`, `copy_failed`, `copy_mismatch` and `deadline_expired`.
+- `data/tile_archive.py`: `TileFileError`, `fetch_tile_directory_presence`, `fetch_tile_file_digest`, `apply_tile_file_copy`, `apply_tile_file_placement`, `apply_tile_file_removal`, `apply_tile_temporary_cleanup`, `apply_tile_leftover_removal` and the constants `TILE_FILE_CHUNK_BYTES`, `TILE_TEMPORARY_PREFIX` and `TILE_FILE_MODE`.
+- `service/tile_archive.py`: `TileArchiveSettings`, `TileArchiveResult`, `TileArchiveError`, `TILE_ARCHIVE_NAMED_ERRORS`, `resolve_tile_places_overlap`, `apply_tile_archive_command`, `apply_tile_archive`, `apply_tile_archive_run`, `apply_tile_failure_reason`, the types `TileArchiveOutcome` and `TileArchiveFailureReason` and the constants `TILE_ARCHIVE_NAME`, `TILE_ARCHIVE_SHA256`, `TILE_ARCHIVE_RUN_SECONDS` and `TILE_ARCHIVE_GUARD_STATEMENT_TIMEOUT_MS`; its outcomes are `loaded`, `unchanged` and `skipped`, and its failure reasons `places_overlap`, `served_directory_missing`, `served_unreadable`, `source_missing`, `source_unreadable`, `source_mismatch`, `copy_failed`, `copy_mismatch` and `deadline_expired`.
 - `worker/tile_archive.py`: the manual entry point `python -m worker.tile_archive`, with `build_required_paths`, `build_tile_archive_settings`, `build_tile_archive_workspace_root`, `apply_tile_archive_report`, `apply_tile_archive_action` and the constant `TILE_ARCHIVE_EXIT_CODES`.
 - `TILE_ARCHIVE_SOURCE` and `TILE_ARCHIVE_DIR`: the environment entries of the source place and of the served directory of the tile archive in `config/settings.py`.
 
@@ -224,6 +224,15 @@ The names of `plans_finished/accounts/`, the four account operations and the one
 - `data/accounts.py`: `StoredAccount`, `apply_account_insert`, `fetch_account_by_id`, `fetch_account_by_pseudonym`, `apply_account_delete`, `build_stored_account` and the statements `APPLY_ACCOUNT_INSERT_SQL`, `FETCH_ACCOUNT_SQL`, `FETCH_ACCOUNT_BY_ID_SQL`, `FETCH_ACCOUNT_BY_PSEUDONYM_SQL` and `APPLY_ACCOUNT_DELETE_SQL`.
 - `tests/conftest.py`: the fixture `stored_account_cleanup`, which deletes the accounts a critical test registered before committing them.
 - `SESSION_SIGNING_KEY`: the environment entry of the key that signs session tokens, with `SESSION_SIGNING_KEY_MIN_LENGTH` in `config/settings.py`.
+
+## Community fact names
+
+The names of `plans/community_facts/`, the data layer of the nine operations of the community facts.
+
+- `data/community_facts.py`, records and errors: `StoredCommunityFact`, `StoredNearbyFact`, `FactContent`, `AccountVoter`, `AnonymousVoter`, `Voter`, `FactInsertOutcome`, `StoredVoteInsert`, `VoteDayTaken`, `VoteInsertOutcome` and `VoteAccountMissingError`.
+- `data/community_facts.py`, functions: `fetch_stored_facts_in_area`, `fetch_stored_fact`, `fetch_stored_nearby_facts`, `fetch_stored_flagged_facts`, `fetch_stored_fact_for_vote`, `fetch_stored_fact_for_change`, `fetch_taken_vote_day`, `apply_fact_insert`, `apply_vote_insert`, `apply_vote_row`, `apply_fact_flag`, `apply_fact_hiding`, `apply_fact_restoration`, `build_stored_community_fact`, `build_optional_stored_community_fact` and `build_vote_voter_columns`.
+- `data/community_facts.py`, constants: `UNHIDDEN_FACT_CONDITION`, `WGS84_SRID`, `VOTE_ACCOUNT_CONSTRAINT_NAME`, `VOTE_ACCOUNT_MISSING_MESSAGE` and the query constants `FETCH_STORED_FACTS_IN_AREA_SQL`, `FETCH_STORED_FACT_SQL`, `FETCH_STORED_NEARBY_FACTS_SQL`, `FETCH_STORED_FLAGGED_FACTS_SQL`, `FETCH_STORED_FACT_FOR_VOTE_SQL`, `FETCH_STORED_FACT_FOR_CHANGE_SQL`, `FETCH_FACT_BY_IDEMPOTENCY_KEY_SQL`, `FETCH_ACCOUNT_VOTE_DAY_SQL`, `FETCH_HASH_VOTE_DAY_SQL`, `APPLY_FACT_INSERT_SQL`, `APPLY_VOTE_INSERT_SQL`, `APPLY_FACT_FLAG_SQL`, `APPLY_FACT_HIDING_SQL` and `APPLY_FACT_RESTORATION_SQL`.
+- `tests/data/test_community_facts_cases.py` and `tests/data/test_community_facts_critical.py`: the tests without and with the local database; the critical ones use the fixtures `service_transaction`, `stored_account_cleanup` and `database_cleanup_registry`, and no fixture of their own.
 
 ## Sample-loading interface
 

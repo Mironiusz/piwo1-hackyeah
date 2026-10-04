@@ -2,7 +2,7 @@
 
 Document state: 2026-10-04, plan closed
 
-Implementation state: 2026-10-04, not started; the user deferred the implementation of this plan, and the four-example provider of the first plan stays in the tree until S-1 - S-4 replace it
+Implementation state: 2026-10-04, S-1 - S-5 implemented; noncritical and the 17 critical cases pass on a local database; the joint checks of PRD AC-3 - AC-5 and AC-10 and the human-only steps remain, see `SAMPLE_DATA_REVIEW.md`
 
 ## Goal
 

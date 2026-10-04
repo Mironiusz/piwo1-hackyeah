@@ -56,7 +56,7 @@ def pytest_addoption(parser):
 
 @pytest.fixture
 def database_cleanup_registry(schema_owner_engine: Engine) -> Iterator[DatabaseFixtureRegistry]:
-    """Shares exact cleanup through the skeleton-owned validated local owner engine."""
+    """Shares exact cleanup through the local schema-owner engine of tests/data/conftest.py, so only tests under tests/data can request it."""
     registry = DatabaseFixtureRegistry(schema_owner_engine)
     try:
         yield registry

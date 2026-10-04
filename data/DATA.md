@@ -128,6 +128,48 @@ Tests use invented zips, `httpx.MockTransport` and the process supervisor replac
 
 The statements are SQLAlchemy Core on the columns of `accessibility_db.tables.Account`. The insert is `ON CONFLICT (lower(pseudonym)) DO NOTHING RETURNING id`, so the index `UX_account_pseudonym_lower` decides between two concurrent registrations and the second waits for the first transaction; the lookup compares `lower(pseudonym)` with `lower(:pseudonym)`, the expression of that index, so letter case follows the database. The deletion is one `DELETE ... RETURNING id`; `FK_vote_account` detaches the votes of the account in the same statement, and a vote insert holding its key-share lock on the row makes the deletion wait. The critical tests of `tests/data/test_accounts_critical.py` prove each of these on the local database of `db/compose.yaml`; facts and votes are written there only inside transactions rolled back after the test, because the service account cannot delete them.
 
+## Community facts
+
+`community_facts.py` reads and writes the tables `fact` and `vote` for the nine operations of the community facts that `service/` and `api/` build (`plans/community_facts/COMMUNITY_FACTS_PLAN.md` D-1 - D-9). It works on a connection the service opened on `fetch_api_engine()` of `engine.py`, inside the transaction of the caller, and it never commits, opens a connection, sets a statement limit or logs. It decides nothing: a lock gives the service layer the state it decides on, and a write does what it is told. The votes of the facts of any read come from `fetch_fact_votes` of `route_facts.py`, in one call for all of them.
+
+| Record                                | Content                                                                                                                                                                          |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `StoredCommunityFact`                 | A `StoredFact` of `route_facts.py` with `flagged_at`, the pair of the first flag as one `OffsetInstant` or `None`, and `is_hidden`; no author, no account and no idempotency key |
+| `StoredNearbyFact`                    | `fact` and `distance_m`, the exact geodesic distance in metres; the rounding to whole metres is the service layer's                                                              |
+| `FactContent`                         | `fact_type`, `lat`, `lon`, `description`, `step_count` and `geozone_radius_m`, normalized by the caller                                                                          |
+| `AccountVoter` and `AnonymousVoter`   | The two kinds of `Voter`: an `account_id`, or the 32 bytes `voter_hash` of a person without an account, left out of the text of the record                                       |
+| `FactInsertOutcome`                   | The `fact` of a save and `is_created`, false for a repeated save                                                                                                                 |
+| `StoredVoteInsert` and `VoteDayTaken` | The two kinds of `VoteInsertOutcome`: the `vote_id` and `cast_on` of the stored vote, or the `cast_on` of the stored vote that refused the new one                               |
+| `VoteAccountMissingError`             | A vote named an account that no longer exists; the message is constant and carries no identifier                                                                                 |
+
+| Operation                      | Role                                                                                                                                                                                              |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fetch_stored_facts_in_area`   | The visible facts whose point lies in a rectangle, the edge included, by identity and at most `limit`; the caller passes one above the cap of the contract to learn that the rectangle holds more |
+| `fetch_stored_fact`            | One fact by identifier in any status, a fact removed in OpenStreetMap included, or `None` for a hidden or a missing one                                                                           |
+| `fetch_stored_nearby_facts`    | The visible facts of one type within a distance of a point, the distance included, nearest first, with the exact distance                                                                         |
+| `fetch_stored_flagged_facts`   | Every flagged fact, the hidden ones included, the most recently flagged first                                                                                                                     |
+| `fetch_stored_fact_for_vote`   | Locks a fact for a vote and reads it as it is once locked, hidden or removed or not, or `None`                                                                                                    |
+| `fetch_stored_fact_for_change` | Locks a fact for a flag, a hiding or a restoration and reads it as it is once locked, or `None`                                                                                                   |
+| `apply_fact_insert`            | Saves a report or a geozone with the confirmation of its author as its first vote, once per idempotency key                                                                                       |
+| `apply_vote_insert`            | Stores a vote at the instant the caller gives, or says which day refused it                                                                                                                       |
+| `apply_fact_flag`              | Marks a fact flagged and keeps the first instant                                                                                                                                                  |
+| `apply_fact_hiding`            | Hides a fact and keeps the first instant                                                                                                                                                          |
+| `apply_fact_restoration`       | Clears the hidden mark and keeps the flag and the votes                                                                                                                                           |
+
+Two visibility rules of the contract differ on purpose and each lives in one place. The map and the check for existing facts use `VISIBLE_FACT_CONDITION` of `route_facts.py`, which leaves out hidden facts and facts removed in OpenStreetMap; the reading by identifier uses `UNHIDDEN_FACT_CONDITION`, which leaves out only the hidden ones. A rectangle is compared as geometry, because the edges of a geography rectangle are geodesic and bulge north of the parallels, so it does not use the index `IX_fact_geog` and scans the facts; a geozone counts by its point. A fact with a negative identifier of the sample data is read and written like any other.
+
+The moderation writes check neither the source, nor the flag, nor the hidden mark; the service layer decides on the state the lock gave back, and `CK_fact_hidden_only_flagged` stays the last guard of the database. The two locks are the lock of the vote, `FOR SHARE`, and the lock of the change, `FOR NO KEY UPDATE`. The first conflicts with the `FOR UPDATE` the publication of a fresh copy takes on the facts it reconciles (`plans_finished/osm_importer/OSM_IMPORTER_PLAN.md` D-15) and with the lock of the change, so a vote waits for both, while two votes on one fact do not wait for each other; a vote holds only its own fact, so it adds no cycle to the ascending order of the publication.
+
+What the service layer has to keep to use these operations correctly:
+
+- One request is one transaction on its connection. It uses the isolation READ COMMITTED of the engine default: `apply_fact_insert` waits on the unique index of the idempotency key and, after a conflict, reads the fact the other transaction committed, which a REPEATABLE READ transaction would not see.
+- The lock comes before the decision and before every write on the same fact. The caller raises the statement limit to 120000 ms before `fetch_stored_fact_for_vote` with `apply_statement_timeout` and restores 5000 ms after it; this module sets no limit.
+- The caller takes the instant of a vote from `fetch_business_now` after the lock, so the day of the vote is the day of the write and not of the arrival.
+- A vote of an account that no longer exists raises `VoteAccountMissingError` after an integrity failure of the database, and so does the confirmation of an author whose account no longer exists inside `apply_fact_insert`. The transaction is then aborted and the caller rolls it back, so a failed save leaves neither the fact nor the vote. `VoteDayTaken` is an answer and leaves the transaction usable.
+- A repeated save returns the stored fact, hidden or not, and stores nothing; the comparison of its content with the request and the answer for a hidden fact are the service layer's.
+
+The critical tests of `tests/data/test_community_facts_critical.py` cover each of these on the local database of `db/compose.yaml`, the vote against a publication on two real connections included; `tests/data/test_community_facts_cases.py` fixes the lock modes, the visibility predicates and the columns of the statements without a database.
+
 ## Walking route
 
 Five modules serve the walking route of `service/route_planning.py`.
@@ -146,17 +188,18 @@ Five modules serve the walking route of `service/route_planning.py`.
 
 `tile_archive.py` holds the file operations of the tile step of `service/tile_archive.py`. It reads and writes files only and touches no database.
 
-| Name                            | Role                                                                                                                                      |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `fetch_tile_directory_presence` | Whether a path is a directory that is not a link                                                                                          |
-| `fetch_tile_file_digest`        | The SHA-256 hex digest of a regular file read in chunks under the run deadline, or `None` for a missing path, a directory and a link      |
-| `apply_tile_file_copy`          | A copy of the source in a new `.tile-archive-*` file of the served directory, written in chunks under the run deadline, mode 0644, synced |
-| `apply_tile_file_placement`     | The temporary file put under the served name with one `os.replace`, and on Linux a sync of the directory                                  |
-| `apply_tile_file_removal`       | The removal of one file if it is still there                                                                                              |
-| `apply_tile_leftover_removal`   | The removal of every regular `.tile-archive-*` file of a directory, with the count removed                                                |
-| `TILE_FILE_CHUNK_BYTES`         | 1 048 576, the size of one chunk of every read and write                                                                                  |
-| `TILE_TEMPORARY_PREFIX`         | `.tile-archive-`, the prefix of the temporary copies                                                                                      |
-| `TILE_FILE_MODE`                | 0644, the mode of the copy, so a proxy running as another user can read the public archive                                                |
+| Name                            | Role                                                                                                                                                                     |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `fetch_tile_directory_presence` | Whether a path is a directory that is not a link                                                                                                                         |
+| `fetch_tile_file_digest`        | The SHA-256 hex digest of a regular file read in chunks under the run deadline, or `None` for a missing path, a directory and a link                                     |
+| `apply_tile_file_copy`          | A copy of the source in a new `.tile-archive-*` file of the served directory, written in chunks under the run deadline, mode 0644, synced                                |
+| `apply_tile_file_placement`     | The temporary file put under the served name with one `os.replace`, and on Linux a sync of the directory                                                                 |
+| `apply_tile_file_removal`       | The removal of one file if it is still there                                                                                                                             |
+| `apply_tile_temporary_cleanup`  | The removal of a temporary copy that was not placed; a failed removal is logged as a warning and left to the next run, so it never hides the failure that ended the copy |
+| `apply_tile_leftover_removal`   | The removal of every regular `.tile-archive-*` file of a directory, with the count removed                                                                               |
+| `TILE_FILE_CHUNK_BYTES`         | 1 048 576, the size of one chunk of every read and write                                                                                                                 |
+| `TILE_TEMPORARY_PREFIX`         | `.tile-archive-`, the prefix of the temporary copies                                                                                                                     |
+| `TILE_FILE_MODE`                | 0644, the mode of the copy, so a proxy running as another user can read the public archive                                                                               |
 
 A failed read, copy, placement or removal raises `TileFileError` with one of four constant messages that name no path; the service turns it into the reason of its step. An exhausted run deadline passes on as the `DeadlineExpiredError` of `common_time.py`, which is a `TimeoutError` and so an `OSError`, so every function handles it before an `OSError`. The atomic replacement follows `apply_routing_pointer` of `routing_data.py` and the sync of the directory `apply_journal_write` of `import_workspace.py`. The tests run on temporary directories; on 2026-10-04 the Linux paths - the mode of the copy, a link at the served name and the sync of the directory - also ran in a Linux container of the image `python:3.13-slim`.
 
