@@ -21,7 +21,7 @@ People who meet physical barriers on the way - wheelchair users, parents with ba
 - The technology stack is an open entry in `docs/standards/decision_registry.md`, to be chosen in phase B of `plan-prd` for this initiative. Until then the Python profile of the standards stays in force.
 - The HarmonyOS port and the Huawei submission are an open entry in `docs/standards/decision_registry.md`.
 - Deadline: the Kraków submission closes at 11:00 on 4 October 2026 (`docs/hackathon/challenge_requirements.md`, Shared facts).
-- Layout of the initiative, decided by the user: one task for the whole MVP, flat in `plans/mvp/` with the prefix `MVP`. Consequence: the implementation plan has to split the work into packages that several people can build in parallel.
+- Layout of the initiative, decided by the user: one task for the whole MVP, flat in `plans_finished/mvp/` with the prefix `MVP`. Consequence: the implementation plan has to split the work into packages that several people can build in parallel.
 - Language of the seed, decided by the user: the request was made in Polish and the repository is written in English, so the seed keeps the Polish original verbatim with an English translation by the agent next to it.
 
 All decisions recorded in this document were made by the user on 2026-10-03, unless the item says otherwise.

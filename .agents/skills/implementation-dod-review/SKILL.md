@@ -22,7 +22,7 @@ Do not invent missing context. If a required file, standard, responsibility boun
 What not to report:
 
 - speculative rewrites that the change does not need,
-- stylistic preferences without a concrete risk - with the caveat that a rule recorded in a standard is not a stylistic preference: you report a violation of `standard_formatting.md`, for example bold in prose or a character from the forbidden list, normally,
+- stylistic preferences without a concrete risk - with the caveat that a rule recorded in a standard is not a stylistic preference: you report a violation of `standard_formatting.md`, for example bold in prose, a character from the forbidden list or a reference to a line number instead of a section, normally,
 - problems that existed before the change and lie outside its scope, unless they block understanding of the change itself,
 - the absence of a rule in an area covered by an entry in the deferred decisions registry.
 

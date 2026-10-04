@@ -4,16 +4,16 @@ Document state: 2026-10-03
 
 ## Business goal
 
-By 11:00 on 4 October 2026 the MVP of `plans/mvp/` is reachable at a public link given in the Kraków submission on HackTribe, so the jury can open it on its own, also on a phone, and the live demo runs from the same place. The brief lists a demo link as optional, but a link the jury can try on its own supports the criteria of usefulness and ease of use (25%) and of prototype quality and completeness (20%) of the Kraków task description, and the WOW factor of the terms and conditions. This task makes the decisions that goal needs; the task `DEPLOYMENT` of the same initiative delivers the deployment itself.
+By 11:00 on 4 October 2026 the MVP of `plans_finished/mvp/` is reachable at a public link given in the Kraków submission on HackTribe, so the jury can open it on its own, also on a phone, and the live demo runs from the same place. The brief lists a demo link as optional, but a link the jury can try on its own supports the criteria of usefulness and ease of use (25%) and of prototype quality and completeness (20%) of the Kraków task description, and the WOW factor of the terms and conditions. This task makes the decisions that goal needs; the task `DEPLOYMENT` of the same initiative delivers the deployment itself.
 
 The same decision resolves the open entry Target environment for the demo in `docs/standards/decision_registry.md`, so that during the night before the deadline the agent works in that environment with permissions the team set on purpose, instead of having none at all.
 
 ## Problem and its consequences
 
-Where the demo runs was not decided in phase B of `plans/mvp/`; the user handed the decision to the db person of the team. As long as it stays open:
+Where the demo runs was not decided in phase B of `plans_finished/mvp/`; the user handed the decision to the db person of the team. As long as it stays open:
 
 - nobody can prepare the environment, and every hour taken from the night before 11:00 on 4 October shortens the time for the video, the checks and the fixes,
-- `plans/mvp/MVP_PLAN.md` cannot be closed, because its open question Q-7 waits for this decision, and the backend architecture of its Q-11 is decided only after Q-7,
+- `plans_finished/mvp/MVP_PLAN.md` cannot be closed, because its open question Q-7 waits for this decision, and the backend architecture of its Q-11 is decided only after Q-7,
 - the agent has no access to any target environment, so reading an error at 02:00 or deploying a fix needs a human every time,
 - people outside the team, the jury included, would leave personal data in a service nobody owns and nobody is due to delete.
 
@@ -22,15 +22,15 @@ Where the demo runs was not decided in phase B of `plans/mvp/`; the user handed 
 - The choice of the hosting for the demo, recorded with its reason.
 - The three permission levels of the agent for the hosted demo environment, in the rules of the repository.
 - Recording the decision where people look for it: the deferred decisions registry and the MVP plan.
-- The extension of the privacy information requirement of `plans/mvp/MVP_PRD.md` with the deletion of the demo.
+- The extension of the privacy information requirement of `plans_finished/mvp/MVP_PRD.md` with the deletion of the demo.
 
 ## Out of scope
 
 - The other technical decisions delegated in the same conversation, each with its own initiative: `plans_finished/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/local_database/`, `plans_finished/geocoding/`, `plans_finished/account_sessions/`.
-- The deployment configuration with written instructions, the secure connection of the public link, and making the routing service unreachable during the live demo. The user moved them on 2026-10-03, in phase B of this task, to the task `DEPLOYMENT` of this initiative (`plans_finished/deployment/DEPLOYMENT_SEED.md`). Reason: the configuration names how the service and the worker start, which `plans/mvp/MVP_PLAN.md` decides in Q-11 only after its Q-7 is closed by this task, so keeping them here made each wait for the other.
+- The deployment configuration with written instructions, the secure connection of the public link, and making the routing service unreachable during the live demo. The user moved them on 2026-10-03, in phase B of this task, to the task `DEPLOYMENT` of this initiative (`plans_finished/deployment/DEPLOYMENT_SEED.md`). Reason: the configuration names how the service and the worker start, which `plans_finished/mvp/MVP_PLAN.md` decides in Q-11 only after its Q-7 is closed by this task, so keeping them here made each wait for the other.
 - Standing the hosted environment up: creating the account with the hosting provider, the first deployment and checking the main scenario at the public link before the submission. The team took it out of this initiative on 2026-10-03; the db person does it, using what this initiative delivers.
 - Deleting the environment on 4 October 2026, and written instructions for it. The deletion is a step of the owner of the repository on that day. The agent proposed instructions for it in this PRD, and the user cut them at the gate on 2026-10-03.
-- Building the privacy information page. It belongs to `plans/mvp/`; this task changes only the requirement for it.
+- Building the privacy information page. It belongs to `plans_finished/mvp/`; this task changes only the requirement for it.
 - The hosting part of the business model in the Kraków presentation, a deliverable outside the app.
 - Keeping the app online after the hackathon. The brief does not require it, and the team decided to delete the demo after the results.
 
@@ -40,9 +40,9 @@ FR-1. Choice of the hosting. The demo runs on a hosted service reachable at a pu
 
 FR-2. Permission levels of the agent. The rules of the repository for the agent, in the section Target environment, carry the three permission levels for the hosted demo environment as described in the section Domain rules, the same in every place where those rules are kept.
 
-FR-3. The decision recorded. The entry Target environment for the demo of `docs/standards/decision_registry.md` moves to the resolved section with one sentence about how it turned out and where it lives now, and the open question Q-7 of `plans/mvp/MVP_PLAN.md` is closed with a pointer to this initiative.
+FR-3. The decision recorded. The entry Target environment for the demo of `docs/standards/decision_registry.md` moves to the resolved section with one sentence about how it turned out and where it lives now, and the open question Q-7 of `plans_finished/mvp/MVP_PLAN.md` is closed with a pointer to this initiative.
 
-FR-4. Privacy information about the deletion. The privacy information requirement FR-20 and its criterion AC-19 of `plans/mvp/MVP_PRD.md` are extended: in the hosted demo the privacy page states, in Polish and English, that the demo and all its data are deleted on 4 October 2026, after the results are announced. The MVP PRD has already passed its gate, so the extension is made with the user's confirmation and marked there as a change coming from this initiative.
+FR-4. Privacy information about the deletion. The privacy information requirement FR-20 and its criterion AC-19 of `plans_finished/mvp/MVP_PRD.md` are extended: in the hosted demo the privacy page states, in Polish and English, that the demo and all its data are deleted on 4 October 2026, after the results are announced. The MVP PRD has already passed its gate, so the extension is made with the user's confirmation and marked there as a change coming from this initiative.
 
 ## Acceptance criteria
 
@@ -52,7 +52,7 @@ AC-2 (FR-2). Every place that keeps the rules of the repository for the agent ca
 
 AC-3 (FR-3). The registry entry is in the resolved section and no longer among the open decisions, and Q-7 of the MVP plan points to this initiative as decided.
 
-AC-4 (FR-4). FR-20 and AC-19 of `plans/mvp/MVP_PRD.md` require the statement about the deletion of the demo in both languages, and the MVP PRD records that the change comes from this initiative and was confirmed by the user.
+AC-4 (FR-4). FR-20 and AC-19 of `plans_finished/mvp/MVP_PRD.md` require the statement about the deletion of the demo in both languages, and the MVP PRD records that the change comes from this initiative and was confirmed by the user.
 
 ## Domain rules
 
@@ -67,10 +67,10 @@ AC-4 (FR-4). FR-20 and AC-19 of `plans/mvp/MVP_PRD.md` require the statement abo
 ## Dependencies and impact on other modules
 
 - `plans_finished/routing_engine/` and `plans_finished/frontend_stack/` decide what the hosting has to carry: a routing engine on our own server or an external routing service, and a static frontend or one rendered on the server. Neither is decided on 2026-10-03, and the choice of FR-1 cannot rely on either before they are.
-- The task `DEPLOYMENT` of this initiative waits for the choice of FR-1 and for the skeleton of the app in `plans/mvp/`.
+- The task `DEPLOYMENT` of this initiative waits for the choice of FR-1 and for the skeleton of the app in `plans_finished/mvp/`.
 - `plans_finished/local_database/` decides how the team gets PostgreSQL with PostGIS locally; the hosted database has to meet the same database standard as the local one.
-- `plans/mvp/MVP_PRD.md` changes in FR-20 and AC-19 (FR-4), and `plans/mvp/MVP_PLAN.md` gets Q-7 closed (FR-3), which lets its phase B continue towards Q-11.
-- `docs/standards/decision_registry.md`: the entry Target environment for the demo is resolved by this task. The entry Technology stack and the Python profile of the standards is a blocker of it named in the registry; its backend part is decided in `plans/mvp/MVP_PLAN.md` D-1, its frontend part in `plans_finished/frontend_stack/`.
+- `plans_finished/mvp/MVP_PRD.md` changes in FR-20 and AC-19 (FR-4), and `plans_finished/mvp/MVP_PLAN.md` gets Q-7 closed (FR-3), which lets its phase B continue towards Q-11.
+- `docs/standards/decision_registry.md`: the entry Target environment for the demo is resolved by this task. The entry Technology stack and the Python profile of the standards is a blocker of it named in the registry; its backend part is decided in `plans_finished/mvp/MVP_PLAN.md` D-1, its frontend part in `plans_finished/frontend_stack/`.
 - The rules of the repository for the agent change in the section Target environment. Every later session of the agent works under the new levels.
 - The HarmonyOS port is an open entry of the registry. A public link does not prevent a second client from using the same service, but the demo is deleted after the results, so nothing after 4 October can rely on it.
 
