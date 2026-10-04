@@ -1,6 +1,6 @@
 # OpenStreetMap read and common loading handoff
 
-Document state: 2026-10-04, continuation handoff prepared at the user's request; technical plan remains in progress
+Document state: 2026-10-04, continuation handoff updated after the second planning session; the initiative is held by the user until `plans/tile_loading/` settles the tile step; technical plan remains in progress
 
 ## Purpose and current state
 
@@ -9,6 +9,41 @@ This handoff lets the next person or session continue `osm_import` without repea
 `OSM_IMPORT_SHAPE.md` is closed at C:40. `OSM_IMPORT_PRD.md` is approved. `OSM_IMPORT_PLAN.md` remains marked `plan in progress`, with blocking Q-3, Q-4 and Q-5. No implementation or end-to-end loading verification has been completed by this work. The initiative remains in `plans/osm_import`.
 
 The immediate pending decision is plan D-18: approve or revise `service.demo_loading.apply_demo_load() -> DemoLoadResult` and the frozen records described in the loading contract. Do not infer approval from the earlier answers A: the last such answer approved plain-text terminal output in D-17.
+
+## Continuation state of 2026-10-04
+
+A second session resumed phase B on 2026-10-04 after the user asked to complete this initiative in full and then archive it. It verified the delivered contracts below, coordinated with the parallel `sample_data` and `community_facts` sessions and stopped at the user's request before settling D-18 or Q-3 - Q-5. No code was written. The sections after this one describe the state of the first session and stay as written; where they disagree with this section, this section reflects the later check.
+
+### User decisions of the second session
+
+- Full completion of this initiative, then archiving it under ch. 4.6 of `docs/standards/standard_agentic_workflow.md`.
+- Plan D-20: GTFS stays out of `python -m worker.load_demo`; its integration becomes a new initiative created after this one is archived.
+- Plan D-21: the tile step goes to `plans/tile_loading/`, whose seed records the request; this initiative is held until that initiative settles how the tile requirements of PRD FR-3, FR-4, AC-4 and AC-6 are met.
+
+### Delivered contracts verified in the code
+
+- Importer: `service/osm_import.py` `apply_osm_import_run(settings: OsmImportSettings, client: httpx.AsyncClient, lease: ImportLease, run_deadline: Deadline) -> OsmImportResult` is async and accepts a caller's live lease without acquiring exclusion itself, which is the handoff of plan D-14. The HTTP client is `data/osm_source.py` `build_osm_http_client() -> httpx.AsyncClient`; the run budget is `OSM_IMPORT_RUN_SECONDS = 3600` with `common_time.py` `build_deadline`. `OsmImportOutcome` is `updated`, `unchanged`, `skipped`, `routing_incomplete` or `commit_unknown`; `skipped` comes only from `apply_osm_import`, which acquires its own lease. A hard failure is an exception from `OSM_IMPORT_NAMED_ERRORS`, not an outcome value.
+- Recovery after a committed copy with a failed routing pointer: `service/osm_routing_recovery.py` `apply_osm_routing_recovery` runs at the start of every run, before the source comparison. A retry with an unchanged source republishes the pointer from the verified committed copy and returns `unchanged`; missing or inconsistent files raise `OsmRoutingIntegrityError`. Risk R-2 of the plan is settled by the delivered importer (`plans_finished/osm_importer/OSM_IMPORTER_PLAN.md` D-22 and D-23).
+- Settings: `worker/osm_import.py` `build_osm_import_settings() -> OsmImportSettings` reads `IMPORT_WORKSPACE_ROOT`, `ROUTING_DATA_DIR`, `VALHALLA_TOOL_DIR`, `VALHALLA_CONFIG_TEMPLATE` and `BUSINESS_TIMEZONE`. Service must not import worker (`tests/architecture/test_layer_boundaries.py` `FORBIDDEN`), while worker may import worker, as `worker/gtfs_import.py` does; the common service entry point therefore needs the settings as an argument, which D-18 does not yet show.
+- Exclusion: `data/locks.py` `apply_import_exclusion(engine: Engine, workspace_root: Path) -> Iterator[ImportLease]` takes the local `admission.lock` of the workspace and two PostgreSQL advisory keys without waiting and raises `ImportAlreadyRunning` when busy; `ImportLease.apply_lease_validation(connection)` raises `ImportLeaseLost`; leaving the context can raise `ImportWorkspaceUnconfirmed`. Both `apply_osm_import` and `service/gtfs_import.py` `apply_gtfs_import` acquire the same exclusion and return `skipped` when busy, so a loader holding the lease across all its steps refuses both standalone commands, as D-10 and D-11 require.
+- Samples: `service/sample_data.py` `apply_sample_data() -> SampleDataResult` is synchronous and owns its transaction; records and `SampleDataError` (alias `SampleDataFailure`) with `SampleFailureReason` and `SampleCommitState` are in `common_sample_data.py`. The provider has no whole-step timer: every statement is limited by `build_engine(5000)`, connect and pool waits by 5 s each, and the number of statements is fixed.
+- Tiles: no callable, command or compose service loads the archive. `plans/map_tiles/MAP_TILES_PLAN.md` D-1 hands the `krakow.pmtiles` file to the backend persons by hand and `docs/setup/MAP_SETUP.md` describes the copy check; the repository has no proxy configuration that serves it.
+- Copy-date read: `data/osm_copy.py` `fetch_current_osm_copy(connection: Connection) -> OsmCopySnapshot | None` exists, delivered with the importer and used by route planning; it orders by `state_at` descending with a limit of one and returns `OsmCopySnapshot(id, state_at: OffsetInstant, file_name)`, not the bare `OffsetInstant` of plan D-15. `data/engine.py` provides the cached pooled `fetch_api_engine()` and `fetch_read_only_snapshot(engine)`, the pattern of `service/route_planning.py` `resolve_route`, which makes the per-invocation engine of D-16 unnecessary. `common_time.py` `build_business_day(instant)` converts to the configured `BUSINESS_TIMEZONE`, and route planning already uses it for `osm_copy_date`; plan D-3 instead fixes a constant Europe/Warsaw zone, so the two operations could show different days for one copy if the setting differed.
+- API: `GET /api/osm-copy` is not registered, although `frontend/src/shell/Menu.tsx` calls `readOsmCopy`. The optional-token seam is `api/sessions.py` `fetch_request_session(request: Request) -> SessionResolution`; `SessionTokenMiddleware` and `apply_session_error_handlers` are installed application-wide from `api/accounts.py` `apply_account_routes`, so a new route needs only `Depends(fetch_request_session)`. `community_facts` plans the same use without moving that registration.
+- Environment: `venv/Scripts/python.exe` is Python 3.13 with fastapi, SQLAlchemy, psycopg, pytest, httpx and `accessibility_db`. No `.env` or `.env.local` exists, so the local-only guard of `tests/conftest.py` stops critical tests until a local configuration is supplied.
+
+### Questions still to put to the user
+
+- D-18, revised with a settings argument and with the tile step depending on `tile_loading`.
+- D-15 and D-16 against the delivered selector and API engine above.
+- D-3 against `build_business_day` and `BUSINESS_TIMEZONE`, for one rule across `read_osm_copy` and `plan_route`.
+- The outcome mapping from `OsmImportOutcome`, `OSM_IMPORT_NAMED_ERRORS` and `SampleDataError` to the common records.
+- The sample budget: the `sample_data` session agreed to describe it as finite by construction, with the wording that every stage is bounded and a lost commit acknowledgement stays `commit_unknown`, never as a hard wall-clock limit.
+
+### Coordination with parallel sessions
+
+- `sample_data` may change the sample set from four facts to eight under `stage7_demo_scenario`; the callable, record names, enums and reason codes stay, only the counts and identifiers change. Later the same day that session reported that the user chose the `stage7_demo_scenario` dataset and that the `sample_data` shape is reopened, with a new PRD and plan to follow; it plans to keep the provider names and to announce any change before making it. Re-read `plans/sample_data/SAMPLE_DATA_LOADING_HANDOFF.md` before relying on the provider contract. The adapter must treat `created_count`, `unchanged_count`, `initial_votes_created_count` and `fact_ids` as opaque values for the report. That session defines `schema_owner_engine` in `tests/data/conftest.py` and edits only its own sample sections of `service/SERVICE.md` and `service/SERVICE_ALGORITHM.md`, after this initiative signals it has finished those files.
+- `community_facts` touches no code of `api/`; it shares only `MVP.md` and `FINAL_CHECKLIST.md`, in other rows. Both sides edit those files with targeted edits after a fresh read.
 
 ## Read first
 
@@ -96,7 +131,7 @@ No query timing, applied local schema, provider cancellation, lease-loss behavio
 
 ## How to resume
 
-1. Read this handoff and the linked plan and loading contract; retain the approved SHAPE and PRD.
+1. Check the state of `plans/tile_loading/` first: this initiative is held until it settles the tile step (plan D-21). Then read this handoff, starting with Continuation state of 2026-10-04, and the linked plan and loading contract; retain the approved SHAPE and PRD.
 2. Recheck the working tree and current provider/backend handoffs. Incorporate newly delivered contracts instead of inventing replacements.
 3. Resume technical planning at D-18 and Q-3 - Q-5. Ask about the pending proposal and genuine contract gaps, one decision at a time; do not repeat settled choices.
 4. Finalize the common loading contract and concrete call signatures, mappings, deadlines, fixture inputs and verification commands. Keep provider implementation with its existing initiatives.

@@ -1,8 +1,8 @@
 # Plan: Sample reports and geozones for the demo
 
-Document state: 2026-10-04, plan closed
+Document state: 2026-10-04, plan in progress
 
-Implementation state: 2026-10-04, provider, fixtures and documentation delivered; critical database and joint acceptance blocked on dependency delivery
+Implementation state: 2026-10-04, provider, fixtures and documentation delivered for the four examples; the user replaced that dataset with the demo scenario's, so the shape is reopened and this plan is redone after the new PRD, as recorded in `SAMPLE_DATA_REVIEW.md`
 
 ## Goal
 

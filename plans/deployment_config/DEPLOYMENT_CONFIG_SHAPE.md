@@ -12,7 +12,7 @@ The seed carries no regulator value, so the default C:40 applies.
 ## Recipient and trigger
 
 - The recipient is the user, Rafał, the owner of the server in a data centre, who stands the demo up on it by following `docs/deployment/hosted_demo.md` with one command and an environment file kept outside the repository (`plans_finished/deployment/DEPLOYMENT_SHAPE.md`, section Recipient and trigger).
-- The owner of this task is Rafał (`MVP.md`, section Initiatives, the paragraph after the table).
+- The owner of this task is Kuba, to whom Rafał handed it on 2026-10-04; it was Rafał's before (`MVP.md`, section Initiatives, the paragraph after the table; `TEAM.md`). The server and standing the demo up on it stay with Rafał, the recipient above.
 - Deadline: the demo answers at the public link by 10:00 on 4 October 2026, one hour before the Kraków submission closes at 11:00 (`plans_finished/deployment/DEPLOYMENT_PRD.md`, Business goal).
 - Trigger: stage 5 of `FINAL_CHECKLIST.md`, section Stages. The work starts at once on documents; check 7.1 can be verified only after checks 2.1, 3.2, 3.3, 3.4 and 6.1.
 
@@ -84,4 +84,4 @@ To be filled in during the interview.
 4. When this task is done, and what is deployed when not every part of the app is ready before the deadline. `Block: no`
 5. Whether this task completes the environment templates with the entries the services of the demo read and the templates lack. `Block: no`
 
-Left to phase B of `plan-prd`, because they choose a solution, not the scope: building or pulling the Valhalla image, the software of the proxy, the port of the public link and the minimum version of Docker Engine, and the header by which the proxy hands the address of the person to the backend, agreed with Kuba, who writes the code of the votes.
+Left to phase B of `plan-prd`, because they choose a solution, not the scope: building or pulling the Valhalla image, the software of the proxy, the port of the public link and the minimum version of Docker Engine, and the header by which the proxy hands the address of the person to the backend, agreed with Marek, who builds the identifier of a person without an account and whose plan settles the backend side of it in D-16 of `plans/community_facts_api/COMMUNITY_FACTS_API_PLAN.md`.
