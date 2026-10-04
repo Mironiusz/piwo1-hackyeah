@@ -224,6 +224,49 @@ The list holds the visible facts that are not outdated: the barriers of the prof
 
 Nothing of a route request is stored. The only log entries the route writes are at ERROR, naming the kind of a failure or the count of crossed barriers, never a coordinate.
 
+## Community facts
+
+A person reads the facts of the map, opens one, checks for existing facts before a report, saves a report or a geozone, confirms or denies a fact and flags content; a moderator lists flagged content and hides or restores it (M3 - M5, M9 - M11). It follows `plans/community_facts_api/COMMUNITY_FACTS_API_PLAN.md` D-4 - D-17.
+
+Run order of a read:
+
+1. One read-only snapshot is opened.
+2. The facts the rule of the read allows are read: the area takes the visible facts whose point lies in the rectangle, at most 1001 to learn whether there are more than 1000; a reading by identifier takes one fact that is not hidden, a fact removed in OpenStreetMap included; the nearby check takes the visible facts of the type within 15 m, nearest first; the moderator list takes every flagged fact, hidden ones included, the latest flag first.
+3. All the votes of those facts are read in one read on the same snapshot, and each fact gets its status from its own votes by the rule of the section Status of a fact.
+4. The area answers at most 1000 facts and whether the rectangle holds more; the nearby check rounds each distance to whole metres; the moderator item adds the day of the first flag in the Europe/Warsaw zone and whether the fact is hidden.
+
+Run order of a save:
+
+1. The input is checked and normalized: a step count only for stairs and from 1 to 999; a geozone only for a barrier and with a radius of 10, 25, 50 or 100 m; a description without the spaces at both ends, absent when nothing is left, at most 500 code points and storable. A refusal names the fields and writes nothing.
+2. The key of the save is SHA-256 of `create_fact:` and the UUID of the request in canonical form, and the person is the account of the session or the hash of the address and the User-Agent.
+3. In one transaction the report is inserted unless its key is already stored, and a new report gets the confirmation of its author at the instant of the save as its first vote. Both are stored or neither.
+4. A key already stored answers the first fact: a hidden fact is refused as missing first, and a fact saved with another content is refused as a reused key second, so a retry never reveals hidden content and never stores a second fact or vote.
+5. The answer is the fact with its status, and whether this save created it.
+
+Run order of a vote:
+
+1. The person is the account of the session or the hash of the address and the User-Agent.
+2. The fact is locked for the vote, waiting up to 120 seconds for the publication of a fresh OpenStreetMap copy or a moderation that holds it; the limit of every other statement stays 5 seconds.
+3. A missing or hidden fact is refused as missing. A fact of OpenStreetMap, an ordinary outdated fact and a fact removed in OpenStreetMap can be voted on; the last stays outdated.
+4. The instant of the vote is read now, after the wait, and the vote is stored unless the person already voted on the fact on the same calendar day in Europe/Warsaw. A day already taken is refused with the midnight that starts the next day, with the offset in force at that midnight.
+5. The answer is the fact with its status after the vote, read in the same transaction, so it counts the committed outcome of a publication the vote waited for.
+
+Run order of a flag, a hiding and a restoration:
+
+1. The fact is locked for the change.
+2. A flag refuses a missing or hidden fact as missing and a fact of the source `openstreetmap` as not flaggable; a report, a geozone and a fact converted to a report are flagged, keeping the instant of the first flag and nothing about who flagged.
+3. A hiding or a restoration of a moderator refuses a missing fact as missing and an unflagged one as not flagged; a hiding keeps the instant of the first hiding, a restoration clears the hidden mark and keeps the flag and every vote.
+4. A hiding and a restoration answer the moderator item of the fact; a repeated one changes nothing and answers the same.
+
+Domain rules:
+
+- A hidden fact is missing for every operation that is not a moderator one; a moderator sees it.
+- The area and the nearby check leave out a fact removed in OpenStreetMap, which a reading by identifier still shows; an ordinary outdated fact stays in all three, so a person can confirm it again.
+- A person without an account is the pair of IP address and User-Agent: identical pairs are one person for the daily limit and for the latest-vote rule, and voting with and without an account counts as two persons, as M9 accepts. A missing User-Agent is the empty text.
+- A vote or a save of an account deleted after its session was resolved stores nothing and is answered as an expired session, never as a person without an account.
+
+Nothing of these operations is logged: no coordinate, description, address, User-Agent, hash, account or key.
+
 ## Sample data
 
 The sample step loads the eight sample facts of the demo scenario atomically while retaining existing votes and moderation decisions (`plans/sample_data/`).

@@ -22,8 +22,9 @@ def runtime_settings(monkeypatch: pytest.MonkeyPatch):
 
 
 @pytest.fixture
-def fact_store(runtime_settings, monkeypatch: pytest.MonkeyPatch) -> InventedFactStore:
-    """Replace the data layer, the engine and the clock of the community facts with an empty invented store."""
+def fact_store(request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch) -> InventedFactStore:
+    """Replace the data layer, the engine and the clock of the community facts with an empty invented store, with the invented runtime settings loaded."""
+    request.getfixturevalue("runtime_settings")
     store = InventedFactStore()
     apply_invented_fact_store(monkeypatch, store)
     return store

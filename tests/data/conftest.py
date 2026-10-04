@@ -5,14 +5,12 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 import pytest
-from sqlalchemy import Connection, Engine, make_url, text
+from sqlalchemy import Connection, Engine, text
 
-from data.engine import API_STATEMENT_TIMEOUT_MS, apply_engine_construction, build_engine, build_import_engine
+from data.engine import API_STATEMENT_TIMEOUT_MS, build_engine, build_import_engine
 from service.route_graph import ROUTE_GRAPH_CACHE
 from tests.common_database_fixtures import DatabaseFixtureRegistry
 from tests.data.common_sample_data_fixtures import SAMPLE_FIXTURE_LOCK_KEY, SAMPLE_FIXTURE_LOCK_NAMESPACE, SampleCriticalDataset, apply_sample_network_fixture, build_sample_critical_dataset
-
-SCRATCH_OWNER_STATEMENT_TIMEOUT_MS = 30000
 
 
 @pytest.fixture
@@ -28,19 +26,6 @@ def service_transaction() -> Iterator[Connection]:
                 transaction.rollback()
     finally:
         engine.dispose()
-
-
-@pytest.fixture
-def schema_owner_engine(request: pytest.FixtureRequest) -> Iterator[Engine]:
-    """Give an unpooled engine of the local schema owner of db/ from --scratch-database-url, disposed after the fixtures that use it."""
-    address = request.config.getoption("--scratch-database-url")
-    if address is None:
-        pytest.fail("Pass --scratch-database-url with a local schema-owner URL for database acceptance")
-    owner = apply_engine_construction(make_url(address), SCRATCH_OWNER_STATEMENT_TIMEOUT_MS, True)
-    try:
-        yield owner
-    finally:
-        owner.dispose()
 
 
 @pytest.fixture

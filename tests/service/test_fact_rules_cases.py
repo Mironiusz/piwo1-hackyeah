@@ -140,7 +140,8 @@ def test_idempotency_keys_of_two_uuids_differ() -> None:
         (date(2026, 12, 31), date(2027, 1, 1), 1),
     ],
 )
-def test_next_vote_starts_at_the_next_midnight_with_its_own_offset(runtime_settings, cast_on: date, midnight: date, offset_hours: int) -> None:
+@pytest.mark.usefixtures("runtime_settings")
+def test_next_vote_starts_at_the_next_midnight_with_its_own_offset(cast_on: date, midnight: date, offset_hours: int) -> None:
     allowed = build_repeat_allowed_at(cast_on)
     assert (allowed.date(), allowed.hour, allowed.minute, allowed.second, allowed.microsecond) == (midnight, 0, 0, 0, 0)
     assert allowed.utcoffset() == timedelta(hours=offset_hours)

@@ -20,9 +20,10 @@ def apply_fact_error_handlers(app: FastAPI) -> None:
     """Install the answers of the six refusals of the community facts."""
 
     async def apply_invalid_fact_input(request: Request, error: Exception) -> JSONResponse:
-        """Answer a field outside its rules with the sorted paths of the fields it concerns."""
-        fields = sorted(error.fields) if isinstance(error, InvalidFactInputError) else []
-        return build_error_response("invalid_request", 422, fields)
+        """Answer a field outside its rules with the sorted paths of the fields it concerns; another exception is not this handler's and is answered as internal_error."""
+        if not isinstance(error, InvalidFactInputError):
+            return build_error_response("internal_error", 500)
+        return build_error_response("invalid_request", 422, sorted(error.fields))
 
     async def apply_fact_not_found(request: Request, error: Exception) -> JSONResponse:
         """Answer a missing fact, or a hidden one outside a moderator operation."""
@@ -33,9 +34,10 @@ def apply_fact_error_handlers(app: FastAPI) -> None:
         return build_error_response("idempotency_key_reused", 409)
 
     async def apply_vote_too_soon(request: Request, error: Exception) -> JSONResponse:
-        """Answer a second vote of one calendar day with the midnight from which the next vote is accepted."""
-        repeat_allowed_at = error.repeat_allowed_at if isinstance(error, VoteTooSoonError) else None
-        return build_error_response("vote_too_soon", 409, repeat_allowed_at=repeat_allowed_at)
+        """Answer a second vote of one calendar day with the midnight from which the next vote is accepted; another exception is answered as internal_error."""
+        if not isinstance(error, VoteTooSoonError):
+            return build_error_response("internal_error", 500)
+        return build_error_response("vote_too_soon", 409, repeat_allowed_at=error.repeat_allowed_at)
 
     async def apply_fact_not_flaggable(request: Request, error: Exception) -> JSONResponse:
         """Answer a flag of a fact from OpenStreetMap."""

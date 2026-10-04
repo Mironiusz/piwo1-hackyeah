@@ -16,9 +16,9 @@ Votes, independent user reports and moderation decisions are never changed. Noth
 
 ## Prerequisites
 
-- The database of `db/` with its revision chain applied. Locally this is `db/compose.yaml` (`db/README.md`, section Local database); the hosted demo is wired by `plans/deployment_config/`.
+- The database of `db/` with its revision chain applied. Locally this is `db/compose.yaml` (`db/README.md`, section Local database); the hosted demo is wired by `deploy/compose.yaml`.
 - A Python 3.13 environment with `python -m pip install ./db` followed by `python -m pip install .`.
-- The Valhalla 3.9.0 tools `valhalla_build_tiles` and `valhalla_build_extract`. They exist in the image of `valhalla/Dockerfile`, on which `plans/deployment_config/` builds the backend image the import runs in. There are no native Windows builds, so on Windows every step except the tile build can run, but a complete import cannot.
+- The Valhalla 3.9.0 tools `valhalla_build_tiles` and `valhalla_build_extract`. They exist in the image of `valhalla/Dockerfile`, on which `deploy/backend.Dockerfile` builds the backend image the import runs in. There are no native Windows builds, so on Windows every step except the tile build can run, but a complete import cannot.
 - A Valhalla configuration template produced by `valhalla_build_config` of the same image. The import overrides `mjolnir.tile_dir`, `mjolnir.tile_extract`, `include_platforms`, `keep_osm_node_ids` and `keep_all_osm_node_ids`, and removes the transit inputs.
 - The shared libraries of osmium in the image, including `libexpat.so.1`, which `python:3.13-slim` lacks.
 
@@ -41,7 +41,7 @@ From the repository root, with `DB_HOST` and `DB_PORT` given at launch:
 python -m worker.osm_import
 ```
 
-The same command performs the first import and every later refresh. In the hosted demo it runs as a one-off container of the backend image; the exact container command belongs to `plans/deployment_config/`. Any run against the hosted demo needs an explicit human decision. The whole run has a 60-minute deadline, and the final database transaction has at most 120 seconds of it. A missing or invalid configuration entry ends the run with exit code 1 and names the entry and its file.
+The same command performs the first import and every later refresh. In the hosted demo it runs as a one-off container of the backend image, the service `loader` of `deploy/compose.yaml`, with the command of `docs/deployment/hosted_demo.md`, section Loading the data. Any run against the hosted demo needs an explicit human decision. The whole run has a 60-minute deadline, and the final database transaction has at most 120 seconds of it. A missing or invalid configuration entry ends the run with exit code 1 and names the entry and its file.
 
 ## Outcomes
 
