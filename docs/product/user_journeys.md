@@ -4,7 +4,7 @@ Document state: 2026-10-03
 
 ## Why this document exists
 
-This document describes, step by step, what a person does in the app and what the app answers, for every mandatory feature M1 - M11 of `docs/product/specification.md`, version 11. It is derived from that specification and from `plans/mvp/MVP_PRD.md`, and it adds no product rule of its own: where the journeys needed behavior that no earlier version described, the rule was decided by the user on 2026-10-03 and entered the specification as version 11, written on the branch of the frontend person as version 6. In case of a discrepancy the specification prevails.
+This document describes, step by step, what a person does in the app and what the app answers, for every mandatory feature M1 - M11 of `docs/product/specification.md`, version 11. It is derived from that specification and from `plans_finished/mvp/MVP_PRD.md`, and it adds no product rule of its own: where the journeys needed behavior that no earlier version described, the rule was decided by the user on 2026-10-03 and entered the specification as version 11, written on the branch of the frontend person as version 6. In case of a discrepancy the specification prevails.
 
 The journeys are the input for two things: the list of views of the web frontend (`docs/product/views.md`), and the view of the frontend person on the contract of the programming interface, `docs/product/api_contract.md`. They do not describe the layout or the look of a screen; the design direction is in `PRODUCT.md` and `.impeccable/briefs/`.
 
@@ -30,7 +30,7 @@ Places of the app the journeys move between. The names are working names for the
 
 A fact is a barrier or an amenity of the closed list at a place, or a geozone. Without an account and logged in are the two ways a person contributes; the journeys are the same for both unless a journey says otherwise.
 
-Every journey gives who it is for, where it starts, its steps, its branches, where it ends and the rules it rests on. M stands for a section of the specification, FR and AC for `plans/mvp/MVP_PRD.md`.
+Every journey gives who it is for, where it starts, its steps, its branches, where it ends and the rules it rests on. M stands for a section of the specification, FR and AC for `plans_finished/mvp/MVP_PRD.md`.
 
 ## J-1. First opening: setting the needs
 

@@ -4,7 +4,7 @@ Document state: 2026-10-03
 
 ## Business goal
 
-The route of the MVP avoids barriers known from OpenStreetMap and colors every segment by what is known about it (`plans/mvp/MVP_PRD.md` FR-2, FR-3, FR-10, FR-11). Both need one rule that says, for every barrier and amenity of the closed list of `docs/product/specification.md` M3, which OpenStreetMap tags and values make it present, absent or unknown. This initiative delivers that rule with its thresholds, approved as a product rule by the owner of the specification, so that `plans/mvp/MVP_PLAN.md` Q-8 is closed and the import, the route, the map and the list all read the same result.
+The route of the MVP avoids barriers known from OpenStreetMap and colors every segment by what is known about it (`plans_finished/mvp/MVP_PRD.md` FR-2, FR-3, FR-10, FR-11). Both need one rule that says, for every barrier and amenity of the closed list of `docs/product/specification.md` M3, which OpenStreetMap tags and values make it present, absent or unknown. This initiative delivers that rule with its thresholds, approved as a product rule by the owner of the specification, so that `plans_finished/mvp/MVP_PLAN.md` Q-8 is closed and the import, the route, the map and the list all read the same result.
 
 It serves the Kraków judging criteria of usefulness for the chosen group (25%) and of data reliability and presentation (15%) directly: the thresholds decide what a person in a wheelchair, with a baby stroller or with walking difficulties is warned about, and the rule of what is unknown decides whether the app keeps its promise never to present missing information as accessible (M10).
 
@@ -27,17 +27,17 @@ A threshold that is too lenient shows a barrier as passable to exactly the peopl
 - The meaning of "OpenStreetMap contradicts a user report" for each barrier.
 - The number of steps and the date of the last OpenStreetMap edit carried by the facts the rule produces.
 - The entry of these rules, with their thresholds and value lists, into `docs/product/specification.md` version 3, together with the rules of `plans_finished/osm_data_source/` as one change approved by the user (`plans_finished/osm_data_source/OSM_DATA_SOURCE_SHAPE.md`, section Smallest meaningful scope). This initiative writes the whole of version 3, the rules of `plans_finished/osm_data_source/` included. Decided by the user on 2026-10-03 in phase B, against keeping the thresholds out of version 3 until the import person confirms them and against version 3 waiting for phase B of `plans_finished/osm_data_source/`.
-- The decision handed to `plans/mvp/MVP_PLAN.md` as the decision closing Q-8.
+- The decision handed to `plans_finished/mvp/MVP_PLAN.md` as the decision closing Q-8.
 
 ## Out of scope
 
-- Building the import that applies the rule. It is a work package of `plans/mvp/`, together with the import and refresh decided in `plans_finished/osm_data_source/` and the backend architecture of Q-11 there, as `plans_finished/geocoding/` and `plans_finished/osm_data_source/` did. Agent decision at C:40, without asking: the same split the user chose for the two sibling initiatives; to be confirmed at the gate of this PRD.
+- Building the import that applies the rule. It is a work package of `plans_finished/mvp/`, together with the import and refresh decided in `plans_finished/osm_data_source/` and the backend architecture of Q-11 there, as `plans_finished/geocoding/` and `plans_finished/osm_data_source/` did. Agent decision at C:40, without asking: the same split the user chose for the two sibling initiatives; to be confirmed at the gate of this PRD.
 - Changing the closed list itself; it is decided by the specification.
 - Thresholds that depend on the profile. The presets only switch barrier types on or off (M1), so a threshold is the same for everyone; a profile that wants a different threshold is a change of the specification, not of this rule.
 - Which stretch of way a point report lies on, and within what distance of an opposite kerb fact a report counts as contradicted. Recorded in the shape as a TODO for phase B of `plans_finished/routing_engine/`.
 - What happens to an OpenStreetMap fact that disappears from or returns in a fresh copy; decided in `plans_finished/osm_data_source/`.
 - Data outside OpenStreetMap, such as an elevation model for the incline or open city data (O4).
-- The two defects of the specification noticed in the shape interview - geozones avoided whatever their status, and the rule "disputed" against scenario 3 of `plans/mvp/MVP_SHAPE.md` - which concern the route and the statuses, not the mapping. They were reported to the user and are not settled here.
+- The two defects of the specification noticed in the shape interview - geozones avoided whatever their status, and the rule "disputed" against scenario 3 of `plans_finished/mvp/MVP_SHAPE.md` - which concern the route and the statuses, not the mapping. They were reported to the user and are not settled here.
 
 ## Functional requirements
 
@@ -53,7 +53,7 @@ FR-5. Contradiction. OpenStreetMap contradicts a user report of a barrier only b
 
 FR-6. Number of steps. A stairs fact from OpenStreetMap carries the number of steps when OpenStreetMap gives it.
 
-FR-7. Source and date. Every fact the rule produces carries the source OpenStreetMap and the date of the last edit of the OpenStreetMap element its tags belong to, as a calendar day in the Europe/Warsaw zone (`plans/mvp/MVP_PRD.md` AC-14).
+FR-7. Source and date. Every fact the rule produces carries the source OpenStreetMap and the date of the last edit of the OpenStreetMap element its tags belong to, as a calendar day in the Europe/Warsaw zone (`plans_finished/mvp/MVP_PRD.md` AC-14).
 
 FR-8. Unmapped values. A tag value the rule does not list leaves the item unknown; it never makes a barrier absent and never makes an amenity present.
 
@@ -71,7 +71,7 @@ AC-1 (FR-1, FR-6). A way tagged `highway=steps`, `step_count=12`, `handrail:righ
 
 AC-2 (FR-1, FR-3). A footway tagged `surface=paving_stones`, `incline=4%`, `width=2` that does not meet a carriageway is in the state no barrier for each of the three presets.
 
-AC-3 (FR-3). Segment Y of `plans/mvp/MVP_SHAPE.md` scenario 9 - asphalt, no steps, no incline, no kerb data, no width - is in the state partial data for the preset "I use a wheelchair", and the list names the incline, the kerbs and the width as unknown. For the preset "Walking is difficult for me" it is partial data with only the incline unknown.
+AC-3 (FR-3). Segment Y of `plans_finished/mvp/MVP_SHAPE.md` scenario 9 - asphalt, no steps, no incline, no kerb data, no width - is in the state partial data for the preset "I use a wheelchair", and the list names the incline, the kerbs and the width as unknown. For the preset "Walking is difficult for me" it is partial data with only the incline unknown.
 
 AC-4 (FR-1). `incline=8%` and `incline=-8%` give a steep incline; `incline=5%` gives no steep incline; `incline=up` leaves the incline unknown.
 
@@ -134,11 +134,11 @@ The thresholds in short: steep incline above 6%, narrow passage below 0.9 m, hig
 
 ## Dependencies and impact on other modules
 
-- No product code exists, so nothing in the repository is changed indirectly. The decision closes `plans/mvp/MVP_PLAN.md` Q-8 and feeds Q-10 there, the domain model of facts, which depends on Q-8.
+- No product code exists, so nothing in the repository is changed indirectly. The decision closes `plans_finished/mvp/MVP_PLAN.md` Q-8 and feeds Q-10 there, the domain model of facts, which depends on Q-8.
 - `plans_finished/routing_engine/` reads the result: a profile, the user facts and the contradiction rule on top of a per-segment present, absent or unknown. The engine does not change the rule, and the rule does not depend on the engine (`plans_finished/osm_barrier_mapping/OSM_BARRIER_MAPPING_SHAPE.md`, section Challenging own assumptions).
 - `plans_finished/osm_data_source/` decides the copy the rule runs on and the fate of facts that disappear or return; its scenarios use this rule (`surface=sett` as poor surface, a way without steps as not contradicting stairs) and its rules enter the same version 3 of the specification, written by this initiative (FR-11).
-- `plans/mvp/MVP_PRD.md` AC-10 and `plans/mvp/MVP_SHAPE.md` scenario 9 name only the incline and the kerbs as unknown for segment Y; with this rule a wheelchair profile also misses the width (AC-3 here), so AC-10 there gains the width. Scenario 9 also has to be read with segment Y meeting a carriageway, because the kerb is an attribute only at crossings.
-- `plans/mvp/MVP_PRD.md` FR-10 and its section Domain rules define the state no data as "nothing known"; FR-9 here makes the default "no stairs" not count, and FR-10 here adds the `wheelchair=no` marking. Both reach the MVP through version 3 of the specification.
+- `plans_finished/mvp/MVP_PRD.md` AC-10 and `plans_finished/mvp/MVP_SHAPE.md` scenario 9 name only the incline and the kerbs as unknown for segment Y; with this rule a wheelchair profile also misses the width (AC-3 here), so AC-10 there gains the width. Scenario 9 also has to be read with segment Y meeting a carriageway, because the kerb is an attribute only at crossings.
+- `plans_finished/mvp/MVP_PRD.md` FR-10 and its section Domain rules define the state no data as "nothing known"; FR-9 here makes the default "no stairs" not count, and FR-10 here adds the `wheelchair=no` marking. Both reach the MVP through version 3 of the specification.
 - `plans_finished/api_contract/` and the list of the route show the attribute names of the section Domain rules.
 
 ## Risks and notes

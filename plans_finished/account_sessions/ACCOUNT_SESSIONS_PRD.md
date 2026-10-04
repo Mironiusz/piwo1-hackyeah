@@ -17,7 +17,7 @@ Without these decisions, account behavior and moderator authorization cannot be 
 - Decide the behavior of account sessions and the resolution of each request to an account, an anonymous contributor or a moderator.
 - Decide how removal of a moderator role affects access while an account session remains active.
 - Withdrawn after the gate on 2026-10-03: applying the same 30-day vote hash to account and anonymous votes (FR-4).
-- Record the decision for `plans/mvp/MVP_PLAN.md` Q-6. The backend owner makes the technical decision in agreement with the frontend consumer.
+- Record the decision for `plans_finished/mvp/MVP_PLAN.md` Q-6. The backend owner makes the technical decision in agreement with the frontend consumer.
 - Keep the account behavior consistent with the product specification, version 4, including case-insensitive pseudonym uniqueness, the password rules and lack of password recovery.
 
 ## Out of scope
@@ -25,7 +25,7 @@ Without these decisions, account behavior and moderator authorization cannot be 
 - Implementing account registration, login, logout, deletion, sessions, moderator authorization or vote deduplication. This initiative records the decision; implementation is part of the MVP.
 - Password recovery. A forgotten password can make the account permanently inaccessible.
 - Account profiles, email addresses, disability information or storing a person's preference profile on the account.
-- Deciding other technical matters assigned to `plans_finished/api_contract/`, `plans_finished/frontend_stack/` or `plans/mvp/`.
+- Deciding other technical matters assigned to `plans_finished/api_contract/`, `plans_finished/frontend_stack/` or `plans_finished/mvp/`.
 
 ## Functional requirements
 
@@ -69,9 +69,9 @@ AC-7 (FR-5). A profile set on one device does not appear on another device after
 
 ## Dependencies and impact on other modules
 
-- `plans/mvp/MVP_PLAN.md` Q-6 waits for this initiative's account-session decision.
+- `plans_finished/mvp/MVP_PLAN.md` Q-6 waits for this initiative's account-session decision.
 - The backend owner is responsible for the decision; the frontend person is its consumer and must agree on the request behavior before the decision is handed back to the MVP plan.
-- Vote rules in M4 and account rules in M9 of `docs/product/specification.md` apply to MVP vote and account behavior. The corresponding requirements and acceptance criteria in `plans/mvp/MVP_PRD.md` must stay aligned.
+- Vote rules in M4 and account rules in M9 of `docs/product/specification.md` apply to MVP vote and account behavior. The corresponding requirements and acceptance criteria in `plans_finished/mvp/MVP_PRD.md` must stay aligned.
 - `plans_finished/api_contract/` depends on how a request is resolved to an actor. The API contract may be prepared in parallel, but its account behavior must follow the decision from this initiative.
 - No product code exists for this initiative, so this PRD does not assume changes to existing code or a database.
 

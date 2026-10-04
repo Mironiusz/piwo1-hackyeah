@@ -1,6 +1,6 @@
 # Programming interface contract
 
-Document state: 2026-10-03, approved by the user in place of the frontend person, whose confirmation is still to be obtained; `cast_vote` changed on 2026-10-04 with version 13 of `docs/product/specification.md`
+Document state: 2026-10-04, approved by the user in place of Kuber and Adrian, whose confirmation is still to be obtained; the pseudonym rule is aligned with specification M9 by `plans/accounts/ACCOUNTS_SHAPE.md`, and `cast_vote` changed on 2026-10-04 with version 13 of `docs/product/specification.md`
 
 ## Why this document exists
 
@@ -385,7 +385,7 @@ Request:
 { "pseudonym": "Wózek_KRK", "password": "five or more characters" }
 ```
 
-- `pseudonym` - leading and trailing spaces are removed, then it has 3 to 30 characters, none of them a control character of the Unicode category Cc; it is kept as it is after the trim, and it is unique without regard to letter case (M9).
+- `pseudonym` - leading and trailing spaces are removed, then it has 3 to 30 characters: letters, the Polish ones included, digits, the underscore and the hyphen; it is kept as it is after the trim, and it is unique without regard to letter case (M9).
 - `password` - 5 to 128 characters, all accepted: printable ASCII, spaces and Unicode, with no rule of composition (M9).
 - A character is a Unicode code point.
 

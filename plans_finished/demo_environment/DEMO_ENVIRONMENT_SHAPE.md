@@ -7,17 +7,17 @@ The seed quotes agent questions whose text contains C:20 (an option the user did
 
 ## Problem
 
-The MVP (`plans/mvp/`) is demonstrated live on 4 October 2026 and recorded on video. Where it runs during the demo - a team laptop or a hosted service - was not decided in phase B of `plans/mvp/`; the user handed the decision to the people responsible for it. The choice also fills the open entry Target environment for the demo in `docs/standards/decision_registry.md`, on which the permission levels of the agent in `CLAUDE.md` and `AGENTS.md`, section Target environment, depend.
+The MVP (`plans_finished/mvp/`) is demonstrated live on 4 October 2026 and recorded on video. Where it runs during the demo - a team laptop or a hosted service - was not decided in phase B of `plans_finished/mvp/`; the user handed the decision to the people responsible for it. The choice also fills the open entry Target environment for the demo in `docs/standards/decision_registry.md`, on which the permission levels of the agent in `CLAUDE.md` and `AGENTS.md`, section Target environment, depend.
 
 ## Recipient and trigger
 
 - The owner of the decision is the db person of the team, as the role closest to the infrastructure; the backend person is consulted, because the service runs there. The user named five team roles on 2026-10-03 - frontend, db, import, external API, backend - and asked the agent to assign the initiatives to them; this assignment is an agent decision at C:40, without asking, made at that request.
 - The interview from 2026-10-03 on is answered by the user together with the db person, so its answers are decisions of the owner of the initiative.
-- `plans/mvp/MVP_PLAN.md`, open question Q-7, which waits for this decision. Trigger: the user delegated the decision on 2026-10-03 in phase B of `plans/mvp/`.
+- `plans_finished/mvp/MVP_PLAN.md`, open question Q-7, which waits for this decision. Trigger: the user delegated the decision on 2026-10-03 in phase B of `plans_finished/mvp/`.
 
 ## Current state
 
-- No product code exists. The backend is decided in `plans/mvp/MVP_PLAN.md` D-1: Python 3.13 with FastAPI, on PostgreSQL with PostGIS.
+- No product code exists. The backend is decided in `plans_finished/mvp/MVP_PLAN.md` D-1: Python 3.13 with FastAPI, on PostgreSQL with PostGIS.
 - `CLAUDE.md`, section Target environment: until the environment is chosen and the three permission levels are filled in, the agent has no access to any target environment, and deployment is done by a human. No address, host, login or secret of the target environment enters the repository (`docs/standards/standard_config.md`).
 - The Kraków brief says the prototype does not have to stay online after the hackathon, and asks for a proposal of who hosts, updates, secures and pays for the service (`docs/hackathon/challenge_requirements.md`, Technical and organizational requirements).
 - The Kraków submission closes at 11:00 on 4 October 2026 (`docs/hackathon/challenge_requirements.md`, Shared facts).
@@ -35,13 +35,13 @@ The other technical decisions delegated in the same conversation have their own 
 
 Standing the hosted environment up - creating the account with the hosting provider, the first deployment, and checking the main scenario at the public link before the submission - was taken out of this initiative by the team on 2026-10-03. The initiative delivers what that work needs; the db person does the work, outside this initiative, as decided by the team on 2026-10-03.
 
-The deployment configuration with the written instructions, the secure connection and showing an unavailable source in the live demo moved to the task `DEPLOYMENT` of this initiative (`plans_finished/deployment/DEPLOYMENT_SEED.md`), decided by the user on 2026-10-03 in phase B of `plan-prd`. Reason: the configuration names how the service and the worker start, which `plans/mvp/MVP_PLAN.md` decides in Q-11 only after its Q-7 is closed by this task, so keeping it here made each wait for the other. At the time of the split that question was Q-10, which was narrowed to the domain model later on 2026-10-03. Scenarios 1 and 3 below are served by that task.
+The deployment configuration with the written instructions, the secure connection and showing an unavailable source in the live demo moved to the task `DEPLOYMENT` of this initiative (`plans_finished/deployment/DEPLOYMENT_SEED.md`), decided by the user on 2026-10-03 in phase B of `plan-prd`. Reason: the configuration names how the service and the worker start, which `plans_finished/mvp/MVP_PLAN.md` decides in Q-11 only after its Q-7 is closed by this task, so keeping it here made each wait for the other. At the time of the split that question was Q-10, which was narrowed to the domain model later on 2026-10-03. Scenarios 1 and 3 below are served by that task.
 
 ## Functional requirements
 
 1. The three permission levels of the agent in `CLAUDE.md` and `AGENTS.md`, section Target environment, are filled in together with the choice, as decided in the section Domain rules.
-2. The decision lands where people look for it: the entry Target environment for the demo in `docs/standards/decision_registry.md` moves to the resolved section, and Q-7 of `plans/mvp/MVP_PLAN.md` is closed. This follows from the rules of the registry, section How to use it.
-3. The privacy information page of the hosted demo states, in Polish and English, that the demo and all its data are deleted on 4 October 2026, after the results are announced. Decided by the team on 2026-10-03. The page itself is built in `plans/mvp/`, so this extends FR-20 and AC-19 of `plans/mvp/MVP_PRD.md`, whose gate was already passed; the extension has to be raised there, not applied silently.
+2. The decision lands where people look for it: the entry Target environment for the demo in `docs/standards/decision_registry.md` moves to the resolved section, and Q-7 of `plans_finished/mvp/MVP_PLAN.md` is closed. This follows from the rules of the registry, section How to use it.
+3. The privacy information page of the hosted demo states, in Polish and English, that the demo and all its data are deleted on 4 October 2026, after the results are announced. Decided by the team on 2026-10-03. The page itself is built in `plans_finished/mvp/`, so this extends FR-20 and AC-19 of `plans_finished/mvp/MVP_PRD.md`, whose gate was already passed; the extension has to be raised there, not applied silently.
 
 ## Scenarios: input, flow, expected state after the run
 
@@ -72,7 +72,7 @@ The deployment configuration with the written instructions, the secure connectio
 ## Notes on data, performance and security
 
 - The Kraków brief asks for secure connections and basic data protection (`docs/hackathon/challenge_requirements.md`, Technical and organizational requirements).
-- Browsers give a page the current location, which FR-2 of `plans/mvp/MVP_PRD.md` uses as a start, only over a secure connection, so the public link is served over HTTPS. Agent decision at C:40, without asking: it follows from FR-2 and from the brief above.
+- Browsers give a page the current location, which FR-2 of `plans_finished/mvp/MVP_PRD.md` uses as a start, only over a secure connection, so the public link is served over HTTPS. Agent decision at C:40, without asking: it follows from FR-2 and from the brief above.
 - Secrets and target environment details never enter the repository (`docs/standards/standard_config.md`, section Secrets).
 - Logs of a hosting platform usually hold the IP addresses of visitors, jury members included. The agent reads them without asking, so that personal data reaches the context of the model without a request each time. The agent named this risk to the team on 2026-10-03, and the team kept logs at the level without asking.
 

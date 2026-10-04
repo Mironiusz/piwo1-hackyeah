@@ -7,14 +7,14 @@ The seed quotes agent questions whose text contains C:20 (an option the user did
 
 ## Problem
 
-The backend of the MVP runs on PostgreSQL with PostGIS (`plans/mvp/MVP_PLAN.md` D-1), and the standards require code that touches the database to have critical tests against a real database. How each member of the team gets such a database locally was not decided in phase B of `plans/mvp/`; the user handed the decision to the people responsible for it.
+The backend of the MVP runs on PostgreSQL with PostGIS (`plans_finished/mvp/MVP_PLAN.md` D-1), and the standards require code that touches the database to have critical tests against a real database. How each member of the team gets such a database locally was not decided in phase B of `plans_finished/mvp/`; the user handed the decision to the people responsible for it.
 
 ## Recipient and trigger
 
 - The owner of the decision is the db person of the team. The user named five team roles on 2026-10-03 - frontend, db, import, external API, backend - and asked the agent to assign the initiatives to them; this assignment is an agent decision at C:40, without asking, made at that request.
-- `plans/mvp/MVP_PLAN.md`, open question Q-4, which waits for this decision. Trigger: the user delegated the decision on 2026-10-03 in phase B of `plans/mvp/`.
+- `plans_finished/mvp/MVP_PLAN.md`, open question Q-4, which waits for this decision. Trigger: the user delegated the decision on 2026-10-03 in phase B of `plans_finished/mvp/`.
 - The answers of this interview are given by the user, who has not stated being the db person; they remove the questions from the list, but the ruling of the db person is still to be confirmed, as in `plans_finished/fact_schema/`.
-- Consumers of the decision: the work package of `plans/mvp/` that builds the local setup, and `plans_finished/schema_revision/`, whose first schema revision runs on the database this decision describes.
+- Consumers of the decision: the work package of `plans_finished/mvp/` that builds the local setup, and `plans_finished/schema_revision/`, whose first schema revision runs on the database this decision describes.
 
 ## Current state
 
@@ -32,21 +32,21 @@ The backend of the MVP runs on PostgreSQL with PostGIS (`plans/mvp/MVP_PLAN.md` 
 
 ## Smallest meaningful scope
 
-A decision on how the team gets a local PostgreSQL with PostGIS, taken by the right people, recorded and handed to `plans/mvp/MVP_PLAN.md` Q-4. The initiative ends with the recorded decision; the setup itself is built by a work package of `plans/mvp/`, as with `plans_finished/geocoding/` and `plans_finished/osm_data_source/`. Decided by the user on 2026-10-03 (question 1), against also delivering the setup instructions and the script, and against delivering them together with the Alembic configuration.
+A decision on how the team gets a local PostgreSQL with PostGIS, taken by the right people, recorded and handed to `plans_finished/mvp/MVP_PLAN.md` Q-4. The initiative ends with the recorded decision; the setup itself is built by a work package of `plans_finished/mvp/`, as with `plans_finished/geocoding/` and `plans_finished/osm_data_source/`. Decided by the user on 2026-10-03 (question 1), against also delivering the setup instructions and the script, and against delivering them together with the Alembic configuration.
 
-The decision is recorded in the repository by 22:00 on 3 October 2026, the deadline the team set for the choice of the hosting in `plans_finished/demo_environment/DEMO_ENVIRONMENT_SHAPE.md`, which has the same owner. Decided by the user on 2026-10-03 (question 4), against 20:30 and against no deadline of its own, knowing that an earlier decision speeds up nothing downstream while `plans/mvp/MVP_PLAN.md` still waits for the routing engine and the frontend.
+The decision is recorded in the repository by 22:00 on 3 October 2026, the deadline the team set for the choice of the hosting in `plans_finished/demo_environment/DEMO_ENVIRONMENT_SHAPE.md`, which has the same owner. Decided by the user on 2026-10-03 (question 4), against 20:30 and against no deadline of its own, knowing that an earlier decision speeds up nothing downstream while `plans_finished/mvp/MVP_PLAN.md` still waits for the routing engine and the frontend.
 
 Every member of the team who runs critical tests has their own local database, not a shared one. Answered from the repository, not asked: `docs/standards/standard_tests.md`, section Test layers, status ready, says a critical test "may write and runs a durable seed, so it always goes against the local database" (question 2).
 
 ## Out of scope
 
 - The other technical decisions delegated in the same conversation have their own initiatives: `plans_finished/api_contract/`, `plans_finished/routing_engine/`, `plans_finished/osm_data_source/`, `plans_finished/frontend_stack/`, `plans_finished/demo_environment/`, `plans_finished/osm_barrier_mapping/`, `plans_finished/geocoding/`, `plans_finished/account_sessions/`. The database of the demo environment is `plans_finished/demo_environment/`.
-- The setup instructions in the README, the script creating the database and the accounts, the entries of the environment templates and the Alembic configuration: a work package of `plans/mvp/`, cut by the user on 2026-10-03 (question 1).
+- The setup instructions in the README, the script creating the database and the accounts, the entries of the environment templates and the Alembic configuration: a work package of `plans_finished/mvp/`, cut by the user on 2026-10-03 (question 1).
 - A database shared by the team: ruled out by `docs/standards/standard_tests.md` (question 2).
 
 ## Functional requirements
 
-The decision has to make these achievable for the work package of `plans/mvp/` that builds the setup:
+The decision has to make these achievable for the work package of `plans_finished/mvp/` that builds the setup:
 
 1. Every member of the team who writes backend code can run the critical tests against their own local PostgreSQL with PostGIS.
 2. The setup satisfies `docs/standards/standard_database.md` (locale, revisions, permissions) and `docs/standards/standard_config.md` (environment entries without secrets in the repository).
@@ -67,7 +67,7 @@ Derived by the agent from questions 1 to 5 and from the standards quoted in Curr
 
 - Is a local database per person needed at all, or would one shared database serve the team faster? Not under the standards: a critical test writes and seeds durably, so it always goes against the local database (`docs/standards/standard_tests.md`), and two people running critical tests on one database would see each other's seeded rows (question 2).
 - Is enabling PostGIS only an environment matter? No: creating the extension is a schema change and, under `docs/standards/standard_database.md`, an Alembic revision, which needs a database account allowed to create it (question 3). Since PostGIS is not a trusted extension, that account has to be a superuser at the moment the extension is created.
-- Does ending with the decision alone delay anyone? Yes: the first schema revision of `plans_finished/schema_revision/` waits for the local setup and the Alembic configuration, which now come from a work package of `plans/mvp/`, and `plan-implement` of `plans/mvp/` starts only once its plan is closed (`plans/mvp/MVP_PLAN.md`, Risks). The user chose this knowing the cost (question 1).
+- Does ending with the decision alone delay anyone? Yes: the first schema revision of `plans_finished/schema_revision/` waits for the local setup and the Alembic configuration, which now come from a work package of `plans_finished/mvp/`, and `plan-implement` of `plans_finished/mvp/` starts only once its plan is closed (`plans_finished/mvp/MVP_PLAN.md`, Risks). The user chose this knowing the cost (question 1).
 - Does the decision have to wait for `plans_finished/routing_engine/`? No: the environment carries pgRouting without creating it, so the choice of the routing engine changes at most the chain of revisions, not the decision (question 5).
 
 ## Domain rules or explicit TODO
