@@ -1,6 +1,6 @@
 # Review: Web frontend of the MVP
 
-Document state: 2026-10-04, implementation run closed and reviewed as not ready for the whole initiative: one blocker waits for a decision of Adrian, the run against the service was not made and AC-16 is not built; the initiative stays in `plans/`
+Document state: 2026-10-04, implementation run closed and reviewed as not ready for the whole initiative: the one blocker, B-1, was skipped by Adrian and stays a recorded deviation from the standard, the run against the service was not made and AC-16 is not built; the initiative stays in `plans/`
 
 ## Implementation run of 2026-10-04
 
@@ -130,7 +130,7 @@ The change was reviewed by the agent `dod-reviewer` on the model Opus, in read-o
 
 Blocker:
 
-- B-1. The markers of the map cannot be reached with the keyboard: `frontend/src/map/MapView.tsx` gives every marker button `tabIndex` -1, while `docs/standards/standard_frontend.md`, in its accessibility rules and in its checklist, asks that every interactive element is reachable with the keyboard. The demo is not hurt, because the list under the map opens the same facts, and `docs/product/views.md` asks that the map is one stop the keyboard can leave. Two sources differ, so this is a decision of Adrian: the exception is written into the standard, or the markers enter the order of the Tab key. Open.
+- B-1. The markers of the map cannot be reached with the keyboard: `frontend/src/map/MapView.tsx` gives every marker button `tabIndex` -1, while `docs/standards/standard_frontend.md`, in its accessibility rules and in its checklist, asks that every interactive element is reachable with the keyboard. The demo is not hurt, because the list under the map opens the same facts, and `docs/product/views.md` asks that the map is one stop the keyboard can leave. Two sources differ, so this is a decision of Adrian: the exception is written into the standard, or the markers enter the order of the Tab key. Adrian decided on 2026-10-04 at about 06:30 to skip it: the markers stay out of the order of the Tab key and the standard is not changed. The deviation from the standard stays recorded here and is not resolved.
 
 Risks:
 
@@ -159,13 +159,12 @@ Verification, as the reviewer reported it, before the merge with `dev`:
 - `standard_architecture`, `standard_config`, `standard_database`, `standard_errors`, `standard_idempotency`, `standard_logging`, `standard_security`, `standard_time`, `standard_worker`: not applicable, the change holds no backend code.
 - Also checked by the reviewer: no line comment in the frontend files, no function without a documentation comment, no address of another host in `frontend/src` or `index.html`, no dictionary key missing in either language, the name OpenStreetMap only in the two texts of the page about the data, and two contrast ratios of `docs/product/accessibility_status.md` recomputed.
 
-Verdict of the review: not ready. Scope: the whole initiative `frontend_app`. B-1 blocks under the strict deviation rule, step 12 was never run, AC-16 is not built and the steps of a human are open. In the files it read the reviewer found no defect that breaks the demo, and every gate passed; once B-1 is decided, that part needs only minor fixes. The initiative does not qualify for `plans_finished/` and stays in `plans/`.
+Verdict of the review: not ready. Scope: the whole initiative `frontend_app`. B-1 blocks under the strict deviation rule, step 12 was never run, AC-16 is not built and the steps of a human are open. In the files it read the reviewer found no defect that breaks the demo, and every gate passed; once B-1 is decided, that part needs only minor fixes. B-1 was then skipped by Adrian, as the blocker above records, so the verdict stands. The initiative does not qualify for `plans_finished/` and stays in `plans/`.
 
 What changed after the review was checked by the lead agent and not by the reviewer: the four gates pass, and each change was seen in a browser at 360 px on the mock. The map of facts starts with the loading text and never with the text that no fact is known; the view that picks an end of a route moves the focus to the map and keeps both actions on a screen of 360 by 640 px; a vote cast without an account leaves both votes active for an account on the same fact, and the vote of the account is kept with its pseudonym; with the mock stopped the account page shows the message with the way to try again, and after the mock started again the retry ended in the notice of an ended session; a pseudonym with letters of another alphabet is refused by the form with its rule and no request; with the tile archive moved aside the message stands in place of the map and the list shows the facts; with the archive back the map draws; a saved report shows its author the own vote on the new fact with both votes inactive.
 
 ### Open points for Adrian
 
-- B-1 of the review: the exception for the markers of the map in `docs/standards/standard_frontend.md`, or the markers in the order of the Tab key.
 - The rule for the labels of the stops on the summary line (O-10).
 - Whether the account says anything about the needs (O-19).
 - The 62 texts added during the build, in `docs/product/interface_texts.md`, section Texts added while the views were built.
