@@ -7,7 +7,7 @@ Regulator: C:40
 
 The project has decided where its OpenStreetMap data comes from and how tags become barriers and amenities, but the importer has not been built. Without a complete first copy, the app has no pedestrian network or initial OpenStreetMap facts for Kraków.
 
-The user created `osm_importer` to carry this implementation separately from the MVP initiative, which a colleague is currently working on. The user explicitly prohibited editing that initiative and its plan, and asked for any absolutely necessary change there to be reported as a decision with a visible warning in capital letters.
+The user created `osm_importer` to carry this implementation separately from the MVP initiative, which Rafał was working on. The original request prohibited editing that initiative and its plan and required a visible warning for necessary changes. On 2026-10-04 the user lifted that editing restriction and authorized modifications to the MVP. The seed preserves the original request; necessary ownership and dependency updates can now be applied to MVP artifacts and `MVP.md`.
 
 The task prefix is `OSM_IMPORTER`, following the initiative name given by the user. The seed preserves the request, and this shape records its scope together with the decisions already present in the repository.
 
@@ -39,15 +39,19 @@ The user assigns implementation of the importer to `osm_importer`. This instruct
 
 Before the colleague finalizes or executes the MVP import work package, its owner needs to record that `osm_importer` supplies the importer and its tests, while the MVP consumes the resulting data and retains responsibility for its shared backend setup. D-4 and D-5 currently describe the earlier ownership; the data-source and product decisions themselves do not need to change.
 
-The concrete handoff for the user to relay is: reference `plans/osm_importer/` as the executor of the import work, avoid a second implementation of that work in MVP, and keep the shared backend and database prerequisites explicit. This is coordination for implementation, not a prerequisite for creating this shape. The agent reports the handoff to the user and does not edit the colleague's files or send a message to the colleague.
+The concrete handoff is: reference `plans/osm_importer/` as the executor of the import work, avoid a second implementation of that work in MVP, and keep the shared backend and database prerequisites explicit. This is coordination for implementation, not a prerequisite for creating this shape. Following the user's authorization on 2026-10-04, the agent may apply the necessary MVP edits. Contacting Rafał is not authorized by this permission.
 
 On 2026-10-04 the user reported that Rafał, who owns the MVP work, confirmed he would handle this handoff. The user approved `OSM_IMPORTER_PRD.md` and requested the technical plan. This authorizes phase B; the backend integration contracts still need to be verified.
 
 Later on 2026-10-04, in phase B, the user chose to settle the importer integration contract together with the agent in this initiative. Shared backend and schema implementation stay outside this scope; the contract decisions are recorded in `OSM_IMPORTER_PLAN.md` for their owners to consume.
 
+Scope reconciliation on 2026-10-04: the user approved adding preparation of the pedestrian-network file, construction of Valhalla walking-routing data and publication of the routing-data pointer to `osm_importer`. The importer owns these outputs and their tests. `osm_import` retains its previously assigned copy-read operation and the common demo-loading program, consuming this importer rather than building another one. Shared backend and schema implementation, route computation, routing-service startup and public transport ingestion remain outside this initiative.
+
 ## Smallest meaningful scope
 
 Deliver the complete importer that obtains the selected source, checks it, limits it to Kraków, derives the agreed pedestrian network and accessibility information, and makes a complete copy available in the shared project database.
+
+The same run prepares the matching walking-routing data for Valhalla before database publication and publishes the routing-data pointer after a successful database commit. Routing consumers must be able to distinguish the source copy of those data from the copy currently loaded by the routing service.
 
 The same importer performs the first import and subsequent manual refreshes, preserves existing votes and user facts under the product rules, and leaves the last complete copy unchanged on failure. Verification, operating instructions and documentation of the imported data are part of this scope.
 
@@ -55,10 +59,10 @@ This is the full importer discussed in the preceding conversation, rather than a
 
 ## Out of scope
 
-- Editing any file of the MVP initiative, including its seed, shape, PRD and plan.
 - Reopening product rules already settled in the specification, or choosing a second source because the chosen one is unavailable.
 - Designing a separate database model, implementing the shared schema revision or creating a separate backend for the importer. The importer must use the shared project contracts after their owners deliver them.
-- Implementing routing, address search, the frontend, map tile production, or an end-user endpoint that triggers an import.
+- Computing routes, implementing routing-service startup or public transport ingestion, address search, the frontend, base map tile production, or an end-user endpoint that triggers an import. Preparation of Valhalla walking-routing data is included.
+- Implementing the copy-read operation or the common demo-loading program, which remain in `osm_import` and consume this initiative's result.
 - A scheduled refresh, data outside Kraków, or writing reports back to OpenStreetMap.
 - Deploying or running the importer in the hosted demo without an explicit request.
 
@@ -68,11 +72,12 @@ This is the full importer discussed in the preceding conversation, rather than a
 2. The imported network follows M2, with geometry, ordered nodes and coordinates sufficient for the routing engine. Barriers, amenities and way attributes follow M3 and M6, independently of a person's preferences.
 3. The copy and each OpenStreetMap fact retain their source and relevant dates. The copy date describes the state of OpenStreetMap, not the day it was downloaded.
 4. New OpenStreetMap facts start unverified. An absent or unknown attribute is not a fact and does not become a confirmation of accessibility.
-5. The network, facts, refresh reconciliation and copy date become current together. A failure leaves the last complete copy unchanged, and a failed first import publishes no partial data.
+5. The network, facts, refresh reconciliation and copy date become current together in the database. Failure before database commit leaves the last complete copy unchanged, and a failed first database import publishes no partial data. A routing-pointer failure after commit follows requirement 10 and does not imply database rollback.
 6. Refreshes preserve fact identity and votes according to M4. The disappearance and return of an OpenStreetMap fact do not cause automatic merging with nearby user reports.
 7. Import runs do not overlap. Processing the same source state again does not create duplicate facts or votes or move the copy date backwards.
 8. The operator can distinguish a successful update, an unchanged copy, a skipped concurrent run and a failed run. Instructions cover the first import, refresh, verification and failure outcomes.
 9. The importer is verified against the source, mapping, reconciliation and database requirements already recorded in the dependency plans. Real OpenStreetMap data does not enter the repository tree.
+10. Each newly published copy has matching prepared walking-routing data. Preparation failure preserves the previous database copy and routing pointer. A failure after database commit is reported with its committed state; consumers never serve a route combining different source copies.
 
 ## Scenarios: input, flow, expected state after the run
 
@@ -87,10 +92,11 @@ This is the full importer discussed in the preceding conversation, rather than a
 ## Challenging own assumptions
 
 - Does an archived source initiative mean the importer already exists? No. Its PRD excludes code delivery, and the current tree has no importer. This initiative owns implementation, not another source-selection exercise.
-- Does extracting the importer permit editing the colleague's plan? No. The user's instruction explicitly prohibits it. The ownership discrepancy is recorded here and reported for the colleague to resolve before implementation overlaps.
+- May this initiative update MVP ownership and dependencies? Yes. The user explicitly lifted the original editing restriction on 2026-10-04 and then approved including Valhalla data preparation and pointer publication. Such updates preserve shared backend and schema ownership.
 - Can a downloaded file alone count as success? No. The backend needs a coherent stored copy and correct handling of existing facts and votes.
 - Can a closed schema plan be treated as an existing database contract? No. The target schema and applied revision must be verified at the technical planning stage. This initiative does not invent substitute tables.
 - Should this initiative also produce the map background? No. The source PRD explicitly separates base map tiles from the imported routing and accessibility data.
+- Does routing-data preparation also assign the copy-read operation and common demo-loading program to this initiative? No. Those existing responsibilities stay with `osm_import`. Agent decision at C:40, without asking: the user approved Valhalla preparation, while the approved importer scope excludes app endpoints; retaining the existing assignments avoids silently expanding scope.
 
 ## Domain rules or explicit TODO
 
@@ -98,7 +104,7 @@ The rules in `docs/product/specification.md` M2, M3, M4 and M6 are adopted witho
 
 Technical planning must re-read the source, mapping and routing decisions against the then-current product specification, verify the delivered shared schema and backend contracts, and agree file ownership before implementation. Those dependencies are not resolved by guessing in this shape. Any proposed change to product behavior must return to the user.
 
-If a necessary MVP change is identified later, record the concrete decision here or in the subsequent artifacts and report it to the user with a warning in capital letters. Do not apply that change to the MVP initiative.
+If a necessary MVP change is identified later, record the concrete decision here or in the subsequent artifacts, apply the corresponding ownership or dependency update under the user's authorization of 2026-10-04, and explain it to the user. Seeds remain immutable.
 
 ## Notes on data, performance and security
 

@@ -50,15 +50,15 @@ A deferral needs a reason. "We did not want to think about it" is not a reason; 
 
 ### Initiatives outside MVP.md that overlap its initiatives
 
-- Affects: the initiative `osm_import` of `MVP.md`, which builds the import of OpenStreetMap data, the rule of `plans/mvp/MVP_PLAN.md` D-14 that no periodic task exists, and the optional features O4 and O9 of `docs/product/specification.md`, open city data and routes with public transport.
-- Variants: for the import, the seed of `plans/osm_import/` goes through the chain and takes what `plans/osm_importer/` settled, or `plans/osm_importer/` replaces `osm_import` in `MVP.md` once it is merged; for the stops of buses and trams from the MSIP service of Kraków with a daily import, `plans/bus_station_api_integration/` enters the MVP, which needs a decision against D-14 and against O4 being outside the MVP, or it stays outside the MVP as part of O4 or O9.
-- Blocks: on 2026-10-04 both initiatives stand only on branches not merged into the line of `plans/mvp/`, each with a plan in progress: `plans/osm_importer/` on `md/fast-setup`, whose plan records that Rafał confirmed he would handle the handoff of the import, and `plans/bus_station_api_integration/` on `mw`. The user decided on 2026-10-04 that an initiative not finished does not stop `plans/mvp/`, adds its content to `MVP.md` later, and that no question is asked while `plans/mvp/` is carried out, so the overlap was recorded here instead of being decided by the agent.
-- Condition: either branch is merged, or Rafał and the owner of the initiative decide which initiative builds the import and whether the stops of MSIP enter the MVP. `MVP.md`, sections Initiatives and Requirements and initiatives, follows in the same change.
+- Affects: the stops of buses and trams from the MSIP service of Kraków with a daily import in `plans/bus_station_api_integration/`, the no-periodic-task rule of `plans/mvp/MVP_PLAN.md` D-14, and optional features O4 and O9 of `docs/product/specification.md`. The importer ownership overlap formerly tracked here is resolved below.
+- Variants: `bus_station_api_integration` enters the MVP, requiring a decision against D-14 and O4 being outside the MVP, or remains outside it as part of O4 or O9.
+- Blocks: on 2026-10-04 the initiative stood on branch mw, not merged into the line of plans/mvp, with a plan in progress. The user decided that an unfinished initiative does not stop plans/mvp and adds its content to MVP.md later. The importer handoff of osm_importer does not settle this independent MSIP scope decision.
+- Condition: the branch is merged, or Rafał and the initiative owner decide whether the stops of MSIP enter the MVP. MVP.md follows in the same change.
 
 ### When the initiative of O9 starts its code
 
 - Affects: the initiative `public_transport_routing` of `MVP.md`, its time box of 4.5 hours of work of the people of the team, and the order of the section Order and critical path of `MVP.md`.
-- Variants: `public_transport_routing` waits for `route_planning` and `osm_import`, as `plans/mvp/MVP_PLAN.md` D-15 and `MVP.md` record; or it starts at once, in parallel with them, as the section Optional features of `docs/product/specification.md` says of O9 - built first and in parallel with the mandatory features - with the parts it shares with `route_planning` and `osm_import` agreed between their owners.
+- Variants: `public_transport_routing` waits for `route_planning` and `osm_importer`, as `plans/mvp/MVP_PLAN.md` D-15, amended by D-20, and `MVP.md` record; or it starts at once, in parallel with them, as the section Optional features of `docs/product/specification.md` says of O9 - built first and in parallel with the mandatory features - with the parts it shares with `route_planning` and `osm_importer` agreed between their owners.
 - Blocks: the specification prevails over the plan, but the waits of D-15 were approved by the user on 2026-10-04, and the user decided that no question is asked while `plans/mvp/` is carried out. Both `route_planning` and `public_transport_routing` are owned by Marek.
 - Condition: Rafał and Marek decide the start of `public_transport_routing`, at the latest when its seed goes into `plan-shape`; `MVP.md` follows in the same change.
 
@@ -66,7 +66,7 @@ A deferral needs a reason. "We did not want to think about it" is not a reason; 
 
 - Affects: the backend vote operation, vote-identity maintenance and the importer's final publication transaction. Owner: Rafał for the shared backend handoff. The user chose brief blocking of vote changes on facts being reconciled on 2026-10-04; the chosen behavior and proposed row-lock protocol live in `plans/osm_importer/OSM_IMPORTER_PLAN.md` D-15. The user requested this registry entry on the same day. The behavior is already decided; this entry tracks the outstanding backend integration contract and delivery, not a reopening of that choice.
 - Variants: adopt D-15 in the shared backend contract, including locking a fact before checking its visibility and inserting a vote; if the backend owner identifies an incompatible contract, bring a concrete protocol revision back to the user in `plans/osm_importer/`. No implementation may silently omit the agreed blocking behavior.
-- Blocks: the shared backend interfaces have not been delivered or verified in this initiative. The backend owner must record the vote-locking contract and deadlines, including how an operation waiting on an import revalidates the fact. On 2026-10-04 the user chose a 120-second budget for the entire final database publication transaction, including lock waiting (`plans/osm_importer/OSM_IMPORTER_PLAN.md` D-16); its enforcement remains open in Q-1. Downloading and parsing are outside that budget. No MVP file is edited by the importer initiative.
+- Blocks: the shared backend interfaces have not been delivered or verified in this initiative. The backend owner must record the vote-locking contract and deadlines, including how an operation waiting on an import revalidates the fact. On 2026-10-04 the user chose a 120-second budget for the entire final database publication transaction, including lock waiting (`plans/osm_importer/OSM_IMPORTER_PLAN.md` D-16); its enforcement remains open in Q-1. Downloading and parsing are outside that budget. Later on the same day the user authorized modifications to MVP (`plans/osm_importer/OSM_IMPORTER_PLAN.md` D-19); this lifts the editing restriction but does not deliver the shared backend handoff.
 - Condition: the backend contract records D-15 or a user-approved revision, implementation lands in the shared backend, and local two-connection tests verify that votes committed before the locks affect reconciliation, later votes wait and revalidate, and identity maintenance cannot change a locked history during evaluation. Record the agreed deadlines and the implementation/test locations before resolving this entry.
 
 ### Intellectual property between the two challenges and the repository licence
@@ -77,6 +77,10 @@ A deferral needs a reason. "We did not want to think about it" is not a reason; 
 - Condition: the organizers have answered, before a licence file is added to the repository.
 
 ## Resolved decisions
+
+### OpenStreetMap importer ownership and Valhalla data preparation
+
+Resolved on 2026-10-04: the user authorized modifying MVP and approved including network PBF preparation, Valhalla walking-data construction and post-commit routing-pointer publication in osm_importer. The importer and its tests are assigned there; osm_import retains read_osm_copy and the common demo-loading program, consuming the importer. The decisions live in plans/osm_importer/OSM_IMPORTER_PLAN.md D-19 - D-21 and plans/mvp/MVP_PLAN.md D-20, and MVP.md records the ownership, requirements and dependencies. Shared backend, schema delivery and the vote-lock integration remain outstanding prerequisites.
 
 ### Language of the repository
 
