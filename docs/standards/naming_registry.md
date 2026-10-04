@@ -92,6 +92,7 @@ Every object the first revision `db/accessibility_db/migrations/versions/0001_ta
 - `db/accessibility_db/<responsibility>.py` - a module of the shared model, first `closed_lists.py` and `tables.py`.
 - `db/tests/common_<topic>.py` - a helper shared by the tests of `db/tests/`, first `common_target_schema.py`, `common_stored_rows.py` and `common_critical_guard.py`.
 - `db/compose.yaml` and `db/compose.deploy.yaml` - the Compose files of the local database and of the database of the hosted demo.
+- `service/<responsibility>.py` - a module of the rules layer, first `account_rules.py`, `passwords.py` and `session_tokens.py` of `plans/accounts/`.
 
 ## Function names
 
@@ -99,6 +100,13 @@ Every object the first revision `db/accessibility_db/migrations/versions/0001_ta
 - `build_offset_instant`, `build_local_datetime` - build the pair of an instant and its wall-clock time, in `db/accessibility_db/tables.py`.
 - `build_instant_pair`, `build_closed_list_type`, `build_closed_list_values`, `resolve_null_pair` - build the mapping of a pair and of a closed list, in `db/accessibility_db/tables.py`.
 - `apply_schema_revisions`, `resolve_application_allowed`, `build_schema_owner_url` - apply the chain and decide whether it may run, in `db/accessibility_db/migrations/env.py`.
+- `resolve_pseudonym`, `resolve_password` - decide whether an input of a registration meets M9 and return the accepted value, in `service/account_rules.py`.
+- `build_password_hash`, `resolve_password_match` - hash a password and decide whether a password matches a stored hash, in `service/passwords.py`.
+- `build_session_token`, `resolve_session_claims` - issue a signed session token and decide whether one is valid, in `service/session_tokens.py`.
+
+## Exception names
+
+- `<What went wrong>Error` - every exception class ends in `Error`, because the ruff rule N818 of the `N` set of `pyproject.toml` refuses any other name; first `InvalidAccountInputError` in `service/account_rules.py` and `SessionExpiredError` in `service/session_tokens.py`.
 
 ## Names of query constants
 
@@ -109,3 +117,4 @@ Every object the first revision `db/accessibility_db/migrations/versions/0001_ta
 
 - `test_<what it checks>` in a file `db/tests/test_<subject>.py`; a file that touches the database carries `pytestmark = pytest.mark.critical`.
 - `service_engine`, `service_connection`, `stored_fact_id` - the fixtures of `db/tests/conftest.py`.
+- `test_<what it checks>` in a file `tests/service/test_<subject>_cases.py` - the scenario tests of the rules layer, first `test_account_rules_cases.py`, `test_passwords_cases.py` and `test_session_tokens_cases.py`.

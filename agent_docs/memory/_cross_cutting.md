@@ -126,3 +126,10 @@
 - Reusable pattern: a part shared by the import and the backend is a package of its own in this repository, installed by both, with its own `pyproject.toml`, tests and Compose files, run in containers; see [[accessibility_db]].
 - Risk / notes: `backend_skeleton` and its PRD on the branch `mw-osm-import` still plan a local setup and an Alembic configuration of their own until Marek takes the change; the hosted demo joins `db/compose.deploy.yaml` in the task `DEPLOYMENT_CONFIG`.
 - Decisions: the entry What the local database setup creates and what only a revision creates of 2026-10-03 is settled in who builds it: `db/` of `schema_first_revision`.
+
+## 2026-10-04 - Exception names end in Error, and the first code of a layer joins the gates (plans/accounts)
+
+- What changed: `service/` got its first code; the root `pyproject.toml` added `service` to `[tool.mypy] files` and `[tool.vulture] paths` and pinned `argon2-cffi==25.1.0` as the first runtime dependency, and the `makefile` added a Bandit pass and a B608 pass for `service`.
+- Why: every code layer is held to the gates of `docs/standards/standard_review.md`, and the template adds a layer to them together with its first code.
+- Reusable pattern: the ruff rule N818, part of the `N` set selected in `pyproject.toml`, refuses an exception class whose name does not end in `Error`, so a plan that names an exception without that suffix gets it at implementation; `plans/accounts/` did so for its six exceptions, and the names `ImportAlreadyRunning` and `ImportLeaseLost` of `plans/backend_skeleton/` will need it too. A layer joins the gates in three places: `[tool.mypy] files`, `[tool.vulture] paths` and its two Bandit passes in the `makefile`.
+- Risk / notes: S-1 of `plans/backend_skeleton/` adds its layers to the same keys, so the two changes meet in `pyproject.toml` and the `makefile` and are merged by hand.
