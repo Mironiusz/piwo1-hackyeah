@@ -1,0 +1,6 @@
+{
+  "base_url": "",
+  "timeout_ms": 15000,
+  "tiles_url": "http://10.0.2.2:8090",
+  "_help": "base_url: address of the API server without /api; empty means no server, data stored on the device. tiles_url: address of the map tile server (tools/mock_backend/server.py, make mock); empty or unreachable means the map background drawn from the data in the app. 10.0.2.2 is the computer that runs the emulator."
+}
