@@ -16,27 +16,27 @@ The set is divided into three groups:
 
 Meaning of the statuses: ready - the document has the full content of its rules. partial - the document has content, but at least one of its rules is waiting for a decision or a measurement; the reason is in the standard itself. skeleton - the document has only the core sections with one-sentence descriptions of what is to be written there.
 
-| File                           | Group            | Status | Responsible for                                                                  |
-| ------------------------------ | ---------------- | ------ | -------------------------------------------------------------------------------- |
-| `standard_agentic_workflow.md` | core             | ready  | the seed -> plan -> review chain, hooks, subagents, Claude Code and Codex parity |
-| `standard_agent_docs.md`       | core             | ready  | the format of SEED, SHAPE, PRD, PLAN, REVIEW and `agent_docs/memory` entries     |
-| `standard_review.md`           | core             | ready  | the review process, the standard - tool map, Definition of Done                  |
-| `standard_documentation.md`    | core             | ready  | documentation of code units and the tone of prose                                |
-| `standard_formatting.md`       | core             | ready  | code and markdown formatting, forbidden characters, no bold in prose             |
-| `standard_git.md`              | core             | ready  | agent permissions for git, branch roles, merge directions                        |
-| `standard_architecture.md`     | Python profile   | ready  | layer boundary, one place for cross-cutting rules, external calls                |
-| `standard_config.md`           | Python profile   | ready  | three configuration layers, environment files, validation, secrets               |
-| `standard_database.md`         | Python profile   | ready  | form of schema changes, database privacy, data access, queries                   |
-| `standard_errors.md`           | Python profile   | ready  | error handling, retries, timeouts                                                |
-| `standard_idempotency.md`      | Python profile   | ready  | idempotency key, reconciliation, deduplication                                   |
-| `standard_code_quality.md`     | Python profile   | ready  | static analysis, complexity, comments, performance                               |
-| `standard_logging.md`          | Python profile   | ready  | log entry format, levels, personal data in logs                                  |
-| `standard_naming.md`           | Python profile   | ready  | names of files, functions and constants                                          |
-| `standard_security.md`         | Python profile   | ready  | static security analysis, dependency vulnerabilities, data in local environments |
-| `standard_tests.md`            | Python profile   | ready  | test layers, critical tests, mandatory tests                                     |
-| `standard_time.md`             | Python profile   | ready  | time model, time zones, time windows in data                                     |
-| `standard_worker.md`           | Python profile   | ready  | the worker process, the periodic task contract, locks                            |
-| `standard_frontend.md`         | frontend profile | ready  | technology, code unit, product rules and gates of frontend code                  |
+| File                           | Group            | Status | Responsible for                                                                    |
+| ------------------------------ | ---------------- | ------ | ---------------------------------------------------------------------------------- |
+| `standard_agentic_workflow.md` | core             | ready  | the seed -> plan -> review chain, hooks, subagents, Claude Code and Codex parity   |
+| `standard_agent_docs.md`       | core             | ready  | the format of SEED, SHAPE, PRD, PLAN, REVIEW and `agent_docs/memory` entries       |
+| `standard_review.md`           | core             | ready  | the review process, the standard - tool map, Definition of Done                    |
+| `standard_documentation.md`    | core             | ready  | documentation of code units and the tone of prose                                  |
+| `standard_formatting.md`       | core             | ready  | code and markdown formatting, forbidden characters, no bold, references by section |
+| `standard_git.md`              | core             | ready  | agent permissions for git, branch roles, merge directions                          |
+| `standard_architecture.md`     | Python profile   | ready  | layer boundary, one place for cross-cutting rules, external calls                  |
+| `standard_config.md`           | Python profile   | ready  | three configuration layers, environment files, validation, secrets                 |
+| `standard_database.md`         | Python profile   | ready  | form of schema changes, database privacy, data access, queries                     |
+| `standard_errors.md`           | Python profile   | ready  | error handling, retries, timeouts                                                  |
+| `standard_idempotency.md`      | Python profile   | ready  | idempotency key, reconciliation, deduplication                                     |
+| `standard_code_quality.md`     | Python profile   | ready  | static analysis, complexity, comments, performance                                 |
+| `standard_logging.md`          | Python profile   | ready  | log entry format, levels, personal data in logs                                    |
+| `standard_naming.md`           | Python profile   | ready  | names of files, functions and constants                                            |
+| `standard_security.md`         | Python profile   | ready  | static security analysis, dependency vulnerabilities, data in local environments   |
+| `standard_tests.md`            | Python profile   | ready  | test layers, critical tests, mandatory tests                                       |
+| `standard_time.md`             | Python profile   | ready  | time model, time zones, time windows in data                                       |
+| `standard_worker.md`           | Python profile   | ready  | the worker process, the periodic task contract, locks                              |
+| `standard_frontend.md`         | frontend profile | ready  | technology, code unit, product rules and gates of frontend code                    |
 
 The boundaries between the standards are described in the Scope and boundaries section of each of them.
 

@@ -155,7 +155,7 @@ None. B-3 is fixed by the withdrawal marker in the Problem section of the PRD. B
 
 ### Improvements
 
-- I-A. F-8 of `plans/api_contract/API_CONTRACT_PLAN.md` cites D-3 of this plan at line 26, while it is at line 29 since F-9 - F-11 were inserted. To be corrected together with the path of that reference at the move.
+- I-A. F-8 of `plans/api_contract/API_CONTRACT_PLAN.md` cites D-3 of this plan by a line number that no longer points at D-3, since F-9 - F-11 were inserted. To be corrected together with the path of that reference at the move.
 - I-B. Fixed after the report: the item of Risks of the plan on renewal now names what a signed-token renewal costs.
 - I-C. Fixed after the report: the change markers of FR-1, FR-2 and Domain rules of the PRD and of the rolling session of the shape name the session of a deleted account next to the expired one, as D-3, F-9 and M9 do.
 - I-D. Not applied: Human steps, Scope steps 2 and 3 and the Definition of Done of the plan describe the hand-off as it was done, under the names Q-6 and Q-3 of that time.

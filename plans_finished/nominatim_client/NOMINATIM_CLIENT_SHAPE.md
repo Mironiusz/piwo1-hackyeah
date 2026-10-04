@@ -77,7 +77,7 @@ A test of the public Nominatim instance against the decisions of `plans_finished
 - The searched text is treated like the current location: never in a log or in the database (`GEOCODING_PLAN.md` D-12, specification M2). The texts of this check are not of any person (Domain rules), so recording them with their responses does not break that rule.
 - Query volume: at most 40 requests per run at about one per second, below the absolute limit of the policy (Domain rules). Of the cost, only the time of a person and the risk of a block of the team machine remain, because the public instance is free.
 - The recorded responses are OpenStreetMap data under the ODbL, which each response states in its field `licence` (`GEOCODING_PLAN.md` F-2); they keep that field and their source, so the attribution travels with them. Keeping them in a public repository touches the open entry of `docs/standards/decision_registry.md` on the repository licence; this shape does not settle that entry.
-- A copy of someone else's document in `plans/<INITIATIVE>/attachments/` comes under the formatting gate like any other file (`docs/standards/standard_formatting.md`, line 67). A name in OpenStreetMap may hold a character forbidden there, and then the user chooses how the copy is handled.
+- A copy of someone else's document in `plans/<INITIATIVE>/attachments/` comes under the formatting gate like any other file (`docs/standards/standard_formatting.md`, section Emphasis in prose). A name in OpenStreetMap may hold a character forbidden there, and then the user chooses how the copy is handled.
 
 ## Open questions
 

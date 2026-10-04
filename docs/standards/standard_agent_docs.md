@@ -1,6 +1,6 @@
 # Agent documentation standard
 
-Document state: 2026-10-03
+Document state: 2026-10-04
 
 Status: ready - full content.
 
@@ -28,7 +28,7 @@ Narrowing specific to this standard: the unit of deviation is the task (`plans/<
 
 ## SEED format
 
-SEED is a verbatim record of the request, with an explicit source of origin: a conversation with the user, a pasted email, a meeting note, a branch description, a report from a team member. It cannot be modified once saved - a change of scope always goes to SHAPE, never to SEED. If the seed is too thin for anything to follow from it, it is still saved verbatim, and the gaps are addressed with questions in the shape phase - the seed is not corrected by guesswork, because then it stops being a record of what was actually said.
+SEED is a verbatim record of the request, with an explicit source of origin: a conversation with the user, a pasted email, a meeting note, a branch description, a report from a team member. It cannot be modified once saved - a change of scope always goes to SHAPE, never to SEED. The one exception so far, the rewrite of line-number references of 2026-10-04, is recorded in `standard_agentic_workflow.md` ch. 4.6. If the seed is too thin for anything to follow from it, it is still saved verbatim, and the gaps are addressed with questions in the shape phase - the seed is not corrected by guesswork, because then it stops being a record of what was actually said.
 
 The user may create the seed file themselves, pasting a ready note instead of dictating it in the conversation - in that case `plan-shape` never overwrites it, it only reads it. The only hard requirement for a manually created file: it must contain some content, because an empty seed cannot be processed.
 
@@ -83,16 +83,18 @@ The "Facts" section contains only finding items, one per line, without an introd
 An item carries four things: an identifier, a claim, evidence and a check date. They are written in three fields separated by the vertical bar character: the identifier together with the claim, the evidence, the check date in the format YYYY-MM-DD. The identifier has the shape `F-N.` with a period, just like the identifiers in the other sections. Several pieces of evidence for one finding are separated by a semicolon.
 
 ```text
-F-1. The database reachability probe reads the address from the configuration, not from an environment variable. | code:`data/engine.py:31`; doc:`docs/standards/standard_config.md` para. Three configuration layers and four storage places | 2026-08-17
+F-1. The database reachability probe reads the address from the configuration, not from an environment variable. | code:`data/engine.py` function `build_engine`; doc:`docs/standards/standard_config.md` section Three configuration layers and four storage places | 2026-08-17
 ```
 
 Evidence belongs to one of five kinds, recognizable by the very beginning of the entry alone, without interpreting the content:
 
-- `code:` - reading code with an indication of the file and line,
+- `code:` - reading code with an indication of the file and the symbol: a function, a class, a constant, a table or a key of a configuration file, a make target,
 - `cmd:` - a run together with its result. The kind is broad: it covers a shell command, a code snippet and reading the state of an environment, that is, everything that was run and whose effect is visible in the result,
 - `db:` - a database query together with its result,
-- `doc:` - a reference to a document with an indication of the paragraph or line,
+- `doc:` - a reference to a document with an indication of the section or of an identified item such as D-3 or FR-2,
 - `ASSUMPTION:` - content accepted without verification, explicitly marked.
+
+No kind of evidence cites a line number, a `cmd:` result that printed line numbers included: the place is named in the form of `standard_formatting.md`, section References to a place in a file. A finding is checked again before implementation, and a line number stops pointing at the cited content with the first merge into the cited file, while a section, an item or a symbol moves together with it.
 
 A finding derived from several sources carries several pieces of evidence in one item. There is no separate kind of evidence for inference and there is not supposed to be one - such a kind would be a loophole precisely for unsupported claims, which this format protects against.
 
@@ -168,6 +170,7 @@ Who writes. The entry is appended by `plan-implement` at the end of the task, as
 - PLAN has concrete names of files, functions and data contracts in every "Scope of changes" step, zero TODOs, zero open questions.
 - PLAN carries in its state line a marker in one of the two allowed wordings: plan in progress or plan closed.
 - The "Facts" section of a closed plan has only finding items, one per line, each with an identifier, a claim, evidence of one of the five kinds and a check date, in three fields separated by a vertical bar.
+- No evidence and no artifact names a line number: a reference to a place in another file names a section, an item or a code symbol - see `standard_formatting.md`, section References to a place in a file.
 - The `ASSUMPTION:` evidence kind stands only next to content that really could not be checked - it is not a bag for what one did not feel like verifying.
 - The "Open questions" section of a closed plan has not a single list item and opens with a statement of absence.
 - The `agent_docs/memory` entry (if one was created) has the full set of fields, is appended - not overwritten - and landed under the correct path `memory/<group>/<module>.md`.
