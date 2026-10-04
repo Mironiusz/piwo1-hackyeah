@@ -20,7 +20,7 @@ The shell is the same in every view: a header with the name of the product and t
 
 The content is one of two kinds:
 
-- The map with a panel. The app has one map, which stays on the screen and keeps its position while its mode changes. The modes are facts, route planning, route result and point picking. A panel lies over the lower part of the map and carries the content of the mode; the fact detail and the steps of reporting open as panels over the map too.
+- The map with a panel. The app has one map, which stays on the screen and keeps its position while its mode changes. The modes are facts, route planning, route result and point picking. A panel lies over the lower part of the map and carries the content of the mode; the fact detail and the steps of reporting open as panels over the map too. In every mode a control of the map shows the location of the device as a dot and keeps the map on it until the person moves the map; the location stays in the browser.
 - A page. The needs, the account, the privacy information, the page about the data and moderation are pages without the map.
 
 | View                     | Kind                  | Journeys         |
@@ -473,7 +473,7 @@ Proposed by the agent and not asked one by one:
 
 ## The hosted demo
 
-The hosted demo is served over plain HTTP (`MVP.md`, Known departures from the Kraków brief), and a browser gives no location to a page served that way. There the start from the current location, and the location action while reporting, end in the state of the refused location. Since version 10 of the specification the demo does not show routing that does not answer; that state of V-4 stays and is checked outside the hosted link.
+The hosted demo is served over plain HTTP (`MVP.md`, Known departures from the Kraków brief), and a browser gives no location to a page served that way. There the start from the current location, and the location action while reporting, end in a message that the browser gives the location only to a page with a secure connection, and the control of the map that shows the location of the device is disabled and its name says why. Since version 10 of the specification the demo does not show routing that does not answer; that state of V-4 stays and is checked outside the hosted link.
 
 ## What stays open
 

@@ -5,6 +5,7 @@ import { Navigate, useNavigate } from "react-router";
 import { searchAddress } from "../../api/client.ts";
 import { errorTextKey, toApiError } from "../../api/errors.ts";
 import type { AddressMatch, Point } from "../../api/types.ts";
+import { LOCATION_TEXTS, readDeviceLocation, type LocationState } from "../../map/deviceLocation.ts";
 import { focusMap } from "../../map/focusMap.ts";
 import { isInsideKrakow } from "../../map/krakowBounds.ts";
 import { EMPTY_MAP_SCENE, useMap, useMapScene, type MapCamera, type MapRest, type MapScene } from "../../map/mapScene.ts";
@@ -18,14 +19,6 @@ import { splitLabel } from "../routeText.ts";
 import { buildMoveCamera, isSamePlace } from "./reportMap.ts";
 import { ReportStepHead } from "./ReportStepHead.tsx";
 import { countSteps, findOpenStep, findStepNumber, REPORT_HEADING_ID, REPORT_PATHS, SEARCH_TEXT_MAX_LENGTH } from "./reportSteps.ts";
-
-type LocationState = "idle" | "waiting" | "refused" | "failed" | "outside";
-
-const LOCATION_TEXTS: Record<Exclude<LocationState, "idle" | "waiting">, string> = {
-  refused: "plan.location_refused",
-  failed: "plan.location_failed",
-  outside: "plan.outside",
-};
 
 type SearchState = { kind: "idle" } | { kind: "searching" } | { kind: "results"; matches: AddressMatch[] } | { kind: "none" } | { kind: "invalid" } | { kind: "refused"; textKey: string };
 
@@ -222,26 +215,7 @@ export function ReportPlaceStep() {
   /**
    * Reads the location of the device in the browser and moves the map there. The location goes to no request.
    */
-  const readLocation = () => {
-    if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
-      setLocation("failed");
-      return;
-    }
-    setLocation("waiting");
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const point = { lat: position.coords.latitude, lon: position.coords.longitude };
-        if (!isInsideKrakow(point)) {
-          setLocation("outside");
-          return;
-        }
-        setLocation("idle");
-        moveTo(point, null);
-      },
-      (failure) => setLocation(failure.code === failure.PERMISSION_DENIED ? "refused" : "failed"),
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
-    );
-  };
+  const readLocation = () => readDeviceLocation((point) => moveTo(point, null), setLocation);
 
   /**
    * Sets the point under the mark as the place of the report and opens the details.

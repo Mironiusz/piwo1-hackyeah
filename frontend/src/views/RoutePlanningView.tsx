@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router";
 
-import { isInsideKrakow } from "../map/krakowBounds.ts";
+import { LOCATION_TEXTS, readDeviceLocation, type LocationState } from "../map/deviceLocation.ts";
 import { EMPTY_MAP_SCENE, useMapScene, type MapScene } from "../map/mapScene.ts";
 import { Button } from "../parts/Button.tsx";
 import { Note } from "../parts/Note.tsx";
@@ -11,14 +11,6 @@ import { ACTIONS_ONE, HINT, PANEL_TITLE } from "../parts/styles.ts";
 import { useNeeds } from "../state/needs.tsx";
 import { usePlannedRoute, type RouteEnd, type RouteEndName } from "../state/plannedRoute.tsx";
 import { buildEndMarkers, buildEndsCamera, nameRouteEnd } from "./routeText.ts";
-
-type LocationState = "idle" | "waiting" | "refused" | "failed" | "outside";
-
-const LOCATION_TEXTS: Record<Exclude<LocationState, "idle" | "waiting">, string> = {
-  refused: "plan.location_refused",
-  failed: "plan.location_failed",
-  outside: "plan.outside",
-};
 
 interface EndRowProps {
   name: RouteEndName;
@@ -108,26 +100,7 @@ export function RoutePlanningView() {
   );
   useMapScene(scene);
 
-  const readLocation = () => {
-    if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
-      setLocation("failed");
-      return;
-    }
-    setLocation("waiting");
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const point = { lat: position.coords.latitude, lon: position.coords.longitude };
-        if (!isInsideKrakow(point)) {
-          setLocation("outside");
-          return;
-        }
-        setEnd("start", { point, kind: "location", label: null });
-        setLocation("idle");
-      },
-      (failure) => setLocation(failure.code === failure.PERMISSION_DENIED ? "refused" : "failed"),
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
-    );
-  };
+  const readLocation = () => readDeviceLocation((point) => setEnd("start", { point, kind: "location", label: null }), setLocation);
 
   const submit = async () => {
     if (await plan()) {

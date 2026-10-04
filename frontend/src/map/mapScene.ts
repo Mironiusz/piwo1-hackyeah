@@ -74,12 +74,32 @@ export const EMPTY_MAP_SCENE: MapScene = {
   onMarkerPress: null,
 };
 
+/**
+ * The heights in pixels between which a person can drag the map, and its height at this moment.
+ */
+export interface MapSpan {
+  height: number;
+  min: number;
+  max: number;
+}
+
+/**
+ * The way to change the height of the map by hand: it reads the span of the map, sets a new height inside it,
+ * and calls a listener with the span once at the start and every time the size of the map changes, until the returned function stops it.
+ */
+export interface MapResize {
+  readSpan: () => MapSpan | null;
+  setHeight: (height: number) => void;
+  watchSpan: (listener: (span: MapSpan) => void) => () => void;
+}
+
 export interface MapSceneContextValue {
   setScene: (scene: MapScene) => void;
   rest: MapRest | null;
   readCenter: () => Point | null;
   hasFailed: boolean;
   topSlot: HTMLElement | null;
+  resize: MapResize | null;
 }
 
 export const MapSceneContext = createContext<MapSceneContextValue | null>(null);

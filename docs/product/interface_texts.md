@@ -195,6 +195,9 @@ The names of the two languages are never translated: `Polski` and `English`. The
 - `plan.location_failed`
   - PL: Nie udało się ustalić Twojej lokalizacji. Wpisz adres albo wskaż punkt na mapie.
   - EN: We could not find your location. Enter an address or pick a point on the map.
+- `plan.location_insecure`, when the page has no secure connection
+  - PL: Przeglądarka podaje lokalizację tylko stronie z bezpiecznym połączeniem, a ta strona go nie ma. Wpisz adres albo wskaż punkt na mapie.
+  - EN: Your browser gives the location only to a page with a secure connection, and this page has none. Enter an address or pick a point on the map.
 - `plan.pick_point`
   - PL: Przesuń mapę, aż znacznik na środku wskaże to miejsce. Na klawiaturze przesuwasz mapę strzałkami.
   - EN: Move the map until the marker in the middle points at the place. On a keyboard you move the map with the arrow keys.
@@ -661,6 +664,10 @@ The texts below did not stand in the mocks. They were written by the agents that
 | `legend.overruled`           | zgłoszenie sprzeczne z danymi mapy                                                                                                  | report the map data contradict                                                                                     |
 | `map.zoom_in`                | Przybliż mapę                                                                                                                       | Zoom the map in                                                                                                    |
 | `map.zoom_out`               | Oddal mapę                                                                                                                          | Zoom the map out                                                                                                   |
+| `map.locate`                 | Pokaż moją lokalizację na mapie                                                                                                     | Show my location on the map                                                                                        |
+| `map.locate_unavailable`     | Lokalizacja jest niedostępna                                                                                                        | Location is not available                                                                                          |
+| `map.locate_insecure`        | Lokalizacja jest niedostępna, bo ta strona nie ma bezpiecznego połączenia                                                           | Location is not available, because this page has no secure connection                                              |
+| `map.resize`                 | Wysokość mapy                                                                                                                       | Height of the map                                                                                                  |
 | `moderation.hide.done`       | Ukryto: {title}. Możesz to przywrócić na liście ukrytych.                                                                           | Hidden: {title}. You can restore it in the list of hidden content.                                                 |
 | `moderation.restore.done`    | Przywrócono: {title}. Jest znowu widoczne dla wszystkich.                                                                           | Restored: {title}. Everyone can see it again.                                                                      |
 | `needs.empty`                | Bez żadnej zaznaczonej pozycji mapa pokaże wszystkie fakty.                                                                         | With no item marked the map shows every fact.                                                                      |

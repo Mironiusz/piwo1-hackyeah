@@ -1,4 +1,5 @@
-import { addProtocol, AttributionControl, Map as MapLibreMap, Marker, NavigationControl, setWorkerUrl, type LayerSpecification, type StyleSpecification } from "maplibre-gl";
+import type { TFunction } from "i18next";
+import { addProtocol, AttributionControl, GeolocateControl, Map as MapLibreMap, Marker, NavigationControl, setWorkerUrl, type LayerSpecification, type StyleSpecification } from "maplibre-gl";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import { Protocol } from "pmtiles";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -20,6 +21,7 @@ const BOUNDS_MARGIN_DEGREES = 0.05;
 const CIRCLE_STEPS = 48;
 const METRES_PER_DEGREE = 111_320;
 const SELECTED_MARKER_CLASS = "z-[2]";
+const LOCATE_BUTTON_SELECTOR = ".maplibregl-ctrl-geolocate";
 
 const EMPTY_STYLE: StyleSpecification = { version: 8, sources: {}, layers: [] };
 
@@ -93,6 +95,14 @@ function composeStyle(base: StyleSpecification, zones: MapZone[], route: Route |
   const firstLabel = base.layers.findIndex((layer) => layer.type === "symbol");
   const at = firstLabel === -1 ? base.layers.length : firstLabel;
   return { ...base, sources, layers: [...base.layers.slice(0, at), ...overlays, ...base.layers.slice(at)] };
+}
+
+/**
+ * Returns the names of the button that shows the location of the device: while it can be used, and while it cannot,
+ * which on a page without a secure connection says so.
+ */
+function nameLocateButton(t: TFunction): { usable: string; unavailable: string } {
+  return { usable: t("map.locate"), unavailable: window.isSecureContext ? t("map.locate_unavailable") : t("map.locate_insecure") };
 }
 
 /**
@@ -175,6 +185,9 @@ interface MapViewProps {
  * When the size of the map changes, the map goes back to the place the view asked for, unless the person has moved it since:
  * a move that was still running would otherwise end at the center of the old size.
  * It tells that the map failed when the map cannot be created, when its style does not load and when the tile archive cannot be read.
+ * A button of the map shows the location of the device as a dot and keeps the map on it while the person does not move the map.
+ * The location stays in the browser and goes to no request. A browser gives it only to a page with a secure connection,
+ * so on a page without one the button is disabled and its name says why.
  * An error of one tile or of a font is passed over, because the rest of the map is still drawn.
  */
 export function MapView({ label, markers, zones, route, isRouteAssessed, isPicking, hasSampleData, camera, onReady, onMarkerPress, onRest, onFail }: MapViewProps) {
@@ -186,10 +199,11 @@ export function MapView({ label, markers, zones, route, isRouteAssessed, isPicki
   const drawnMarkers = useRef(new Map<string, Marker>());
   const appliedCamera = useRef<string | null>(null);
   const liveCamera = useRef<MapCamera | null>(null);
-  const latest = useRef({ onReady, onRest, onFail });
+  const locateControl = useRef<GeolocateControl | null>(null);
+  const latest = useRef({ onReady, onRest, onFail, t });
 
   useEffect(() => {
-    latest.current = { onReady, onRest, onFail };
+    latest.current = { onReady, onRest, onFail, t };
   });
 
   const markerIds = new Set(markers.map((marker) => marker.id));
@@ -209,6 +223,7 @@ export function MapView({ label, markers, zones, route, isRouteAssessed, isPicki
     let created: MapLibreMap;
     try {
       prepareMapLibrary();
+      const locateNames = nameLocateButton(latest.current.t);
       created = new MapLibreMap({
         container: element,
         style: EMPTY_STYLE,
@@ -224,6 +239,7 @@ export function MapView({ label, markers, zones, route, isRouteAssessed, isPicki
         dragRotate: false,
         pitchWithRotate: false,
         touchPitch: false,
+        locale: { "GeolocateControl.FindMyLocation": locateNames.usable, "GeolocateControl.LocationNotAvailable": locateNames.unavailable },
       });
     } catch {
       latest.current.onFail();
@@ -233,6 +249,12 @@ export function MapView({ label, markers, zones, route, isRouteAssessed, isPicki
     created.keyboard.disableRotation();
     created.addControl(new AttributionControl({ compact: false }), "bottom-right");
     created.addControl(new NavigationControl({ showCompass: false }), "top-right");
+    const locate = new GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: true, fitBoundsOptions: { maxZoom: 17 } });
+    locate.on("trackuserlocationstart", () => {
+      liveCamera.current = null;
+    });
+    created.addControl(locate, "top-right");
+    locateControl.current = locate;
     latest.current.onReady({
       readCenter: () => {
         const center = created.getCenter();
@@ -241,6 +263,7 @@ export function MapView({ label, markers, zones, route, isRouteAssessed, isPicki
     });
     setMap(created);
     return () => {
+      locateControl.current = null;
       latest.current.onReady(null);
       drawn.clear();
       created.remove();
@@ -382,6 +405,22 @@ export function MapView({ label, markers, zones, route, isRouteAssessed, isPicki
       button?.setAttribute("aria-label", name);
       button?.setAttribute("title", name);
     }
+    const locateNames = nameLocateButton(t);
+    const nameLocate = () => {
+      const button = map.getContainer().querySelector<HTMLButtonElement>(LOCATE_BUTTON_SELECTOR);
+      if (button === null) {
+        return;
+      }
+      const name = button.disabled ? locateNames.unavailable : locateNames.usable;
+      button.setAttribute("aria-label", name);
+      button.setAttribute("title", name);
+    };
+    nameLocate();
+    const locate = locateControl.current;
+    locate?.on("error", nameLocate);
+    return () => {
+      locate?.off("error", nameLocate);
+    };
   }, [map, label, t, language]);
 
   return (
