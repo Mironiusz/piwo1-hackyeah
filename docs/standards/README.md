@@ -125,7 +125,6 @@ Decisions recorded on 2026-10-03, when the project was set up from the template:
 Decisions recorded on 2026-10-03 by `plans_finished/frontend_stack/`:
 
 - Frontend code is held to the workflow core and to `standard_frontend.md` only. A full frontend profile mirroring the Python one was decided against, so the frontend has no standard for the names of its files and for its split into directories. Condition for writing it: the split starts raising questions in review.
-- The four gates of `standard_frontend.md` do not run until the initiative `frontend_app` of `MVP.md` writes the first frontend code and sets them up. Until then the standard is checked by review alone.
 
 Decision recorded on 2026-10-03, outside an initiative, on the request of the user to stop the gates failing on the `impeccable` skill:
 

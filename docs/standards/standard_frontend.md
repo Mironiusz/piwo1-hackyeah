@@ -32,17 +32,21 @@ The frontend is a single-page application written in TypeScript with React, buil
 
 TypeScript stays on the version of the template, not on the newest major version. The template is the combination its authors keep working together.
 
-Nothing is rendered on the server. The page, its scripts and styles, the fonts, the map tiles, the map fonts and sprites and the programming interface are all served from one host, so the frontend calls the interface on its own origin. No package of the frontend is loaded from a content delivery network at run time: everything is installed with npm and built into the static files.
+Nothing is rendered on the server. The page, its scripts and styles, the fonts, the map tiles, the map style and fonts and the programming interface are all served from one host, so the frontend calls the interface on its own origin. No package of the frontend is loaded from a content delivery network at run time: everything is installed with npm and built into the static files.
 
 The map is drawn by MapLibre GL JS, used directly from one React component, without a wrapper library. The app has one map, and a wrapper would add a dependency between React and the map that no requirement asks for.
 
 The map of Kraków is one archive of vector tiles in the PMTiles format, cut out of the daily Protomaps build of OpenStreetMap data for the bounding box of the administrative boundary of Kraków, zoom 0 to 15. The archive lies on the server of the project next to the frontend files, and the browser reads it in byte ranges through the protocol of the `pmtiles` library. It is not committed to the repository: it is a binary file of tens of megabytes that changes with every build.
 
-The style of the base map comes from the Protomaps style package, with the colors set to the design direction and the labels in the language of the interface. The fonts and sprites the style needs are copies served by the project, and the style never points at an outside host. Whether these copies are committed or fetched by a script is decided by the initiative `map_tiles` of `MVP.md`, which sets up the map.
+The style of the base map comes from the Protomaps style package, with the colors set to the design direction and the labels in the language of the interface. A script generates it into two committed files, one for each language of the interface, and the application loads the one of the current language. The fonts the style needs are nine committed files, the Latin ranges of three weights of Noto Sans, and the style uses no sprite. No address of a file the browser loads names an outside host. Decided on 2026-10-04 by the initiative `map_tiles` of `MVP.md` (`plans/map_tiles/MAP_TILES_PLAN.md` D-3, D-4, D-6); the instructions are in `docs/setup/MAP_SETUP.md`.
 
 The attribution control of the map is always open, never collapsed, and shows the OpenStreetMap attribution stored in the archive. The interface shows no separate date for the base map, because a second date on the screen would present the base map as a source of facts, which it is not. The key of the build the archive was cut from is written down next to the file when it is produced.
 
 The two typefaces of the design direction are installed as npm packages and built into the static files, never loaded from an outside host.
+
+Three more packages were decided on 2026-10-04 by the initiative `frontend_app` of `MVP.md` (`plans/frontend_app/FRONTEND_APP_PLAN.md`, D-3, D-6, D-7 and D-9). React Router handles the addresses of the views, which are paths, and the back button of the browser, without code of the project to test. i18next with react-i18next reads the two dictionaries and picks the plural form of a text with a number, three forms in Polish and two in English. Tailwind CSS, through its Vite plugin, writes the styles at build time from the tokens of the design direction and adds nothing the browser loads from another host. The first two are run time dependencies; Tailwind CSS is a development dependency.
+
+During development the frontend runs against a temporary mock of the service, `frontend/mock-server/server.mjs`, a Node.js program without a dependency that answers the operations of `docs/product/api_contract.md` behind the proxy of the development server. The build contains no proxy and no file of the mock, so a deployed frontend runs only on the service (D-4 of the same plan).
 
 The rejected variants, the facts behind each choice and the command that cuts the tile archive are in `plans_finished/frontend_stack/FRONTEND_STACK_PLAN.md`, D-1 - D-7 and D-9. A new run time dependency is added only with its reason stated in the merge request.
 
@@ -50,7 +54,7 @@ The rejected variants, the facts behind each choice and the command that cuts th
 
 Frontend code lives in `frontend/` in the repository root, with its own `package.json` and lock file. The whole frontend application is one code unit in the sense of `standard_documentation.md`, and its durable memory is the group `agent_docs/memory/frontend/`.
 
-Its pair of documents is `frontend/FRONTEND.md` and `frontend/FRONTEND_ALGORITHM.md`, next to the code. The pair is created by the initiative `frontend_app` of `MVP.md`, with the first screen applying a display rule of the product specification. Until then the condition stands in `agent_docs/memory/frontend/_shared.md`, as `standard_documentation.md` asks of a unit that has no domain rule to describe yet.
+Its pair of documents is `frontend/FRONTEND.md` and `frontend/FRONTEND_ALGORITHM.md`, next to the code. The pair was created on 2026-10-04 by the initiative `frontend_app` of `MVP.md`, with the route result, the first screen applying a display rule of the product specification.
 
 ## Rules that come from the product
 
@@ -89,7 +93,7 @@ Frontend code has four automatic gates. The first three run from `frontend/`:
 - the tests, `npx vitest run`,
 - the forbidden characters check, `pytest tests/architecture/test_prose_style.py`, extended to the files `.ts`, `.tsx`, `.css`, `.html` and `.json` under `frontend/`.
 
-The gates, their `make` targets and the extension of the test are set up by the initiative `frontend_app` of `MVP.md`, which writes the first frontend code. Until then this standard is checked by review alone.
+The gates have the `make` targets `frontend-typecheck`, `frontend-lint`, `frontend-test` and `frontend-format-check`, joined by `frontend-check`, which is part of `check`. They were set up on 2026-10-04 by the initiative `frontend_app` of `MVP.md`, together with the extension of the forbidden characters check. On a machine without `make` the same commands run as `npm --prefix frontend run typecheck`, `lint` and `test`.
 
 The type check and the linter are those of the Vite template. The lint does not use type information, so a rule that needs it is not checked by the lint; that is why the type check is a gate of its own.
 
@@ -110,5 +114,5 @@ The names of frontend files and the split of the frontend into directories. A fu
 - Has the change gone through prettier with the configuration of the repository?
 - Is the change free of the forbidden characters, the texts of the interface included?
 - Does logic outside components have unit tests that do not use the network?
-- Once the gates are set up: do the type check, the lint, the tests and the forbidden characters check pass?
+- Do the type check, the lint, the tests and the forbidden characters check pass?
 - Is the tile archive kept out of the repository?
