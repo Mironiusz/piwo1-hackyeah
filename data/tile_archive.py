@@ -7,6 +7,7 @@ import tempfile
 from pathlib import Path
 
 from common_time import Deadline, DeadlineExpiredError, fetch_monotonic_seconds, resolve_remaining_milliseconds
+from config.logging import fetch_logger
 
 TILE_FILE_CHUNK_BYTES = 1048576
 TILE_TEMPORARY_PREFIX = ".tile-archive-"
@@ -51,10 +52,11 @@ def apply_tile_file_copy(source: Path, directory: Path, deadline: Deadline) -> P
     Copy the source into a new temporary file of the directory chunk by chunk, sync it to disk and return its path.
 
     The file is made readable by everyone and writable by its owner, because the proxy that serves it may run as another
-    user and the archive is public. The run deadline is checked before each chunk. When the copy fails or the deadline runs out, the partial file is
-    removed first; a failed copy then raises TileFileError and an exhausted deadline passes on as DeadlineExpiredError.
-    DeadlineExpiredError is a TimeoutError and so an OSError, which is why it is handled before the OSError of a failed
-    copy.
+    user and the archive is public. The run deadline is checked before each chunk. When the copy fails or the deadline
+    runs out, the partial file is removed first, and a removal that fails too is only logged, so it never hides the
+    original failure; a failed copy then raises TileFileError and an exhausted deadline passes on as
+    DeadlineExpiredError. DeadlineExpiredError is a TimeoutError and so an OSError, which is why it is told apart from
+    the OSError of a failed copy.
     """
     temporary: Path | None = None
     try:
@@ -72,7 +74,7 @@ def apply_tile_file_copy(source: Path, directory: Path, deadline: Deadline) -> P
             os.fsync(writer.fileno())
     except (DeadlineExpiredError, OSError) as failure:
         if temporary is not None:
-            apply_tile_file_removal(temporary)
+            apply_tile_temporary_cleanup(temporary)
         if isinstance(failure, DeadlineExpiredError):
             raise
         raise TileFileError("Cannot copy tile archive file") from failure
@@ -99,6 +101,14 @@ def apply_tile_file_removal(path: Path) -> None:
         path.unlink(missing_ok=True)
     except OSError as error:
         raise TileFileError("Cannot remove tile archive file") from error
+
+
+def apply_tile_temporary_cleanup(temporary: Path) -> None:
+    """Remove a temporary copy that was not placed, leaving it to the leftover removal of the next run when it cannot be removed now."""
+    try:
+        apply_tile_file_removal(temporary)
+    except TileFileError:
+        fetch_logger(__name__).warning("Tile archive temporary file was left for the next run", exc_info=True)
 
 
 def apply_tile_leftover_removal(directory: Path) -> int:

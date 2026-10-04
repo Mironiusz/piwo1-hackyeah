@@ -27,8 +27,9 @@ def sample_prerequisites() -> tuple[SampleNetworkPrerequisites, ...]:
 
 
 @pytest.fixture
-def sample_insert_rows(runtime_settings) -> tuple[tuple[SampleFactRow, ...], tuple[SampleVoteRow, ...]]:
-    """Builds the fact and vote rows of a first loading on an invented winter morning."""
+def sample_insert_rows(request: pytest.FixtureRequest) -> tuple[tuple[SampleFactRow, ...], tuple[SampleVoteRow, ...]]:
+    """Builds the fact and vote rows of a first loading on an invented winter morning, keeping the invented settings loaded for the test."""
+    request.getfixturevalue("runtime_settings")
     return build_sample_insert_rows(SAMPLE_DEFINITIONS, SAMPLE_LOADING_AT)
 
 

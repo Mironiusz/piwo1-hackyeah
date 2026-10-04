@@ -263,7 +263,7 @@ The fixed identifiers are -1 to -8 in definition order. A primary-key conflict l
 
 ## Tile archive step
 
-The step puts the recorded map tile archive under the served name `krakow.pmtiles` of the directory the proxy serves, taking it from the source place a person put it in (`plans/tile_loading/TILE_LOADING_PLAN.md` D-7). It runs by hand, inside the common loading program or on its own, never on a schedule.
+The step puts the recorded map tile archive under the served name `krakow.pmtiles` of the directory the proxy serves, taking it from the source place a person put it in (`plans_finished/tile_loading/TILE_LOADING_PLAN.md` D-7). It runs by hand, inside the common loading program or on its own, never on a schedule.
 
 ```text
 admission under the exclusion of the importer, or skipped (standalone command only)
@@ -276,6 +276,6 @@ admission under the exclusion of the importer, or skipped (standalone command on
 -> loaded
 ```
 
-Repeat: when the file under the served name already has the recorded SHA-256 value, the run writes nothing and reports `unchanged`, which completes the tile effect; the source place is not needed then, so a retry after the source was removed still succeeds. When the served name is missing, holds a file of another value or is a link, the run loads the archive and replaces what was there, logging an information line when it replaces a file of another value. A link at the source counts as no source file.
+Repeat: when the file under the served name already has the recorded SHA-256 value, the run writes nothing under the served name and reports `unchanged`, which completes the tile effect; the source place is not needed then, so a retry after the source was removed still succeeds. When the served name is missing, holds a file of another value or is a link, the run loads the archive and replaces what was there, logging an information line when it replaces a file of another value. A link at the source counts as no source file.
 
 Every failure ends the run with its reason and leaves the served name as it was, because the archive reaches it only through the one replacement after both checks: a reader of the served name finds the earlier file or the complete checked archive, never part of a file. The one exception is a failed sync of the directory on Linux after the replacement, which ends as `copy_failed` with the complete checked archive already under the served name. A temporary copy that is not placed is removed; when even that fails, a warning is logged and the next run removes it. A copy that cannot be read back ends as `copy_failed`, a copy of another value as `copy_mismatch`. The placed file is readable by everyone and writable by its owner, because the proxy may read it as another user and the archive is public.

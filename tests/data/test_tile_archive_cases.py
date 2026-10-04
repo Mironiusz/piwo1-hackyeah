@@ -1,6 +1,7 @@
 """Check the file operations of the tile step on a temporary directory: the chunked digest, the copy into a temporary file, the placement and the removal of leftovers."""
 
 import hashlib
+import logging
 import stat
 import sys
 from pathlib import Path
@@ -111,6 +112,25 @@ def test_a_deadline_expiring_during_the_copy_leaves_no_temporary_file(tmp_path, 
     with pytest.raises(DeadlineExpiredError):
         apply_tile_file_copy(source, served, EXPIRED_AFTER_FIRST_CHUNK)
     assert fetch_temporary_files(served) == []
+
+
+def test_a_partial_file_that_cannot_be_removed_does_not_hide_an_expired_deadline(tmp_path, monkeypatch, caplog):
+    """Keep the expired deadline as the failure of the copy when its partial file cannot be removed, and log that the file was left for the next run."""
+    source = tmp_path / "krakow.pmtiles"
+    source.write_bytes(INVENTED_ARCHIVE)
+    served = tmp_path / "served"
+    served.mkdir()
+    apply_expiry_after_first_chunk(monkeypatch)
+
+    def apply_refused_removal(path):
+        raise TileFileError("Cannot remove tile archive file")
+
+    monkeypatch.setattr("data.tile_archive.apply_tile_file_removal", apply_refused_removal)
+    application = logging.getLogger("piwo1-hackyeah")
+    monkeypatch.setattr(application, "handlers", [caplog.handler])
+    with pytest.raises(DeadlineExpiredError):
+        apply_tile_file_copy(source, served, EXPIRED_AFTER_FIRST_CHUNK)
+    assert [record.getMessage() for record in caplog.records] == ["Tile archive temporary file was left for the next run"]
 
 
 def test_a_copy_of_a_missing_source_fails_and_leaves_no_temporary_file(tmp_path):
