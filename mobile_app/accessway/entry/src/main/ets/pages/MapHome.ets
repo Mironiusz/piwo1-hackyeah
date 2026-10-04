@@ -12,7 +12,7 @@ import { Nav, AppScreen } from './Nav';
 const MAP_H: number = 250;
 const HALF_W_PX: number = 190;
 
-/** V-3: mapa faktów. Wyszukiwanie celu, przełącznik "Z moich potrzeb / Wszystkie" i fakty w widocznym miejscu. */
+/** V-3: fact map. Destination search, "Z moich potrzeb / Wszystkie" (From my needs / All) toggle, facts in view. */
 @Component
 export struct MapHome {
   nav: Nav = new Nav();
@@ -33,7 +33,7 @@ export struct MapHome {
     return factsInView(all, appModel.mapLat, appModel.mapLon, halfLat, halfLon);
   }
 
-  /** Z serwerem fakty zależą od widocznego miejsca, więc po przesunięciu mapy pobieramy je od nowa. */
+  /** With a server, facts depend on the visible area, so after the map is moved we fetch them again. */
   private async reload(): Promise<void> {
     if (appModel.usesApi()) {
       try {

@@ -4,7 +4,7 @@ from datetime import UTC, date, datetime, timedelta, timezone
 
 import pytest
 
-from common_time import Deadline, DeadlineExpiredError, build_business_day, build_deadline, build_publication_deadline, fetch_utc_now, resolve_remaining_milliseconds
+from common_time import Deadline, DeadlineExpiredError, build_business_datetime, build_business_day, build_deadline, build_publication_deadline, fetch_utc_now, resolve_remaining_milliseconds
 from tests.common_runtime_settings import apply_invented_runtime_settings
 
 
@@ -58,3 +58,19 @@ def test_business_day_refuses_a_naive_instant() -> None:
     """Refuse a value without a zone offset instead of guessing its zone."""
     with pytest.raises(ValueError):
         build_business_day(datetime(2026, 10, 3, 23, 30))
+
+
+@pytest.mark.usefixtures("runtime_settings")
+@pytest.mark.parametrize("instant, offset_minutes", [(datetime(2026, 10, 25, 0, 59, tzinfo=UTC), 120), (datetime(2026, 10, 25, 1, 0, tzinfo=UTC), 60)])
+def test_business_datetime_keeps_the_instant_with_the_offset_in_force_at_it(instant: datetime, offset_minutes: int) -> None:
+    """Give the last minute of summer time with +02:00 and the first minute of winter time with +01:00, for the same instants."""
+    local = build_business_datetime(instant)
+    assert local.astimezone(UTC) == instant
+    assert local.utcoffset() == timedelta(minutes=offset_minutes)
+
+
+@pytest.mark.usefixtures("runtime_settings")
+def test_business_datetime_refuses_a_naive_instant() -> None:
+    """Refuse a value without a zone offset instead of guessing its zone."""
+    with pytest.raises(ValueError):
+        build_business_datetime(datetime(2026, 10, 3, 23, 30))

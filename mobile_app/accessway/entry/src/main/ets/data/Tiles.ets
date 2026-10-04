@@ -1,47 +1,12 @@
 import { http } from '@kit.NetworkKit';
-
-/** Podpis ulicy z kafelka: nazwa i jej linie w punktach kafelka. */
-export interface TileLabel {
-  name: string;
-  geom: number[][];
-}
-
-/** Geometria wielokątów jednej klasy rysowania, każda część to płaska lista [x, y, ...] w punktach kafelka. */
-export interface TileFills {
-  green: number[][];
-  water: number[][];
-  building: number[][];
-}
-
-/** Linie ulic według rangi, w punktach kafelka. */
-export interface TileLines {
-  path: number[][];
-  minor: number[][];
-  major: number[][];
-}
-
-/**
- * Kafelek gotowy do rysowania (format `render-v2` serwera): geometria uproszczona do około jednego punktu ekranu,
- * pogrupowana według klasy i zapisana w całkowitych punktach kafelka 0..extent. Na ekran przelicza ją jedna
- * skala i przesunięcie na kafelek.
- */
-export interface TileData {
-  z: number;
-  x: number;
-  y: number;
-  extent: number;
-  fills: TileFills;
-  lines: TileLines;
-  labels: TileLabel[];
-}
-
-interface TileInfo {
-  min_zoom: number;
-  max_zoom: number;
-  bounds: number[];
-  attribution: string;
-  build: string;
-}
+import { taskpool } from '@kit.ArkTS';
+import { gunzip } from './Inflate';
+import {
+  COMPRESSION_GZIP, COMPRESSION_NONE, findEntry, parseDirectory, parseHeader, PmDirectory, PmEntry, PmHeader,
+  TILE_TYPE_MVT, zxyToTileId
+} from './Pmtiles';
+import { emptyTile, TileData } from './TileTypes';
+import { decodeTileTask } from './TileWorker';
 
 const MAX_CACHE: number = 96;
 const MAX_PARALLEL: number = 4;
@@ -49,6 +14,10 @@ const RETRY_MS: number = 8000;
 const NOTIFY_MS: number = 90;
 const TILE_PX: number = 512;
 const EARTH_M: number = 40075016.686;
+const FIRST_FETCH: number = 16384;
+const INIT_TIMEOUT_MS: number = 3000;
+const TILE_TIMEOUT_MS: number = 10000;
+const MAX_LEAF_DEPTH: number = 3;
 
 export function lonToTileX(lon: number, z: number): number {
   return Math.floor((lon + 180) / 360 * Math.pow(2, z));
@@ -59,40 +28,36 @@ export function latToTileY(lat: number, z: number): number {
   return Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * Math.pow(2, z));
 }
 
-/** Długość geograficzna lewej krawędzi kolumny kafelków x. */
+/** Longitude of the left edge of tile column x. */
 export function tileXToLon(x: number, z: number): number {
   return x / Math.pow(2, z) * 360 - 180;
 }
 
-/** Szerokość geograficzna górnej krawędzi wiersza kafelków y. */
+/** Latitude of the top edge of tile row y. */
 export function tileYToLat(y: number, z: number): number {
   const n = Math.PI - 2 * Math.PI * y / Math.pow(2, z);
   return Math.atan(Math.sinh(n)) * 180 / Math.PI;
 }
 
-function emptyTile(z: number, x: number, y: number): TileData {
-  return {
-    z: z, x: x, y: y, extent: 512,
-    fills: { green: [], water: [], building: [] },
-    lines: { path: [], minor: [], major: [] },
-    labels: []
-  };
-}
-
 /**
- * Kafelki mapy z serwera (`tools/mock_backend/server.py`, później serwer projektu): informacje o archiwum,
- * pobieranie kafelków JSON w tle, pamięć ostatnich kafelków i powiadomienie mapy, gdy przyjdzie nowy.
- * Bez adresu albo gdy serwer nie odpowiada, mapa rysuje podkład z danych w aplikacji.
+ * The base map of Kraków from the one PMTiles archive of the project, read in byte ranges like the web app reads
+ * it (`plans_finished/frontend_stack/FRONTEND_STACK_PLAN.md` D-3 and D-5). It reads the header and the root
+ * directory once, then each tile the map asks for: leaf directory if needed, the tile bytes, and decoding on a
+ * worker thread. Decoded tiles stay in memory and the map is told when a batch has arrived. Without an address,
+ * or when the archive does not answer, the map draws the sample base map bundled in the app.
  */
 export class TileStore {
-  baseUrl: string = '';
+  archiveUrl: string = '';
   ready: boolean = false;
   minZoom: number = 0;
   maxZoom: number = 15;
-  attribution: string = '';
-  build: string = '';
+  /** Grows with every new tile; the map compares it to know when to redraw its base map. */
+  version: number = 0;
   onChange: () => void = () => {
   };
+  private header: PmHeader | null = null;
+  private root: PmDirectory | null = null;
+  private leaves: Map<number, PmDirectory> = new Map<number, PmDirectory>();
   private cache: Map<string, TileData> = new Map<string, TileData>();
   private order: string[] = [];
   private pending: Set<string> = new Set<string>();
@@ -100,50 +65,68 @@ export class TileStore {
   private queue: string[] = [];
   private running: number = 0;
   private notifyTimer: number = -1;
-  /** Rośnie przy każdym nowym kafelku; mapa porównuje go, żeby wiedzieć, kiedy odświeżyć podkład. */
-  version: number = 0;
 
+  /** Sets the full address of the archive, for example `http://10.0.2.2:8090/krakow.pmtiles`. */
   configure(url: string): void {
-    let u = url.trim();
-    while (u.endsWith('/')) {
-      u = u.substring(0, u.length - 1);
-    }
-    this.baseUrl = u;
+    this.archiveUrl = url.trim();
   }
 
-  private async getText(path: string, timeoutMs: number): Promise<string> {
+  /** Reads bytes [offset, offset + length) of the archive with one range request. */
+  private async range(offset: number, length: number, timeoutMs: number): Promise<Uint8Array> {
     const req = http.createHttp();
     try {
-      const res = await req.request(`${this.baseUrl}${path}`, {
+      const res = await req.request(this.archiveUrl, {
         method: http.RequestMethod.GET,
-        expectDataType: http.HttpDataType.STRING,
+        header: { 'Range': `bytes=${offset}-${offset + length - 1}` },
+        expectDataType: http.HttpDataType.ARRAY_BUFFER,
         connectTimeout: timeoutMs,
         readTimeout: timeoutMs
       });
-      if (res.responseCode === 404) {
-        return '';
+      const body = new Uint8Array(res.result as ArrayBuffer);
+      if (res.responseCode === 206) {
+        return body;
       }
-      if (res.responseCode !== 200) {
-        throw new Error(`HTTP ${res.responseCode}`);
+      if (res.responseCode === 200 && body.length >= offset + length) {
+        return body.subarray(offset, offset + length);
       }
-      return res.result as string;
+      throw new Error(`HTTP ${res.responseCode}`);
     } finally {
       req.destroy();
     }
   }
 
-  /** Pyta serwer o archiwum; zwraca false, gdy adresu nie ma albo serwer nie odpowiada w 3 sekundy. */
+  private unpack(bytes: Uint8Array, compression: number): Uint8Array {
+    if (compression === COMPRESSION_GZIP) {
+      return gunzip(bytes);
+    }
+    if (compression === COMPRESSION_NONE || compression === 0) {
+      return bytes;
+    }
+    throw new Error(`pmtiles: compression ${compression} is not supported`);
+  }
+
+  /** Reads the header and the root directory; false when there is no address or the archive does not answer in time. */
   async init(): Promise<boolean> {
     this.ready = false;
-    if (this.baseUrl.length === 0) {
+    this.header = null;
+    this.root = null;
+    this.leaves.clear();
+    if (this.archiveUrl.length === 0) {
       return false;
     }
     try {
-      const info = JSON.parse(await this.getText('/tiles/info.json', 3000)) as TileInfo;
-      this.minZoom = info.min_zoom;
-      this.maxZoom = info.max_zoom;
-      this.attribution = info.attribution;
-      this.build = info.build;
+      const first = await this.range(0, FIRST_FETCH, INIT_TIMEOUT_MS);
+      const h = parseHeader(first);
+      if (h.tileType !== TILE_TYPE_MVT) {
+        throw new Error('pmtiles: the archive does not hold vector tiles');
+      }
+      const rootEnd = h.rootOffset + h.rootLength;
+      const rootRaw = rootEnd <= first.length ? first.subarray(h.rootOffset, rootEnd) :
+        await this.range(h.rootOffset, h.rootLength, INIT_TIMEOUT_MS);
+      this.root = parseDirectory(this.unpack(rootRaw, h.internalCompression));
+      this.header = h;
+      this.minZoom = h.minZoom;
+      this.maxZoom = h.maxZoom;
       this.ready = true;
     } catch (e) {
       this.ready = false;
@@ -152,8 +135,8 @@ export class TileStore {
   }
 
   /**
-   * Poziom kafelków, przy którym kafelek ma na ekranie około 512-1024 punktów, jak w mapie bazowej Protomaps.
-   * Przy oddaleniu oznacza to mniej kafelków i mniej szczegółów do narysowania.
+   * Tile zoom at which one tile is about 512 to 1024 points wide on screen, as the Protomaps basemap is meant
+   * to be shown; zoomed out this means fewer tiles with less detail.
    */
   zoomFor(pxPerM: number, lat: number): number {
     const tileM = TILE_PX / Math.max(pxPerM, 1e-6);
@@ -165,7 +148,7 @@ export class TileStore {
     return this.cache.get(`${z}/${x}/${y}`) ?? null;
   }
 
-  /** Kafelek z pamięci albo null; brakujący trafia do kolejki pobierania. */
+  /** A tile from memory, or null after queueing it for download. */
   want(z: number, x: number, y: number): TileData | null {
     const key = `${z}/${x}/${y}`;
     const hit = this.cache.get(key);
@@ -192,7 +175,7 @@ export class TileStore {
     }
   }
 
-  /** Kilka kafelków przychodzi naraz; mapa przerysowuje się raz na paczkę, a nie po każdym. */
+  /** Several tiles arrive together; the map redraws once per batch, not after each tile. */
   private notifySoon(): void {
     if (this.notifyTimer >= 0) {
       return;
@@ -203,22 +186,63 @@ export class TileStore {
     }, NOTIFY_MS);
   }
 
-  private async fetchTile(key: string): Promise<void> {
-    try {
-      const text = await this.getText(`/tiles/${key}.json`, 10000);
-      const parts = key.split('/');
-      const data: TileData = text.length > 0 ? JSON.parse(text) as TileData :
-        emptyTile(parseInt(parts[0], 10), parseInt(parts[1], 10), parseInt(parts[2], 10));
-      this.cache.set(key, data);
-      this.order.push(key);
-      while (this.order.length > MAX_CACHE) {
-        const old = this.order.shift() as string;
-        this.cache.delete(old);
+  private async leaf(h: PmHeader, e: PmEntry): Promise<PmDirectory> {
+    const at = h.leafOffset + e.offset;
+    const known = this.leaves.get(at);
+    if (known !== undefined) {
+      return known;
+    }
+    const dir = parseDirectory(this.unpack(await this.range(at, e.length, TILE_TIMEOUT_MS), h.internalCompression));
+    this.leaves.set(at, dir);
+    return dir;
+  }
+
+  /** Where the tile lies in the data section, following leaf directories; null when the archive has no such tile. */
+  private async locate(h: PmHeader, root: PmDirectory, tileId: number): Promise<PmEntry | null> {
+    let dir = root;
+    for (let depth = 0; depth <= MAX_LEAF_DEPTH; depth++) {
+      const e = findEntry(dir, tileId);
+      if (e === null || !e.leaf) {
+        return e;
       }
-      this.failedAt.delete(key);
-      this.version++;
-      this.notifySoon();
-    } catch (e) {
+      dir = await this.leaf(h, e);
+    }
+    return null;
+  }
+
+  private store(key: string, data: TileData): void {
+    this.cache.set(key, data);
+    this.order.push(key);
+    while (this.order.length > MAX_CACHE) {
+      const old = this.order.shift() as string;
+      this.cache.delete(old);
+    }
+    this.failedAt.delete(key);
+    this.version++;
+    this.notifySoon();
+  }
+
+  private async fetchTile(key: string): Promise<void> {
+    const h = this.header;
+    const root = this.root;
+    const parts = key.split('/');
+    const z = parseInt(parts[0], 10);
+    const x = parseInt(parts[1], 10);
+    const y = parseInt(parts[2], 10);
+    try {
+      if (h === null || root === null) {
+        throw new Error('pmtiles: archive not open');
+      }
+      const e = await this.locate(h, root, zxyToTileId(z, x, y));
+      if (e === null) {
+        this.store(key, emptyTile(z, x, y));
+        return;
+      }
+      const raw = await this.range(h.dataOffset + e.offset, e.length, TILE_TIMEOUT_MS);
+      const copy = raw.slice().buffer;
+      const data = await taskpool.execute(decodeTileTask, copy, z, x, y) as TileData;
+      this.store(key, data);
+    } catch (err) {
       this.failedAt.set(key, Date.now());
     } finally {
       this.pending.delete(key);

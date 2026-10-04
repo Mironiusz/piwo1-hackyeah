@@ -25,7 +25,7 @@ Verified in the repository and on the remote after `git fetch` at 06:05 on 2026-
 
 - The draft of the scenario, `STAGE7_DEMO_SCENARIO_DRAFT.md`, written at 05:40, with ten open questions Q-1 - Q-10 and ten discrepancies.
 - The service answers no operation of the contract: function `build_app` of `api/app.py` registers no route on `origin/dev` at `9b2b2ef`. `origin/mw-backend-skeleton`, three commits of Mateusz ahead of `origin/dev`, the last at 05:13, is not merged. Checks 4.1, 5.1, 5.2, 6.1 and 6.2, which 7.2 and 7.3 wait for, are not ticked.
-- The web client of `frontend/` was checked only on its mock server (`plans/frontend_followup/FRONTEND_FOLLOWUP_REPORT.md`, section 1).
+- The web client of `frontend/` was checked only on its mock server (`plans_finished/frontend_followup/FRONTEND_FOLLOWUP_REPORT.md`, section 1).
 - The HarmonyOS client `mobile_app/accessway/` runs on bundled sample data through `LocalRepository`, with the sample facts of `entry/src/main/ets/data/DemoSeed.ets`, last changed at 03:50 by Kuber.
 - The decision to record the video of check 10.2 on the emulator with on-device data, attributed to Rafał at 04:40 in the draft, is recorded nowhere else in the repository, and check 10.2 still says "on a running service, hosted or local".
 - The time and length of the Kraków pitch, check 1.2, are not recorded in `docs/hackathon/challenge_requirements.md`.

@@ -11,8 +11,8 @@ The task prefix is `PUBLIC_TRANSPORT_ROUTING`, from the seed the user saved unde
 
 ## Recipient and trigger
 
-- A person planning a route in Kraków who sets the switch of the route form to public transport. The request reaches the service through `plan_route` of `docs/product/api_contract.md` from the web frontend of `plans/frontend_app/`, and possibly from the HarmonyOS client of `plans/stage5_harmonyos_port/`.
-- The frontend of `plans/frontend_app/`, which builds the switch, the public transport segment and the statement of O9 only once this initiative has written its interface into `docs/product/api_contract.md` (`MVP.md`, section Initiatives).
+- A person planning a route in Kraków who sets the switch of the route form to public transport. The request reaches the service through `plan_route` of `docs/product/api_contract.md` from the web frontend of `plans_finished/frontend_app/`, and possibly from the HarmonyOS client of `plans/stage5_harmonyos_port/`.
+- The frontend of `plans_finished/frontend_app/`, which builds the switch, the public transport segment and the statement of O9 only once this initiative has written its interface into `docs/product/api_contract.md` (`MVP.md`, section Initiatives).
 - A member of the team who fetches the copy of the GTFS before the demo and refreshes it by hand; nothing refreshes it on a schedule (specification, O9).
 
 ## Current state
@@ -41,22 +41,22 @@ Items 1 - 3 come from the seed, items 4 - 7 from the interview. The least that k
 4. The registry entry When the initiative of O9 starts its code moves to Resolved decisions, and `MVP.md`, sections Initiatives, Order and critical path and Open decisions and confirmations, follows the parallel start of question 1, in the same change, as the condition of that entry asks.
 5. Version 14 of `docs/product/specification.md`: the exception of M7, and the items of M10 and O9 that repeat it, name the boarding, the ride and the alighting, and a segment the GTFS marks as accessible next to one whose GTFS gives no accessibility information (question 2). It also adds what a public transport segment shows (question 3) and that the switch is not shown where a route with a tram does not work yet (question 8). The registry entry Wording of the public transport segment of O9 moves to Resolved decisions. Version 14 is approved by Rafał.
 6. A step of the loading program of `osm_import` that fetches the copy of the GTFS and builds the routing data with public transport from the same copy of OpenStreetMap as the walking data (question 5), in the form of a step `osm_import` writes down. `MVP.md`, section Initiatives, and `docs/deployment/hosted_demo.md`, section Loading the data, follow it.
-7. The day each feed of the copy in use was published, kept by the step of item 6 and returned by the service through the contract, so that the page about the data V-13 shows it next to the date of the OpenStreetMap copy (question 6). The page itself is built by `plans/frontend_app/`.
+7. The day each feed of the copy in use was published, kept by the step of item 6 and returned by the service through the contract, so that the page about the data V-13 shows it next to the date of the OpenStreetMap copy (question 6). The page itself is built by `plans_finished/frontend_app/`.
 
 ## Out of scope
 
-- The switch, the public transport segment and the statement in the views: `plans/frontend_app/` builds them once the interface is in the contract (`MVP.md`, section Initiatives).
+- The switch, the public transport segment and the statement in the views: `plans_finished/frontend_app/` builds them once the interface is in the contract (`MVP.md`, section Initiatives).
 - The walking route and everything D-12 reuses from D-1 - D-11 of `VALHALLA_ROUTING_PLAN.md`: `plans_finished/route_planning/` (`MVP.md`, section Initiatives).
 - The importer, the network file of D-2 and the walking data of the engine: `plans_finished/osm_importer/` (`OSM_IMPORTER_PLAN.md` D-20).
 - Real-time public transport data (specification, section Out of scope).
-- The exception of O9 on the page about the data V-13, next to its item that missing data is never shown as accessible: `plans/frontend_app/`, which builds that page. Recorded here because version 14 makes it necessary.
+- The exception of O9 on the page about the data V-13, next to its item that missing data is never shown as accessible: `plans_finished/frontend_app/`, which builds that page. Recorded here because version 14 makes it necessary.
 - Showing the switch and the public transport segment in the HarmonyOS client: `plans/stage5_harmonyos_port/` decides it; the contract of item 1 serves that client as it serves the web frontend. Agent decision at C:40, without asking: the seed and `MVP.md` give this initiative no view.
 - The stops of buses and trams from the MSIP service of Kraków: this initiative uses only the stops of the three feeds of the GTFS, as the seed and D-12 name them. The registry entry Initiatives outside MVP.md that overlap its initiatives stays open under its own condition, which this shape does not meet. Agent decision at C:40, without asking.
 - An arrival time, a choice of the departure or arrival time, and a date of the timetable (specification, O9, and question 3, which chose only the departure time).
 
 ## Functional requirements
 
-1. Kind of route. The contract carries the choice between a walking route and a route with public transport for the switch of the route form; walking is the default and one route is computed at a time. The switch itself is built by `plans/frontend_app/` (`VALHALLA_ROUTING_PRD.md` FR-5; seed).
+1. Kind of route. The contract carries the choice between a walking route and a route with public transport for the switch of the route form; walking is the default and one route is computed at a time. The switch itself is built by `plans_finished/frontend_app/` (`VALHALLA_ROUTING_PRD.md` FR-5; seed).
 2. Route with public transport. It uses the three feeds `GTFS_KRK_T`, `GTFS_KRK_A` and `GTFS_KRK_M`, departs now in the Europe/Warsaw zone, and its walking legs follow every rule of a walking route of M2, M7 and M8. It never boards or alights at a stop and never uses a trip the GTFS marks as not accessible; riding through such a stop on the same vehicle is allowed. Nothing of the request leaves the project (`VALHALLA_ROUTING_PRD.md` FR-6; specification, O9).
 3. Public transport segment. Green for the boarding, the ride and the alighting, whether the GTFS marks it as accessible or gives no accessibility information, with the source GTFS of ZTP Kraków and no date; not a fact, with no status, no vote and no flag. It shows the kind of vehicle, the line, the boarding and alighting stops and the departure time in hours and minutes, and the list of M8 holds it as an item in the order of the route (`VALHALLA_ROUTING_PRD.md` FR-7; questions 2 and 3).
 4. Public transport unavailable. When the route with public transport cannot be answered while walking routes can - no departure in time, the data with public transport unavailable, or no route with public transport that avoids every barrier and geozone its walking legs avoid - the service answers the walking route, the route with the fewest barriers when needed, with a plain statement that public transport was unavailable. When walking routes cannot be answered either, the answer is the plain message of M10 and no route (`VALHALLA_ROUTING_PRD.md` FR-8 and FR-10; specification, O9 and M10).

@@ -23,7 +23,7 @@ function numberWord(n: number): string {
   return n < 5 ? tr(pl[n], en[n]) : `${n}`;
 }
 
-/** V-5: wynik trasy, z wariantami bez oceny (potrzeby bez barier) i bez trasy wolnej od barier z potrzeb. */
+/** V-5: route result, incl. no-assessment case (needs without barriers) and no route free of the needs' barriers. */
 @Component
 export struct RouteView {
   nav: Nav = new Nav();
@@ -99,7 +99,7 @@ export struct RouteView {
       it.fact.source === FactSource.OSM);
   }
 
-  /** Rodzaje barier z potrzeb, przez które trasa musi przejść, gdy trasy wolnej od nich nie ma. */
+  /** Kinds of barriers from the needs that the route must pass through when no route free of them exists. */
   private blockingKinds(): string {
     const kinds: string[] = [];
     for (const it of this.blocking()) {

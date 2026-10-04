@@ -6,7 +6,7 @@ import { FONT, FONT_B, fs, P } from '../components/Theme';
 import { BackLink, BoxKind, Bullet, MessageBox, PageBox, PageTitle, SampleChip, statusColor, statusIcon, SubTitle, Icon } from '../components/Ui';
 import { Nav } from './Nav';
 
-/** V-12: informacja o prywatności. */
+/** V-12: privacy information. */
 @Component
 export struct PrivacyView {
   nav: Nav = new Nav();
@@ -60,7 +60,7 @@ export struct PrivacyView {
   }
 }
 
-/** V-13: o danych, statusach i stanach odcinków. */
+/** V-13: about the data, statuses and segment states. */
 @Component
 export struct AboutView {
   nav: Nav = new Nav();

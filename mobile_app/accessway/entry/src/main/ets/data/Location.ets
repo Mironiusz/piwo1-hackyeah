@@ -6,8 +6,8 @@ import { LatLon } from '../model/Types';
 const PERMS: Permissions[] = ['ohos.permission.APPROXIMATELY_LOCATION', 'ohos.permission.LOCATION'];
 
 /**
- * Bieżące położenie urządzenia, tylko na żądanie osoby. Położenie służy do jednej trasy albo do przesunięcia mapy
- * i nie jest zapisywane. Brak zgody albo brak sygnału kończy się błędem z komunikatem w bieżącym języku.
+ * Current device position, only when the person asks for it. The position is used for one route or to move the map
+ * and is not saved. No permission or no signal ends in an error with a message in the current language.
  */
 export async function currentPosition(ctx: common.UIAbilityContext): Promise<LatLon> {
   const atManager = abilityAccessCtrl.createAtManager();
