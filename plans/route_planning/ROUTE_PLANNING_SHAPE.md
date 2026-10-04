@@ -1,6 +1,6 @@
 # Shape: Walking routes of the MVP
 
-Document state: 2026-10-04, interview in progress
+Document state: 2026-10-04, interview closed
 Regulator: C:40
 
 ## Problem
@@ -14,6 +14,7 @@ The interview is answered by Rafał in place of Marek, the owner of the initiati
 - A person who plans a walking route in the web client or in the HarmonyOS client, through `plan_route` (`POST /api/routes`) with a start, a destination and the barriers and amenities of the profile; the client plans a shown route again when the profile changes or a vote or a report of the person is saved (M1, M2).
 - Adrian and Kuber, who build the route screens of `frontend_app` and `stage5_harmonyos_port` against the response of `plan_route`.
 - `public_transport_routing`, owned by Marek too, which builds O9 on the walking route (`plans_finished/valhalla_routing/VALHALLA_ROUTING_PLAN.md` D-12) and starts its code after this initiative (`MVP.md`, Order and critical path).
+- Mateusz, whose `osm_importer` keeps the boundary of Kraków of every copy for the refusal of requirement 12, and Kuba, if phase B keeps it in the database.
 - Check 4.1 of `FINAL_CHECKLIST.md` and `stage7_demo_scenario`, which verify the route on the running service.
 - Inside the service the trigger is every route request; the graph of the route with the fewest barriers is built when the backend process starts and rebuilt when the instant of the copy in use changes (`VALHALLA_ROUTING_PLAN.md` D-7).
 
@@ -30,6 +31,8 @@ Checked on 2026-10-04 on the branch `rm/requirements-preparation`, equal to `ori
 - `plan_route` in `docs/product/api_contract.md`, section Route: the request carries `start`, `destination`, `avoid` and `need`; the response carries `osm_copy_date`, `barrier_free_route_exists`, `route` and `alternative`; a segment carries `state`, always one of the four states of M7, `missing_attributes` and `is_marked_wheelchair_no`; the route carries the three groups of M8; the one error is `routing_unavailable` with status 503.
 - Three open entries of `docs/standards/decision_registry.md` touch the operation: Route without assessment in the contract and Refusal of a point outside Kraków in the contract, both to be decided by Marek with Kuber and Adrian before `plan_route` is built, and Street name of an item of a list, deferred until Marek has tested the programming interface.
 - `docs/product/views.md`, section The views read against the contract of the team, records that a segment carries its missing attributes and that the frontend does not show them (decision 8), because version 11 of the specification replaced the named missing attributes with one plain note (M8; `MVP.md`, section Requirements and initiatives).
+- The HarmonyOS client merged into `dev` on 2026-10-04 (`mobile_app/accessway/entry/src/main/ets/data/ApiMapping.ets`, function `planFromApi`) derives whether a route is assessed from the barriers of its own request, sets a route without assessment as free of barriers in its field `barrierFree`, and names the attributes of `missing_attributes` in its gaps of the route, which M8 has not named since version 11 of the specification. None of this is code of this initiative.
+- The importer assembles the administrative boundary of Kraków, relation 449696, in every run (`plans/osm_importer/OSM_IMPORTER_PLAN.md`, Step 2, `build_osm_boundary`) and stores it nowhere, and no OpenStreetMap data, the boundary included, may enter the repository (`agent_docs/memory/_cross_cutting.md`, entry OpenStreetMap data in the repository). The bounds of the map of Kraków also hold parts of Wieliczka and Niepołomice (`plans_finished/geocoding/GEOCODING_PLAN.md` D-6).
 - This branch and the branch of Kuba each carry a different version 13 of the specification: here "two notes on the account in the target schema", there "the vote limit by calendar day and the length of the hash of a vote without an account". Neither changes a rule of a route; the numbering is for whoever merges the branches.
 
 ## Smallest meaningful scope
@@ -60,6 +63,9 @@ The list follows from the seed and from the decisions it names; it changes with 
 9. `routing_unavailable` in every case of D-10 there, with no route guessed and no call outside the project.
 10. The tests of D-13 there: the cases of `ROUTING_ENGINE_PLAN.md` D-16 that still hold and a test in which Valhalla answers a route crossing an excluded barrier and the request ends with `routing_unavailable`.
 11. A route of a profile without barriers: when `avoid` is empty, every segment of `route` and of `alternative` has the state `not_assessed`, a fifth value of `state` outside the four states of M7, with an empty `missing_attributes`; `not_assessed` appears in no other case (question 1). This initiative writes the value into `docs/product/api_contract.md`, section plan_route, and `docs/product/views.md`, and moves the entry Route without assessment in the contract of `docs/standards/decision_registry.md` to Resolved decisions.
+12. A start or a destination outside the administrative boundary of Kraków of the copy in use is refused by `plan_route` with an error code of its own that names which of the two points lies outside, and no route is computed (question 2). The client checks a point against the bounds of the map of Kraków when it is set, as `docs/product/views.md` proposes, and on the refusal removes the point and gives the message of M2. The import keeps the boundary of every copy with that copy; where and in what form, and the name and status of the error code, are decided in phase B. This initiative writes the refusal into `docs/product/api_contract.md`, section plan_route, and `docs/product/views.md`, hands the keeping of the boundary to `osm_importer`, and moves the entry Refusal of a point outside Kraków in the contract of `docs/standards/decision_registry.md` to Resolved decisions.
+13. A point between the bounds of the map and the boundary of Kraków stays set until the route request refuses it, which departs from "the point is not set" of M2. This initiative writes that into M2 through a new version of `docs/product/specification.md`, whose text the user approves at the gate of the PRD (question 2).
+14. `missing_attributes` stays in the contract and the service fills it for every segment in `partial_data` or `no_data` as the contract describes (question 3). Whether a client shows it is decided by M8 of the specification for the client, not by this initiative.
 
 ## Scenarios: input, flow, expected state after the run
 
@@ -70,7 +76,8 @@ The list follows from the seed and from the decisions it names; it changes with 
 5. Fresh copy not yet served. Input: a fresh OpenStreetMap copy is current in the database and the service still serves the walking data of the previous one. State after: 503 `routing_unavailable` until the service serves the data of the copy in use.
 6. Exclusions silently dropped. Input: Valhalla drops the excluded locations without an error (F-9 of `VALHALLA_ROUTING_PLAN.md`) and answers a route crossing a barrier of the profile. Flow: the check of D-9 finds the crossing, the request is repeated once with it excluded, and crosses it again. State after: 503 `routing_unavailable`, one entry at ERROR without coordinates.
 7. Profile without barriers. Input: `avoid` empty and `need` of `rest_place`, a start at the Tauron Arena and a destination 1.5 km away. Flow: no barrier and no geozone is excluded, the route is traced and checked as in 1. State after: every segment, the two straight stretches at the ends included, has the state `not_assessed`; every barrier on the route is in `additional_barriers` (M8); `barrier_free_route_exists` is true, because no barrier of the profile exists to cross; `is_marked_wheelchair_no` is filled as for any other profile.
-8. Point outside Kraków. Input: a start in Wieliczka. State after: open, question 2.
+8. Point outside Kraków. Input: a point on the map in Wieliczka, 1 km outside the boundary of Kraków and inside the bounds of the map, as the start, and the Rynek Główny as the destination. Flow: the client sets the start, the destination is set, the client sends `plan_route`; the service finds the start outside the boundary of the copy in use. State after: the refusal names the start, no route is computed and nothing of the request is stored or logged; the client removes the start and says that routes work only in Kraków. A start outside the bounds of the map is refused by the client alone, before it is set.
+9. Missing attributes. Input: the preset "I use a wheelchair" and a stretch of pavement with `surface=asphalt` and no `incline` or `width`. State after: the segment is `partial_data` with `missing_attributes` of `incline` and `width`, and the list says in one plain note that some stretches have no data (M8).
 
 ## Challenging own assumptions
 
@@ -78,6 +85,8 @@ The list follows from the seed and from the decisions it names; it changes with 
 - Can the effect be verified before `osm_importer` delivers the walking data? Only on small networks the tests build themselves from invented elements; the route on the copy of Kraków waits for check 3.1 of `FINAL_CHECKLIST.md`, as stage 4 says.
 - Can a status be shown without the code of the status rule? No: a route reads the statuses through that rule (`ROUTING_ENGINE_PLAN.md` D-12), and no branch holds it on 2026-10-04, so the statuses of a route wait for `schema_first_revision` or `community_facts`.
 - Is the instant of the routing data comparable with the instant of the copy as D-3 asks? `plans_finished/backend_architecture/` D-14 reads `tileset_last_modified` from `/status` of the service, while the copy in use is the latest `state_at` of `osm_copy`; how the one maps to the other is for the pointer `osm_importer` publishes and for phase B, not for this shape.
+- After questions 1 - 3, does every item of the seed still have an executor? Yes: nothing was cut; the answers added the boundary of Kraków, handed to `osm_importer`, and changes of the contract, the views and the specification, done by this initiative.
+- Is the refusal of a point outside Kraków a rule of the route or of the client? Both: M2 says the point is not set, which only the client can do, and the client has no boundary, so the service refuses and the client follows the refusal (question 2).
 - Is the deadline reachable? The code of this initiative needs the layers of `backend_skeleton`, the first revision of `schema_first_revision` and, to be verified on Kraków, the walking data of `osm_importer`; none of them is merged at 04:30 on 2026-10-04, and the Kraków submission closes at 11:00 the same day.
 
 ## Domain rules or explicit TODO
@@ -86,8 +95,9 @@ The list follows from the seed and from the decisions it names; it changes with 
 - A route avoids the barriers of the profile known from OpenStreetMap, the confirmed barriers of the profile and the geozones of a type in the profile that are unverified, confirmed or disputed; an outdated or hidden fact changes no route (M2, M11).
 - A segment without complete data is never green, and a way marked `wheelchair=no` is never green (M7).
 - A route of a profile without barriers has every segment in the state `not_assessed` and is never presented as free of barriers (M1, M7). Decided by the user on 2026-10-04 in question 1, in place of Marek, against a field of the route next to a state of null and against the client deriving it from its own `avoid`; to be confirmed by Marek, and as a change of the contract also by Kuber and Adrian. `is_marked_wheelchair_no` stays as it is for such a route, because M8 names a way marked `wheelchair=no` whatever the profile. Agent decision at C:40, without asking, for `is_marked_wheelchair_no`.
-- TODO: a point outside Kraków, question 2.
-- TODO: `missing_attributes`, question 3.
+- `plan_route` refuses a start or a destination outside the administrative boundary of Kraków of the copy in use, and the client also checks the bounds of the map when a point is set. Decided by the user on 2026-10-04 in question 2, in place of Marek, against also serving the boundary to the clients and against a check of the bounds of the map alone, which would have needed M2 changed; to be confirmed by Marek, and as a change of the contract also by Kuber and Adrian. The user chose it knowing that a point between the bounds of the map and the boundary stays set until the route request refuses it (requirement 13).
+- `missing_attributes` stays in the contract and is filled by the service. Decided by the user on 2026-10-04 in question 3, in place of Marek, against removing it from the contract; asked despite the answer of the repository because the contract, the HarmonyOS client and decision 8 of `docs/product/views.md` with M8 say different things (signal 1). The service decides those attributes anyway to choose between the states of M7.
+- For the clients, outside this initiative: the HarmonyOS client reads the state `not_assessed` instead of deriving it from its own request, does not name missing attributes in the list (M8), and does not present a route without assessment as free of barriers (M7). Raised with the user on 2026-10-04 for Kuber.
 
 ## Notes on data, performance and security
 
@@ -97,9 +107,9 @@ The list follows from the seed and from the decisions it names; it changes with 
 - Read visibility: hidden and outdated facts are left out, and a fact from OpenStreetMap without votes is unverified and counts until outdated (M2, M4, M11; `ROUTING_ENGINE_PLAN.md` D-12). Answered in the repository.
 - Time: `osm_copy_date` is the calendar day of the copy in Europe/Warsaw (`docs/product/api_contract.md`, Conventions). Answered in the repository.
 - Idempotency: `plan_route` writes nothing.
-- Database schema: the route only reads the schema; question 2 may change that.
+- Database schema: the route only reads the schema. Keeping the boundary of Kraków of every copy (requirement 12) is a change of the schema if phase B keeps it in the database, and then a ruling of Kuba and a revision of `schema_first_revision` or a later one; phase B decides between that and a file kept with the walking data.
+- Stability of the programming interface contract: the state `not_assessed` (question 1) and the refusal of a point outside Kraków (question 2) change `plan_route` in `docs/product/api_contract.md`; both are still to be confirmed by Kuber and Adrian.
 
 ## Open questions
 
-2. How is a start or a destination outside the administrative boundary of Kraków refused? `Block: yes` (category: stability of the programming interface (API) contract; database schema, if the boundary is stored)
-3. Does the service fill `missing_attributes` of a segment, which no client shows since version 11 of the specification, or does the field leave the contract? `Block: yes` (category: stability of the programming interface (API) contract)
+None blocking. Every question of the interview was answered by the user in place of Marek on 2026-10-04 and waits for his confirmation, and questions 1 and 2 also for the confirmation of Kuber and Adrian.
