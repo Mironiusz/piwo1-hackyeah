@@ -8,7 +8,7 @@
 export default {
   page: {
     title: 'EnableMe - Kraków bez barier',
-    icons: { arrow: 'do', approx: 'w przybliżeniu', check: 'tak', cross: 'nie' },
+    icons: { arrow: 'do' },
   },
   slides: {
     title: {

@@ -7,7 +7,7 @@
 export default {
   page: {
     title: "EnableMe - Imagine What's Next",
-    icons: { arrow: 'to', approx: 'approximately', check: 'yes', cross: 'no' },
+    icons: { arrow: 'to' },
   },
   slides: {
     title: {

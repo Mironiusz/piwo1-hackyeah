@@ -15,7 +15,7 @@
 }
 
 .reveal .fact-card h3 {
-  font-size: 38px;
+  font-size: 44px;
   color: var(--text);
 }
 
@@ -24,7 +24,7 @@
   grid-template-columns: max-content 1fr;
   gap: 10px 24px;
   margin: 0;
-  font-size: 26px;
+  font-size: 32px;
 }
 
 .reveal .fact-card dt {
@@ -48,7 +48,7 @@
   border-left: 8px solid var(--on-accent);
   background: var(--accent);
   color: var(--on-accent);
-  font-size: 24px;
+  font-size: 28px;
 }
 
 .reveal .fact-conflict p {

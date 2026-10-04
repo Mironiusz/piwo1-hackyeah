@@ -3,8 +3,8 @@
 .reveal .demo-steps {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 34px 60px;
-  margin: 48px 0 0;
+  gap: 64px 60px;
+  margin: 80px 0 0;
   padding: 0;
   list-style: none;
 }
@@ -21,7 +21,7 @@
 
 .reveal .demo-steps p {
   margin: 0;
-  font-size: 30px;
+  font-size: 40px;
 }
 
 .reveal .demo-steps + .footnote {

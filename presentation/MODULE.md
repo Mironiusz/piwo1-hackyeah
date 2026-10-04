@@ -50,6 +50,9 @@ presentation/
   index.html
   .prettierrc, .prettierignore, .gitignore
   README.md, MODULE.md
+  materials/
+    video_script.md
+    pitch.md
   scripts/
     deck.mjs
     snapshots.mjs
@@ -68,15 +71,15 @@ presentation/
       rehearsal.js
       theme.js
     components/
-      flow.js
       icons.js
+      route-states.js
     styles/
       theme.css
       components.css
     slides/
       index.js
       timing.js
-      title.js
+      <id>.js, <id>.css   one module per slide, with the styles only that slide uses
 ```
 
 ## File responsibilities
@@ -90,13 +93,15 @@ presentation/
 - `src/lib/steps.js` - turns the segments of a slide into one GSAP timeline with a label per step, adds one invisible reveal.js fragment per step and keeps the timeline in sync with the reveal.js events.
 - `src/lib/rehearsal.js` - the rehearsal mode.
 - `src/lib/theme.js` - `token(name)`, the value of a color token, for color tweens.
-- `src/components/flow.js` - flow diagrams: `flowRow`, `flowColumn`, `vArrow`, `vArrowUp`, `hArrow`; returns the SVG and the geometry of the boxes.
-- `src/components/icons.js` - symbols missing from the fonts, drawn in SVG: `ARROW`, `APPROX`, `CHECK`, `CROSS` for HTML, `svgArrow`, `svgArrowDown`, `svgCheck`, `svgCross` for SVG drawings. Their spoken labels come from `page.icons` of the content file.
+- `src/components/icons.js` - `ARROW`, the arrow missing from the fonts, drawn in SVG, with its spoken label from `page.icons` of the content file.
+- `src/components/route-states.js` - `routeStates`, a route of four segments in the four segment states of the app, and `stateSample`, one state for a legend row; used by the slides `title` and `states`.
 - `src/styles/theme.css` - the color and font tokens, the slide frame, the progress bar and the slide number.
-- `src/styles/components.css` - the shared classes: `.slide-title`, `.kicker`, `.footnote`, `.accent`, `.tag`, `.canvas`, the title slide, SVG text, icons, flow diagrams and the notes page of the PDF.
+- `src/styles/components.css` - the shared classes: `.slide-title`, `.kicker`, `.footnote`, the title slide, SVG text, icons, the notes page of the PDF, the text blocks shared by the slides (`.lead`, `.statement`, `.plain-list`, `.chip`, `.card-num`) and the `.rs-*` styles of the route.
 - `src/slides/index.js` - the order of the slides.
 - `src/slides/timing.js` - `TIMING`, the seconds per slide, and `clock(seconds)`.
-- `src/slides/title.js` - the placeholder title slide that proves the pipeline; it is to be replaced by the real deck.
+- `src/slides/<id>.js` - the ten slides, in order: `title`, `problem`, `solution`, `states`, `facts`, `demo`, `data`, `architecture`, `business`, `status`. The notes of each slide are the spoken text of the pitch.
+- `materials/video_script.md` - the script of the Polish video of the Kraków submission, recorded on the HarmonyOS emulator.
+- `materials/pitch.md` - how the pitch is given: timing, roles, the live demo and its fallbacks, the rehearsal and the answers to the questions of the jury.
 - `scripts/deck.mjs` - shared by the Playwright scripts: the language arguments, opening a built deck from disk with every network request and page error recorded, and moving to a slide and step.
 - `scripts/snapshots.mjs` - the screenshots and the contract checks of the deck.
 - `scripts/pdf.mjs` - the three PDFs per language.
@@ -158,7 +163,7 @@ A new slide therefore takes four places: its module, its import in `src/slides/i
 export default {
   page: {
     title: 'the title of the HTML page',
-    icons: { arrow: '...', approx: '...', check: '...', cross: '...' },
+    icons: { arrow: '...' },
   },
   slides: {
     title: { summary: '...', kicker: '...', heading: '...', subtitle: '...', notes: '<p>...</p>' },
@@ -166,7 +171,7 @@ export default {
 };
 ```
 
-- `page.title` becomes the `<title>` of the built page, `page.icons` the spoken labels of the icons.
+- `page.title` becomes the `<title>` of the built page, `page.icons` the spoken label of the arrow icon.
 - `slides.<id>` holds the words of one slide. `summary` and `notes` are read by the engine; every other key is chosen by the slide and read only by its module. A value may be a string, a list or a nested object, and may carry HTML, as the notes do.
 - Both files have the same keys at every level, the same type of every value and the same length of every list. `scripts/content-check.mjs`, run by `npm run lint`, fails on any difference.
 - A content entry without a slide, and a slide without a content entry, are errors: the first is reported by `npm run snapshots`, the second throws when the deck loads.
@@ -181,7 +186,7 @@ export default {
 - `from()` is allowed for a simple entrance, but never twice on the same property of the same element: the second `from()` records the hidden value as its end and the element never appears. An element that enters in a later step after being visible before uses `fromTo(..., { immediateRender: false })`.
 - The first tween of a segment never has a relative position (`'<'`, `'<0.3'`). It would be counted from the start of the last tween of the previous step and the animation would run into a step that is not its own.
 - GSAP does not interpolate `var(--...)`; color tweens take the value from `token('--name')`.
-- No DOM measurements: reveal.js hides inactive slides, so a measurement while building returns zeros. Geometry comes from constants, as in `flow.js`.
+- No DOM measurements: reveal.js hides inactive slides, so a measurement while building returns zeros. Geometry comes from constants, as in `route-states.js`.
 - Motion that has to be seen is drawn above the nodes, not under them.
 - The `html` of a slide never contains `<section>`: reveal.js treats a nested section as a vertical slide.
 - The number of `[click]` markers in the notes equals the number of steps; `npm run snapshots` fails otherwise. Intermediate states of an animation are checked with a separate Playwright run that clicks and waits, because a snapshot shows only the end of a step.
@@ -190,18 +195,17 @@ export default {
 
 Slides use only the tokens of `src/styles/theme.css`, never a raw hex value. One color has one meaning in the whole deck:
 
-| Token                                                                   | Flow and tag class                                  | Meaning                                                |
-| ----------------------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------ |
-| `--primary` (navy), `--on-primary`                                      | `is-primary`                                        | the product, our system; slide titles                  |
-| `--accent` (yellow), `--on-accent`                                      | `is-accent`, `.accent`                              | what we look at now; the progress bar                  |
-| `--state-barrier`, `--state-clear`, `--state-partial`, `--state-nodata` | `is-barrier`, `is-clear`, `is-partial`, `is-nodata` | the four route segment states, only those              |
-| `--state-disputed`                                                      | `is-disputed`                                       | the disputed status of a fact                          |
-| `--text`, `--text-dim`, `--text-muted`                                  | `is-dim`, `.t-dim`                                  | main text, secondary text, decoration that is not read |
-| `--bg`, `--surface`, `--surface-2`, `--line`, `--line-strong`           | -                                                   | background, cards, lines and arrows                    |
+| Token                                                                   | Where                                          | Meaning                                   |
+| ----------------------------------------------------------------------- | ---------------------------------------------- | ----------------------------------------- |
+| `--primary` (navy), `--on-primary`                                      | titles, `.card-num`, `.statement`, the API box | the product, our system                   |
+| `--accent` (yellow), `--on-accent`                                      | `.statement.is-accent`, the conflict of a fact | what we look at now; the progress bar     |
+| `--state-barrier`, `--state-clear`, `--state-partial`, `--state-nodata` | `.rs-seg.is-<state>`                           | the four route segment states, only those |
+| `--text`, `--text-dim`                                                  | -                                              | main text, secondary text                 |
+| `--bg`, `--surface`, `--line`, `--line-strong`                          | -                                              | background, cards, lines and borders      |
 
 - Yellow is a background with dark text on it (`--on-accent`), never a text color on the light background.
 - The four segment state colors mean nothing but the segment states, and always come with a label or a pattern, never color alone. The tokens and their values are those of the HarmonyOS app (`mobile_app/accessway/entry/src/main/ets/components/Theme.ets`), where the same colors draw the segments of a route.
-- `--text-muted` is below the 4.5:1 contrast on `--bg`, so it never colors text that has to be read; such text uses `--text` or `--text-dim`.
+- The app has a muted text color, `#6F7480`, below the 4.5:1 contrast on `--bg`; the deck has no such token, so every text it shows is `--text` or `--text-dim`.
 
 ### Typography and layout
 
@@ -212,7 +216,7 @@ Slides use only the tokens of `src/styles/theme.css`, never a raw hex value. One
 
 ## Architectural decisions
 
-- The engine is a pre-existing component, and the Huawei submission names it as such. It was ported on 2026-10-04 from LLM-prezentacja, an earlier presentation project of Rafał. The port kept the mechanics - reveal.js, the step timelines, the offline build, the presenter notes with timing, the rehearsal mode, the snapshot and PDF scripts, the flow diagrams and the icons - translated the code into English, and replaced the theme, the fonts and every slide.
+- The engine is a pre-existing component, and the Huawei submission names it as such. It was ported on 2026-10-04 from LLM-prezentacja, an earlier presentation project of Rafał. The port kept the mechanics - reveal.js, the step timelines, the offline build, the presenter notes with timing, the rehearsal mode, the snapshot and PDF scripts and the arrow icon - translated the code into English, and replaced the theme, the fonts and every slide.
 - The deck runs in the browser instead of being a PowerPoint file, because animations built step by step are its core, and reveal.js gives remote navigation, the presenter view and a print view for the PDF.
 - Steps are bound to clicks. Each animated slide has one GSAP timeline split by labels into steps, and every step is an invisible reveal.js fragment, so the remote and the keyboard work without extra handling. The state of a slide always follows from the number of visible fragments: a step forward is animated, while a step back and every jump set the state at once, so going back, returning from the next slide and reloading the page always give the right picture.
 - Each deck is one file that works offline, because the room may have no internet. Vite with `vite-plugin-singlefile` puts the scripts, styles and fonts into one HTML file that works opened from disk. The fonts are installed from Fontsource, never fetched from a font service, and `trimFonts` keeps only the latin and latin-ext subsets in woff2, so the file stays near 0.5 MB. The subsets are filtered out of the full Fontsource files, because only those carry a `unicode-range` per subset.
@@ -221,7 +225,7 @@ Slides use only the tokens of `src/styles/theme.css`, never a raw hex value. One
 - The submitted PDF comes from the print view, which shows every slide in its final state with vector text. A slide with intermediate states can only be presented from a PDF viewer through the steps PDF made of screenshots, so both are produced.
 - The notes end with the `summary` of the next slide, which is kept in the module of the slide it describes, so a change of order in `src/slides/index.js` corrects every announcement by itself. The labels of the notes - `Time`, `ends at`, `Next:` and the `Speaker notes` heading of reveal.js - are English in both decks.
 - The code unit has its own `.prettierrc` with single quotes in JavaScript, the style the engine was written in. The double quotes of `docs/standards/standard_frontend.md` apply to the web frontend in `frontend/`, not to this unit.
-- Several parts of the source engine were dropped. The stage map in the corner went with its list of stages, because a deck of at most 10 slides needs no map of its parts. The slide variants switched by a digit went, because the pitch has no decision taken live. KaTeX and `math.js` went, because the deck has no formulas and KaTeX would add its own fonts to the file. The 3D vector space, the token chips and the components that drew the content of the earlier talk went with that content. The IBM Plex fonts went with their monospace face, and with it the `.mono` class and the code card, because the brand has no monospace face and a system one would look different on every computer. `svg-text.js` and `visibility.js` went, because no kept module used them.
+- Several parts of the source engine were dropped. The stage map in the corner went with its list of stages, because a deck of at most 10 slides needs no map of its parts. The slide variants switched by a digit went, because the pitch has no decision taken live. KaTeX and `math.js` went, because the deck has no formulas and KaTeX would add its own fonts to the file. The 3D vector space, the token chips and the components that drew the content of the earlier talk went with that content. The IBM Plex fonts went with their monospace face, and with it the `.mono` class and the code card, because the brand has no monospace face and a system one would look different on every computer. `svg-text.js` and `visibility.js` went, because no kept module used them, and so did the flow diagrams, the tags, the drawing area, the `.accent` class and the icons other than the arrow, once the slides were written without them.
 
 ## Summary
 

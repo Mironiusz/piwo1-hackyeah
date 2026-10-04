@@ -34,15 +34,6 @@
   color: var(--text-dim);
 }
 
-/* What we look at now: a yellow highlight behind dark text, never yellow text on the light background. */
-
-.reveal .accent {
-  padding: 0 0.15em;
-  background: var(--accent);
-  color: var(--on-accent);
-  box-decoration-break: clone;
-}
-
 /* Title slide */
 
 .reveal .title-slide {
@@ -66,30 +57,11 @@
   color: var(--text-dim);
 }
 
-/* Drawing area: an SVG drawing or an HTML layer in a fixed place under the title, so slides that turn into each
-   other share the same coordinates. */
-
-.reveal .canvas {
-  position: absolute;
-  left: var(--pad-x);
-  top: 150px;
-  width: 1440px;
-}
-
-.reveal .canvas > svg {
-  display: block;
-  overflow: visible;
-}
-
 /* SVG text */
 
 .reveal svg text {
   fill: var(--text);
   font-family: var(--font-sans);
-}
-
-.reveal svg .t-dim {
-  fill: var(--text-dim);
 }
 
 /* Icons in place of glyphs missing from the fonts (src/components/icons.js). They take the color of the text. */
@@ -102,155 +74,6 @@
   stroke-width: 2.2;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
-
-.reveal .svg-arrow,
-.reveal .svg-check,
-.reveal .svg-cross {
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.reveal .svg-arrow {
-  stroke-width: 2.2;
-}
-
-.reveal .svg-check,
-.reveal .svg-cross {
-  stroke-width: 3;
-}
-
-/* Flow diagrams (src/components/flow.js). The class is-* of a node sets its color by meaning. */
-
-.reveal .fl-box {
-  fill: var(--surface);
-  stroke: var(--line-strong);
-  stroke-width: 1.5;
-}
-
-.reveal .fl-label {
-  font-size: 26px;
-  font-weight: 600;
-  fill: var(--text);
-}
-
-.reveal .fl-sub {
-  font-size: 20px;
-  fill: var(--text-dim);
-}
-
-.reveal .fl-link {
-  fill: none;
-  stroke: var(--line-strong);
-  stroke-width: 2;
-}
-
-.reveal .fl-head {
-  fill: var(--line-strong);
-}
-
-.reveal .fl-node.is-primary .fl-box {
-  fill: var(--primary);
-  stroke: var(--primary);
-}
-
-.reveal .fl-node.is-primary text {
-  fill: var(--on-primary);
-}
-
-.reveal .fl-node.is-accent .fl-box {
-  fill: var(--accent);
-  stroke: var(--accent);
-}
-
-.reveal .fl-node.is-accent text {
-  fill: var(--on-accent);
-}
-
-.reveal .fl-node.is-barrier {
-  --fl-color: var(--state-barrier);
-}
-
-.reveal .fl-node.is-clear {
-  --fl-color: var(--state-clear);
-}
-
-.reveal .fl-node.is-partial {
-  --fl-color: var(--state-partial);
-}
-
-.reveal .fl-node.is-nodata {
-  --fl-color: var(--state-nodata);
-}
-
-.reveal .fl-node.is-disputed {
-  --fl-color: var(--state-disputed);
-}
-
-.reveal .fl-node:is(.is-barrier, .is-clear, .is-partial, .is-nodata, .is-disputed) .fl-box {
-  fill: color-mix(in srgb, var(--fl-color) 14%, var(--surface));
-  stroke: var(--fl-color);
-  stroke-width: 3;
-}
-
-.reveal .fl-node.is-dim .fl-label {
-  fill: var(--text-dim);
-}
-
-/* Tags in HTML: a short label, colored by meaning with a class is-*. Text stays dark on every tag. */
-
-.reveal .tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 5px 16px;
-  border: 2px solid var(--line-strong);
-  border-radius: 6px;
-  background: var(--surface);
-  font-size: 24px;
-  font-weight: 600;
-  line-height: 1.3;
-  color: var(--text);
-  white-space: nowrap;
-}
-
-.reveal .tag.is-primary {
-  border-color: var(--primary);
-  background: var(--primary);
-  color: var(--on-primary);
-}
-
-.reveal .tag.is-accent {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: var(--on-accent);
-}
-
-.reveal .tag.is-barrier {
-  --tag: var(--state-barrier);
-}
-
-.reveal .tag.is-clear {
-  --tag: var(--state-clear);
-}
-
-.reveal .tag.is-partial {
-  --tag: var(--state-partial);
-}
-
-.reveal .tag.is-nodata {
-  --tag: var(--state-nodata);
-}
-
-.reveal .tag.is-disputed {
-  --tag: var(--state-disputed);
-}
-
-.reveal .tag:is(.is-barrier, .is-clear, .is-partial, .is-nodata, .is-disputed) {
-  border-color: var(--tag);
-  background: color-mix(in srgb, var(--tag) 14%, var(--surface));
 }
 
 /* Page with notes in the PDF (npm run pdf): readable from paper */
@@ -294,16 +117,16 @@ html.reveal-print .reveal .speaker-notes-pdf[data-layout='separate-page']:last-c
 
 .reveal .lead {
   margin: 28px 0 0;
-  font-size: 34px;
+  font-size: 40px;
   color: var(--text-dim);
 }
 
 .reveal .statement {
-  margin: 48px 0 0;
+  margin: 64px 0 0;
   padding: 22px 28px;
   border-left: 8px solid var(--primary);
   background: var(--surface);
-  font-size: 34px;
+  font-size: 40px;
   font-weight: 600;
   line-height: 1.3;
 }
@@ -322,9 +145,9 @@ html.reveal-print .reveal .speaker-notes-pdf[data-layout='separate-page']:last-c
 
 .reveal .plain-list li {
   position: relative;
-  margin: 0 0 14px;
+  margin: 0 0 20px;
   padding-left: 30px;
-  font-size: 28px;
+  font-size: 34px;
   line-height: 1.3;
 }
 
@@ -341,7 +164,7 @@ html.reveal-print .reveal .speaker-notes-pdf[data-layout='separate-page']:last-c
 
 .reveal h3 {
   margin: 0 0 18px;
-  font-size: 32px;
+  font-size: 38px;
   font-weight: 700;
   color: var(--primary);
 }
@@ -350,7 +173,7 @@ html.reveal-print .reveal .speaker-notes-pdf[data-layout='separate-page']:last-c
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  margin: 36px 0 0;
+  margin: 48px 0 0;
   padding: 0;
   list-style: none;
 }
@@ -360,12 +183,8 @@ html.reveal-print .reveal .speaker-notes-pdf[data-layout='separate-page']:last-c
   border: 2px solid var(--line-strong);
   border-radius: 999px;
   background: var(--surface);
-  font-size: 28px;
+  font-size: 34px;
   font-weight: 600;
-}
-
-.reveal .chip.is-barrier {
-  border-color: var(--state-barrier);
 }
 
 .reveal .card-num {

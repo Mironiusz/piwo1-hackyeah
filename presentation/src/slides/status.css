@@ -12,9 +12,9 @@
 }
 
 .reveal .closing {
-  margin: 36px 0 0;
+  margin: 56px 0 0;
   font-family: var(--font-title);
-  font-size: 64px;
+  font-size: 80px;
   font-weight: 700;
   color: var(--primary);
 }

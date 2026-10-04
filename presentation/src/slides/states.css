@@ -18,8 +18,8 @@
 
 .reveal .states-gray-label {
   margin: 0;
-  font-size: 22px;
-  color: var(--text-muted);
+  font-size: 26px;
+  color: var(--text-dim);
   text-align: center;
 }
 
@@ -37,7 +37,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 6px;
-  font-size: 26px;
+  font-size: 32px;
   font-weight: 600;
 }
 

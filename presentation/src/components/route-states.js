@@ -39,9 +39,9 @@ export function routeStates({ x = 0, y = 0, width = 1200 } = {}) {
 
 /** A short sample of one state, a line with its badge, for a legend row. */
 export function stateSample(state) {
-  return `<svg class="rs-sample" viewBox="0 0 120 60" width="120" height="60" aria-hidden="true">
+  return `<svg class="rs-sample" viewBox="0 0 120 66" width="120" height="66" aria-hidden="true">
     <g class="rs-seg is-${state}">
-      <path class="rs-line" d="M6 44 H114" />
+      <path class="rs-line" d="M6 56 H114" />
       <circle class="rs-badge" cx="60" cy="22" r="18" />
       ${ICONS[state](60, 22)}
     </g>

@@ -8,13 +8,11 @@
 :root {
   --bg: #f4f5f2;
   --surface: #ffffff;
-  --surface-2: #eef0ec;
   --line: #d5d8dc;
   --line-strong: #4b5058;
 
   --text: #111418;
   --text-dim: #4b5058;
-  --text-muted: #6f7480;
 
   --primary: #12306b;
   --on-primary: #ffffff;
@@ -25,7 +23,6 @@
   --state-clear: #1e7a46;
   --state-partial: #e0a100;
   --state-nodata: #6f7480;
-  --state-disputed: #8a5a00;
 
   --font-sans: 'Barlow Semi Condensed', system-ui, sans-serif;
   --font-title: 'Barlow Condensed', system-ui, sans-serif;

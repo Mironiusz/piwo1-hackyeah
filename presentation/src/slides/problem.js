@@ -11,7 +11,7 @@ export default {
   html: `
     <h2 class="slide-title">${t.heading}</h2>
     <p class="lead">${t.who}</p>
-    <ul class="chip-row">${t.barriers.map((b) => `<li class="chip is-barrier">${b}</li>`).join('')}</ul>
+    <ul class="chip-row">${t.barriers.map((b) => `<li class="chip">${b}</li>`).join('')}</ul>
     <p class="statement problem-gap">${t.gap}</p>`,
   notes: t.notes,
 

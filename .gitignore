@@ -8,6 +8,7 @@ logs
 .coverage
 .codex/context
 .claude/settings.local.json
+.claude/worktrees/
 .pytest-*
 pytest_tmp*/
 temp/
