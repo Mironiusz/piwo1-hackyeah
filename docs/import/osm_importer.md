@@ -45,7 +45,7 @@ The same command performs the first import and every later refresh. In the hoste
 
 ## Outcomes
 
-The run ends with one log line `OSM import outcome=<outcome>` carrying the source instant, the duration and the counts of nodes, ways, memberships and facts written.
+The run ends with one log line `OSM import outcome=<outcome>` carrying the source instant, the duration, the counts of nodes, ways, memberships and facts written, and `invalid_areas`, the number of source areas skipped because they could not be assembled. A count is printed for `updated`, `routing_incomplete` and `commit_unknown`, and `-` where no source was read. A nonzero count is expected on the Małopolska extract and is not a failure: in an extract downloaded on 2026-10-03 the 24 skipped areas were parish, deanery, protected-area and land-use outlines broken in OpenStreetMap.
 
 | Outcome              | Exit code | Meaning                                                                                                                            | What is current afterwards                                                                                                         |
 | -------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
@@ -120,3 +120,4 @@ They run whole imports of invented sources with a stand-in for the Valhalla tool
 
 - The boundary and network passes keep every way and every node of the whole Małopolska extract in memory, so peak memory grows with the extract, not with Kraków. A real run has not been measured yet; measure one before the demo depends on it.
 - A non-area relation of the copy whose tags make an amenity present, or an area without a usable interior point, fails the whole import rather than guessing a location.
+- An area that cannot be assembled, a broken multipolygon or a broken closed way of OpenStreetMap, is skipped and counted in `invalid_areas` instead of failing the read. It is treated as a missing area: a broken boundary of Kraków, relation 449696, fails the import with `OsmGeometryError: Missing complete administrative boundary`, and a broken area relation of the copy whose tags make an amenity present fails it with the non-area relation error above. A broken closed way of the copy whose tags make an amenity present is not refused: its fact stands at half the length of its outline instead of inside the area, the location of a way without an assembled area.

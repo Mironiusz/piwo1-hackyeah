@@ -30,6 +30,13 @@ class OsmElementSnapshot:
     area_wkb: bytes | None = None
 
 
+@dataclass
+class OsmInvalidAreaTally:
+    """Count the areas one read skipped because native assembly left them without an outer ring."""
+
+    count: int = 0
+
+
 def fetch_osm_header_timestamp(path: Path) -> str:
     """Read the source header value for subsequent rules-layer validation."""
     try:
@@ -39,8 +46,14 @@ def fetch_osm_header_timestamp(path: Path) -> str:
         raise OsmReadError("Cannot read source header") from error
 
 
-def fetch_osm_elements(path: Path, deadline: Deadline) -> Iterator[OsmElementSnapshot]:
-    """Stream copied nodes, ways, relations and assembled areas from the complete source, refusing to continue past the deadline."""
+def fetch_osm_elements(path: Path, deadline: Deadline, invalid_areas: OsmInvalidAreaTally | None = None) -> Iterator[OsmElementSnapshot]:
+    """
+    Stream copied nodes, ways, relations and assembled areas from the complete source, refusing to continue past the deadline.
+
+    An area that native assembly left without an outer ring, from a broken multipolygon or a broken closed way of the
+    source, has no geometry to copy, so it is skipped and counted in the given tally; its way or relation is still
+    streamed. Every other failure to read or to build a geometry stops the read.
+    """
     factory = osmium.geom.WKBFactory()
     try:
         processor = osmium.FileProcessor(path).with_locations().with_areas()
@@ -63,6 +76,10 @@ def fetch_osm_elements(path: Path, deadline: Deadline) -> Iterator[OsmElementSna
             elif isinstance(element, osmium.osm.Relation):
                 yield OsmElementSnapshot("relation", element.id, edited_at, tags, members=tuple((member.type, member.ref, member.role) for member in element.members))
             elif isinstance(element, osmium.osm.Area):
+                if element.num_rings()[0] == 0:
+                    if invalid_areas is not None:
+                        invalid_areas.count += 1
+                    continue
                 element_type: Literal["node", "way", "relation"] = "way" if element.from_way() else "relation"
                 yield OsmElementSnapshot(element_type, element.orig_id(), edited_at, tags, area_wkb=bytes.fromhex(factory.create_multipolygon(element)))
     except DeadlineExpiredError:

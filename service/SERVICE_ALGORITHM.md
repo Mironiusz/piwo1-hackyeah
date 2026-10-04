@@ -44,7 +44,7 @@ The header instant must include a timezone offset or UTC marker. Invalid calenda
 
 The first copy and a strictly newer instant proceed. Equal instants are unchanged even when represented with different offsets, and an earlier instant fails.
 
-The source is read in three passes, each checking the run deadline before every element.
+The source is read in three passes, each checking the run deadline before every element. Each pass skips the same areas native assembly left without an outer ring, and the count of the first pass is the count of the copy. A skipped area is a missing area to every pass: a skipped boundary of Kraków fails the first pass, a skipped area relation of the copy whose tags make an amenity present fails the third under the non-area relation rule, and a closed way of the copy whose area was skipped keeps its amenity at half its length.
 
 1. The first pass reads administrative relation 449696 and requires its assembled area and every referenced ring way. It verifies closed endpoint connectivity and the exact topological agreement of the assembled outline with every member ring, so that native assembly cannot silently omit a hole. Nested ring relations and open ring junctions fail explicitly.
 2. The second pass selects permitted ways from their original tags and keeps every referenced node, including nodes outside the boundary, after checking coordinate consistency.
@@ -113,7 +113,7 @@ A converted or removed fact that stays absent needs no new decision. A fact that
 
 ## Diagnostics and summary
 
-Invalid source metadata, geometry, tags, tools, routing files and integrity each raise a named exception. Their messages are constant texts without URLs, raw responses or values. The worker reports one outcome line with the source instant, duration and the counts of nodes, ways, memberships and facts written. Unexpected failures are reported by their type only.
+Invalid source metadata, geometry, tags, tools, routing files and integrity each raise a named exception. Their messages are constant texts without URLs, raw responses or values. The worker reports one outcome line with the source instant, duration, the counts of nodes, ways, memberships and facts written, and the count of invalid source areas skipped. Unexpected failures are reported by their type only.
 
 ## Address search
 

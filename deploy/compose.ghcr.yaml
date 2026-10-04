@@ -1,0 +1,23 @@
+services:
+  proxy:
+    build: !reset null
+    image: ghcr.io/mironiusz/enableme-proxy:${DEMO_IMAGE_TAG:?Set DEMO_IMAGE_TAG to main or sha-<commit>}
+
+  backend:
+    build: !reset null
+    image: ghcr.io/mironiusz/enableme-backend:${DEMO_IMAGE_TAG:?Set DEMO_IMAGE_TAG to main or sha-<commit>}
+
+  routing:
+    build: !reset null
+    image: ghcr.io/mironiusz/enableme-routing:${DEMO_IMAGE_TAG:?Set DEMO_IMAGE_TAG to main or sha-<commit>}
+
+  database:
+    build: !reset null
+    image: ghcr.io/mironiusz/enableme-database:${DEMO_IMAGE_TAG:?Set DEMO_IMAGE_TAG to main or sha-<commit>}
+
+  migrate:
+    build: !reset null
+    image: ghcr.io/mironiusz/enableme-migrate:${DEMO_IMAGE_TAG:?Set DEMO_IMAGE_TAG to main or sha-<commit>}
+
+  loader:
+    image: ghcr.io/mironiusz/enableme-backend:${DEMO_IMAGE_TAG:?Set DEMO_IMAGE_TAG to main or sha-<commit>}

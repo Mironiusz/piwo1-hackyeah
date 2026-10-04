@@ -9,7 +9,7 @@ import pytest
 from shapely import from_wkb
 
 from common_time import Deadline, DeadlineExpiredError, build_deadline, fetch_monotonic_seconds
-from data.osm_reader import OsmReadError, fetch_osm_elements, fetch_osm_header_timestamp
+from data.osm_reader import OsmInvalidAreaTally, OsmReadError, fetch_osm_elements, fetch_osm_header_timestamp
 
 SOURCE_XML = """<osm version="0.6">
 <node id="1" lat="50" lon="19.9" timestamp="2026-10-03T00:00:00Z"/>
@@ -19,6 +19,13 @@ SOURCE_XML = """<osm version="0.6">
 <way id="10" timestamp="2026-10-03T00:00:00Z"><nd ref="1"/><nd ref="2"/><nd ref="3"/><nd ref="4"/><nd ref="1"/><tag k="highway" v="path"/></way>
 <relation id="449696" timestamp="2026-10-03T00:00:00Z"><member type="way" ref="10" role="outer"/><tag k="type" v="multipolygon"/><tag k="boundary" v="administrative"/></relation>
 </osm>"""
+OPEN_RING_WAY_XML = '<way id="20" timestamp="2026-10-03T00:00:00Z"><nd ref="1"/><nd ref="2"/><nd ref="3"/></way>'
+BROKEN_MULTIPOLYGON_XML = '<relation id="30" timestamp="2026-10-03T00:00:00Z"><member type="way" ref="20" role="outer"/><tag k="type" v="multipolygon"/><tag k="landuse" v="grass"/></relation>'
+
+
+def build_broken_source_xml() -> str:
+    """Add a multipolygon whose only outer ring is open, which native assembly leaves without an outer ring."""
+    return SOURCE_XML.replace('<relation id="449696"', OPEN_RING_WAY_XML + '<relation id="449696"').replace("</osm>", BROKEN_MULTIPOLYGON_XML + "</osm>")
 
 
 def build_test_deadline() -> Deadline:
@@ -44,6 +51,26 @@ class OsmReaderIntegration(unittest.TestCase):
         area = next(element for element in snapshots if element.area_wkb is not None and element.element_type == "relation")
         self.assertEqual(area.element_id, 449696)
         self.assertTrue(from_wkb(area.area_wkb).is_valid)
+
+    def test_an_area_without_an_outer_ring_is_skipped_and_counted_while_the_rest_is_read(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "invented.osm"
+            path.write_text(build_broken_source_xml())
+            invalid_areas = OsmInvalidAreaTally()
+            snapshots = list(fetch_osm_elements(path, build_test_deadline(), invalid_areas))
+        self.assertEqual(invalid_areas.count, 1)
+        areas = {(element.element_type, element.element_id) for element in snapshots if element.area_wkb is not None}
+        self.assertEqual(areas, {("way", 10), ("relation", 449696)})
+        relation = next(element for element in snapshots if element.element_type == "relation" and element.element_id == 30)
+        self.assertIsNone(relation.area_wkb)
+        self.assertEqual(relation.members, (("w", 20, "outer"),))
+
+    def test_an_area_without_an_outer_ring_is_skipped_without_a_tally(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "invented.osm"
+            path.write_text(build_broken_source_xml())
+            snapshots = list(fetch_osm_elements(path, build_test_deadline()))
+        self.assertFalse(any(element.element_id == 30 and element.area_wkb is not None for element in snapshots))
 
     def test_missing_references_fail_instead_of_dropping_coordinates(self):
         with tempfile.TemporaryDirectory() as directory:

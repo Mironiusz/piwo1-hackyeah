@@ -1,0 +1,155 @@
+name: Demo images
+
+on:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: demo-images-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  IMAGES: routing backend proxy database migrate
+  ROUTING_BASE: localhost:5000/enableme-routing
+
+jobs:
+  images:
+    name: Build the images of the hosted demo
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    services:
+      registry:
+        image: registry:3.0.0
+        ports:
+          - 5000:5000
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Derive the image names and tags
+        id: meta
+        env:
+          PUBLISH: ${{ github.event_name != 'pull_request' }}
+        run: |
+          registry="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}"
+          {
+            echo "publish=${PUBLISH}"
+            echo "registry=${registry}"
+            if [[ "$PUBLISH" == true ]]; then
+              for name in $IMAGES; do
+                echo "${name}=${registry}/enableme-${name}:sha-${GITHUB_SHA}"
+              done
+            fi
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+        with:
+          driver-opts: network=host
+
+      - name: Log in to the GitHub container registry
+        if: ${{ steps.meta.outputs.publish == 'true' }}
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build the routing image
+        id: routing
+        uses: docker/build-push-action@v7
+        with:
+          context: valhalla
+          file: valhalla/Dockerfile
+          build-args: CONCURRENCY=4
+          push: true
+          tags: |
+            ${{ env.ROUTING_BASE }}:ci
+            ${{ steps.meta.outputs.routing }}
+          labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          cache-from: type=gha,scope=enableme-routing
+          cache-to: type=gha,mode=max,scope=enableme-routing
+
+      - name: Build the backend image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: deploy/backend.Dockerfile
+          build-contexts: routing=docker-image://${{ env.ROUTING_BASE }}@${{ steps.routing.outputs.digest }}
+          push: ${{ steps.meta.outputs.publish }}
+          tags: ${{ steps.meta.outputs.backend }}
+          labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          cache-from: type=gha,scope=enableme-backend
+          cache-to: type=gha,mode=max,scope=enableme-backend
+
+      - name: Build the proxy image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: deploy/proxy.Dockerfile
+          push: ${{ steps.meta.outputs.publish }}
+          tags: ${{ steps.meta.outputs.proxy }}
+          labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          cache-from: type=gha,scope=enableme-proxy
+          cache-to: type=gha,mode=max,scope=enableme-proxy
+
+      - name: Build the database image
+        uses: docker/build-push-action@v7
+        with:
+          context: db/image
+          file: db/image/Dockerfile
+          push: ${{ steps.meta.outputs.publish }}
+          tags: ${{ steps.meta.outputs.database }}
+          labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          cache-from: type=gha,scope=enableme-database
+          cache-to: type=gha,mode=max,scope=enableme-database
+
+      - name: Build the schema revision image
+        uses: docker/build-push-action@v7
+        with:
+          context: db
+          file: db/image/Dockerfile.tools
+          push: ${{ steps.meta.outputs.publish }}
+          tags: ${{ steps.meta.outputs.migrate }}
+          labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          cache-from: type=gha,scope=enableme-migrate
+          cache-to: type=gha,mode=max,scope=enableme-migrate
+
+      - name: Move the main tag to this commit
+        if: ${{ steps.meta.outputs.publish == 'true' && github.ref == 'refs/heads/main' }}
+        env:
+          REGISTRY: ${{ steps.meta.outputs.registry }}
+        run: |
+          for name in $IMAGES; do
+            docker buildx imagetools create --tag "${REGISTRY}/enableme-${name}:main" "${REGISTRY}/enableme-${name}:sha-${GITHUB_SHA}"
+          done
+
+      - name: Show the published tags
+        if: ${{ steps.meta.outputs.publish == 'true' }}
+        env:
+          REGISTRY: ${{ steps.meta.outputs.registry }}
+          MOVED_MAIN: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          {
+            printf 'Published the five images of the hosted demo built from `%s`:\n\n' "$GITHUB_SHA"
+            for name in $IMAGES; do
+              printf -- '- `%s/enableme-%s:sha-%s`\n' "$REGISTRY" "$name" "$GITHUB_SHA"
+            done
+            if [[ "$MOVED_MAIN" == true ]]; then
+              printf '\nThe tag `main` of each of them now names this commit.\n'
+            fi
+            printf '\nOn the server run the pull commands of `docs/deployment/hosted_demo.md` with `DEMO_IMAGE_TAG=sha-%s`.\n' "$GITHUB_SHA"
+          } >> "$GITHUB_STEP_SUMMARY"

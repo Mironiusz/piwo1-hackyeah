@@ -50,6 +50,19 @@ docker compose --env-file .env.demo -f deploy/compose.yaml up -d --wait backend
 
 Until then every vote without an account counts as coming from one person. The value never enters the repository.
 
+## Pulling the published images
+
+Instead of building the images on the server, the demo can pull the ones `.github/workflows/demo-images.yml` publishes for every commit of `main`, which skips the build of Valhalla (`docs/setup/github_actions.md`). The override `deploy/compose.ghcr.yaml` names the published image of every service and drops its build. It needs `DEMO_IMAGE_TAG` in `.env.demo`: `main` for the last commit of `main` whose five images were all published, or `sha-<commit>` for one commit, with the full hash the summary of the run shows.
+
+The override then goes after `deploy/compose.yaml` in every command of this document, the start, the schema revisions and the loading step included. A command without it builds and uses the local images instead. The two start commands become:
+
+```bash
+docker compose --env-file .env.demo -f deploy/compose.yaml -f deploy/compose.ghcr.yaml --profile migrate pull
+docker compose --env-file .env.demo -f deploy/compose.yaml -f deploy/compose.ghcr.yaml up -d --wait proxy backend routing database
+```
+
+`pull` fetches the images of the start and the one of the schema revisions; the loading step uses the image of the backend. `up` alone never fetches a newer image for a tag the server already has, so with `main` the `pull` command is run again to get a newer commit. If the packages are private, log in first, as in `valhalla/README.md`, section Pulling the image on a server.
+
 ## Applying the schema revisions
 
 The schema revisions are applied by hand, as a step of their own, with the consent given at the call (`docs/standards/standard_config.md`, section Environment entries). Run this step after the first start and after every update that brings a new revision:

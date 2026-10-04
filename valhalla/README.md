@@ -25,6 +25,8 @@ The build clones the `3.9.0` tag, applies both patches and rebuilds only `valhal
 
 `.github/workflows/valhalla-image.yml` builds this directory on a GitHub-hosted runner with `CONCURRENCY=4` and publishes the image to the GitHub container registry, so a server pulls the image instead of building it. The workflow runs only when a person starts it: it has no other trigger, and nothing deploys or pulls the image on its own. The workflow file has no comments, by the no line comments rule, so its decisions are described here.
 
+This directory is also built by `.github/workflows/demo-images.yml`, as the image `enableme-routing` of the hosted demo with the tags of a commit, together with the four other images of the demo (`docs/setup/github_actions.md`). When the hosted demo pulls its images instead of building them, it pulls that image, not `valhalla-a11y`; this workflow stays the way to publish a routing image with a version tag.
+
 ### Running the workflow
 
 On GitHub open Actions, choose `Valhalla image` and press Run workflow, or start it with the GitHub CLI:

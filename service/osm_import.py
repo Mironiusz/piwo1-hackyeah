@@ -76,11 +76,12 @@ class OsmImportSettings:
 
 @dataclass(frozen=True)
 class OsmImportResult:
-    """Report what one run achieved: its outcome, the source instant it handled and what publication wrote."""
+    """Report what one run achieved: its outcome, the source instant it handled, what publication wrote and how many invalid source areas the read skipped."""
 
     outcome: OsmImportOutcome
     state_at: datetime | None
     counts: OsmPublicationCounts | None
+    invalid_area_count: int | None
 
 
 def apply_osm_import_command(settings: OsmImportSettings) -> OsmImportResult:
@@ -109,7 +110,7 @@ async def apply_osm_import(settings: OsmImportSettings, client: httpx.AsyncClien
             try:
                 lease = stack.enter_context(apply_import_exclusion(engine, settings.workspace_root))
             except ImportAlreadyRunning:
-                return OsmImportResult("skipped", None, None)
+                return OsmImportResult("skipped", None, None, None)
             return await apply_osm_import_run(settings, client, lease, run_deadline)
     finally:
         engine.dispose()
@@ -131,19 +132,19 @@ async def apply_osm_import_run(settings: OsmImportSettings, client: httpx.AsyncC
     apply_osm_routing_recovery(settings.routing_root, committed_state_at)
     async with fetch_osm_extract(client, lease.workspace_lease.workspace, run_deadline.expires_at) as extract:
         if not resolve_osm_source_is_newer(extract.state_at, committed_state_at):
-            return OsmImportResult("unchanged", extract.state_at, None)
+            return OsmImportResult("unchanged", extract.state_at, None, None)
         prepared = fetch_osm_prepared_copy(extract.path, run_deadline, settings.zone)
     committed_names = frozenset(build_routing_copy_name(snapshot.state_at.instant) for snapshot in history)
     apply_osm_routing_preparation(lease.workspace_lease, settings.routing_root, prepared.network, prepared.boundary, extract.state_at, committed_names, template, settings.tool_directory, run_deadline)
     publication, counts = apply_osm_publication_step(lease, prepared, extract.state_at, extract.filename, run_deadline)
     if publication == "commit_unknown":
-        return OsmImportResult("commit_unknown", extract.state_at, None)
+        return OsmImportResult("commit_unknown", extract.state_at, None, prepared.invalid_area_count)
     try:
         apply_routing_pointer(settings.routing_root, build_routing_copy_name(extract.state_at))
     except RoutingDataError:
         fetch_logger(__name__).exception("Routing pointer publication failed after commit")
-        return OsmImportResult("routing_incomplete", extract.state_at, counts)
-    return OsmImportResult("updated", extract.state_at, counts)
+        return OsmImportResult("routing_incomplete", extract.state_at, counts, prepared.invalid_area_count)
+    return OsmImportResult("updated", extract.state_at, counts, prepared.invalid_area_count)
 
 
 def build_osm_stamp(value: datetime) -> datetime:

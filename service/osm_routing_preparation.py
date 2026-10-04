@@ -14,7 +14,7 @@ from config.logging import fetch_logger
 from data.import_workspace import WorkspaceLease
 from data.osm_copy import OsmPresentFact
 from data.osm_network_file import apply_osm_network_pbf
-from data.osm_reader import fetch_osm_elements
+from data.osm_reader import OsmInvalidAreaTally, fetch_osm_elements
 from data.osm_valhalla import OsmTileBuildError, apply_osm_valhalla_config, apply_osm_valhalla_tiles
 from data.routing_data import (
     ROUTING_COPIES_NAME,
@@ -34,20 +34,29 @@ from service.osm_routing_recovery import OsmRoutingIntegrityError
 
 @dataclass(frozen=True)
 class OsmPreparedCopy:
-    """Keep the original network, the motor-traffic node membership, the present facts and the boundary of Kraków of one source."""
+    """Keep the original network, the motor-traffic node membership, the present facts, the boundary of Kraków and the count of skipped invalid areas of one source."""
 
     network: OsmPreparedNetwork
     motor_traffic_node_ids: frozenset[int]
     facts: tuple[OsmPresentFact, ...]
     boundary: Polygon | MultiPolygon
+    invalid_area_count: int
 
 
 def fetch_osm_prepared_copy(source_path: Path, deadline: Deadline, zone: ZoneInfo) -> OsmPreparedCopy:
-    """Read the complete source in three passes - the Kraków boundary, the pedestrian network and the facts of the copy."""
-    boundary = build_osm_boundary(fetch_osm_elements(source_path, deadline))
+    """
+    Read the complete source in three passes - the Kraków boundary, the pedestrian network and the facts of the copy.
+
+    Every pass skips the same invalid areas of the source, so the count of the first pass is the count of the copy. A
+    skipped area is treated as a missing one: a skipped boundary of Kraków fails the boundary pass, a skipped area
+    relation of the copy whose tags make an amenity present fails the fact pass, and a closed way of the copy whose
+    area was skipped keeps its amenity at half its length.
+    """
+    invalid_areas = OsmInvalidAreaTally()
+    boundary = build_osm_boundary(fetch_osm_elements(source_path, deadline, invalid_areas))
     network = build_osm_network(fetch_osm_elements(source_path, deadline), boundary)
     fact_data = build_osm_fact_data(fetch_osm_elements(source_path, deadline), boundary, network, zone)
-    return OsmPreparedCopy(network, fact_data.motor_traffic_node_ids, fact_data.facts, boundary)
+    return OsmPreparedCopy(network, fact_data.motor_traffic_node_ids, fact_data.facts, boundary, invalid_areas.count)
 
 
 def build_osm_valhalla_config(template: dict[str, Any], tile_directory: Path, archive_path: Path) -> dict[str, Any]:
