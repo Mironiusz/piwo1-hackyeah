@@ -193,3 +193,44 @@ Verification on Windows with Python 3.13: Ruff check and format pass; the tests 
 ### Verdict
 
 The clash with `db/` is removed from the code and the documents of the skeleton, except the files a human still deletes. The verdict of the initiative is unchanged: B-1 - B-3 remain, and `plans/backend_skeleton/` stays in place.
+
+## 2026-10-04 - Windows acceptance with the database of db/ and the template gap closed
+
+Scope: B-1 and B-2 of the entry "Recovery design closed and foundation implemented" after the alignment with `db/`, the template gap the previous entry left, the classification of B-3, and the Windows gates of the skeleton files. Executor: Windows 11 x64 with Python 3.13.14 in an isolated virtual environment of the session and Docker 29.6.1 (plan F-30). The stale `database/`, `alembic/`, `alembic.ini`, `compose.local.yml` and `tests/data/test_database_setup_critical.py` were removed by the user's commit `e1d621c` before this work.
+
+The user answered two proposals of this session on 2026-10-04 with "pozwalam ci to zrobić, zrób co możesz, dopinajmy to" (English: "I allow you to do it, do what you can, let's wrap it up"): an empty `LOG_LEVEL` marker means the default `INFO`, and B-3 is a handoff to the consumer, not a blocker of the skeleton. The plan records the first on D-4.
+
+Changed:
+
+- `.env.local.example` holds `APP_ENVIRONMENT`, `API_BIND_HOST`, `API_PORT`, `BUSINESS_TIMEZONE`, `LOG_LEVEL` and `IMPORT_WORKSPACE_ROOT` as empty markers, and `docs/standards/standard_config.md`, section Environment entries, records each with its requiredness and its behavior when missing. `docs/setup/backend.md` no longer says that these entries are added by hand.
+- `config/settings.py` reads an empty `LOG_LEVEL` as `DEFAULT_LOG_LEVEL` through `build_log_level`, the same way `build_workspace_path` reads an empty `IMPORT_WORKSPACE_ROOT` as unconfigured. `tests/config/test_settings_cases.py` checks that every required backend entry left empty is refused by name and that an empty log level gives `INFO`.
+- `data/import_process.py`: `fetch_activity_completion` and `apply_linux_process` refuse a platform other than Linux with `ImportWorkspaceUnconfirmed`, in the form mypy narrows, the idiom `fetch_kernel_api` of `data/windows_job.py` already uses. Before this, mypy on Windows reported 10 errors in this file.
+- `tests/data/test_import_exclusion_critical.py`: `test_next_manual_launch_recovers_after_owner_crash` failed on Windows, because it encodes the Linux semantics in which a contained writer outlives its killed owner. The shared helper `apply_owner_crash` now starts and kills the owner; the Linux test keeps its expectations, and the new `test_next_manual_launch_recovers_after_windows_owner_crash` checks with the real database that a child meant to run for 30 seconds ends with its owner and that the next launch is admitted within 10 seconds after recovering the private files.
+- The plan: the state line, F-30, and the change notes on D-3 and D-4.
+
+Agent decision at C:40, without asking: the owner-crash test was split instead of skipped on Windows. D-18 decides that a Windows job with kill-on-close ends the whole tree with its last handle, so on Windows an orphan writer cannot exist and the observable requirement of AC-8 is the immediate recovery on the next launch; the Windows variant proves it on the database path that the workspace-only `test_windows_owner_crash_is_recovered_on_next_manual_launch` does not cover.
+
+### Executed evidence
+
+- The local database of `db/compose.yaml` built and started healthy under a task-owned Compose project with generated local test values kept in the session scratch directory; no environment file of the repository was created or read.
+- Before any revision: the critical suite of the skeleton gave 12 passed and 1 skipped (the Linux orphan variant), with the 120-second case deselected; this includes the three native Windows Job Object cases and the Windows owner-crash case with the database. The production-ceiling case passed separately in 120.09 seconds.
+- `python -m api`, with the `DB_` entries given at launch and empty `LOG_LEVEL` and `IMPORT_WORKSPACE_ROOT`, answered an unknown GET path and `DELETE /` with 404 and `{"error":{"code":"not_found"}}`, kept a supplied `X-Request-Id` and generated a missing one, and logged one line per request with method, operation, status, duration and request identifier only. The process was stopped after the check.
+- The profile `migrate` applied the chain: `alembic_version` is `0001`, read as the schema owner; the service account is refused reading it, as its rights intend. The profile `test` ran `db/tests`: 26 passed.
+- After the revision the critical suite of the skeleton again gave 12 passed and 1 skipped, and no `public.backend_skeleton_scratch` was left.
+- The non-critical suite passes for every skeleton test. Its 7 failures are outside the skeleton: the prose gates on `mobile_app/`, three pyosmium cases of `osm_importer` that cannot open a temporary path with a non-ASCII user name, and two Linux process cases of `data/osm_valhalla.py`.
+- Mypy: no error in the skeleton files on Windows and with `--platform linux`; two errors remain in `data/osm_valhalla.py`, which calls `os.killpg` and `signal.SIGKILL` without a platform guard. Ruff check and format, vulture and every Bandit pass of the target `security` for the skeleton paths are clean; Ruff and deptry report only `mobile_app/`. pip-audit found no known vulnerability in the project dependencies; it reported only `pip` of the tool environment (PYSEC-2026-3721) and could not audit the local `accessibility-db`. Pinned Prettier formatted the changed documents.
+- The task-owned Compose containers, network and the three images built for the check were removed. No hosted environment was accessed and no existing container was stopped.
+
+### Blockers
+
+None for the skeleton. B-1 is closed: the database image is the one of `db/`, which built and served the whole acceptance here; the persistence of the import workspace across replacement containers belongs to the container configuration of its consumer (`docs/setup/backend.md`, section Configuration). B-2 is closed by the native Windows runs above with Python 3.13. B-3 is a handoff to Mateusz by the user's decision: D-18 makes the verification of each actual mutating tool a condition of importer readiness.
+
+### Risks
+
+R-1. `make typecheck` and the full `make check` still fail on Windows because of `data/osm_valhalla.py` of `osm_importer` and of `mobile_app/`; their owners fix them.
+
+R-2. The Linux orphan variant was refactored into `apply_owner_crash` and not run again on Linux after the refactoring; its expectations are unchanged and it passed on Linux in the entry "Recovery design closed and foundation implemented".
+
+R-3. `plans/accounts/ACCOUNTS_PLAN.md` F-13 and `plans/deployment_config/DEPLOYMENT_CONFIG_SHAPE.md` still describe two local database setups; both are work in progress of other sessions and were not edited.
+
+R-4. A developer whose `.env.local` predates this change fails the environment contract test until the six new entries are added to it.

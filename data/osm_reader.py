@@ -9,6 +9,8 @@ from typing import Literal
 
 import osmium
 
+from common_time import Deadline, DeadlineExpiredError, fetch_monotonic_seconds, resolve_remaining_milliseconds
+
 
 class OsmReadError(ValueError):
     """Describe a source file whose required elements cannot be read completely."""
@@ -37,12 +39,13 @@ def fetch_osm_header_timestamp(path: Path) -> str:
         raise OsmReadError("Cannot read source header") from error
 
 
-def fetch_osm_elements(path: Path) -> Iterator[OsmElementSnapshot]:
-    """Stream copied nodes, ways, relations and assembled areas from the complete source."""
+def fetch_osm_elements(path: Path, deadline: Deadline) -> Iterator[OsmElementSnapshot]:
+    """Stream copied nodes, ways, relations and assembled areas from the complete source, refusing to continue past the deadline."""
     factory = osmium.geom.WKBFactory()
     try:
         processor = osmium.FileProcessor(path).with_locations().with_areas()
         for element in processor:
+            resolve_remaining_milliseconds(deadline, fetch_monotonic_seconds())
             if not isinstance(element, (osmium.osm.Node, osmium.osm.Way, osmium.osm.Relation, osmium.osm.Area)):
                 raise OsmReadError("Unexpected source entity type")
             edited_at = element.timestamp
@@ -62,5 +65,7 @@ def fetch_osm_elements(path: Path) -> Iterator[OsmElementSnapshot]:
             elif isinstance(element, osmium.osm.Area):
                 element_type: Literal["node", "way", "relation"] = "way" if element.from_way() else "relation"
                 yield OsmElementSnapshot(element_type, element.orig_id(), edited_at, tags, area_wkb=bytes.fromhex(factory.create_multipolygon(element)))
+    except DeadlineExpiredError:
+        raise
     except (RuntimeError, OSError) as error:
         raise OsmReadError("Cannot read complete source elements") from error

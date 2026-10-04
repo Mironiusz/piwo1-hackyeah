@@ -8,6 +8,10 @@ The main scenario of `docs/product/specification.md` is a walking route in Krak�
 
 The rulings behind this PRD were given by Rafał in place of Marek, the owner of the initiative, on 2026-10-04, and are still to be confirmed by him; the changes of the programming interface contract are also still to be confirmed by Kuber and Adrian (shape, Problem).
 
+Amended on 2026-10-04 in phase B: Rafał took over the work of Marek that day, and as the owner of this initiative moved into it the rule that derives the status of a fact from its votes (FR-16), which item 8 of `plans/community_facts/COMMUNITY_FACTS_SHAPE.md` gave to Kuba; the consent of Kuba is still to be obtained.
+
+Amended again on 2026-10-04 in phase B: Rafał decided that in the hosted demo the routing engine of the project may keep the points of a route request, the current location among them, in its own log until the demo and all its data are deleted on 4 October 2026, against discarding the output of the engine, and that the specification and the privacy information change with it (FR-11, FR-14, FR-17). This replaces D-11 of `plans_finished/valhalla_routing/VALHALLA_ROUTING_PLAN.md`. The texts of FR-14 and FR-17 were approved by Rafał at the gate of this amendment.
+
 ## Problem and its consequences
 
 - Every decision about the route is made - the routing engine of the project (`MVP.md` D-9) and the rules of M2, M7 and M8 - and the operation `plan_route` is described in `docs/product/api_contract.md`, but nothing computes a route. Until something does, the route screens of both clients have nothing to show, check 4.1 cannot pass, the demo has no main scenario, and routes with public transport (O9) cannot start their code (`MVP.md`, Order and critical path).
@@ -19,9 +23,11 @@ The rulings behind this PRD were given by Rafał in place of Marek, the owner of
 1. The operation `plan_route` on the service of the project: walking routes in Kraków computed by the routing engine of the project, with every behavior M2, M7, M8 and M10 of the specification give a route.
 2. The setting of the routing engine of the project for walking routes: what it is allowed to answer and what it is allowed to log.
 3. Two changes of the programming interface contract, decided in the shape: the state not assessed of a route of a profile without barriers, and the refusal of a point outside Kraków; written into `docs/product/api_contract.md` and `docs/product/views.md`, with both entries of `docs/standards/decision_registry.md` moved to Resolved decisions.
-4. A new version of the specification that records in M2 how long a point outside Kraków stays set (shape, requirement 13).
+4. A new version of the specification that records in M2 how long a point outside Kraków stays set (shape, requirement 13), and in M2 and its section Personal data that the routing engine of the hosted demo may log the points of a route request (amendment of 2026-10-04).
 5. The need handed to `osm_importer`: the boundary of Kraków of every copy is kept with that copy.
-6. The tests that show the requirements below.
+6. The rule that derives the status of a fact from its votes (M4), built once for the route, the publication of a fresh OpenStreetMap copy and the operations of the community facts.
+7. The privacy information of the app written into `docs/product/interface_texts.md` and `docs/product/views.md` so that it follows the new version of the specification.
+8. The tests that show the requirements below.
 
 ## Out of scope
 
@@ -29,7 +35,7 @@ The rulings behind this PRD were given by Rafał in place of Marek, the owner of
 - Running the routing engine with its data in the hosted demo (`plans/deployment_config/`).
 - Routes with public transport, O9 (`public_transport_routing`).
 - The route screens of the clients (`frontend_app`, `stage5_harmonyos_port`), the address search (`address_search`), and how a client presents the missing attributes of a segment, which M8 decides for the client.
-- The rule that derives the status of a fact from its votes, which a route calls and never rewrites (`schema_first_revision`, `community_facts`).
+- The reads and writes of the votes and of the facts for the operations of the community facts (`community_facts`); this initiative builds only the rule of FR-16 they call.
 - The name of a way in the place of an item of the list, deferred until Marek has tested the programming interface (`docs/standards/decision_registry.md`, entry Street name of an item of a list).
 
 ## Functional requirements
@@ -54,15 +60,19 @@ FR-9. No route shown as compliant when it is not (M10). A route that crosses a b
 
 FR-10. Routing not answering (M10). When the routing engine does not answer, does not answer in time or fails, the service answers that a route cannot be planned right now, with no route and nothing guessed, and nothing of the request is sent to a routing service outside the project (`plans_finished/mvp/MVP_PRD.md` FR-17; `plans_finished/valhalla_routing/VALHALLA_ROUTING_PRD.md` FR-10).
 
-FR-11. Nothing of a route request is kept (M2). The current location, the start, the destination and the profile are not stored, not logged beyond the name of the operation, its status, its duration and its request identifier, not linked to an account and not sent outside the project, and nothing the routing engine keeps or logs holds a location of a request. A route request carries no identity of an account (`plans_finished/valhalla_routing/VALHALLA_ROUTING_PRD.md` FR-2; `docs/product/api_contract.md`, sections Sessions and actors and Request logs and failures).
+FR-11. What of a route request is kept (M2). The current location, the start, the destination and the profile are not stored, not logged by the service beyond the name of the operation, its status, its duration and its request identifier, not linked to an account and not sent outside the project. What the routing engine of the project logs may hold the points of a request; that log stays on the server of the demo and is deleted with the demo on 4 October 2026 (FR-14). A route request carries no identity of an account (`plans_finished/valhalla_routing/VALHALLA_ROUTING_PRD.md` FR-2; `docs/product/api_contract.md`, sections Sessions and actors and Request logs and failures; amendment of 2026-10-04).
 
 FR-12. Response time. A walking route across Kraków, with its alternative or its route with the fewest barriers, is answered within 5 seconds on the server of the demo (`plans_finished/valhalla_routing/VALHALLA_ROUTING_PRD.md` FR-4).
 
 FR-13. The contract and the views. FR-5 and FR-7 are written into `docs/product/api_contract.md`, section plan_route, and into `docs/product/views.md`, and the entries Route without assessment in the contract and Refusal of a point outside Kraków in the contract of `docs/standards/decision_registry.md` move to Resolved decisions, each with how it turned out.
 
-FR-14. The specification. A new version of `docs/product/specification.md` records in M2 that a point between the bounds of the map of Kraków and its boundary stays set until the route request refuses it (shape, requirement 13). The user approved on 2026-10-04, at the gate of this PRD, this text, added at the end of the paragraph of M2 on a point outside Kraków: "The app checks a point against the bounds of the map of Kraków when it is set. A point inside those bounds but outside the boundary stays set until the route is requested, and is then refused and removed with the same message."
+FR-14. The specification. A new version of `docs/product/specification.md` records in M2 that a point between the bounds of the map of Kraków and its boundary stays set until the route request refuses it (shape, requirement 13). The user approved on 2026-10-04, at the gate of this PRD, this text, added at the end of the paragraph of M2 on a point outside Kraków: "The app checks a point against the bounds of the map of Kraków when it is set. A point inside those bounds but outside the boundary stays set until the route is requested, and is then refused and removed with the same message." The same version records the log of FR-11, with this text approved by Rafał on 2026-10-04 at the gate of the second amendment: in M2 the sentence "The current location travels only in the route request: it is not stored, not logged and not linked to the account." becomes "The current location travels only in the route request: it is not stored, not logged and not linked to the account, with one exception of the hosted demo: the routing service of the project may write the points of a route request, the current location among them, into its own log, which stays on the server of the demo and is deleted with the demo on 4 October 2026."; in the section Personal data the item Kept gets "the points of a route request, the current location among them, in the log of the routing service of the hosted demo, until the demo and all its data are deleted on 4 October 2026 (M2)", and in the item Not kept "the current location (only inside a route request;" becomes "the current location (only inside a route request and in the log of the routing service named above;".
 
 FR-15. The boundary of Kraków for the import. The need that the import keeps the boundary of Kraków of every copy together with that copy is handed to `osm_importer` and recorded in its plan.
+
+FR-16. Status of a fact (M4). From the stored votes of a fact the service derives its status, the sums of confirmations and denials over the latest votes of the five persons who voted on it most recently, and the day of its latest confirmation, by the rules of M4 and M9: the weights 1 and 0.5, only the latest vote of a person counting, a vote of a deleted account counting as a person of its own, and a fact removed in OpenStreetMap outdated whatever its votes. The route, the publication of a fresh OpenStreetMap copy and the operations of the community facts call this one rule and never rewrite it (amendment of 2026-10-04).
+
+FR-17. Privacy information (section Personal data of the specification). The privacy information of the app names the log of FR-11 among the kept items, with its purpose and retention, and no longer says that the current location is not kept at all. Rafał approved on 2026-10-04, at the gate of the second amendment, these texts of `docs/product/interface_texts.md`: a new key `privacy.kept.route_log` with the Polish "Punkty zapytań o trasę, także Twojej bieżącej lokalizacji, w dzienniku usługi wyznaczania tras. Żeby w wersji demonstracyjnej dało się sprawdzić, jak działa wyznaczanie tras. Do usunięcia dema i wszystkich jego danych 4 października 2026." and the English "The points of route requests, your current location among them, in the log of the route planning service. To check how route planning works in this demo. Until the demo and all its data are deleted on 4 October 2026."; and the key `privacy.not_kept.location` changed to the Polish "Bieżącej lokalizacji poza dziennikiem usługi wyznaczania tras. Używamy jej tylko do wyznaczenia jednej trasy." and the English "Your current location, apart from the log of the route planning service. We use it only to plan one route." V-12 of `docs/product/views.md` names the log among what the app keeps. The code of the clients follows these texts in `frontend_app` and `stage5_harmonyos_port` (amendment of 2026-10-04).
 
 ## Acceptance criteria
 
@@ -92,15 +102,19 @@ AC-11 (FR-9). When the engine answers a route that crosses a barrier the request
 
 AC-12 (FR-10). With the engine down, and with the engine answering after its time limit, a route request ends as routing not answering with no route, and no service outside the project received any part of it (`plans_finished/mvp/MVP_PRD.md` AC-16; `plans_finished/valhalla_routing/VALHALLA_ROUTING_PRD.md` AC-12).
 
-AC-13 (FR-11). After a route request whose start is a known current location, no service outside the project received any part of it, and neither the logs of the service nor what the engine keeps or logs hold that location (`plans_finished/valhalla_routing/VALHALLA_ROUTING_PRD.md` AC-5).
+AC-13 (FR-11). After a route request whose start is a known current location, no service outside the project received any part of it, and the logs of the service hold that location nowhere; the log of the routing engine is not checked (`plans_finished/valhalla_routing/VALHALLA_ROUTING_PRD.md` AC-5; amendment of 2026-10-04).
 
 AC-14 (FR-12). A walking route from Tyniec to Wyciąże, with the barriers and geozones of the demo data, is answered within 5 seconds on the server of the demo, and so is the case of AC-5 (`plans_finished/valhalla_routing/VALHALLA_ROUTING_PRD.md` AC-7).
 
 AC-15 (FR-13). `docs/product/api_contract.md`, section plan_route, and `docs/product/views.md` describe the state not assessed and the refusal of a point outside Kraków, and both entries stand in Resolved decisions of `docs/standards/decision_registry.md`.
 
-AC-16 (FR-14). The specification carries a new version whose M2 says how long a point between the bounds of the map and the boundary of Kraków stays set, with the text the user approved.
+AC-16 (FR-14). The specification carries a new version whose M2 says how long a point between the bounds of the map and the boundary of Kraków stays set, and whose M2 and section Personal data say that the log of the routing engine of the hosted demo may hold the points of a route request until the demo is deleted, with the texts the user approved.
 
 AC-17 (FR-15). The plan of `osm_importer` names the keeping of the boundary of Kraków of every copy as a need of this initiative.
+
+AC-18 (FR-16). Scenarios 2, 7 and 8 of `plans/community_facts/COMMUNITY_FACTS_SHAPE.md` give the statuses and sums they state; an OpenStreetMap fact without votes is unverified; a fact removed in OpenStreetMap is outdated with any votes; a report with only the confirmation of its author has that day as the day of its latest confirmation.
+
+AC-19 (FR-17). `docs/product/interface_texts.md` holds `privacy.kept.route_log` and the changed `privacy.not_kept.location` in both languages with the approved texts, and V-12 of `docs/product/views.md` names the log of the routing engine among what the app keeps.
 
 ## Domain rules
 
@@ -111,23 +125,27 @@ AC-17 (FR-15). The plan of `osm_importer` names the keeping of the boundary of K
 - The date of the copy in a response is the calendar day of the copy in Europe/Warsaw (M6, M10).
 - A route of a profile without barriers is never presented as free of barriers (M7), and missing information is never presented as a confirmation of accessibility (M10).
 - A start or a destination is in Kraków when it lies inside the administrative boundary of Kraków of the copy in use (M2).
+- The log of the routing engine of the hosted demo may hold the points of a route request until the demo is deleted on 4 October 2026; nothing else of the project stores or logs them (M2 in the version of FR-14).
 
 ## Dependencies and impact on other modules
 
 - `backend_skeleton` provides the layers and the entry points the operation lives in, and the local setup; the code of this initiative cannot land before them.
 - `schema_first_revision` provides the first schema revision the route reads; on 2026-10-04 it exists only on the unmerged branch of Kuba.
-- The rule that derives the status of a fact, from `schema_first_revision` and `community_facts`; no branch held it on 2026-10-04, and without it a route has no statuses.
+- `community_facts` and `osm_importer` call the rule of FR-16 instead of building their own; item 8 of the shape of `community_facts` moves here once Kuba consents.
 - `osm_importer` provides the data of the routing engine for each copy with their publication, and receives the need of FR-15. If that need is not delivered, FR-7 cannot work.
 - `plans/deployment_config/` runs the routing engine in the hosted demo, which AC-14 needs.
 - `frontend_app` and `stage5_harmonyos_port` follow the changes of FR-13. The HarmonyOS client on `dev` derives whether a route is assessed from its own request, treats a route without assessment as free of barriers, and names the missing attributes in its list, which M8 does not allow; that is for Kuber, raised in the shape.
+- `frontend_app` and `stage5_harmonyos_port` follow the texts of FR-17 in their privacy pages.
 - `public_transport_routing` starts its code after this initiative (`MVP.md`, Order and critical path).
-- Documents changed by this initiative: `docs/product/api_contract.md`, `docs/product/views.md`, `docs/standards/decision_registry.md`, `docs/product/specification.md`, and the plan of `osm_importer`.
+- Documents changed by this initiative: `docs/product/api_contract.md`, `docs/product/views.md`, `docs/product/interface_texts.md`, `docs/standards/decision_registry.md`, `docs/product/specification.md`, and the plan of `osm_importer`.
 
 ## Risks and notes
 
 - The deadline: the work starts at about 04:40 on 4 October 2026, and the Kraków submission closes at 11:00 the same day, while `backend_skeleton`, `schema_first_revision`, the status rule and `osm_importer` are each not merged or not written.
 - Every ruling of this PRD was given in place of Marek, and the contract changes in place of Kuber and Adrian; a different ruling of theirs changes FR-5, FR-6 or FR-7.
-- The branch of Kuba carries a version 13 of the specification different from the version 13 of `dev`, so the version of FR-14 gets its number only when the two are merged.
+- `dev` carries version 14 of the specification since `osm_importer` changed it on 2026-10-04, so FR-14 makes version 15 unless another initiative writes a version first.
+- Until the clients follow FR-17, their privacy pages say that the current location is not kept, which the log of the routing engine makes untrue on the hosted demo.
 - The route of the engine and the route with the fewest barriers are computed by different programs on the same copy, so an unusual piece of the network can end as routing not answering instead of a route (`plans_finished/valhalla_routing/VALHALLA_ROUTING_PLAN.md`, Risks).
 - The time of a route with every barrier of a whole route across Kraków was not measured; FR-12 is checked only on the server of the demo.
 - How the service tells which copy the routing engine serves is not settled in the documents; it is a question of the plan, not of this PRD.
+- FR-16 takes item 8 out of the shape of `community_facts` before Kuba has consented; if Kuba refuses, FR-16 goes back to `community_facts` and the route waits for its rule.

@@ -3,7 +3,7 @@
 import ipaddress
 import re
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Final, Literal
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from pydantic import BaseModel, ConfigDict, Field, SecretStr, ValidationError, field_validator
@@ -21,6 +21,7 @@ ENVIRONMENT_ENTRY_FILES = {
     "DB_HOST": "launch environment",
     "DB_PORT": "launch environment",
 }
+DEFAULT_LOG_LEVEL: Final = "INFO"
 
 
 class ConfigurationError(ValueError):
@@ -35,7 +36,7 @@ class Settings(BaseModel):
     API_BIND_HOST: str
     API_PORT: int = Field(ge=1, le=65535)
     BUSINESS_TIMEZONE: str
-    LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
+    LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = DEFAULT_LOG_LEVEL
     DB_HOST: str
     DB_PORT: int = Field(ge=1, le=65535)
     DB_NAME: str = Field(min_length=1)
@@ -59,6 +60,12 @@ class Settings(BaseModel):
         if not value.get_secret_value():
             raise ValueError("empty_service_account_password")
         return value
+
+    @field_validator("LOG_LEVEL", mode="before")
+    @classmethod
+    def build_log_level(cls, value: Any) -> Any:
+        """Treat the empty template marker as the documented default level, never as a more verbose one."""
+        return DEFAULT_LOG_LEVEL if value == "" else value
 
     @field_validator("BUSINESS_TIMEZONE")
     @classmethod

@@ -52,8 +52,8 @@ def test_invalid_entries_do_not_leak_values(key: str, value: str) -> None:
     assert value not in str(caught.value)
 
 
-@pytest.mark.parametrize("key", ["DB_HOST", "DB_NAME", "DB_SERVICE_ACCOUNT_NAME", "DB_SERVICE_ACCOUNT_PASSWORD"])
-def test_unfilled_database_entry_is_refused_by_name(key: str) -> None:
+@pytest.mark.parametrize("key", ["APP_ENVIRONMENT", "API_BIND_HOST", "API_PORT", "BUSINESS_TIMEZONE", "DB_HOST", "DB_NAME", "DB_SERVICE_ACCOUNT_NAME", "DB_SERVICE_ACCOUNT_PASSWORD"])
+def test_unfilled_required_entry_is_refused_by_name(key: str) -> None:
     """Refuse the empty marker an unfilled template leaves, naming the entry and its file."""
     values = VALID.copy()
     values[key] = ""
@@ -61,6 +61,12 @@ def test_unfilled_database_entry_is_refused_by_name(key: str) -> None:
         Settings(**values)
     assert key in str(caught.value)
     assert "private" not in str(caught.value)
+
+
+def test_unfilled_log_level_uses_the_default_level() -> None:
+    """Read the empty template marker of the log level as the documented default, not as an error or a verbose level."""
+    settings = Settings(**VALID, LOG_LEVEL="")
+    assert settings.LOG_LEVEL == "INFO"
 
 
 def test_optional_workspace_does_not_block_api_configuration() -> None:

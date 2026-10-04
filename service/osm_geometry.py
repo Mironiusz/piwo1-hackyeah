@@ -4,7 +4,7 @@ import math
 
 from pyproj import Transformer
 from pyproj.exceptions import ProjError
-from shapely import get_coordinates
+from shapely import contains_xy, get_coordinates, prepare
 from shapely.errors import GEOSException
 from shapely.geometry import LineString, MultiPolygon, Point, Polygon
 from shapely.ops import transform
@@ -53,11 +53,16 @@ def resolve_osm_fact_location(geometry: Point | LineString | Polygon | MultiPoly
 
 
 def resolve_osm_element_coverage(boundary: Polygon | MultiPolygon, geometry: Point | LineString) -> bool:
-    """Keep inside nodes and whole ways having at least one source node inside the boundary."""
-    if not isinstance(boundary, (Polygon, MultiPolygon)) or boundary.is_empty or not boundary.is_valid:
+    """
+    Keep inside nodes and whole ways having at least one source node inside the boundary.
+
+    The boundary is the one build_osm_boundary already validated, so it is prepared for repeated point tests
+    instead of being validated again for every element of the source.
+    """
+    if not isinstance(boundary, (Polygon, MultiPolygon)) or boundary.is_empty:
         raise OsmGeometryError("Invalid administrative boundary")
     if not isinstance(geometry, (Point, LineString)) or geometry.is_empty or not geometry.is_valid:
         raise OsmGeometryError("Invalid element geometry")
-    if isinstance(geometry, Point):
-        return boundary.contains(geometry)
-    return any(boundary.contains(Point(coordinate)) for coordinate in geometry.coords)
+    prepare(boundary)
+    coordinates = get_coordinates(geometry)
+    return bool(contains_xy(boundary, coordinates[:, 0], coordinates[:, 1]).any())

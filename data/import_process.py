@@ -17,6 +17,8 @@ class ImportProcessFailedError(RuntimeError):
 
 def fetch_activity_completion(path: Path) -> bool:
     """Prove all compliant Linux writers released their inherited descriptor."""
+    if sys.platform != "linux":
+        raise ImportWorkspaceUnconfirmed("Linux process supervision requires Linux")
     import fcntl
 
     descriptor = os.open(path, os.O_RDWR | os.O_NOFOLLOW)
@@ -32,6 +34,8 @@ def fetch_activity_completion(path: Path) -> bool:
 
 def apply_linux_process(lease: WorkspaceLease, arguments: list[str], deadline: Deadline) -> int:
     """Contain a compliant tool group and wait for every inherited writer."""
+    if sys.platform != "linux":
+        raise ImportWorkspaceUnconfirmed("Linux process supervision requires Linux")
     import fcntl
 
     path = lease.run_directory / "activity.lock"
