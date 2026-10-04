@@ -27,13 +27,6 @@ A deferral needs a reason. "We did not want to think about it" is not a reason; 
 - Blocks: `MVP.md` D-14 decides that no periodic task exists and that the import is the one-off command `python -m worker.osm_import`, while the Python profile was written for a service with a worker that keeps time. No worker code exists yet, and `plans/backend_skeleton/` and `plans/osm_importer/` are still planning the first one. The user decided on 2026-10-04 in `plans/repository_consistency/` to defer the rewrite until that code exists instead of guessing its shape.
 - Condition: the first worker code of `backend_skeleton` or `osm_importer` exists; the standards are then changed to match it, and this entry moves to Resolved decisions.
 
-### Technology stack and the Python profile of the standards
-
-- Affects: whether the twelve Python profile standards stay in force (`docs/standards/README.md`), the tools in `pyproject.toml` and `makefile`, the gates that check code, and the shape of every plan.
-- Variants: a backend in Python with PostgreSQL (possibly with PostGIS), which keeps the profile as it is; another backend, which removes the profile following the steps in `README.md`; no own backend, which also removes the profile.
-- Blocks: the stack follows from what the product has to do; the MVP scope it has to serve is in `docs/product/specification.md` since 2026-10-03. On 2026-10-03, in phase B of `plans_finished/mvp/`, the user chose the backend - Python 3.13 with FastAPI, on PostgreSQL with PostGIS - and with it kept the Python profile (`plans_finished/mvp/MVP_PLAN.md` D-1). That decision lives in `plans_finished/mvp/MVP_PLAN.md` D-1 and in `MVP.md`, and the first backend code that carries it is built by the initiative `backend_skeleton` (`MVP.md`). On 2026-10-03 `plans_finished/frontend_stack/` decided the frontend technology and recorded how frontend code is held to the standards: the workflow core and `standard_frontend.md` in the standards map (`plans_finished/frontend_stack/FRONTEND_STACK_PLAN.md`).
-- Condition: the backend decision lands in the first backend code and in the standards map. The frontend half of this entry is met. The profile is kept or removed in the same change, never left in force by inertia.
-
 ### HarmonyOS port and the Huawei submission
 
 - Affects: the architecture of the HarmonyOS client and the time left for the Kraków deliverables.
@@ -147,3 +140,7 @@ Resolved on 2026-10-03 by the user: the ten categories of the template stay unch
 ### Target environment for the demo
 
 Resolved on 2026-10-03 by the user, answering for the db person, and changed on 2026-10-04 by the user in `plans_finished/deployment/`. The demo runs on a server of the user in a data centre, reached at its IP address over plain HTTP, and is deleted with all its data on 4 October 2026. The virtual private server of the db person, chosen in `plans_finished/demo_environment/DEMO_ENVIRONMENT_PLAN.md` D-8, is superseded. The choice lives in `plans_finished/deployment/DEPLOYMENT_PRD.md` FR-5 and `plans_finished/mvp/MVP_PLAN.md` D-10, the permission levels of the agent in `CLAUDE.md` and `AGENTS.md`, section Target environment.
+
+### Technology stack and the Python profile of the standards
+
+Resolved on 2026-10-04 in the backend foundation: `api/`, `config/`, `data/`, `service/` and `worker/` implement the Python/FastAPI/PostgreSQL stack chosen in `plans_finished/mvp/MVP_PLAN.md` D-1. The standards map keeps the Python profile explicitly; frontend remains governed by its separate profile. Platform acceptance is still recorded in `plans/backend_skeleton/BACKEND_SKELETON_REVIEW.md`.

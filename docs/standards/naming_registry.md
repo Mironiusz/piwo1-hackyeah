@@ -118,3 +118,13 @@ Every object the first revision `db/accessibility_db/migrations/versions/0001_ta
 - `test_<what it checks>` in a file `db/tests/test_<subject>.py`; a file that touches the database carries `pytestmark = pytest.mark.critical`.
 - `service_engine`, `service_connection`, `stored_fact_id` - the fixtures of `db/tests/conftest.py`.
 - `test_<what it checks>` in a file `tests/service/test_<subject>_cases.py` - the scenario tests of the rules layer, first `test_account_rules_cases.py`, `test_passwords_cases.py` and `test_session_tokens_cases.py`.
+
+## Names of the backend foundation
+
+The names of `plans/backend_skeleton/`, merged on 2026-10-04 from the branch `mw-backend-skeleton`.
+
+- Layer packages: `api`, `service`, `data`, `worker`; shared configuration is `config` and time is `common_time`.
+- Factories and actions: `build_app`, `build_engine`, `build_import_engine`, `build_migration_engine`, `apply_import_exclusion`, `apply_publication`, `apply_import_process`.
+- SQL constants use `FETCH_..._SQL` or `APPLY_..._SQL` in `data/locks.py`; import admission and publication fence have separate keys.
+- Planned public failure names such as `ImportAlreadyRunning` and `PublicationOutcomeUnknown` are aliases of exception classes ending in `Error`, satisfying the naming gate while preserving the shared contract.
+- Launch targets: `backend`, `db-build`, `db-up`, `db-down`, `migration-heads`, `migration-history`, `test-critical`, `check-unit`.

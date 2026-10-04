@@ -32,10 +32,12 @@ The machine needs `make`, `python` 3.13 and `node` with `npm` for prettier, whic
 
 ```bash
 python -m venv venv
-venv/Scripts/python -m pip install -e ".[dev]"
+venv/bin/python -m pip install -e ".[dev]"
 npm ci
 make check
 ```
+
+On Windows use `py -3.13 -m venv venv` and `venv/Scripts/python -m pip install -e ".[dev]"`. Activate the virtual environment before running make. Local database requirements and the protected critical suite are in `docs/setup/backend.md`.
 
 ## Setup from the template
 
