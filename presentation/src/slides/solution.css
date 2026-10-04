@@ -1,0 +1,28 @@
+/* Styles of the slide solution: Three cards in a row: needs, route, facts. */
+
+.reveal .card-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 36px;
+  margin: 72px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reveal .card {
+  padding: 30px;
+  border-top: 8px solid var(--primary);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.reveal .card h3 {
+  margin-top: 22px;
+  font-size: 40px;
+}
+
+.reveal .card p {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.35;
+}

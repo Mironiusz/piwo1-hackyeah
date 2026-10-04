@@ -57,7 +57,7 @@ On 2026-10-04 the user extended this scope to shared exclusion of concurrent imp
 5. Prepare the administrative launch foundation under the current `MVP.md`, D-14, contract, without implementing the import itself.
 6. Set up the checks required with the first backend code, including architecture boundaries and local critical-test protection, and verify the local setup independently of the first schema revision.
 7. Document the delivered readiness and verification commands so Kuba and Mateusz can consume concrete results. Record the chosen backend in the standards map and resolve the technology-profile deferral when its implementation condition is met.
-8. Deliver shared exclusion of concurrent import runs, with zero wait for a second run and ownership retained until outstanding work, rollback and cleanup have ended.
+8. Deliver shared exclusion of concurrent import runs, with zero wait for a second run and ownership retained until outstanding work, rollback and cleanup have ended, including private-file cleanup after loss of all database connections. The user confirmed this abnormal-loss boundary on 2026-10-04.
 9. Deliver enforcement of one deadline for the whole publication transaction, including lock waiting, all statements and commit. On expiration stop further publication and roll back an uncommitted transaction; do not report an uncertain commit as a proven rollback.
 
 Requirements 1 - 7 follow from the existing seed, `MVP.md`, D-1, D-7 and D-14, and the local database plan, D-8. They do not reopen those choices. Requirements 8 and 9 follow from the user's answer to Q-1 on 2026-10-04; their consumer behavior follows importer D-16 and D-17 and the source plan D-11.
@@ -102,3 +102,19 @@ Requirements 1 - 7 follow from the existing seed, `MVP.md`, D-1, D-7 and D-14, a
 ## Open questions
 
 None at the shape stage. Q-1 was answered by the user on 2026-10-04, assigning shared import exclusion and deadline enforcement to skeleton. Q-2 was answered from the updated `MVP.md`, D-14, and importer D-14 and D-20: the administrative entry point is `python -m worker.osm_import` in both agreed environments. Phase B still has to finalize and verify the technical handoff; closing this interview proves scope agreement, not importer readiness.
+
+## 2026-10-04 - Abnormal-loss cleanup boundary confirmed
+
+The user required a new importer to wait until the old run has finished cleaning its files even if all database lock sessions are lost. This confirms requirement 8 without accepting an abnormal-loss exception. Database completion alone is insufficient. Technical-plan Q-3 asks how cleanup and admission recovery are completed when the old process crashes; no recovery policy has been inferred from this answer.
+
+## 2026-10-04 - Automatic crash cleanup requested
+
+The user selected automatic cleanup and admission release after a process crash. No human cleanup or manual unlock is required for the intended recovery. The trigger remains open in technical-plan Q-4: recovery during the next manual launch, or independently without another launch. This answer does not authorize automatic fresh imports or identify a storage mechanism.
+
+## 2026-10-04 - Recovery trigger selected
+
+The user selected automatic cleanup during the next manually launched import, before it acquires new source data. If no new launch occurs, cleanup remains pending. No independent background recovery service or automatic fresh import is required. Q-4 is resolved; technical-plan Q-5 asks whether all runs for one database share one execution machine and a persistent workspace accessible across replacement containers.
+
+## 2026-10-04 - One execution machine and persistent workspace agreed
+
+The user confirmed one execution machine and one shared persistent workspace for all imports into a given database, including across replacement containers. Hosted imports use the demo server; development imports use the local machine and local database. Q-5 is answered. No hosted operation, product-schema lease or separate background service is authorized. Technical-plan closure still requires a concrete exclusion and recovery protocol satisfying the agreed boundaries.

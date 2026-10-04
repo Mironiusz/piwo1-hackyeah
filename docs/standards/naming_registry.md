@@ -118,3 +118,35 @@ Every object the first revision `db/accessibility_db/migrations/versions/0001_ta
 - `test_<what it checks>` in a file `db/tests/test_<subject>.py`; a file that touches the database carries `pytestmark = pytest.mark.critical`.
 - `service_engine`, `service_connection`, `stored_fact_id` - the fixtures of `db/tests/conftest.py`.
 - `test_<what it checks>` in a file `tests/service/test_<subject>_cases.py` - the scenario tests of the rules layer, first `test_account_rules_cases.py`, `test_passwords_cases.py` and `test_session_tokens_cases.py`.
+
+## Names of the backend foundation
+
+The names of `plans/backend_skeleton/`, merged on 2026-10-04 from the branch `mw-backend-skeleton`.
+
+- Layer packages: `api`, `service`, `data`, `worker`; shared configuration is `config` and time is `common_time`.
+- Factories and actions: `build_app`, `build_engine`, `build_import_engine`, `build_database_url`, `apply_import_exclusion`, `apply_publication`, `apply_import_process`.
+- SQL constants use `FETCH_..._SQL` or `APPLY_..._SQL` in `data/locks.py`; import admission and publication fence have separate keys.
+- Planned public failure names such as `ImportAlreadyRunning` and `PublicationOutcomeUnknown` are aliases of exception classes ending in `Error`, satisfying the naming gate while preserving the shared contract.
+- Launch targets: `backend`, `test-critical`, `check-unit`. The targets of the local database and of the revision runner left on 2026-10-04 with the local setup of the skeleton; the local database is started by the commands of `db/README.md`.
+
+## Importer service names
+
+- `service/osm_source_validation.py`: `resolve_osm_source_location`, `resolve_osm_checksum`, `resolve_osm_source_state`, `resolve_osm_source_is_newer` and `OsmSourceError` validate source metadata without I/O.
+- `service/osm_tag_rule.py`: `resolve_is_pedestrian_network_way` is the shared predicate for stored network and routing PBF selection, following the backend architecture contract.
+- `service/osm_tag_thresholds.py`: closed tag-value lists use the suffix `_VALUES`.
+
+- `service/osm_tag_values.py`: `resolve_osm_length_m`, `resolve_osm_incline_percent` and `resolve_osm_step_count` parse numeric tag values; `OsmTagError` rejects unrepresentable step counts.
+- `service/osm_geometry.py`: `resolve_osm_fact_location`, `resolve_osm_element_coverage` and `OsmGeometryError` implement geometry rules.
+- `service/osm_routing_tags.py`: `build_osm_routing_node_tags` and `build_osm_routing_way_tags` create routing tag mappings.
+- `data/osm_reader.py`: `OsmElementSnapshot`, `fetch_osm_elements`, `fetch_osm_header_timestamp` and `OsmReadError` describe local source reading.
+- `data/osm_network_file.py`: `apply_osm_network_pbf` and `OsmNetworkFileError` describe prepared PBF writing.
+- `data/routing_data.py`: `RoutingFileDigest`, `RoutingManifest`, `RoutingDataError`, `apply_osm_routing_manifest` and `fetch_osm_routing_manifest` describe completeness metadata.
+
+- `data/osm_source.py`: `build_osm_http_client`, `fetch_osm_latest_location`, `fetch_osm_checksum_text`, `apply_osm_download` and `OsmDownloadError` own HTTP transport.
+- `service/osm_acquisition.py`: `OsmExtract` and `fetch_osm_extract` describe validated temporary source acquisition.
+- `service/osm_preparation.py`: `OsmPreparedNetwork`, `build_osm_boundary`, `build_osm_boundary_rings`, `build_osm_network` and `build_osm_routing_network` describe selection and normalized copies.
+- `service/osm_routing_preparation.py`: `OsmNetworkData`, `prepare_osm_network_data`, `build_osm_valhalla_config` and `prepare_osm_routing_data` connect the preparation stages.
+- `data/osm_valhalla.py`: `OsmTileBuildError`, `apply_osm_valhalla_config`, `apply_osm_valhalla_command` and `apply_osm_valhalla_tiles` own tool execution.
+
+- `data/osm_copy.py`: `OsmFactIdentity`, typed source rows, `apply_osm_network`, `apply_osm_present_facts` and `fetch_osm_fact_history` use the delivered database models.
+- `service/osm_database_rows.py`: `build_osm_database_network` maps original network snapshots to database rows.

@@ -1,0 +1,32 @@
+/* Styles of the slide data: The table of the data sources. */
+
+.reveal .data-table {
+  width: 100%;
+  margin-top: 36px;
+  border-collapse: collapse;
+  font-size: 30px;
+}
+
+.reveal .data-table th,
+.reveal .data-table td {
+  padding: 14px 16px;
+  border-bottom: 2px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.reveal .data-table thead th {
+  border-bottom-color: var(--primary);
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.reveal .data-table tbody th {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.reveal .data-footer {
+  margin-top: 36px;
+  font-size: 34px;
+}

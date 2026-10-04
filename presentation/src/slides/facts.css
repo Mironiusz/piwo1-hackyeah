@@ -1,0 +1,79 @@
+/* Styles of the slide facts: A fact card as the app shows it, next to the statuses and the rules against abuse. */
+
+.reveal .facts-grid {
+  display: grid;
+  grid-template-columns: 760px 1fr;
+  gap: 60px;
+  margin-top: 36px;
+}
+
+.reveal .fact-card {
+  padding: 30px 34px;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.reveal .fact-card h3 {
+  font-size: 44px;
+  color: var(--text);
+}
+
+.reveal .fact-card dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 10px 24px;
+  margin: 0;
+  font-size: 32px;
+}
+
+.reveal .fact-card dt {
+  color: var(--text-dim);
+}
+
+.reveal .fact-card dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.reveal .status-chip {
+  padding: 2px 14px;
+  border: 2px solid var(--line-strong);
+  border-radius: 999px;
+}
+
+.reveal .fact-conflict {
+  margin-top: 22px;
+  padding: 16px 20px;
+  border-left: 8px solid var(--on-accent);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 28px;
+}
+
+.reveal .fact-conflict p {
+  margin: 0;
+}
+
+.reveal .fact-conflict .fact-conflict-head {
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.reveal .vote-row {
+  display: flex;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.reveal .vote-btn {
+  padding: 10px 26px;
+  border: 2px solid var(--text);
+  border-radius: 10px;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.reveal .facts-side .statuses {
+  margin: 0 0 40px;
+}

@@ -1,0 +1,20 @@
+/* Styles of the slide status: Two columns, the limits and the closing line. */
+
+.reveal .status-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  margin-top: 40px;
+}
+
+.reveal .status-limits {
+  margin-top: 16px;
+}
+
+.reveal .closing {
+  margin: 56px 0 0;
+  font-family: var(--font-title);
+  font-size: 80px;
+  font-weight: 700;
+  color: var(--primary);
+}

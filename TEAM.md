@@ -15,7 +15,7 @@ The role column uses the role names the repository already uses, so an older doc
 | Marek   | backend                 | the backend skeleton, route planning, the reports and geozones of the community facts, and last the optional routes with public transport                                                                                                                                                       |
 | Mateusz | import and external API | the integrations: the import of open data, the sample data and the calls to external systems                                                                                                                                                                                                    |
 
-The column Works on follows the division of the work of `plans/final_checklist/FINAL_CHECKLIST_SHAPE.md`, requirement 22.
+The column Works on follows the division of the work of `plans_finished/final_checklist/FINAL_CHECKLIST_SHAPE.md`, requirement 22.
 
 Kuba and Kuber are two different people.
 
