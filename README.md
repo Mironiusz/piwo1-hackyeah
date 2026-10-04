@@ -4,7 +4,7 @@ A HackYeah 2026 project (3-4 October 2026, Kraków): a community app about the a
 
 The project is submitted to two partner challenges: "Kraków bez barier" (City of Kraków) and "Imagine What's Next" (Huawei). Their requirements, deliverables and judging criteria are summarized in `docs/hackathon/challenge_requirements.md`. The product specification, with the target group and the MVP scope, is in `docs/product/specification.md`.
 
-There is no application code yet; the only build in the repository is the image of the routing engine in `valhalla/`. How the MVP is built - its initiatives, their owners and order - is summarized in `MVP.md`, and the team is listed in `TEAM.md`. Build, installation and launch instructions for the app will be added here together with the first code.
+The database package in `db/` and the sample-data provider in `service/` and `data/` are implemented. Shared backend infrastructure and the common loading program remain delivery dependencies; the backend has no launch command here yet. The routing engine image lives in `valhalla/`. How the MVP is built - its initiatives, their owners and order - is summarized in `MVP.md`, and the team is listed in `TEAM.md`.
 
 ## Origin of the workflow
 
@@ -20,6 +20,8 @@ The repository was created on 2026-10-03 from a pre-existing project template, "
 - `MVP.md`, `PRODUCT.md`, `TEAM.md`, `AI_WORKFLOW.md` - the summary of the MVP, the product summary that interface work starts from, the team, and how AI tools are used here.
 - `.impeccable/briefs/` - the design briefs and the mocks of the views made with the `impeccable` skill.
 - `valhalla/` - the build of the routing engine Valhalla with two accessibility patches, and `.github/workflows/valhalla-image.yml`, which publishes its image when a person starts it.
+- `db/` - the shared database package and separate local setup, migration and schema checks, described in `db/README.md`.
+- `service/`, `data/` and `common_sample_data.py` - the fictional sample provider, its storage seam and typed contract. Loading prerequisites, retry behavior and incomplete acceptance are described in [docs/data/sample_data.md](docs/data/sample_data.md).
 - `tests/architecture/` - the core gates: Claude Code and Codex parity, the list of third-party content, hooks, prose style, plan document contract, conflict markers.
 - `plans/` and `plans_finished/` - the initiatives in progress and their archive.
 - `pyproject.toml`, `makefile`, `package.json`, `.prettierrc` - quality and formatting tools.
@@ -32,10 +34,12 @@ The machine needs `make`, `python` 3.13 and `node` with `npm` for prettier, whic
 
 ```bash
 python -m venv venv
-venv/Scripts/python -m pip install -e ".[dev]"
+venv/Scripts/python -m pip install ./db -e ".[dev]"
 npm ci
 make check
 ```
+
+On Linux use `venv/bin/python` instead of `venv/Scripts/python`. The database package is installed from `./db`; it is not resolved as an unrelated package from an index. Noncritical sample checks need no runtime configuration: `python -m pytest -m "not critical" tests/service tests/data`. Critical checks require the delivered local backend configuration, owner fixture and a separately applied product schema; `tests/conftest.py` refuses critical selection without that configuration, including collection-only.
 
 ## Setup from the template
 
@@ -44,7 +48,7 @@ The template's setup steps and their state in this repository:
 1. Copy the template files into a new repository, without the template's `.git` directory. Done in the initial commit.
 2. Fill in the places marked `<...>` in `CLAUDE.md`, `AGENTS.md` and `agent_docs/session_context.md`: the project description, the product specification, the team and the agent's permissions for the target environment. `CLAUDE.md` and `AGENTS.md` must be identical except for the tool name - the parity test checks it. Done on 2026-10-03; the team section was removed because there was nothing to record yet, and the team has been listed in `TEAM.md` since 2026-10-04; the permission levels for the target environment were filled in on 2026-10-03 from `plans_finished/demo_environment/`.
 3. Enter the project name in `pyproject.toml`, `package.json` and `package-lock.json`. Done: `piwo1-hackyeah`.
-4. A Python profile project adds its layer directories to `[tool.mypy]` and `[tool.vulture]` in `pyproject.toml` and to the `security` target in `makefile` together with the first code, and sets up the profile gates (layer boundaries, environment contract, consistency of the periodic task registry) together with the first code of a given layer. Waiting for the first code.
+4. A Python profile project adds its layer directories to `[tool.mypy]` and `[tool.vulture]` in `pyproject.toml` and to the `security` target in `makefile` together with the first code, and sets up the profile gates (layer boundaries, environment contract, consistency of the periodic task registry) together with the first code of a given layer. Sample code now carries these tool scopes, a dependency-direction check and the critical environment guard; general backend delivery remains with `backend_skeleton`.
 5. A project outside the Python profile removes the profile standards listed in `docs/standards/README.md`, their rows in the maps in `docs/standards/README.md` and `docs/standards/standard_review.md`, and the Python tools it does not use. The core gates stay, because they are Python tests and need `pytest`. Not applicable: on 2026-10-03 the user chose a Python backend with PostgreSQL and kept the profile (`MVP.md`, D-1); the entry Technology stack and the Python profile of the standards of `docs/standards/decision_registry.md` waits only for the first backend code.
 6. The list of ten blocking risk categories is chosen for a service with a database and an API. A project with a different risk profile changes it in the three places listed in `docs/standards/standard_agentic_workflow.md` ch. 3.3. Kept unchanged by decision of the user.
 7. Run `make check`.

@@ -58,6 +58,8 @@ security:
 	bandit -r .claude/hooks -s B404,B603,B607 --confidence-level medium
 	bandit -r .claude/hooks -t B608
 	bandit -r db -s B101 --confidence-level medium
+	bandit -r service data common_sample_data.py --confidence-level medium
+	bandit -r service data common_sample_data.py -t B608
 
 audit:
 	pip-audit

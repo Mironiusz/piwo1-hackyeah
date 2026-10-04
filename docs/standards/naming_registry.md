@@ -109,3 +109,12 @@ Every object the first revision `db/accessibility_db/migrations/versions/0001_ta
 
 - `test_<what it checks>` in a file `db/tests/test_<subject>.py`; a file that touches the database carries `pytestmark = pytest.mark.critical`.
 - `service_engine`, `service_connection`, `stored_fact_id` - the fixtures of `db/tests/conftest.py`.
+- `schema_owner_engine` - the backend-owned local owner fixture required by `tests/conftest.py`; its delivery contract is `plans/sample_data/SAMPLE_DATA_BACKEND_HANDOFF.md`.
+- `database_cleanup_registry` - the shared exact-key cleanup fixture in `tests/conftest.py`.
+- `sample_critical_dataset` - the invented sample-network fixture in `tests/data/conftest.py`.
+
+## Sample-loading interface
+
+`service.sample_data.apply_sample_data` is the no-argument administrative provider. Its shared records live in `common_sample_data.py`. `SampleDataFailure` is the public alias of `SampleDataError`; the alias preserves the approved provider contract while the class follows exception naming conventions.
+
+The sample definitions reserve `fact.id` -1 through -4. Ordinary facts keep generated identifiers, and sample retries never reallocate or overwrite these identifiers. This convention is documented in `docs/data/sample_data.md`.
