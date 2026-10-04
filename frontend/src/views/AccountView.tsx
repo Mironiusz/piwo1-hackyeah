@@ -213,10 +213,11 @@ function DeleteConfirmation({ pseudonym, failure, isBusy, onCancel, onConfirm }:
  * Both fields are checked against their rules before a request is sent, creating an account logs in right after it,
  * and a deleted account is forgotten by the session too. When an action of the person changes the screen, the focus moves to its title.
  * While the session kept on the device is still being checked, the page shows that it is loading in place of the form for logging in.
+ * When that check got no answer, the page says so and offers to try again, because the kept session may still be valid.
  */
 export function AccountView() {
   const { t } = useTranslation();
-  const { account, isChecking: isSessionChecked, logIn, logOut } = useSession();
+  const { account, isChecking: isSessionChecked, checkError, logIn, logOut, refresh } = useSession();
   const [mode, setMode] = useState<Mode>("main");
   const [pseudonym, setPseudonym] = useState("");
   const [password, setPassword] = useState("");
@@ -254,6 +255,15 @@ export function AccountView() {
     setFailure(null);
     setNotice(null);
     setMode(next);
+  };
+
+  /**
+   * Reads the account of the kept session again after a check that got no answer.
+   * The focus moves to the title, because the control that was pressed leaves the screen.
+   */
+  const checkAgain = () => {
+    title.current?.focus();
+    refresh();
   };
 
   /**
@@ -377,6 +387,15 @@ export function AccountView() {
       </h1>
       {isChecking ? (
         <output className={`${HINT} block`}>{t("state.loading")}</output>
+      ) : account === null && checkError !== null ? (
+        <Note kind="strong" announce="alert">
+          <p>{t(errorTextKey(checkError.code))}</p>
+          <div className="mt-2">
+            <Button isSmall onClick={checkAgain}>
+              {t("action.retry")}
+            </Button>
+          </div>
+        </Note>
       ) : account === null ? (
         <>
           <p className={PAGE_LEAD}>{t(screen === "create" ? "account.create.intro" : "account.intro")}</p>

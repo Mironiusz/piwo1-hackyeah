@@ -2,16 +2,24 @@ import type { Verdict } from "../api/types.ts";
 import { readStored, STORAGE_KEYS, writeStored } from "./storage.ts";
 
 /**
- * The latest vote of the person on one fact, as the device remembers it: the verdict, the day it was cast
- * and the instant from which the next vote is accepted.
+ * The latest vote of a person on one fact, as the device remembers it: who cast it, the verdict, the day it was cast
+ * and the instant from which the next vote is accepted. The voter is the pseudonym of the account of the session,
+ * or null for a person without an account.
  */
 export interface OwnVote {
+  voter: string | null;
   verdict: Verdict;
   votedOn: string;
   repeatAllowedAt: string;
 }
 
-type OwnVotes = Record<string, OwnVote>;
+/**
+ * A vote as the device keeps it. A vote kept before the voter was remembered has none
+ * and is read as the vote of a person without an account.
+ */
+type KeptVote = Omit<OwnVote, "voter"> & { voter?: string | null };
+
+type OwnVotes = Record<string, KeptVote>;
 
 /**
  * Tells whether a value has the form the device keeps the own votes in.
@@ -25,7 +33,8 @@ function isOwnVotes(value: unknown): value is OwnVotes {
       return false;
     }
     const candidate = vote as Record<string, unknown>;
-    return (candidate.verdict === "confirm" || candidate.verdict === "deny") && typeof candidate.votedOn === "string" && typeof candidate.repeatAllowedAt === "string";
+    const hasVoter = candidate.voter === undefined || candidate.voter === null || typeof candidate.voter === "string";
+    return hasVoter && (candidate.verdict === "confirm" || candidate.verdict === "deny") && typeof candidate.votedOn === "string" && typeof candidate.repeatAllowedAt === "string";
   });
 }
 
@@ -63,26 +72,30 @@ export function startOfNextDay(moment: Date): string {
 }
 
 /**
- * Returns the vote the device remembers for a fact, or null.
+ * Returns the vote the device remembers for a fact and a voter, or null.
+ * The vote of another voter on the same fact is not returned, so nobody is shown the vote of someone else who used the device.
  */
-export function readOwnVote(factId: number): OwnVote | null {
-  const votes = readStored(STORAGE_KEYS.ownVotes, isOwnVotes);
-  return votes?.[String(factId)] ?? null;
+export function readOwnVote(factId: number, voter: string | null): OwnVote | null {
+  const kept = readStored(STORAGE_KEYS.ownVotes, isOwnVotes)?.[String(factId)];
+  if (kept === undefined || (kept.voter ?? null) !== voter) {
+    return null;
+  }
+  return { voter, verdict: kept.verdict, votedOn: kept.votedOn, repeatAllowedAt: kept.repeatAllowedAt };
 }
 
 /**
- * Remembers the latest vote of the person on a fact.
+ * Remembers the latest vote of a voter on a fact. The device keeps one vote for a fact, the latest one cast on it.
  */
-export function saveOwnVote(factId: number, verdict: Verdict, votedOn: string, repeatAllowedAt: string): void {
+export function saveOwnVote(factId: number, voter: string | null, verdict: Verdict, votedOn: string, repeatAllowedAt: string): void {
   const votes = readStored(STORAGE_KEYS.ownVotes, isOwnVotes) ?? {};
-  writeStored(STORAGE_KEYS.ownVotes, { ...votes, [String(factId)]: { verdict, votedOn, repeatAllowedAt } });
+  writeStored(STORAGE_KEYS.ownVotes, { ...votes, [String(factId)]: { voter, verdict, votedOn, repeatAllowedAt } });
 }
 
 /**
- * Tells whether the person can vote on a fact now: no vote is remembered, or the calendar day after it has started.
+ * Tells whether a voter can vote on a fact now: no vote of theirs is remembered, or the calendar day after it has started.
  */
-export function canVoteNow(factId: number, now: Date): boolean {
-  const vote = readOwnVote(factId);
+export function canVoteNow(factId: number, voter: string | null, now: Date): boolean {
+  const vote = readOwnVote(factId, voter);
   if (vote === null) {
     return true;
   }

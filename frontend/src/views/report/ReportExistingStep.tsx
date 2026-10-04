@@ -16,6 +16,7 @@ import { readLastMapPath } from "../../state/lastMapPath.ts";
 import { startOfNextDay } from "../../state/ownVotes.ts";
 import { usePlannedRoute } from "../../state/plannedRoute.tsx";
 import { useReportDraft } from "../../state/reportDraft.tsx";
+import { useSession } from "../../state/session.tsx";
 import { buildFactMarker, buildFactZones } from "../factDetail.ts";
 import { ReportFactLine } from "./ReportFactLine.tsx";
 import { buildPointCamera, buildPointMarker } from "./reportMap.ts";
@@ -38,6 +39,7 @@ export function ReportExistingStep() {
   const navigate = useNavigate();
   const { draft, clear } = useReportDraft();
   const { markStale } = usePlannedRoute();
+  const { account } = useSession();
   const [vote, setVote] = useState<VoteState>({ kind: "idle" });
   const [goneIds, setGoneIds] = useState<readonly number[]>([]);
   const [openedAt] = useState(() => new Date());
@@ -78,7 +80,7 @@ export function ReportExistingStep() {
     setVote({ kind: "saving" });
     try {
       const after = await castVote(fact.id, "confirm");
-      rememberConfirmation(fact.id);
+      rememberConfirmation(fact.id, account?.pseudonym ?? null);
       markStale();
       setVote({ kind: "confirmed", fact: after });
     } catch (caught) {
